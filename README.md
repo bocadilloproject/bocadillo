@@ -31,10 +31,9 @@ uvicorn tacos:api
 ```
 
 ```
-Serving Bocadillo on 127.0.0.1:5050
 INFO: Started server process [81910]
 INFO: Waiting for application startup.
-INFO: Uvicorn running on http://127.0.0.1:5050 (Press CTRL+C to quit)
+INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
 🌯💥

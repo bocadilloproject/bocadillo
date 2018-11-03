@@ -19,7 +19,7 @@ class Response:
         self.status_code: int = None
 
     @property
-    async def contents(self) -> Tuple[Body, Headers]:
+    def contents(self) -> Tuple[Body, Headers]:
         if self.content is not None:
             return self.content, {}
         if self.media is not None:
@@ -32,7 +32,7 @@ class Response:
         if self.status_code is None:
             self.status_code = 200
 
-        body, headers = await self.contents
+        body, headers = self.contents
         response = _Response(
             content=body,
             headers=headers,

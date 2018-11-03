@@ -57,7 +57,6 @@ class API:
         if port is None:
             port = 8000
 
-        print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)
 
     def _find_route(self, path: str) -> Tuple[Optional[str], dict]:

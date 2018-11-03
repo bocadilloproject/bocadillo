@@ -10,4 +10,4 @@ async def index(req, resp: Response, person: str):
 
 
 if __name__ == '__main__':
-    api.run(port=5050, debug=True)
+    api.run(debug=True)
