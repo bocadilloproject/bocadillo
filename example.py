@@ -1,11 +1,12 @@
 import bocadillo
+from bocadillo.response import Response
 
 api = bocadillo.API()
 
 
-@api.route('/')
-async def index(req, resp):
-    resp.media = {'message': 'Hello, world!'}
+@api.route('/{greeting}')
+async def index(req, resp: Response, greeting):
+    resp.media = {'message': f'Hello, {greeting}!'}
 
 
 if __name__ == '__main__':

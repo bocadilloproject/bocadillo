@@ -1,6 +1,6 @@
 """The Bocadillo API class."""
 import os
-from typing import Optional
+from typing import Optional, Tuple
 
 import uvicorn
 from starlette.requests import Request
@@ -60,10 +60,12 @@ class API:
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)
 
-    def _find_route(self, path: str) -> Optional[Route]:
+    def _find_route(self, path: str) -> Tuple[Optional[str], dict]:
         for pattern, route in self._routes.items():
-            if route.matches(path):
-                return route
+            kwargs = route.match(path)
+            if kwargs is not None:
+                return pattern, kwargs
+        return None, {}
 
     @staticmethod
     def _default_response(request, response):
@@ -74,10 +76,11 @@ class API:
         """Dispatch a request to the router."""
         response = Response(request)
 
-        route = self._find_route(request.url.path)
+        pattern, kwargs = self._find_route(request.url.path)
+        route = self._routes.get(pattern)
 
         if route is not None:
-            await route(request, response)
+            await route(request, response, **kwargs)
         else:
             self._default_response(request, response)
 
