@@ -56,7 +56,7 @@ INFO: Uvicorn running on http://127.0.0.1:5050 (Press CTRL+C to quit)
 TODO:
 
 - Class-based views
-- Template rendering using `bocadillo.template()`
+- Template rendering
 - Response headers
-- Static assets service with WhiteNoise
+- Static assets
 - Bocadillo CLI
