@@ -12,10 +12,13 @@ class API:
             return handler
         return decorated
 
-    def run(self, host='0.0.0.0', port=5200):
-        """Run the development server."""
+    def serve(self, host: str, port: int):
+        """Serve the application."""
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port)
+
+    def run(self, **kwargs):
+        return self.serve(**kwargs)
 
     def asgi(self, scope):
         """Return a new ASGI application.
