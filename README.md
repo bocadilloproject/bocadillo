@@ -1,3 +1,3 @@
 # Bocadillo
 
-A web framework for the hungry. To be consumed one bite at a time.
+A Python web framework filled with salsa. 🌮
