@@ -1,7 +1,5 @@
 # Bocadillo
 
-**A tasty Python web framework filled with hot salsa. 🌮**
-
 Inspired by [Responder](http://python-responder.org), Bocadillo is a take on building a web framework taking the best parts of Falcon and Flask.
 
 Under the hood, it uses [Starlette](https://www.starlette.io) as an ASGI toolkit and [uvicorn](https://www.uvicorn.org) as an ASGI server.
