@@ -37,7 +37,7 @@ class API:
             '0.0.0.0' will be used to serve to all known hosts.
         port : int, optional
             The port to bind to.
-            Defaults to 5050 or (if set) the value of the `PORT` environment
+            Defaults to 8000 or (if set) the value of the `PORT` environment
             variable.
         debug : bool, optional
             Whether to serve the application in debug mode. Defaults to `False`.
@@ -55,7 +55,7 @@ class API:
             host = '127.0.0.1'
 
         if port is None:
-            port = 5050
+            port = 8000
 
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)

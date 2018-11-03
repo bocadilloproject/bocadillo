@@ -4,9 +4,9 @@ from bocadillo.response import Response
 api = bocadillo.API()
 
 
-@api.route('/{greeting}')
-async def index(req, resp: Response, greeting):
-    resp.media = {'message': f'Hello, {greeting}!'}
+@api.route('/{person}')
+async def index(req, resp: Response, person: str):
+    resp.media = {'message': f'Hello, {person}!'}
 
 
 if __name__ == '__main__':
