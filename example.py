@@ -4,7 +4,7 @@ api = bocadillo.API()
 
 
 @api.route('/')
-def index(req, resp):
+async def index(req, resp):
     resp.media = {'message': 'Hello, world!'}
 
 

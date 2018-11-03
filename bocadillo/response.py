@@ -1,3 +1,4 @@
+import json
 from typing import Tuple, Dict, AnyStr
 
 from starlette.requests import Request
@@ -14,12 +15,15 @@ class Response:
     def __init__(self, request: Request):
         self.request = request
         self.content: str = None
+        self.media: dict = None
         self.status_code: int = None
 
     @property
     async def contents(self) -> Tuple[Body, Headers]:
         if self.content is not None:
             return self.content, {}
+        if self.media is not None:
+            return json.dumps(self.media), {'Content-Type': 'application/json'}
         else:
             return '{}', {'Content-Type': 'application/json'}
 

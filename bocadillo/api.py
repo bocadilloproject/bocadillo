@@ -1,22 +1,30 @@
 """The Bocadillo API class."""
 import os
+from typing import Optional
 
 import uvicorn
 from starlette.requests import Request
+
+from bocadillo.routing import Route
 from .response import Response
 
 
 class API:
     """Bocadillo API."""
 
+    def __init__(self):
+        self._routes = {}
+
     def route(self, pattern: str):
         """Register a new route."""
 
-        def decorated(handler):
-            # TODO: register handler on the router
-            return handler
+        def wrapper(handler):
+            route = Route(pattern=pattern, handler=handler)
+            # TODO check that no route already exists for pattern
+            self._routes[pattern] = route
+            return route
 
-        return decorated
+        return wrapper
 
     def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.
@@ -52,15 +60,27 @@ class API:
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)
 
+    def _find_route(self, path: str) -> Optional[Route]:
+        for pattern, route in self._routes.items():
+            if route.matches(path):
+                return route
+
+    @staticmethod
+    def _default_response(request, response):
+        response.content = 'Not Found'
+        response.status_code = 404
+
     async def _dispatch(self, request, receive, send) -> Response:
         """Dispatch a request to the router."""
         response = Response(request)
 
-        # TODO use registered routes
-        async def handler(req, res):
-            res.content = f'{request.method} {request.url.path}'
+        route = self._find_route(request.url.path)
 
-        await handler(request, response)
+        if route is not None:
+            await route(request, response)
+        else:
+            self._default_response(request, response)
+
         return response
 
     def asgi(self, scope):
