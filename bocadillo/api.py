@@ -3,9 +3,9 @@ import os
 from typing import Optional, Tuple
 
 import uvicorn
-from starlette.requests import Request
 
 from bocadillo.routing import Route
+from .request import Request
 from .response import Response
 
 
@@ -61,6 +61,7 @@ class API:
         uvicorn.run(self, host=host, port=port, debug=debug)
 
     def _find_route(self, path: str) -> Tuple[Optional[str], dict]:
+        """Find a route matching the given path."""
         for pattern, route in self._routes.items():
             kwargs = route.match(path)
             if kwargs is not None:
@@ -69,6 +70,7 @@ class API:
 
     @staticmethod
     def _default_response(request, response):
+        """Configure a default response when no matching route was found."""
         response.content = 'Not Found'
         response.status_code = 404
 
