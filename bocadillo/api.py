@@ -4,9 +4,9 @@ from typing import Optional, Tuple
 
 import uvicorn
 
-from bocadillo.routing import Route
 from .request import Request
 from .response import Response
+from .route import Route
 
 
 class API:
