@@ -2,6 +2,8 @@
 import os
 
 import uvicorn
+from starlette.requests import Request
+from starlette.responses import Response
 
 
 class API:
@@ -16,7 +18,7 @@ class API:
 
         return decorated
 
-    def serve(self, host: str = None, port: int = None, debug: bool = False):
+    def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.
 
         Parameters
@@ -50,8 +52,12 @@ class API:
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)
 
-    def run(self, **kwargs):
-        return self.serve(**kwargs)
+    async def _dispatch(self, req, receive, send) -> Response:
+        """Dispatch a request to the router."""
+        # TODO use registered routes
+        content = f'{req.method} {req.url.path}'
+        response = Response(content, media_type='text/plain')
+        return response
 
     def asgi(self, scope):
         """Return a new ASGI application.
@@ -61,18 +67,10 @@ class API:
         https://github.com/encode/uvicorn
         """
         async def asgi(receive, send):
-            # TODO build a request and dispatch it through the router
-            await send({
-                'type': 'http.response.start',
-                'status': 200,
-                'headers': [
-                    [b'content-type', b'text/plain'],
-                ],
-            })
-            await send({
-                'type': 'http.response.body',
-                'body': b'Hello, Bocadillo!',
-            })
+            nonlocal scope
+            request = Request(scope, receive)
+            response = await self._dispatch(request, receive=receive, send=send)
+            await response(receive, send)
 
         return asgi
 
