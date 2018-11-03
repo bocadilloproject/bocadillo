@@ -3,7 +3,7 @@ import os
 
 import uvicorn
 from starlette.requests import Request
-from starlette.responses import Response
+from .response import Response
 
 
 class API:
@@ -52,11 +52,15 @@ class API:
         print(f'Serving Bocadillo on {host}:{port}')
         uvicorn.run(self, host=host, port=port, debug=debug)
 
-    async def _dispatch(self, req, receive, send) -> Response:
+    async def _dispatch(self, request, receive, send) -> Response:
         """Dispatch a request to the router."""
+        response = Response(request)
+
         # TODO use registered routes
-        content = f'{req.method} {req.url.path}'
-        response = Response(content, media_type='text/plain')
+        async def handler(req, res):
+            res.content = f'{request.method} {request.url.path}'
+
+        await handler(request, response)
         return response
 
     def asgi(self, scope):
@@ -66,6 +70,7 @@ class API:
         --------
         https://github.com/encode/uvicorn
         """
+
         async def asgi(receive, send):
             nonlocal scope
             request = Request(scope, receive)
