@@ -9,4 +9,4 @@ def index(req, resp):
 
 
 if __name__ == '__main__':
-    api.run(host='localhost', port=5050)
+    api.run(port=5050, debug=False)
