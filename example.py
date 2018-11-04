@@ -13,7 +13,7 @@ class AddView:
 
 @api.route('/greet/{person}')
 def index(req, resp: Response, person: str):
-    resp.media = {'message': f'Hello, {person}!'}
+    resp.content = f'Hello, {person}!'
 
 
 if __name__ == '__main__':

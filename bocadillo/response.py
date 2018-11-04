@@ -14,25 +14,38 @@ class Response:
 
     def __init__(self, request: Request):
         self.request = request
-        self.content: str = None
+        self.content: AnyStr = None
         self.media: dict = None
         self.status_code: int = None
+        self.headers = {}
+
+    def _set_json(self, value: dict):
+        self.headers['Content-Type'] = 'application/json'
+        self.content = json.dumps(value)
 
     @property
-    def contents(self) -> Tuple[Body, Headers]:
-        if self.content is not None:
-            return self.content, {}
+    def _body(self) -> Body:
+        """Return the response body.
+
+        Also set the Content-Type header if necessary.
+        """
         if self.media is not None:
-            return json.dumps(self.media), {'Content-Type': 'application/json'}
-        else:
-            return '{}', {'Content-Type': 'application/json'}
+            self._set_json(self.media)
+
+        if self.content is None:
+            self._set_json({})
+
+        self.headers.setdefault('Content-Type', 'text/plain')
+        return self.content
 
     async def __call__(self, receive, send):
         """Build and send the response."""
         if self.status_code is None:
             self.status_code = 200
 
-        body, headers = self.contents
+        body = self._body
+        headers = self.headers
+
         response = _Response(
             content=body,
             headers=headers,
