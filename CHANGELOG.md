@@ -24,6 +24,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 - Fixed a bug that prevented routes without parameters to be handled correctly.
+- Prevent registering multiple routes on the same pattern.
 
 ## v0.1.0 - 2018-11-04
 
