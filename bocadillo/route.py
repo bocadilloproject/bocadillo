@@ -39,7 +39,9 @@ class Route:
         None
         """
         result = parse(self._pattern, path)
-        return result is not None and result.named or None
+        if result is not None:
+            return result.named
+        return None
 
     def _find_view(self, request) -> CallableView:
         """Find a view able to handle the request.

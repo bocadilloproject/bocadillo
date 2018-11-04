@@ -4,9 +4,19 @@ from bocadillo.response import Response
 api = bocadillo.API()
 
 
+@api.error_handler(KeyError)
+def handle(req, resp, exception):
+    resp.content = 'GOTCHA!'
+
+
 @api.route('/greet/{person}')
 def greet(req, resp: Response, person: str):
     resp.content = f'Hello, {person}!'
+
+
+@api.route('/fail')
+def fail(req, resp):
+    raise KeyError('GOTCHA!')
 
 
 @api.route('/add/{x:d}/{y:d}')

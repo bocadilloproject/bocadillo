@@ -1,6 +1,7 @@
 """The Bocadillo API class."""
 import os
-from typing import Optional, Tuple
+from contextlib import contextmanager
+from typing import Optional, Tuple, Type, List, Callable
 
 import uvicorn
 
@@ -8,12 +9,38 @@ from .request import Request
 from .response import Response
 from .route import Route
 
+ErrorHandler = Callable[[Request, Response, Exception], None]
+
 
 class API:
     """Bocadillo API."""
 
     def __init__(self):
         self._routes = {}
+        self._error_handlers: List[Tuple[Type[Exception], ErrorHandler]] = []
+
+    def add_error_handler(self, exception_cls: Type[Exception],
+                          handler: ErrorHandler):
+        """Register a new error handler.
+
+        Parameters
+        ----------
+        exception_cls : Exception class
+            The type of exception that should be handled.
+        handler : (request, response, exception) -> None
+            The actual error handler, which is called when an instance of
+            `exception_cls` is caught.
+        """
+        self._error_handlers.insert(0, (exception_cls, handler))
+
+    def error_handler(self, exception_cls: Type[Exception]):
+        """Register a new error handler (decorator syntax)."""
+
+        def wrapper(handler):
+            self.add_error_handler(exception_cls, handler)
+            return handler
+
+        return wrapper
 
     def route(self, pattern: str):
         """Register a new route."""
@@ -25,6 +52,52 @@ class API:
             return route
 
         return wrapper
+
+    async def _dispatch(self, request) -> Response:
+        """Dispatch a request and return a response."""
+        response = Response(request)
+
+        try:
+            pattern, kwargs = self._find_route(request.url.path)
+            route = self._routes.get(pattern)
+            if route is None:
+                # TODO HTTPError(status=404)
+                raise ValueError('Not found')
+            else:
+                await route(request, response, **kwargs)
+        except Exception as e:
+            self._handle_exception(request, response, e)
+
+        return response
+
+    def _find_route(self, path: str) -> Tuple[Optional[str], dict]:
+        """Find a route matching the given path."""
+        print(path)
+        for pattern, route in self._routes.items():
+            kwargs = route.match(path)
+            if kwargs is not None:
+                return pattern, kwargs
+        return None, {}
+
+    def _find_handlers(self, exception):
+        return (
+            handler for err_type, handler in self._error_handlers
+            if isinstance(exception, err_type)
+        )
+
+    def _handle_exception(self, request, response, exception) -> None:
+        """Handle an exception raised during dispatch.
+
+        If no handler was registered for the exception, it is escalated.
+        """
+        handled = False
+
+        for handler in self._find_handlers(exception):
+            handler(request, response, exception)
+            handled = True
+
+        if not handled:
+            raise exception
 
     def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.
@@ -59,34 +132,6 @@ class API:
 
         uvicorn.run(self, host=host, port=port, debug=debug)
 
-    def _find_route(self, path: str) -> Tuple[Optional[str], dict]:
-        """Find a route matching the given path."""
-        for pattern, route in self._routes.items():
-            kwargs = route.match(path)
-            if kwargs is not None:
-                return pattern, kwargs
-        return None, {}
-
-    @staticmethod
-    def _default_response(request, response):
-        """Configure a default response when no matching route was found."""
-        response.content = 'Not Found'
-        response.status_code = 404
-
-    async def _dispatch(self, request, receive, send) -> Response:
-        """Dispatch a request to the router."""
-        response = Response(request)
-
-        pattern, kwargs = self._find_route(request.url.path)
-        route = self._routes.get(pattern)
-
-        if route is not None:
-            await route(request, response, **kwargs)
-        else:
-            self._default_response(request, response)
-
-        return response
-
     def as_asgi(self, scope):
         """Return a new ASGI application.
 
@@ -95,13 +140,13 @@ class API:
         https://github.com/encode/uvicorn
         """
 
-        async def asgi(receive, send):
+        async def asgi_app(receive, send):
             nonlocal scope
             request = Request(scope, receive)
-            response = await self._dispatch(request, receive=receive, send=send)
+            response = await self._dispatch(request)
             await response(receive, send)
 
-        return asgi
+        return asgi_app
 
     def __call__(self, scope):
         return self.as_asgi(scope)
