@@ -4,8 +4,15 @@ from bocadillo.response import Response
 api = bocadillo.API()
 
 
-@api.route('/{person}')
-async def index(req, resp: Response, person: str):
+@api.route('/add/{x:d}/{y:d}')
+class AddView:
+
+    def get(self, req, resp, x: int, y: int):
+        resp.media = {'result': x + y}
+
+
+@api.route('/greet/{person}')
+def index(req, resp: Response, person: str):
     resp.media = {'message': f'Hello, {person}!'}
 
 

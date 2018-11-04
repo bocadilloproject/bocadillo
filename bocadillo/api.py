@@ -19,7 +19,7 @@ class API:
         """Register a new route."""
 
         def wrapper(handler):
-            route = Route(pattern=pattern, handler=handler)
+            route = Route(pattern=pattern, view=handler)
             # TODO check that no route already exists for pattern
             self._routes[pattern] = route
             return route
