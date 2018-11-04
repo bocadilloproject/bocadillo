@@ -7,6 +7,7 @@ name = "pypi"
 starlette = "*"
 uvicorn = "*"
 parse = "*"
+asgiref = "*"
 
 [dev-packages]
 

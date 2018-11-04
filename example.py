@@ -7,7 +7,7 @@ api = bocadillo.API()
 @api.route('/add/{x:d}/{y:d}')
 class AddView:
 
-    def get(self, req, resp, x: int, y: int):
+    async def get(self, req, resp, x: int, y: int):
         resp.media = {'result': x + y}
 
 
