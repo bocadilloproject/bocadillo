@@ -60,18 +60,18 @@ pip install bocadillo
 
 ## Features
 
-- ASGI-compatible
+- ASGI-compatible app
 - Flask-inspired decorator-based routing
 - Formatted string route patterns
 - Falcon-inspired passing of request and response
-- Send JSON using `resp.media`
+- Send JSON responses using `resp.media`
 - Class-based views
 - Response headers
+- Status codes
+- HTTP error exceptions
 
 TODO:
 
-- Status codes
-- HTTP error exceptions
 - Template rendering
 - Static assets
 - Bocadillo CLI
