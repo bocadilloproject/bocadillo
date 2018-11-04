@@ -49,11 +49,11 @@ INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 - Formatted string route patterns
 - Falcon-inspired passing of request and response
 - Send JSON using `resp.media`
+- Class-based views
+- Response headers
 
 TODO:
 
-- Class-based views
 - Template rendering
-- Response headers
 - Static assets
 - Bocadillo CLI
