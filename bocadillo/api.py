@@ -87,7 +87,7 @@ class API:
 
         return response
 
-    def asgi(self, scope):
+    def as_asgi(self, scope):
         """Return a new ASGI application.
 
         See Also
@@ -104,4 +104,4 @@ class API:
         return asgi
 
     def __call__(self, scope):
-        return self.asgi(scope)
+        return self.as_asgi(scope)
