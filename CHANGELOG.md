@@ -6,7 +6,7 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [v0.2.1]
 
 ### Added
 
@@ -44,4 +44,5 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...v0.2.1.post3
