@@ -24,11 +24,18 @@ before_deploy:
   - git checkout -- .
 
 deploy:
-  provider: pypi
-  distributions: "sdist bdist_wheel"
-  username: $PYPI_USERNAME
-  password: $PYPI_PASSWORD
-  on:
-    tags: true
-    # specify Python version to deploy only once
-    python: "3.7"
+  - provider: pypi
+    distributions: "sdist bdist_wheel"
+    username: $PYPI_USERNAME
+    password: $PYPI_PASSWORD
+    on:
+      tags: true
+      python: "3.7"
+  - provider: pypi
+    distributions: "sdist bdist_wheel"
+    username: $TEST_PYPI_USERNAME
+    password: $TEST_PYPI_PASSWORD
+    server: https://test.pypi.org/legacy/
+    on:
+      branch: test-release
+      python: "3.7"
