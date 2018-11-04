@@ -20,7 +20,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Return a `405 Method Not Allowed` response when trying to use a non-implemented method on a class-based view. The previous behavior was to raise an uncaught `ValueError`.
 - Updated `example.py`.
 
-## [0.1.0] - 2018-11-04
+## v0.1.0 - 2018-11-04
 
 ### Added
 
@@ -37,3 +37,5 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `example.py` app.
 - `README.md`.
 - `CONTRIBUTING.md`.
+
+[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...HEAD
