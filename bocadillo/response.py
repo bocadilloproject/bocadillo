@@ -1,9 +1,8 @@
 import json
-from typing import Tuple, Dict, AnyStr
+from typing import Dict, AnyStr
 
 from starlette.requests import Request
 from starlette.responses import Response as _Response
-
 
 Headers = Dict
 Body = AnyStr
