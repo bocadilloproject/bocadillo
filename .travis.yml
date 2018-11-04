@@ -1,0 +1,34 @@
+language: python
+
+cache: pip
+
+python:
+  - "3.6"
+
+matrix:
+  include:
+    # Python 3.7 still not available in usual distro
+    - python: "3.7"
+      dist: xenial
+      sudo: true
+
+install:
+  - pip install pipenv
+  - pipenv install --skip-lock  # don't use nor update Pipfile.lock
+
+script:
+  - pytest
+
+before_deploy:
+  # PyPI deploy fails if there are unstaged changes
+  - git checkout -- .
+
+deploy:
+  provider: pypi
+  distributions: "sdist bdist_wheel"
+  username: $PYPI_USERNAME
+  password: $PYPI_PASSWORD
+  on:
+    tags: true
+    # specify Python version to deploy only once
+    python: "3.7"
