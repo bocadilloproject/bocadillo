@@ -20,6 +20,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Return a `405 Method Not Allowed` response when trying to use a non-implemented method on a class-based view. The previous behavior was to raise an uncaught `ValueError`.
 - Updated `example.py`.
 
+### Fixed
+
+- Fixed a bug that prevented routes without parameters to be handled correctly.
+
 ## v0.1.0 - 2018-11-04
 
 ### Added
