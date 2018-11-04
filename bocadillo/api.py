@@ -44,9 +44,8 @@ class API:
         >>> import bocadillo
         >>> api = bocadillo.API()
         >>> @api.error_handler(KeyError)
-            def on_key_error(req, resp, exc):
-                resp.content = f'No such key: {exc.args[0]}'
-                resp.status_code = 400
+        ... def on_key_error(req, resp, exc):
+        ...     pass  # perhaps set resp.content and resp.status_code
         """
 
         def wrapper(handler):

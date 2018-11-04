@@ -1,9 +1,11 @@
 import inspect
+from http import HTTPStatus
 from typing import AnyStr, Callable, Optional, Union, Type
 
 from asgiref.sync import sync_to_async
 from parse import parse
 
+from bocadillo.http_error import HTTPError
 from .request import Request
 from .response import Response
 from .view import BaseView
@@ -54,8 +56,7 @@ class Route:
             else:
                 view = getattr(self._view, request.method.lower(), None)
                 if view is None:
-                    # TODO use MethodNotAllowed exception
-                    raise ValueError('Method not allowed', request.method)
+                    raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
         else:
             view = self._view
         return view
