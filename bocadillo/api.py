@@ -20,7 +20,7 @@ class API:
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
 
     def __init__(self):
-        self._routes: Dict[str, View] = {}
+        self._routes: Dict[str, Route] = {}
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
 
