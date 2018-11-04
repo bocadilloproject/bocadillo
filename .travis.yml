@@ -37,5 +37,5 @@ deploy:
     password: $TEST_PYPI_PASSWORD
     server: https://test.pypi.org/legacy/
     on:
-      branch: test-release
+      branch: release/test
       python: "3.7"
