@@ -81,6 +81,10 @@ TODO:
 
 See [CONTRIBUTING](CONTRIBUTING.md) for contribution guidelines.
 
+## Changelog
+
+See [CHANGELOG](CHANGELOG.md) for a chronological log of changes to Bocadillo.
+
 <!-- URLs -->
 
 [travis-url]: https://travis-ci.org/florimondmanca/bocadillo

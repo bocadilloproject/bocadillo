@@ -2,6 +2,10 @@
 
 All notable changes to Bocadillo are documented here.
 
+The format of this document is based on [Keep a Changelog](https://keepachangelog.com).
+
+Bocadillo adheres to [Semantic Versioning](https://semver.org).
+
 ## [Unreleased]
 
 ### Added
