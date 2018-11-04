@@ -1,19 +1,12 @@
 import inspect
 from http import HTTPStatus
-from typing import AnyStr, Callable, Optional, Union, Type, List
+from typing import AnyStr, Optional, List
 
 from asgiref.sync import sync_to_async
 from parse import parse
 
 from bocadillo.http_error import HTTPError
-from .request import Request
-from .response import Response
-from .view import BaseView
-
-
-CallableView = Callable[[Request, Response, dict], None]
-ClassView = Type[BaseView]
-View = Union[CallableView, ClassView]
+from .view import View, CallableView
 
 
 class Route:
@@ -55,10 +48,10 @@ class Route:
 
         if self._view_is_class:
             if hasattr(self._view, 'handle'):
-                view = self._view.handle
+                view: CallableView = self._view.handle
             else:
                 method_func_name = request.method.lower()
-                view = getattr(self._view, method_func_name, None)
+                view: CallableView = getattr(self._view, method_func_name, None)
                 if view is None:
                     raise not_allowed_error
         else:
@@ -73,3 +66,7 @@ class Route:
         if not inspect.iscoroutinefunction(view):
             view = sync_to_async(view)
         await view(request, response, **kwargs)
+
+    @property
+    def name(self) -> str:
+        return self._view.__name__
