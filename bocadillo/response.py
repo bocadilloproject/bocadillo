@@ -14,6 +14,7 @@ class Response:
     def __init__(self, request: Request):
         self.request = request
         self.content: AnyStr = None
+        self.html: str = None
         self.media: dict = None
         self.status_code: int = None
         self.headers = {}
@@ -21,6 +22,10 @@ class Response:
     def _set_json(self, value: dict):
         self.headers['Content-Type'] = 'application/json'
         self.content = json.dumps(value)
+
+    def _set_html(self, html: str):
+        self.headers['Content-Type'] = 'text/html'
+        self.content = html
 
     @property
     def _body(self) -> Body:
@@ -30,6 +35,9 @@ class Response:
         """
         if self.media is not None:
             self._set_json(self.media)
+
+        if self.html is not None:
+            self._set_html(self.html)
 
         if self.content is None:
             self._set_json({})

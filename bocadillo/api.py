@@ -1,28 +1,39 @@
 """The Bocadillo API class."""
-import inspect
 import os
+from pathlib import Path
 from typing import Optional, Tuple, Type, List, Callable, Dict
 
 import uvicorn
 
-from bocadillo.constants import ALL_HTTP_METHODS
+from .constants import ALL_HTTP_METHODS
 from .http_error import HTTPError, handle_http_error
 from .request import Request
 from .response import Response
-from .route import Route, View
+from .route import Route
+from .templates import Template, get_templates_environment
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
 
 
 class API:
-    """Bocadillo API."""
+    """Bocadillo API.
+
+    Parameters
+    ----------
+    templates_dir : str, optional
+        The name of the directory containing templates, relative to
+        the application entry point.
+        Defaults to 'templates'.
+    """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
 
-    def __init__(self):
+    def __init__(self, templates_dir: str = 'templates'):
         self._routes: Dict[str, Route] = {}
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
+        templates_location = str(Path(os.path.abspath(templates_dir)))
+        self._templates = get_templates_environment(templates_location)
 
     def add_error_handler(self, exception_cls: Type[Exception],
                           handler: ErrorHandler):
@@ -146,6 +157,32 @@ class API:
             self._handle_exception(request, response, e)
 
         return response
+
+    def _get_template(self, name: str) -> Template:
+        return self._templates.get_template(name)
+
+    def template(self, name: str, **context):
+        """Render a template.
+
+        Parameters
+        ----------
+        name : str
+            Name of the template, located inside `templates_dir`.
+        context : dict
+            Context variables to inject in the template.
+        """
+        return self._get_template(name).render(**context)
+
+    async def template_async(self, name: str, **context):
+        """Render a template asynchronously.
+
+        Can only be used within `async`  functions.
+
+        See Also
+        --------
+        .template()
+        """
+        return await self._get_template(name).render_async(**context)
 
     def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.

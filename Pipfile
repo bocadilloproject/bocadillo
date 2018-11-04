@@ -8,6 +8,7 @@ starlette = "*"
 uvicorn = "*"
 parse = "*"
 asgiref = "*"
+"jinja2" = "*"
 
 [dev-packages]
 pytest = "*"

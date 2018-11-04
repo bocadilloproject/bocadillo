@@ -6,6 +6,14 @@ The format of this document is based on [Keep a Changelog](https://keepachangelo
 
 Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Added
+
+- HTML responses by setting `response.html`.
+- Jinja2-powered template rendering through `api.template()` and `await api.template_async()`.
+- Add index route to `example.py` app, which renders an HTML template.
+
 ## [v0.2.1]
 
 ### Added

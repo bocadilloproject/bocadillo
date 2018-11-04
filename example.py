@@ -28,5 +28,10 @@ class AddView:
         resp.media = {'result': x + y}
 
 
+@api.route('/')
+async def index(req, resp):
+    resp.html = await api.template_async('index.html', app='Bocadillo')
+
+
 if __name__ == '__main__':
     api.run(debug=True)
