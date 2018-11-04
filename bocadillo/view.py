@@ -1,3 +1,5 @@
+from typing import Callable, Type, Union
+
 from .request import Request
 from .response import Response
 
@@ -19,3 +21,8 @@ class BaseView:
 
     def delete(self, request: Request, response: Response, **kwargs):
         raise NotImplementedError
+
+
+CallableView = Callable[[Request, Response, dict], None]
+ClassView = Type[BaseView]
+View = Union[CallableView, ClassView]

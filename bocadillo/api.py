@@ -1,13 +1,15 @@
 """The Bocadillo API class."""
+import inspect
 import os
-from typing import Optional, Tuple, Type, List, Callable
+from typing import Optional, Tuple, Type, List, Callable, Dict
 
 import uvicorn
 
+from bocadillo.constants import ALL_HTTP_METHODS
 from .http_error import HTTPError, handle_http_error
 from .request import Request
 from .response import Response
-from .route import Route
+from .route import Route, View
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
 
@@ -18,7 +20,7 @@ class API:
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
 
     def __init__(self):
-        self._routes = {}
+        self._routes: Dict[str, Route] = {}
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
 
@@ -74,8 +76,17 @@ class API:
         else:
             raise exception from None
 
-    def route(self, pattern: str):
+    def route(self, pattern: str, *, methods: List[str] = None):
         """Register a new route.
+
+        Parameters
+        ----------
+        pattern : str
+            A route pattern given as an f-string expression.
+        methods : list of str
+            HTTP methods supported by this route.
+            Defaults to all HTTP methods.
+            Ignored for class-based views.
 
         Example
         -------
@@ -85,10 +96,28 @@ class API:
         ... def greet(req, resp, person: str):
         ...     pass
         """
+        assert pattern not in self._routes, (
+            f'Pattern "{pattern}" already registered on route '
+            f'"{self._routes[pattern].name}".'
+        )
 
-        def wrapper(handler):
-            route = Route(pattern=pattern, view=handler)
-            # TODO check that no route already exists for pattern
+        if methods is None:
+            methods = ALL_HTTP_METHODS
+
+        methods = [method.upper() for method in methods]
+
+        for method in methods:
+            assert method in ALL_HTTP_METHODS, (
+                f'{method} is not one of the valid HTTP methods: '
+                f'{", ".join(ALL_HTTP_METHODS)}'
+            )
+
+        def wrapper(view):
+            route = Route(
+                pattern=pattern,
+                view=view,
+                methods=methods,
+            )
             self._routes[pattern] = route
             return route
 

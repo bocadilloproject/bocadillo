@@ -11,7 +11,7 @@ def handle(req, resp: Response, exception: HTTPError):
     resp.content = f'GOTCHA! Overridden {exception.status_code}'
 
 
-@api.route('/greet/{person}')
+@api.route('/greet/{person}', methods=['post'])
 def greet(req, resp: Response, person: str):
     resp.content = f'Hello, {person}!'
 

@@ -1,19 +1,12 @@
 import inspect
 from http import HTTPStatus
-from typing import AnyStr, Callable, Optional, Union, Type
+from typing import AnyStr, Optional, List
 
 from asgiref.sync import sync_to_async
 from parse import parse
 
 from bocadillo.http_error import HTTPError
-from .request import Request
-from .response import Response
-from .view import BaseView
-
-
-CallableView = Callable[[Request, Response, dict], None]
-ClassView = Type[BaseView]
-View = Union[CallableView, ClassView]
+from .view import View, CallableView
 
 
 class Route:
@@ -22,12 +15,13 @@ class Route:
     Formatted string syntax is used for route patterns.
     """
 
-    def __init__(self, pattern: AnyStr, view: View):
+    def __init__(self, pattern: AnyStr, view: View, methods: List[str]):
         self._pattern = pattern
         self._view_is_class = inspect.isclass(view)
         if self._view_is_class:
             view = view()
         self._view = view
+        self._methods = methods
 
     def match(self, path: str) -> Optional[dict]:
         """Return whether the route matches the given path.
@@ -50,15 +44,21 @@ class Route:
 
         Supports both function-based views and class-based views.
         """
+        not_allowed_error = HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
         if self._view_is_class:
             if hasattr(self._view, 'handle'):
-                view = self._view.handle
+                view: CallableView = self._view.handle
             else:
-                view = getattr(self._view, request.method.lower(), None)
+                method_func_name = request.method.lower()
+                view: CallableView = getattr(self._view, method_func_name, None)
                 if view is None:
-                    raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
+                    raise not_allowed_error
         else:
+            if request.method not in self._methods:
+                raise not_allowed_error
             view = self._view
+
         return view
 
     async def __call__(self, request, response, **kwargs):
@@ -66,3 +66,7 @@ class Route:
         if not inspect.iscoroutinefunction(view):
             view = sync_to_async(view)
         await view(request, response, **kwargs)
+
+    @property
+    def name(self) -> str:
+        return self._view.__name__
