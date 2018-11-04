@@ -14,14 +14,14 @@ Under the hood, it uses [Starlette](https://www.starlette.io) as an ASGI toolkit
 Write your first app:
 
 ```python
-# tacos.py
+# app.py
 import bocadillo
 
 api = bocadillo.API()
 
-@api.route('/{person}')
-async def greet(req, resp, person):
-    resp.media = {'message': f'Hello, {person}!'}
+@api.route('/add/{x:d}/{y:d}')
+async def greet(req, resp, x: int, y: int):
+    resp.media = {'result': x + y}
 
 if __name__ == '__main__':
     api.run()
@@ -30,9 +30,9 @@ if __name__ == '__main__':
 Run it:
 
 ```bash
-python tacos.py
+python app.py
 # or directly using uvicorn:
-uvicorn tacos:api
+uvicorn app:api
 ```
 
 ```
@@ -41,11 +41,22 @@ INFO: Waiting for application startup.
 INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
+Make some requests!
+
+```bash
+curl http://localhost:8000/add/3/5
+{"result": 5}
+```
+
 🌯💥
 
 ## Install
 
-> TODO
+Bocadillo is available on PyPI:
+
+```bash
+pip install bocadillo
+```
 
 ## Features
 
@@ -64,6 +75,10 @@ TODO:
 - Template rendering
 - Static assets
 - Bocadillo CLI
+
+## Contributing
+
+See [CONTRIBUTING](CONTRIBUTING.md) for contribution guidelines.
 
 <!-- URLs -->
 
