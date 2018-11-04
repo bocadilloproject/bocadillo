@@ -54,6 +54,8 @@ INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 
 TODO:
 
+- Status codes
+- HTTP error exceptions
 - Template rendering
 - Static assets
 - Bocadillo CLI
