@@ -36,9 +36,7 @@ To update the package's version, use:
 bumpversion "patch | minor | major"
 ```
 
-This will create a new commit with the new version.
-
-To create a new tag, use the `--tag` option.
+This will create a new commit tagged with the new version.
 
 See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options.
 
@@ -52,7 +50,7 @@ It is recommended to make a test release to TestPyPI before releasing a new vers
 
 You can do so by pushing to the `release/test` branch.
 
-- Gab the latest version from `master`:
+- Grab the latest version from `master`:
 
 ```bash
 git checkout release/test
@@ -71,7 +69,7 @@ git push
 
 When ready to release a new version to production:
 
-- Update the package version with `--tag` (see [versioning](#versioning)).
+- Update the package version if necessary (see [versioning](#versioning)).
 
 - Push the tagged commit to remote:
 
