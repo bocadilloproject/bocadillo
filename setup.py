@@ -2,6 +2,10 @@
 
 import setuptools
 
+description = (
+    'A modern Python web framework filled with asynchronous salsa.'
+)
+
 with open('README.md', 'r') as readme:
     long_description = readme.read()
 
@@ -11,7 +15,7 @@ setuptools.setup(
     version=__import__('bocadillo').__version__,
     author='Florimond Manca',
     author_email='florimond.manca@gmail.com',
-    description='A modern, tasty Python web framework filled with salsa. 🌮',
+    description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/florimondmanca/bocadillo',
