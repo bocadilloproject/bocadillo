@@ -70,10 +70,11 @@ pip install bocadillo
 - Status codes
 - HTTP error exceptions
 - Jinja2 template rendering
+- Static assets
+- Mount any WSGI or ASGI app as sub-apps.
 
 TODO:
 
-- Static assets
 - Bocadillo CLI
 - Deployment guide
 
