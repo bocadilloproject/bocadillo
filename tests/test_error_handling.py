@@ -42,6 +42,7 @@ def test_custom_error_handler(api: API, exception_cls):
     @api.error_handler(KeyError)
     def on_key_error(req, res, exc):
         nonlocal called
+        res.content = 'Oops!'
         called = True
 
     @api.route('/')
@@ -49,8 +50,9 @@ def test_custom_error_handler(api: API, exception_cls):
         raise exception_cls('foo')
 
     if exception_cls == KeyError:
-        api.client.get('/')
+        response = api.client.get('/')
         assert called
+        assert response.text == 'Oops!'
     else:
         with pytest.raises(exception_cls):
             api.client.get('/')
