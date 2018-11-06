@@ -5,7 +5,6 @@ from typing import Optional, Tuple, Type, List, Callable, Dict
 
 import uvicorn
 from jinja2 import FileSystemLoader
-from whitenoise import WhiteNoise
 
 from .constants import ALL_HTTP_METHODS
 from .http_error import HTTPError, handle_http_error
@@ -237,8 +236,6 @@ class API:
             request = Request(scope, receive)
             response = await self._dispatch(request)
             await response(receive, send)
-
-        whitenoise = WhiteNoise(asgi_app, root=self.static_root)
 
         return asgi_app
 
