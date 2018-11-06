@@ -12,9 +12,9 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - HTML responses by setting `response.html`.
 - [Jinja2](http://jinja.pocoo.org)-powered template rendering through `api.template()` and `await api.template_async()`.
-- Static assets using [WhiteNoise](http://whitenoise.evans.io). Serve the `static` folder by default. You can disable this by passing `static_root = None` to `API()`.
 - Allow to mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
-- Register more staticfiles locations by mounting `bocadillo.static(directory)`.
+- Static assets using [WhiteNoise](http://whitenoise.evans.io). Configurable through the `static_root` and `static_dir` arguments to `API()`. By default, the `static` folder is served at `/static`. This can be disabled by passing `static_root = None` to `API()`.
+- Register more static files locations by mounting a `bocadillo.static()` sub-app.
 
 ### Updated
 
