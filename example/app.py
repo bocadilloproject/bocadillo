@@ -16,7 +16,7 @@ def greet(req, resp: Response, person: str):
     resp.content = f'Hello, {person}!'
 
 
-@api.route('/fail/{status:d}')
+@api.route('/fail/{status:d}/')
 def fail(req, resp, status: int):
     raise HTTPError(status=status)
 

@@ -10,6 +10,7 @@ parse = "*"
 asgiref = "*"
 "jinja2" = "*"
 whitenoise = "*"
+requests = "*"
 
 [dev-packages]
 pytest = "*"

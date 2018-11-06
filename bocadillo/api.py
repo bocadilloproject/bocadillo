@@ -5,7 +5,9 @@ from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union
 import uvicorn
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
+from starlette.testclient import TestClient
 
+from .checks import check_route_parameters
 from .constants import ALL_HTTP_METHODS
 from .http_error import HTTPError, handle_http_error
 from .request import Request
@@ -49,6 +51,7 @@ class API:
             os.path.abspath(templates_dir),
         ])
         self._extra_apps: Dict[str, Any] = {}
+        self.client = self._build_client()
 
         self.add_error_handler(HTTPError, handle_http_error)
 
@@ -56,6 +59,9 @@ class API:
             if static_root is None:
                 static_root = static_dir
             self.mount(static_root, static(static_dir))
+
+    def _build_client(self) -> TestClient:
+        return TestClient(self)
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix."""
@@ -152,6 +158,7 @@ class API:
             )
 
         def wrapper(view):
+            check_route_parameters(pattern, view)
             route = Route(
                 pattern=pattern,
                 view=view,
