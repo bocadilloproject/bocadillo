@@ -22,8 +22,7 @@ def test_allowed_methods(api: API, methods, method, expected_status_code):
     (['post'], 'get'),
     ([], 'put'),
 ])
-def test_route_methods_are_ignored_on_class_based_views(
-        api: API, methods, method):
+def test_route_methods_ignored_on_class_based_views(api: API, methods, method):
     @api.route('/class', methods=methods)
     class Index:
         def get(self, req, res):
