@@ -3,6 +3,7 @@ import pytest
 from bocadillo import API
 from bocadillo.exceptions import RouteDeclarationError
 
+
 @pytest.mark.parametrize('methods, method, expected_status_code', [
     (['get', 'post'], 'get', 200),
     (['post'], 'get', 405),
