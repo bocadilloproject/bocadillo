@@ -9,6 +9,15 @@ Inspired by [Responder](http://python-responder.org), Bocadillo is a web framewo
 
 Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit and the [uvicorn](https://www.uvicorn.org) ASGI server.
 
+## Contents
+
+- [Quick start](#quick-start)
+- [Install](#install)
+- [Features](#features)
+- [Contributing](#contributing)
+- [Changelog](#changelog)
+- [Roadmap](#roadmap)
+
 ## Quick start
 
 Write your first app:
@@ -73,18 +82,19 @@ pip install bocadillo
 - Static assets
 - Mount any WSGI or ASGI app as a sub-app.
 
-TODO:
-
-- Bocadillo CLI
-- Deployment guide
-
 ## Contributing
 
-See [CONTRIBUTING](CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING](https://github.com/florimondmanca/bocadillo/blob/master/CONTRIBUTING.md) for contribution guidelines.
 
 ## Changelog
 
-See [CHANGELOG](CHANGELOG.md) for a chronological log of changes to Bocadillo.
+See [CHANGELOG](https://github.com/florimondmanca/bocadillo/blob/master/CHANGELOG.md) for a chronological log of changes to Bocadillo.
+
+## Roadmap
+
+If you are interested in the future features that may be implemented into Bocadillo, take a look at our [milestones](https://github.com/florimondmanca/bocadillo/milestones?with_issues=no).
+
+To see what has already been implemented for the next release, see the [Unreleased](https://github.com/florimondmanca/bocadillo/blob/master/CHANGELOG.md#unreleased) section of our changelog.
 
 <!-- URLs -->
 
