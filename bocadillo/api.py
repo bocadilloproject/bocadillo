@@ -7,7 +7,7 @@ from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
 from starlette.testclient import TestClient
 
-from .checks import check_route_parameters
+from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .error_handlers import handle_http_error
 from .exceptions import HTTPError
@@ -159,7 +159,7 @@ class API:
             )
 
         def wrapper(view):
-            check_route_parameters(pattern, view)
+            check_route(pattern, view)
             route = Route(
                 pattern=pattern,
                 view=view,

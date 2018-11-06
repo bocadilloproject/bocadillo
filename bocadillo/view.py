@@ -1,4 +1,4 @@
-from typing import Callable, Type, Union, List
+from typing import Callable, Type, Union, List, Optional
 
 from .constants import ALL_HTTP_METHODS
 from .request import Request
@@ -27,6 +27,10 @@ class BaseView:
 CallableView = Callable[[Request, Response, dict], None]
 ClassView = Type[BaseView]
 View = Union[CallableView, ClassView]
+
+
+def get_view_name(view: CallableView, base: Optional[ClassView] = None) -> str:
+    return '.'.join(part.__name__ for part in (base, view) if part)
 
 
 def get_declared_method_views(view_cls: ClassView) -> List[CallableView]:

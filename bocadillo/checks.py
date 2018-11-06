@@ -3,10 +3,24 @@ import inspect
 from string import Formatter
 
 from .exceptions import RouteDeclarationError
-from .view import get_declared_method_views, View
+from .view import get_declared_method_views, View, get_view_name
 
 
-def check_route_parameters(pattern: str, view: View, _base=None) -> None:
+def check_route(pattern: str, view: View) -> None:
+    """Check compatibility of a route pattern and a view."""
+    _check_route_pattern(pattern, view)
+    _check_route_parameters(pattern, view)
+
+
+def _check_route_pattern(pattern: str, view: View) -> None:
+    if not pattern.startswith('/'):
+        raise RouteDeclarationError(
+            f'Route pattern "{pattern}" on view "{view.__name__}" '
+            f'must start with "/".'
+        )
+
+
+def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
     """Verify that a view accepts parameters defined in a route pattern.
 
     Raises
@@ -16,18 +30,15 @@ def check_route_parameters(pattern: str, view: View, _base=None) -> None:
         of a view argument was not declared in the route pattern.
     """
 
-    def _get_view_name():
-        return '.'.join(arg.__name__ for arg in (_base, view) if arg)
-
     parsed_format = Formatter().parse(pattern)
     route_parameters: set = {name for _, name, _, _ in parsed_format if name}
 
     if inspect.isclass(view):
         views = get_declared_method_views(view)
         for method_view in views:
-            check_route_parameters(pattern, method_view, _base=view)
+            _check_route_parameters(pattern, method_view, _base=view)
     else:
-        view_name = _get_view_name()
+        view_name = get_view_name(view=view, base=_base)
         view_parameters = dict(inspect.signature(view).parameters)
 
         # Necessary if view is from a class-based view.
@@ -40,6 +51,12 @@ def check_route_parameters(pattern: str, view: View, _base=None) -> None:
                     f'"{view_name}()" and should be one of '
                     'its arguments.'
                 )
+
+        if len(view_parameters) < 2:
+            raise RouteDeclarationError(
+                f'View "{view_name}" must have at least two '
+                'parameters (request and response).'
+            )
 
         for i, view_param in enumerate(view_parameters):
             is_req_or_res = i < 2
