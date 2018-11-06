@@ -31,7 +31,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Add error handling.
 - Provide a default HTTP error handler, which catches `HTTPError` exceptions during request processing and returns the appropriate HTTP response.
 - Allow to customize error handling through `@api.error_handler()` and `api.add_error_handler()`.
-- Allow to restrict HTTP methods supported by a route using the `methods` argument to `@api.route()`.
+- Allow to restrict HTTP methods supported by a route using the `methods` argument to `@api.route()`. Ignored for class-based views: HTTP methods should be restricted by implementing/not implementing the corresponding method on the class.
 
 ### Changed
 
