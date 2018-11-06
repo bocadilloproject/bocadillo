@@ -147,14 +147,8 @@ class API:
 
         methods = [method.upper() for method in methods]
 
-        for method in methods:
-            assert method in ALL_HTTP_METHODS, (
-                f'{method} is not one of the valid HTTP methods: '
-                f'{", ".join(ALL_HTTP_METHODS)}'
-            )
-
         def wrapper(view):
-            check_route(pattern, view)
+            check_route(pattern, view, methods)
             route = Route(
                 pattern=pattern,
                 view=view,

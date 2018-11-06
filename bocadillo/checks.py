@@ -1,15 +1,28 @@
 """Start-up check and validation utilities."""
 import inspect
 from string import Formatter
+from typing import List
 
+from .constants import ALL_HTTP_METHODS
 from .exceptions import RouteDeclarationError
 from .view import get_declared_method_views, View, get_view_name
 
 
-def check_route(pattern: str, view: View) -> None:
+def check_route(pattern: str, view: View, methods: List[str]) -> None:
     """Check compatibility of a route pattern and a view."""
+    _check_methods(view, methods)
     _check_route_pattern(pattern, view)
     _check_route_parameters(pattern, view)
+
+
+def _check_methods(view: View, methods: List[str]) -> None:
+    for method in methods:
+        if method not in ALL_HTTP_METHODS:
+            raise RouteDeclarationError(
+                f'Route "{view.__name__}" accepts method "{method}" '
+                'but it is not one of the valid HTTP methods: '
+                f'{", ".join(ALL_HTTP_METHODS)}'
+            )
 
 
 def _check_route_pattern(pattern: str, view: View) -> None:
