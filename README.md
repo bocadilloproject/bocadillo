@@ -29,7 +29,7 @@ import bocadillo
 api = bocadillo.API()
 
 @api.route('/add/{x:d}/{y:d}')
-async def greet(req, resp, x: int, y: int):
+async def add(req, resp, x: int, y: int):
     resp.media = {'result': x + y}
 
 if __name__ == '__main__':
