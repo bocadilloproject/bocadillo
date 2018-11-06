@@ -4,8 +4,6 @@ ALL_HTTP_METHODS = (
     'POST',
     'PUT',
     'DELETE',
-    'CONNECT',
     'OPTIONS',
-    'TRACE',
     'PATCH',
 )
