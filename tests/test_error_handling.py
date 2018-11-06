@@ -28,3 +28,30 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
     response = api.client.get('/')
     assert response.status_code == status_code
     assert response.text == phrase
+
+
+@pytest.mark.parametrize('exception_cls', [
+    KeyError,
+    ValueError,
+    AttributeError,
+])
+def test_custom_error_handler(api: API, exception_cls):
+
+    called = False
+
+    @api.error_handler(KeyError)
+    def on_key_error(req, res, exc):
+        nonlocal called
+        called = True
+
+    @api.route('/')
+    def index(req, res):
+        raise exception_cls('foo')
+
+    if exception_cls == KeyError:
+        api.client.get('/')
+        assert called
+    else:
+        with pytest.raises(exception_cls):
+            api.client.get('/')
+        assert not called
