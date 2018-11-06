@@ -9,6 +9,7 @@ uvicorn = "*"
 parse = "*"
 asgiref = "*"
 "jinja2" = "*"
+whitenoise = "*"
 
 [dev-packages]
 pytest = "*"
