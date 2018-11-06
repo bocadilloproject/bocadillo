@@ -18,7 +18,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ### Updated
 
-- The `example.py` app.
+- Example app in a dedicated `example/` folder.
 
 ## [v0.2.1]
 
