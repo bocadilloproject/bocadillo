@@ -23,27 +23,27 @@ def test_if_route_expects_int_but_int_not_given_then_404(api: API):
     assert response.status_code == 404
 
 
-def test_if_parameter_not_included_in_signature_then_error_raised(api: API):
+def test_if_parameter_declared_but_not_used_then_error_raised(api: API):
     with pytest.raises(RouteDeclarationError):
         @api.route('/greet/{person}')
         def greet(req, res):
             pass
 
     with pytest.raises(RouteDeclarationError):
-        @api.route('/add/{x}/{y}')
+        @api.route('/greet/{person}')
         class Print:
-            def get(self, req, res, x):
+            def get(self, req, res):
                 pass
 
 
-def test_if_parameter_not_declared_in_route_then_error_raised(api: API):
+def test_if_parameter_used_but_not_declared_then_error_raised(api: API):
     with pytest.raises(RouteDeclarationError):
         @api.route('/greet')
         def greet(req, res, person):
             pass
 
     with pytest.raises(RouteDeclarationError):
-        @api.route('/print')
+        @api.route('/greet')
         class Print:
-            def get(self, req, res, x):
+            def get(self, req, res, person):
                 pass

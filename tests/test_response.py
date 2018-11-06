@@ -48,3 +48,12 @@ def test_last_response_setter_called_has_priority(api: API):
     response = api.client.get('/')
     assert response.headers['Content-Type'] == 'text/plain'
     assert response.text == 'foo'
+
+    @api.route('/')
+    def bar(req, res):
+        res.content = 'foo'
+        res.media = {'foo': 'bar'}
+
+    response = api.client.get('/')
+    assert response.headers['Content-Type'] == 'application/json'
+    assert response.json() == {'foo': 'bar'}

@@ -142,11 +142,6 @@ class API:
         ... def greet(req, resp, person: str):
         ...     pass
         """
-        assert pattern not in self._routes, (
-            f'Pattern "{pattern}" already registered on route '
-            f'"{self._routes[pattern].name}".'
-        )
-
         if methods is None:
             methods = ALL_HTTP_METHODS
 
