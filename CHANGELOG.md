@@ -11,8 +11,14 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - HTML responses by setting `response.html`.
-- Jinja2-powered template rendering through `api.template()` and `await api.template_async()`.
-- Add index route to `example.py` app, which renders an HTML template.
+- [Jinja2](http://jinja.pocoo.org)-powered template rendering through `api.template()` and `await api.template_async()`.
+- Static assets using [WhiteNoise](http://whitenoise.evans.io). Serve the `static` folder by default. You can disable this by passing `static_root = None` to `API()`.
+- Allow to mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
+- Register more staticfiles locations by mounting `bocadillo.static(directory)`.
+
+### Updated
+
+- The `example.py` app.
 
 ## [v0.2.1]
 

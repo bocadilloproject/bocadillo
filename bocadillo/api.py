@@ -1,9 +1,9 @@
 """The Bocadillo API class."""
 import os
-from pathlib import Path
-from typing import Optional, Tuple, Type, List, Callable, Dict
+from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union
 
 import uvicorn
+from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
 
 from .constants import ALL_HTTP_METHODS
@@ -11,7 +11,9 @@ from .http_error import HTTPError, handle_http_error
 from .request import Request
 from .response import Response
 from .route import Route
+from .static import static
 from .templates import Template, get_templates_environment
+from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
 
@@ -25,16 +27,41 @@ class API:
         The name of the directory containing templates, relative to
         the application entry point.
         Defaults to 'templates'.
+    static_dir: str, optional
+        The name of the directory containing static files, relative to
+        the application entry point.
+        Defaults to 'static'.
+    static_root : str, optional
+        The path prefix for static assets.
+        Defaults to `static_dir`.
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
 
-    def __init__(self, templates_dir: str = 'templates'):
+    def __init__(
+            self,
+            templates_dir: str = 'templates',
+            static_dir: Optional[str] = 'static',
+            static_root: Optional[str] = None):
         self._routes: Dict[str, Route] = {}
         self._error_handlers = []
+        self._templates = get_templates_environment([
+            os.path.abspath(templates_dir),
+        ])
+        self._extra_apps: Dict[str, Any] = {}
+
         self.add_error_handler(HTTPError, handle_http_error)
-        templates_location = str(Path(os.path.abspath(templates_dir)))
-        self._templates = get_templates_environment([templates_location])
+
+        if static_dir is not None:
+            if static_root is None:
+                static_root = static_dir
+            self.mount(static_root, static(static_dir))
+
+    def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
+        """Mount another WSGI or ASGI app at the given prefix."""
+        if not prefix.startswith('/'):
+            prefix = '/' + prefix
+        self._extra_apps[prefix] = app
 
     def add_error_handler(self, exception_cls: Type[Exception],
                           handler: ErrorHandler):
@@ -239,5 +266,25 @@ class API:
 
         return asgi_app
 
-    def __call__(self, scope):
+    def _find_app(self, scope: dict) -> ASGIAppInstance:
+        """Return an ASGI app depending on the scope's path."""
+        path: str = scope['path']
+
+        # Return a sub-mounted extra app, if found
+        for prefix, app in self._extra_apps.items():
+            if not path.startswith(prefix):
+                continue
+            # Remove prefix from path so that the request is made according
+            # to the mounted app's point of view.
+            scope['path'] = path[len(prefix):]
+            try:
+                return app(scope)
+            except TypeError:
+                app = WsgiToAsgi(app)
+                return app(scope)
+
+        # Default to self
         return self.as_asgi(scope)
+
+    def __call__(self, scope: dict) -> ASGIAppInstance:
+        return self._find_app(scope)

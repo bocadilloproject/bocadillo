@@ -2,7 +2,7 @@ import bocadillo
 from bocadillo.http_error import HTTPError
 from bocadillo.response import Response
 
-api = bocadillo.API()
+api = bocadillo.API(static_root='assets')
 
 
 @api.error_handler(HTTPError)
