@@ -16,6 +16,10 @@ class HTTPError(Exception):
     def __init__(self, status: Union[int, HTTPStatus]):
         if isinstance(status, int):
             status = HTTPStatus(status)
+        else:
+            assert isinstance(status, HTTPStatus), (
+                f'Expected int or HTTPStatus, got {type(status)}'
+            )
         self._status = status
 
     @property
