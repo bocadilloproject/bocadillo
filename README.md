@@ -71,7 +71,7 @@ pip install bocadillo
 - HTTP error exceptions
 - Jinja2 template rendering
 - Static assets
-- Mount any WSGI or ASGI app as sub-apps.
+- Mount any WSGI or ASGI app as a sub-app.
 
 TODO:
 
