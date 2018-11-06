@@ -15,10 +15,13 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Allow to mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
 - Static assets using [WhiteNoise](http://whitenoise.evans.io). Configurable through the `static_root` and `static_dir` arguments to `API()`. By default, the `static` folder is served at `/static`. This can be disabled by passing `static_root = None` to `API()`.
 - Register more static files locations by mounting a `bocadillo.static()` sub-app.
+- Check (at "compile time") that a route pattern begins with a forward slash. Prevents a bug at runtime.
+- Check (at "compile time") that all parameters of a route are used on its view and vice-versa. Prevents bugs at runtime.
 
-### Updated
+### Changed
 
 - Example app in a dedicated `example/` folder.
+- Allow overriding a route by reusing a route pattern. Previously, this would have raised an exception.
 
 ## [v0.2.1]
 

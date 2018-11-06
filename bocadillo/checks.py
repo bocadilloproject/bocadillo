@@ -16,7 +16,7 @@ def _check_route_pattern(pattern: str, view: View) -> None:
     if not pattern.startswith('/'):
         raise RouteDeclarationError(
             f'Route pattern "{pattern}" on view "{view.__name__}" '
-            f'must start with "/".'
+            f'must start with "/" to avoid ambiguities.'
         )
 
 
