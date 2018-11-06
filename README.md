@@ -69,10 +69,10 @@ pip install bocadillo
 - Response headers
 - Status codes
 - HTTP error exceptions
+- Jinja2 template rendering
 
 TODO:
 
-- Template rendering
 - Static assets
 - Bocadillo CLI
 - Deployment guide
