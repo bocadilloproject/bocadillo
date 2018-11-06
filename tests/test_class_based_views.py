@@ -2,21 +2,18 @@ import pytest
 
 from bocadillo import API
 from bocadillo.constants import ALL_HTTP_METHODS
+from tests.utils import RouteBuilder
 
 
-def test_can_register_class_based_view(api: API):
-    @api.route('/')
-    class Index:
-        pass
+def test_can_register_class_based_view(builder: RouteBuilder):
+    builder.class_based()
 
 
 @pytest.mark.parametrize('method', map(str.lower, ALL_HTTP_METHODS))
-def test_if_method_not_implemented_then_405(api: API, method):
-    @api.route('/')
-    class Index:
-        pass
+def test_if_method_not_implemented_then_405(builder: RouteBuilder, method: str):
+    builder.class_based()
 
-    response = getattr(api.client, method)('/')
+    response = getattr(builder.api.client, method)('/')
     assert response.status_code == 405
 
 

@@ -1,8 +1,14 @@
 import pytest
 
-import bocadillo
+from bocadillo import API
+from .utils import RouteBuilder
 
 
 @pytest.fixture
 def api():
-    return bocadillo.API()
+    return API()
+
+
+@pytest.fixture
+def builder(api: API):
+    return RouteBuilder(api)
