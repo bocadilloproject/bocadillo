@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional, Tuple, Type, List, Callable, Dict
 
 import uvicorn
+from jinja2 import FileSystemLoader
+from whitenoise import WhiteNoise
 
 from .constants import ALL_HTTP_METHODS
 from .http_error import HTTPError, handle_http_error
@@ -33,7 +35,7 @@ class API:
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
         templates_location = str(Path(os.path.abspath(templates_dir)))
-        self._templates = get_templates_environment(templates_location)
+        self._templates = get_templates_environment([templates_location])
 
     def add_error_handler(self, exception_cls: Type[Exception],
                           handler: ErrorHandler):
@@ -158,6 +160,11 @@ class API:
 
         return response
 
+    @property
+    def templates_dir(self) -> str:
+        loader: FileSystemLoader = self._templates.loader
+        return loader.searchpath[0]
+
     def _get_template(self, name: str) -> Template:
         return self._templates.get_template(name)
 
@@ -230,6 +237,8 @@ class API:
             request = Request(scope, receive)
             response = await self._dispatch(request)
             await response(receive, send)
+
+        whitenoise = WhiteNoise(asgi_app, root=self.static_root)
 
         return asgi_app
 
