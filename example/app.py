@@ -1,5 +1,5 @@
 import bocadillo
-from bocadillo.http_error import HTTPError
+from bocadillo.exceptions import HTTPError
 from bocadillo.response import Response
 
 api = bocadillo.API(static_root='assets')

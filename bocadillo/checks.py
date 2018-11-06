@@ -28,10 +28,10 @@ def check_route_parameters(pattern: str, view: View, _base=None) -> None:
             check_route_parameters(pattern, method_view, _base=view)
     else:
         view_name = _get_view_name()
-        view_parameters = inspect.signature(view).parameters
+        view_parameters = dict(inspect.signature(view).parameters)
 
-        # necessary if view is from a class-based view
-        # view_parameters.pop('self', None)
+        # Necessary if view is from a class-based view.
+        view_parameters.pop('self', None)
 
         for route_param in route_parameters:
             if route_param not in view_parameters:

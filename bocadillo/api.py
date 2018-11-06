@@ -9,7 +9,8 @@ from starlette.testclient import TestClient
 
 from .checks import check_route_parameters
 from .constants import ALL_HTTP_METHODS
-from .http_error import HTTPError, handle_http_error
+from .error_handlers import handle_http_error
+from .exceptions import HTTPError
 from .request import Request
 from .response import Response
 from .route import Route

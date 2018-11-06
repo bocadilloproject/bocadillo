@@ -5,7 +5,7 @@ from typing import AnyStr, Optional, List
 from asgiref.sync import sync_to_async
 from parse import parse
 
-from bocadillo.http_error import HTTPError
+from bocadillo.exceptions import HTTPError
 from .view import View, CallableView
 
 
