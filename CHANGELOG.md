@@ -10,19 +10,22 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
-- HTML responses by setting `response.html`.
+- Plain text responses using `res.text`.
+- HTML responses by setting `res.html`.
 - [Jinja2](http://jinja.pocoo.org)-powered template rendering through `api.template()` and `await api.template_async()`.
 - Allow to mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
 - Static assets using [WhiteNoise](http://whitenoise.evans.io). Configurable through the `static_root` and `static_dir` arguments to `API()`. By default, the `static` folder is served at `/static`. This can be disabled by passing `static_root = None` to `API()`.
 - Register more static files locations by mounting a `bocadillo.static()` sub-app.
 - Check (at "compile time") that a route pattern begins with a forward slash. Prevents a bug at runtime.
 - Check (at "compile time") that all parameters of a route are used on its view and vice-versa. Prevents bugs at runtime.
+- Use `text/plain` content type if none was set within a view.
 
 ### Changed
 
 - Example app in a dedicated `example/` folder.
 - Allow overriding a route by reusing a route pattern. Previously, this would have raised an exception.
 - Default static root is now `/static`. It previously defaulted to the static directory, which causes issues if the latter was not a relative path.
+- The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
 
 ## [v0.2.1]
 
@@ -50,9 +53,9 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - The `API` class, an ASGI-compatible application.
 - `Request` and `Response` objects, which are wrappers around Starlette's.
-- Plain text responses through `response.content`.
-- JSON responses through `response.media`.
-- Automatic configuration of the response's `Content-Type`: `text/plain` by default, `application/json` if `response.media` was set or `response.content` was left empty.
+- Plain text responses using `res.content`.
+- JSON responses through `res.media`.
+- Automatic configuration of the response's `Content-Type`: `text/plain` by default, `application/json` if `response.media` was set or `res.content` was left empty.
 - Route registration through `@api.route()`.
 - Parametrized routes through f-string expressions, e.g. `{my_param}`. Parameters are passed directly to the view, e.g. `my_view(req, resp, my_param)`. Parameters are compliant with the [Literal string interpolation](https://www.python.org/dev/peps/pep-0498/#specification) specification. In particular, type specifiers are supported (e.g. `{age:d}`) which provides basic validation capabilities.
 - Class-based views. HTTP methods (GET, POST, PUT, PATCH, DELETE) are mapped to the corresponding lowercase methods on the class, e.g. `.get()`. A generic `.handle()` method can also be given to process any request (other methods will then be ignored).

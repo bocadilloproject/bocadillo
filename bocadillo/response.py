@@ -15,14 +15,16 @@ class Response:
         self.headers = {}
 
     def __setattr__(self, key, value):
-        if key == 'html':
+        if key == 'text':
+            self.headers['Content-Type'] = 'text/plain'
+            self._content = value
+        elif key == 'html':
             self.headers['Content-Type'] = 'text/html'
             self._content = value
         elif key == 'media':
             self.headers['Content-Type'] = 'application/json'
             self._content = json.dumps(value)
         elif key == 'content':
-            self.headers['Content-Type'] = 'text/plain'
             self._content = value
         else:
             super().__setattr__(key, value)
@@ -34,6 +36,8 @@ class Response:
 
         if self._content is None:
             self.media = {}
+
+        self.headers.setdefault('Content-Type', 'text/plain')
 
         response = _Response(
             content=self._content,
