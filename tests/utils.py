@@ -25,3 +25,13 @@ class RouteBuilder:
         @self._api.route(pattern, *args, **kwargs)
         class View:
             pass
+
+
+def create_static_dir(tmpdir_factory, dirname: str):
+    return tmpdir_factory.mktemp(dirname)
+
+
+def create_asset(tmpdir_factory, dir: str, filename: str, contents: str):
+    asset = tmpdir_factory.mktemp(dir).join(filename)
+    asset.write(contents)
+    return asset

@@ -36,7 +36,7 @@ class API:
         Defaults to 'static'.
     static_root : str, optional
         The path prefix for static assets.
-        Defaults to `static_dir`.
+        Defaults to 'static'.
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -45,7 +45,7 @@ class API:
             self,
             templates_dir: str = 'templates',
             static_dir: Optional[str] = 'static',
-            static_root: Optional[str] = None):
+            static_root: Optional[str] = 'static'):
         self._routes: Dict[str, Route] = {}
         self._error_handlers = []
         self._templates = get_templates_environment([
