@@ -42,7 +42,7 @@ def test_custom_error_handler(api: API, exception_cls):
     @api.error_handler(KeyError)
     def on_key_error(req, res, exc):
         nonlocal called
-        res.content = 'Oops!'
+        res.text = 'Oops!'
         called = True
 
     @api.route('/')

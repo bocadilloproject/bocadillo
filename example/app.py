@@ -8,12 +8,12 @@ api = bocadillo.API(static_root='assets')
 @api.error_handler(HTTPError)
 def handle(req, resp: Response, exception: HTTPError):
     resp.status_code = exception.status_code
-    resp.content = f'GOTCHA! Overridden {exception.status_code}'
+    resp.text = f'GOTCHA! Overridden {exception.status_code}'
 
 
 @api.route('/greet/{person}', methods=['post'])
 def greet(req, resp: Response, person: str):
-    resp.content = f'Hello, {person}!'
+    resp.text = f'Hello, {person}!'
 
 
 @api.route('/fail/{status:d}')

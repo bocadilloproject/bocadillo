@@ -21,7 +21,7 @@ def test_if_method_implemented_then_as_normal(api: API):
     @api.route('/')
     class Index:
         def get(self, req, res):
-            res.content = 'Get!'
+            res.text = 'Get!'
 
     response = api.client.get('/')
     assert response.status_code == 200
@@ -32,10 +32,10 @@ def test_if_handle_is_implemented_then_bypasses_other_methods(api: API):
     @api.route('/')
     class Index:
         def handle(self, req, res):
-            res.content = 'Handle!'
+            res.text = 'Handle!'
 
         def get(self, req, res):
-            res.content = 'Get!'
+            res.text = 'Get!'
 
     response = api.client.get('/')
     assert response.status_code == 200
