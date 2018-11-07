@@ -13,6 +13,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
 
 - [Quick start](#quick-start)
 - [Install](#install)
+- [Usage](#usage)
 - [Features](#features)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
