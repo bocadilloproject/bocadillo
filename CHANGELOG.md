@@ -22,6 +22,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Example app in a dedicated `example/` folder.
 - Allow overriding a route by reusing a route pattern. Previously, this would have raised an exception.
+- Default static root is now `/static`. It previously defaulted to the static directory, which causes issues if the latter was not a relative path.
 
 ## [v0.2.1]
 
