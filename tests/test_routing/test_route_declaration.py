@@ -22,7 +22,7 @@ def test_if_route_registered_then_not_404(api: API):
 
 
 def test_default_status_code_is_200_on_routes(builder: RouteBuilder):
-    builder.function_based()
+    builder.function_based('/')
     assert builder.api.client.get('/').status_code == 200
 
 

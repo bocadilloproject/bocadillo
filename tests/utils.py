@@ -11,7 +11,7 @@ class RouteBuilder:
     def api(self):
         return self._api
 
-    def function_based(self, pattern: str = '/', *args, res: dict = None,
+    def function_based(self, pattern: str, *args, res: dict = None,
                        **kwargs):
         if res is None:
             res = {}
@@ -21,7 +21,7 @@ class RouteBuilder:
             for key, value in res.items():
                 setattr(response, key, value)
 
-    def class_based(self, pattern: str = '/', *args, **kwargs):
+    def class_based(self, pattern: str, *args, **kwargs):
         @self._api.route(pattern, *args, **kwargs)
         class View:
             pass

@@ -6,12 +6,12 @@ from tests.utils import RouteBuilder
 
 
 def test_can_register_class_based_view(builder: RouteBuilder):
-    builder.class_based()
+    builder.class_based('/')
 
 
 @pytest.mark.parametrize('method', map(str.lower, ALL_HTTP_METHODS))
 def test_if_method_not_implemented_then_405(builder: RouteBuilder, method: str):
-    builder.class_based()
+    builder.class_based('/')
 
     response = getattr(builder.api.client, method)('/')
     assert response.status_code == 405

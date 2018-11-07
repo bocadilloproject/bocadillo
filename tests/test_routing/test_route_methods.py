@@ -11,7 +11,7 @@ from tests.utils import RouteBuilder
     ([], 'put', 405),
 ])
 def test_allowed_methods(builder: RouteBuilder, methods, method, status):
-    builder.function_based(methods=methods)
+    builder.function_based('/', methods=methods)
 
     response = getattr(builder.api.client, method)('/')
     assert response.status_code == status
@@ -37,7 +37,7 @@ def test_route_methods_ignored_on_class_based_views(api: API, methods, method):
 
 def test_allowed_method_must_be_valid_http_method(builder: RouteBuilder):
     with pytest.raises(RouteDeclarationError):
-        builder.function_based(methods=['foo'])
+        builder.function_based('/', methods=['foo'])
 
     with pytest.raises(RouteDeclarationError):
-        builder.class_based(methods=['bar'])
+        builder.class_based('/', methods=['bar'])
