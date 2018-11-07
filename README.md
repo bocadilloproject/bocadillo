@@ -183,28 +183,35 @@ def create_post(req, res):
 The `methods` argument is ignored on class-based views. You should instead
 decide which methods are implemented on the class.
 
-### Sending responses
+### Responses
 
-Bocadillo handles the nitty gritty of build HTTP responses for you. All you
-have to do is set `.content` (for plain text), `.media` (for JSON) or `.html`
-(for HTML) on the `Response` object in a view. Bocadillo takes charge of
-serializing and setting the `Content-Type` header.
+Bocadillo passes the request and the response object to each view, much like
+Falcon does. To send a response, mutate the `res` object to your liking.
 
-```python
-@api.route('/multiply/{x:d}/{y:d}')
-def joke(req, res, x: int, y: int):
-    res.media = {'result': x * y}
-```
+#### Sending content
+
+Bocadillo has built-in support for 3 types of responses:
 
 ```python
-@api.route('/')
-def index(req, res):
-    res.html = '<h1>Hello, Bocadillo!</h1>'
+res.content = 'My awesome post'  # text/plain
+res.html = '<h1>My awesome post</h1>'  # text/html
+res.media = {'title': 'My awesome post'}  # application/json
 ```
 
-You can set the status code on the response. Bocadillo does not provide
-an enum of HTTP status codes. For now, you'll be safe using the
-`http.HTTPStatus` enum from the standard library:
+Setting the `.content`, `.html` and `.media` attributes automatically sets the
+appropriate `Content-Type`, as depicted above.
+
+If you need to send another content type, use `.content` and set
+the `Content-Type` header yourself:
+
+```python
+res.content = 'h1 { color; gold; }'
+res.headers['Content-Type'] = 'text/css'
+```
+
+#### Status codes
+
+You can set the status code on the response through `res.status_code`:
 
 ```python
 from http import HTTPStatus
