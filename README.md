@@ -86,8 +86,6 @@ To register a new route, use the `@api.route()` decorator:
 
 #### Route parameters
 
-> NOTE: route parameters may change to use [template strings](https://docs.python.org/3/library/string.html#template-strings) in a near future, as these prevent a number of potential attack vectors.
-
 Route patterns use the F-string syntax. Parameters can be specified as
 template literals and are passed as additional arguments to the view:
 
@@ -99,7 +97,7 @@ def retrieve_post(req, res, slug: str):
 
 #### Route parameter validation
 
-You can leverage built-in F-string specifiers to add lightweight validation
+You can leverage [F-string specifiers](https://docs.python.org/3/library/string.html#format-specification-mini-language) to add lightweight validation
 to routes:
 
 ```python
