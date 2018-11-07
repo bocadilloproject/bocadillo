@@ -21,6 +21,11 @@ def fail(req, resp, status: int):
     raise HTTPError(status=status)
 
 
+@api.route('/negation/{x:d}')
+def negate(req, res, x: int):
+    res.media = {'result': -x}
+
+
 @api.route('/add/{x:d}/{y:d}')
 class AddView:
 

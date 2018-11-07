@@ -82,11 +82,46 @@ api = bocadillo.API()
 
 To register a new route, use the `@api.route()` decorator:
 
+
+#### Route parameters
+
+> NOTE: route parameters may change to use [template strings](https://docs.python.org/3/library/string.html#template-strings) in a near future, as these prevent a number of potential attack vectors.
+
+Route patterns use the F-string syntax. Parameters can be specified as
+template literals and are passed as additional arguments to the view:
+
 ```python
 @api.route('/posts/{slug}')
 def retrieve_post(req, res, slug: str):
     res.content = 'My awesome post'
 ```
+
+#### Route parameter validation
+
+You can leverage built-in F-string specifiers to add lightweight validation
+to routes:
+
+```python
+@api.route('/negation/{x:d}')
+def negate(req, res, x: int):
+    res.media = {'result': -x}
+```
+
+```bash
+curl http://localhost:8000/negation/abc
+```
+
+```http
+HTTP/1.1 404 Not Found
+server: uvicorn
+date: Wed, 07 Nov 2018 20:24:31 GMT
+content-type: text/plain
+transfer-encoding: chunked
+
+Not Found
+```
+
+#### Asynchronous views
 
 Routes can also be declared in an `async` fashion, which allows you to call
 arbitrary async/await Python code:
