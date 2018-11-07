@@ -67,6 +67,154 @@ Bocadillo is available on PyPI:
 pip install bocadillo
 ```
 
+## Usage
+
+It all starts with an import:
+
+```python
+import bocadillo
+api = bocadillo.API()
+```
+
+### Routing
+
+#### Basics
+
+To register a new route, use the `@api.route()` decorator:
+
+```python
+@api.route('/posts/{slug}')
+def retrieve_post(req, res, slug: str):
+    res.content = 'My awesome post'
+```
+
+Routes can also be declared in an `async` fashion, which allows you to call
+arbitrary async/await Python code:
+
+```python
+from asyncio import sleep
+
+async def find_post_content(slug: str):
+    await sleep(1)  # perhaps query a database here?
+    return 'My awesome post'
+
+@api.route('/posts/{slug}')
+async def retrieve_post(req, res, slug: str):
+    res.content = await find_post_content(slug)
+```
+
+#### Restricting available HTTP methods
+
+You can use the `methods` argument to `@api.route()` to restrict the set of
+HTTP methods exposed on a route:
+
+```python
+@api.route('/posts', methods=['post'])
+def create_post(req, res):
+    # process `req`…
+    res.status_code = 201
+```
+
+#### Class-based views
+
+Additionally to the function-based, Bocadillo supports class-based views.
+Each HTTP method gets mapped to the corresponding lower-cased method on the
+class, e.g. `GET` maps to `.get()`.
+
+```python
+@api.route('/')
+class Index:
+
+    def get(self, req, res):
+        res.content = 'Bocadillo'
+```
+
+Also, a catch-all `.handle()` method can be
+implemented to process all requests — other methods will then be ignored.
+
+```
+```
+
+### Sending responses
+
+Bocadillo handles the nitty gritty of build HTTP responses for you. All you
+have to do is set `.content` (for plain text), `.media` (for JSON) or `.html`
+(for HTML) on the `Response` object in a view. Bocadillo takes charge of
+serializing and setting the `Content-Type` header.
+
+```python
+@api.route('/multiply/{x}/{y}')
+def joke(req, res, x, y):
+    res.media = {'result': x + y}
+```
+
+```python
+@api.route('/')
+def index(req, res):
+    res.html = '<h1>Hello, Bocadillo!</h1>'
+```
+
+You can set the status code on the response. Bocadillo does not provide
+an enum of HTTP status codes. For now, you'll be safe using the
+`http.HTTPStatus` enum from the standard library:
+
+```python
+from http import HTTPStatus
+
+@api.route('/jobs', methods=['post'])
+def create_job(req, res):
+    # process `req`…
+    res.status_code = 201
+    # or:
+    res.status_code = HTTPStatus.CREATED.value
+```
+
+### Error handling
+
+You can raise an `HTTPError` exception in any view to trigger an appropriate
+automatic error response:
+
+```python
+from bocadillo.exceptions import HTTPError
+
+@api.route('/fail/{status_code:d}')
+def fail(req, res, status_code: int):
+    raise HTTPError(status_code)
+```
+
+```bash
+curl -SD - http://localhost:8000/fail/401
+```
+
+```http
+HTTP/1.1 401 Unauthorized
+server: uvicorn
+date: Wed, 07 Nov 2018 19:55:56 GMT
+content-type: text/plain
+transfer-encoding: chunked
+
+Unauthorized
+```
+
+You can also register your own error handlers using `@api.error_handler()`.
+
+```python
+@api.error_handler(KeyError)
+def on_key_error(req, res, exc: KeyError):
+    res.status = 400
+    res.content = f"You fool! We didn't find the key '{exc.args[0]}'."
+```
+
+For convenience, a non-decorator syntax is also available:
+
+```python
+def on_attribute_error(req, res, exc: AttributeError):
+    res.status = 500
+    res.media = {'error': {'attribute_not_found': exc.args[0]}}
+
+api.add_error_handler(AttributeError, on_attribute_error)
+```
+
 ## Features
 
 - ASGI-compatible app
