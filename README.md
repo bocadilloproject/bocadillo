@@ -191,9 +191,9 @@ have to do is set `.content` (for plain text), `.media` (for JSON) or `.html`
 serializing and setting the `Content-Type` header.
 
 ```python
-@api.route('/multiply/{x}/{y}')
-def joke(req, res, x, y):
-    res.media = {'result': x + y}
+@api.route('/multiply/{x:d}/{y:d}')
+def joke(req, res, x: int, y: int):
+    res.media = {'result': x * y}
 ```
 
 ```python
@@ -211,7 +211,6 @@ from http import HTTPStatus
 
 @api.route('/jobs', methods=['post'])
 def create_job(req, res):
-    # process `req`…
     res.status_code = 201
     # or:
     res.status_code = HTTPStatus.CREATED.value
