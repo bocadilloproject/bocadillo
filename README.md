@@ -103,10 +103,39 @@ async def retrieve_post(req, res, slug: str):
     res.content = await find_post_content(slug)
 ```
 
-#### Restricting available HTTP methods
+#### Class-based views
 
-You can use the `methods` argument to `@api.route()` to restrict the set of
-HTTP methods exposed on a route:
+Bocadillo supports class-based views too — without any inheritance needed.
+
+Each HTTP method gets mapped to the corresponding method on the
+class, e.g. `GET` is mapped to `.get()`, `POST` is mapped to `.post()` etc.
+
+Other than that, class-based view methods are just regular views:
+
+```python
+@api.route('/')
+class Index:
+
+    def get(self, req, res):
+        res.content = 'Classes, oh my!'
+```
+
+A catch-all `.handle()` method can also be implemented to process all
+requests — other methods will then be ignored.
+
+```python
+@api.route('/')
+class Index:
+
+    def handle(self, req, res):
+        res.content = 'Get it, post it, patch it.'
+```
+
+#### Restricting available HTTP methods (function-based views only)
+
+By default, a route accepts all HTTP methods. On function-based views,
+you can use the `methods` argument to `@api.route()` to specify the set of
+HTTP methods being exposed:
 
 ```python
 @api.route('/posts', methods=['post'])
@@ -115,25 +144,8 @@ def create_post(req, res):
     res.status_code = 201
 ```
 
-#### Class-based views
-
-Additionally to the function-based, Bocadillo supports class-based views.
-Each HTTP method gets mapped to the corresponding lower-cased method on the
-class, e.g. `GET` maps to `.get()`.
-
-```python
-@api.route('/')
-class Index:
-
-    def get(self, req, res):
-        res.content = 'Bocadillo'
-```
-
-Also, a catch-all `.handle()` method can be
-implemented to process all requests — other methods will then be ignored.
-
-```
-```
+The `methods` argument is ignored on class-based views. You should instead
+decide which methods are implemented on the class.
 
 ### Sending responses
 
