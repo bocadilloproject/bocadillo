@@ -83,6 +83,11 @@ api = bocadillo.API()
 
 To register a new route, use the `@api.route()` decorator:
 
+```python
+@api.route('/')
+def index(req, res):
+    res.text = 'Hello, Bocadillo!'
+```
 
 #### Route parameters
 
@@ -92,7 +97,7 @@ template literals and are passed as additional arguments to the view:
 ```python
 @api.route('/posts/{slug}')
 def retrieve_post(req, res, slug: str):
-    res.content = 'My awesome post'
+    res.text = 'My awesome post'
 ```
 
 #### Route parameter validation
@@ -134,7 +139,7 @@ async def find_post_content(slug: str):
 
 @api.route('/posts/{slug}')
 async def retrieve_post(req, res, slug: str):
-    res.content = await find_post_content(slug)
+    res.text = await find_post_content(slug)
 ```
 
 #### Class-based views
@@ -151,7 +156,7 @@ Other than that, class-based view methods are just regular views:
 class Index:
 
     def get(self, req, res):
-        res.content = 'Classes, oh my!'
+        res.text = 'Classes, oh my!'
 ```
 
 A catch-all `.handle()` method can also be implemented to process all
@@ -162,7 +167,7 @@ requests — other methods will then be ignored.
 class Index:
 
     def handle(self, req, res):
-        res.content = 'Get it, post it, patch it.'
+        res.text = 'Get it, post it, patch it.'
 ```
 
 #### Restricting available HTTP methods (function-based views only)
@@ -191,12 +196,12 @@ Falcon does. To send a response, mutate the `res` object to your liking.
 Bocadillo has built-in support for 3 types of responses:
 
 ```python
-res.content = 'My awesome post'  # text/plain
+res.text = 'My awesome post'  # text/plain
 res.html = '<h1>My awesome post</h1>'  # text/html
 res.media = {'title': 'My awesome post'}  # application/json
 ```
 
-Setting the `.content`, `.html` and `.media` attributes automatically sets the
+Setting the `.text`, `.html` and `.media` attributes automatically sets the
 appropriate `Content-Type`, as depicted above.
 
 If you need to send another content type, use `.content` and set
@@ -259,7 +264,7 @@ This can be done through the `@api.error_handler()` decorator:
 @api.error_handler(KeyError)
 def on_key_error(req, res, exc: KeyError):
     res.status = 400
-    res.content = f"You fool! We didn't find the key '{exc.args[0]}'."
+    res.text = f"You fool! We didn't find the key '{exc.args[0]}'."
 ```
 
 For convenience, a non-decorator syntax is also available:
