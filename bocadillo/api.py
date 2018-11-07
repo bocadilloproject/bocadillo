@@ -1,5 +1,6 @@
 """The Bocadillo API class."""
 import os
+from contextlib import contextmanager
 from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union
 
 import uvicorn
@@ -188,22 +189,46 @@ class API:
         loader: FileSystemLoader = self._templates.loader
         return loader.searchpath[0]
 
+    @templates_dir.setter
+    def templates_dir(self, templates_dir: str):
+        loader: FileSystemLoader = self._templates.loader
+        loader.searchpath = [os.path.abspath(templates_dir)]
+
     def _get_template(self, name: str) -> Template:
         return self._templates.get_template(name)
 
-    def template(self, name: str, **context):
+    @contextmanager
+    def _prevent_async_template_rendering(self):
+        """If enabled, temporarily disable async template rendering."""
+        if not self._templates.is_async:
+            yield
+            return
+
+        self._templates.is_async = False
+        try:
+            yield
+        finally:
+            self._templates.is_async = True
+
+    def template(self, name_: str, **context):
         """Render a template.
 
         Parameters
         ----------
-        name : str
+        name_ : str
             Name of the template, located inside `templates_dir`.
+            Trailing underscore to avoid collisions with a potential
+            context variable named 'name'.
         context : dict
             Context variables to inject in the template.
         """
-        return self._get_template(name).render(**context)
+        # Hot fix for a bug with Jinja2's async environment, which always
+        # renders asynchronously even under `render()`.
+        # `RuntimeError: There is no current event loop in thread [...]`
+        with self._prevent_async_template_rendering():
+            return self._get_template(name_).render(**context)
 
-    async def template_async(self, name: str, **context):
+    async def template_async(self, name_: str, **context):
         """Render a template asynchronously.
 
         Can only be used within `async`  functions.
@@ -212,7 +237,7 @@ class API:
         --------
         .template()
         """
-        return await self._get_template(name).render_async(**context)
+        return await self._get_template(name_).render_async(**context)
 
     def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.

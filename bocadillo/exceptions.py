@@ -1,5 +1,9 @@
 from http import HTTPStatus
 from typing import Union
+from jinja2.exceptions import TemplateNotFound as _TemplateNotFound
+
+# Alias
+TemplateNotFound = _TemplateNotFound
 
 
 class RouteDeclarationError(Exception):
