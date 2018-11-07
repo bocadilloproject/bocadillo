@@ -147,7 +147,8 @@ async def retrieve_post(req, res, slug: str):
 Bocadillo supports class-based views too — without any inheritance needed.
 
 Each HTTP method gets mapped to the corresponding method on the
-class, e.g. `GET` is mapped to `.get()`, `POST` is mapped to `.post()` etc.
+class. For example, `GET` gets mapped to `.get()`,
+`POST` gets mapped to `.post()`, etc.
 
 Other than that, class-based view methods are just regular views:
 
@@ -159,8 +160,8 @@ class Index:
         res.text = 'Classes, oh my!'
 ```
 
-A catch-all `.handle()` method can also be implemented to process all
-requests — other methods will then be ignored.
+A catch-all `.handle()` method can also be implemented to process all incoming
+requests — resulting in other methods being ignored.
 
 ```python
 @api.route('/')
@@ -177,19 +178,20 @@ you can use the `methods` argument to `@api.route()` to specify the set of
 HTTP methods being exposed:
 
 ```python
-@api.route('/posts', methods=['post'])
-def create_post(req, res):
-    # process `req`…
-    res.status_code = 201
+@api.route('/', methods=['get'])
+def index(req, res):
+    res.text = "Come GET me, bro"
 ```
 
-The `methods` argument is ignored on class-based views. You should instead
-decide which methods are implemented on the class.
+**Note**: the `methods` argument is ignored on class-based views.
+You should instead decide which methods are implemented on the class to control
+the exposition of HTTP methods.
 
 ### Responses
 
 Bocadillo passes the request and the response object to each view, much like
-Falcon does. To send a response, mutate the `res` object to your liking.
+Falcon does.
+To send a response, the idiomatic process is to mutate the `res` object directly.
 
 #### Sending content
 
@@ -214,24 +216,24 @@ res.headers['Content-Type'] = 'text/css'
 
 #### Status codes
 
-You can set the status code on the response through `res.status_code`:
+You can set the status code on the response using `res.status_code`:
 
 ```python
-from http import HTTPStatus
-
 @api.route('/jobs', methods=['post'])
 def create_job(req, res):
     res.status_code = 201
-    # or:
-    res.status_code = HTTPStatus.CREATED.value
 ```
+
+> Bocadillo does not provide an enum of HTTP status codes. If you prefer to
+use one, you'd be safe enough going for `HTTPStatus`, located in the standard
+library's `http` module.
 
 ### Error handling
 
-#### Built-in HTTP error handling
+#### Returning error responses
 
-You can raise an `HTTPError` exception in any view to trigger an appropriate
-automatic error response:
+To return an error HTTP response, you can raise an `HTTPError` exception.
+Bocadillo will catch it and return an appropriate response:
 
 ```python
 from bocadillo.exceptions import HTTPError
@@ -242,23 +244,23 @@ def fail(req, res, status_code: int):
 ```
 
 ```bash
-curl -SD - http://localhost:8000/fail/401
+curl -SD - http://localhost:8000/fail/403
 ```
 
 ```http
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 403 Forbidden
 server: uvicorn
 date: Wed, 07 Nov 2018 19:55:56 GMT
 content-type: text/plain
 transfer-encoding: chunked
 
-Unauthorized
+Forbidden
 ```
 
 #### Custom error handling
 
 You can customize error handling by registering your own error handlers.
-This can be done through the `@api.error_handler()` decorator:
+This can be done using the `@api.error_handler()` decorator:
 
 ```python
 @api.error_handler(KeyError)
