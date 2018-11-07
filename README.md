@@ -183,6 +183,8 @@ def create_job(req, res):
 
 ### Error handling
 
+#### Built-in HTTP error handling
+
 You can raise an `HTTPError` exception in any view to trigger an appropriate
 automatic error response:
 
@@ -208,7 +210,10 @@ transfer-encoding: chunked
 Unauthorized
 ```
 
-You can also register your own error handlers using `@api.error_handler()`.
+#### Custom error handling
+
+You can customize error handling by registering your own error handlers.
+This can be done through the `@api.error_handler()` decorator:
 
 ```python
 @api.error_handler(KeyError)
