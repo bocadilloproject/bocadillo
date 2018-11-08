@@ -33,7 +33,7 @@ Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion
 To update the package's version, use:
 
 ```bash
-bumpversion "patch | minor | major"
+bumpversion "patch | minor | major | post_release"
 ```
 
 This will create a new commit tagged with the new version.
