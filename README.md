@@ -79,9 +79,9 @@ api = bocadillo.API()
 
 ### Routing
 
-#### Basics
+#### Route declaration
 
-To register a new route, use the `@api.route()` decorator:
+To declare and register a new route, use the `@api.route()` decorator:
 
 ```python
 @api.route('/')
@@ -91,8 +91,9 @@ def index(req, res):
 
 #### Route parameters
 
-Route patterns use the F-string syntax. Parameters can be specified as
-template literals and are passed as additional arguments to the view:
+Bocadillo allows you to specify route parameters as named template
+literals in the route pattern (which uses the F-string syntax). Route parameters
+are passed as additional arguments to the view:
 
 ```python
 @api.route('/posts/{slug}')
@@ -236,6 +237,10 @@ a standard Python dictionary object:
 ```python
 res.headers['Cache-Control'] = 'no-cache'
 ```
+
+### Requests
+
+
 
 ### Error handling
 
