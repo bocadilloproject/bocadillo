@@ -14,7 +14,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
 - [Quick start](#quick-start)
 - [Install](#install)
 - [Usage](#usage)
-    - [Running an app](#running-an-app)
+    - [API](#api)
     - [Views](#views)
     - [Routing](#routing)
     - [Responses](#responses)
@@ -85,7 +85,7 @@ import bocadillo
 api = bocadillo.API()
 ```
 
-### Running an app
+### API
 
 > TODO
 
