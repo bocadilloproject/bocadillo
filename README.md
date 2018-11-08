@@ -112,6 +112,11 @@ async def retrieve_post(req, res, slug: str):
     res.text = await find_post_content(slug)
 ```
 
+**Note**: due to the asynchronous nature of Bocadillo, it is generally more
+efficient to use asynchronous views rather than synchronous ones.
+This is because, when given a synchronous view, Bocadillo needs to perform
+a sync-to-async conversion.
+
 #### Class-based views
 
 The previous examples were function-based views, but Bocadillo also supports
