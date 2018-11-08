@@ -125,7 +125,6 @@ class. For example, `GET` gets mapped to `.get()`,
 Other than that, class-based view methods are just regular views:
 
 ```python
-@api.route('/')
 class Index:
 
     def get(self, req, res):
@@ -139,7 +138,6 @@ A catch-all `.handle()` method can also be implemented to process all incoming
 requests — resulting in other methods being ignored.
 
 ```python
-@api.route('/')
 class Index:
 
     def handle(self, req, res):
