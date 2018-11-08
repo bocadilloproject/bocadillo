@@ -1,7 +1,8 @@
 """The Bocadillo API class."""
 import os
 from contextlib import contextmanager
-from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union
+from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union, \
+    Coroutine
 
 import uvicorn
 from asgiref.wsgi import WsgiToAsgi
@@ -168,22 +169,6 @@ class API:
                 return pattern, kwargs
         return None, {}
 
-    async def _dispatch(self, request) -> Response:
-        """Dispatch a request and return a response."""
-        response = Response(request)
-
-        try:
-            pattern, kwargs = self._find_route(request.url.path)
-            route = self._routes.get(pattern)
-            if route is None:
-                raise HTTPError(status=404)
-            else:
-                await route(request, response, **kwargs)
-        except Exception as e:
-            self._handle_exception(request, response, e)
-
-        return response
-
     @property
     def templates_dir(self) -> str:
         loader: FileSystemLoader = self._templates.loader
@@ -228,7 +213,7 @@ class API:
         with self._prevent_async_template_rendering():
             return self._get_template(name_).render(**context)
 
-    async def template_async(self, name_: str, **context):
+    async def template_async(self, name_: str, **context) -> Coroutine:
         """Render a template asynchronously.
 
         Can only be used within `async`  functions.
@@ -271,6 +256,22 @@ class API:
             port = 8000
 
         uvicorn.run(self, host=host, port=port, debug=debug)
+
+    async def _dispatch(self, request: Request) -> Response:
+        """Dispatch a request and return a response."""
+        response = Response(request)
+
+        try:
+            pattern, kwargs = self._find_route(request.url.path)
+            route = self._routes.get(pattern)
+            if route is None:
+                raise HTTPError(status=404)
+            else:
+                await route(request, response, **kwargs)
+        except Exception as e:
+            self._handle_exception(request, response, e)
+
+        return response
 
     def as_asgi(self, scope):
         """Return a new ASGI application.
