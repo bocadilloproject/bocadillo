@@ -14,7 +14,13 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
 - [Quick start](#quick-start)
 - [Install](#install)
 - [Usage](#usage)
-- [Features](#features)
+    - [Views](#views)
+    - [Routing](#routing)
+    - [Responses](#responses)
+    - [Requests](#requests)
+    - [Templates](#templates)
+    - [Static files](#static-files)
+    - [Error handling](#error-handling)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
 - [Roadmap](#roadmap)
@@ -215,56 +221,6 @@ def index(req, res):
 You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
 
-### Responses
-
-Bocadillo passes the request and the response object to each view, much like
-Falcon does.
-To send a response, the idiomatic process is to mutate the `res` object directly.
-
-#### Sending content
-
-Bocadillo has built-in support for common types of responses:
-
-```python
-res.text = 'My awesome post'  # text/plain
-res.html = '<h1>My awesome post</h1>'  # text/html
-res.media = {'title': 'My awesome post'}  # application/json
-```
-
-Setting a response type attribute automatically sets the
-appropriate `Content-Type`, as depicted above.
-
-If you need to send another content type, use `.content` and set
-the `Content-Type` header yourself:
-
-```python
-res.content = 'h1 { color; gold; }'
-res.headers['Content-Type'] = 'text/css'
-```
-
-#### Status codes
-
-You can set the numeric status code on the response using `res.status_code`:
-
-```python
-@api.route('/jobs', methods=['post'])
-def create_job(req, res):
-    res.status_code = 201
-```
-
-> Bocadillo does not provide an enum of HTTP status codes. If you prefer to
-use one, you'd be safe enough going for `HTTPStatus`, located in the standard
-library's `http` module.
-
-#### Headers
-
-You can access and modify a response's headers using `res.headers`, which is
-a standard Python dictionary object:
-
-```python
-res.headers['Cache-Control'] = 'no-cache'
-```
-
 ### Requests
 
 Request objects in Bocadillo expose the same interface as the
@@ -345,6 +301,64 @@ retrieve it through different means depending on the expected encoding:
 - JSON: `await req.json()`
 - Stream (advanced usage): `async for chunk in req.chunk(): ...`
 
+### Responses
+
+Bocadillo passes the request and the response object to each view, much like
+Falcon does.
+To send a response, the idiomatic process is to mutate the `res` object directly.
+
+#### Sending content
+
+Bocadillo has built-in support for common types of responses:
+
+```python
+res.text = 'My awesome post'  # text/plain
+res.html = '<h1>My awesome post</h1>'  # text/html
+res.media = {'title': 'My awesome post'}  # application/json
+```
+
+Setting a response type attribute automatically sets the
+appropriate `Content-Type`, as depicted above.
+
+If you need to send another content type, use `.content` and set
+the `Content-Type` header yourself:
+
+```python
+res.content = 'h1 { color; gold; }'
+res.headers['Content-Type'] = 'text/css'
+```
+
+#### Status codes
+
+You can set the numeric status code on the response using `res.status_code`:
+
+```python
+@api.route('/jobs', methods=['post'])
+def create_job(req, res):
+    res.status_code = 201
+```
+
+> Bocadillo does not provide an enum of HTTP status codes. If you prefer to
+use one, you'd be safe enough going for `HTTPStatus`, located in the standard
+library's `http` module.
+
+#### Headers
+
+You can access and modify a response's headers using `res.headers`, which is
+a standard Python dictionary object:
+
+```python
+res.headers['Cache-Control'] = 'no-cache'
+```
+
+### Templates
+
+> TODO
+
+### Static files
+
+> TODO
+
 ### Error handling
 
 #### Returning error responses
@@ -395,21 +409,6 @@ def on_attribute_error(req, res, exc: AttributeError):
 
 api.add_error_handler(AttributeError, on_attribute_error)
 ```
-
-## Features
-
-- ASGI-compatible app
-- Flask-inspired decorator-based routing
-- Formatted string route patterns
-- Falcon-inspired passing of request and response
-- Send JSON responses using `resp.media`
-- Class-based views
-- Response headers
-- Status codes
-- HTTP error exceptions
-- Jinja2 template rendering
-- Static assets
-- Mount any WSGI or ASGI app as a sub-app.
 
 ## Contributing
 
