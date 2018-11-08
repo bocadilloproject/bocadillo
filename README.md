@@ -77,6 +77,75 @@ import bocadillo
 api = bocadillo.API()
 ```
 
+### Views
+
+In Bocadillo, views are functions that take at least a request and a response
+as arguments, and mutate those objects as necessary.
+
+Views can be synchronous or asynchronous, function-based or class-based.
+
+#### Synchronous views
+
+Synchronous views are simple Python functions:
+
+```python
+def index(req, res):
+    res.html = '<h1>My website</h1>'
+```
+
+(This is also an example of a function-based view.)
+
+#### Asynchronous views
+
+Bocadillo is asynchronous at its core, which means views can also be
+asynchronous. This allows you to call arbitrary async/await
+Python code:
+
+```python
+from asyncio import sleep
+
+async def find_post_content(slug: str):
+    await sleep(1)  # perhaps query a database here?
+    return 'My awesome post'
+
+async def retrieve_post(req, res, slug: str):
+    res.text = await find_post_content(slug)
+```
+
+#### Class-based views
+
+The previous examples were function-based views, but Bocadillo also supports
+class-based views.
+
+Class-based views are regular Python classes (there is no base `View` class).
+Each HTTP method gets mapped to the corresponding method on the
+class. For example, `GET` gets mapped to `.get()`,
+`POST` gets mapped to `.post()`, etc.
+
+Other than that, class-based view methods are just regular views:
+
+```python
+@api.route('/')
+class Index:
+
+    def get(self, req, res):
+        res.text = 'Classes, oh my!'
+       
+    async def post(self, req, res):
+        res.text = 'Roger that'
+```
+
+A catch-all `.handle()` method can also be implemented to process all incoming
+requests — resulting in other methods being ignored.
+
+```python
+@api.route('/')
+class Index:
+
+    def handle(self, req, res):
+        res.text = 'Post it, get it, put it, delete it.'
+```
+
 ### Routing
 
 #### Route declaration
@@ -107,6 +176,7 @@ You can leverage [F-string specifiers](https://docs.python.org/3/library/string.
 to routes:
 
 ```python
+# Only decimal integer values for `x` will be accepted
 @api.route('/negation/{x:d}')
 def negate(req, res, x: int):
     res.media = {'result': -x}
@@ -124,52 +194,6 @@ content-type: text/plain
 transfer-encoding: chunked
 
 Not Found
-```
-
-#### Asynchronous views
-
-Routes can also be declared in an `async` fashion, which allows you to call
-arbitrary async/await Python code:
-
-```python
-from asyncio import sleep
-
-async def find_post_content(slug: str):
-    await sleep(1)  # perhaps query a database here?
-    return 'My awesome post'
-
-@api.route('/posts/{slug}')
-async def retrieve_post(req, res, slug: str):
-    res.text = await find_post_content(slug)
-```
-
-#### Class-based views
-
-Bocadillo supports class-based views too — without any inheritance needed.
-
-Each HTTP method gets mapped to the corresponding method on the
-class. For example, `GET` gets mapped to `.get()`,
-`POST` gets mapped to `.post()`, etc.
-
-Other than that, class-based view methods are just regular views:
-
-```python
-@api.route('/')
-class Index:
-
-    def get(self, req, res):
-        res.text = 'Classes, oh my!'
-```
-
-A catch-all `.handle()` method can also be implemented to process all incoming
-requests — resulting in other methods being ignored.
-
-```python
-@api.route('/')
-class Index:
-
-    def handle(self, req, res):
-        res.text = 'Get it, post it, patch it.'
 ```
 
 #### Specifying HTTP methods (function-based views only)
