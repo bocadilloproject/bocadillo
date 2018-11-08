@@ -27,7 +27,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Default static root is now `/static`. It previously defaulted to the static directory, which causes issues if the latter was not a relative path.
 - The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
 
-## [v0.2.1]
+## [v0.2.1] - 2018-04-11
 
 ### Added
 
