@@ -8,6 +8,12 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.3.1] - 2018-11-09
+
+### Fixed
+
+- Fixed mis-configured `setup.py` preventing Bocadillo from being installed from `pip`.
+
 ## [v0.3.0] - 2018-11-09
 
 ### Added
@@ -28,10 +34,6 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Default static root is now `/static`. It previously defaulted to the static directory, which causes issues if the latter was not a relative path.
 - The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
 - The default error handler now sends HTML content instead of plain text.
-
-### Fixed
-
-- Fixed a bug preventing Bocadillo from being installed from `pip`.
 
 ## [v0.2.1] - 2018-04-11
 
@@ -71,6 +73,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.3.1...HEAD
+[v0.3.1]: https://github.com/florimondmanca/bocadillo/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1.post3...v0.3.0
 [v0.2.1]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...v0.2.1.post3
