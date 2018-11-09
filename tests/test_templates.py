@@ -10,6 +10,12 @@ async def test_render(template_file: TemplateWrapper, api: API):
     assert html == template_file.rendered
 
 
+@pytest.mark.asyncio
+async def test_render_using_dict(template_file: TemplateWrapper, api: API):
+    html = await api.template(template_file.name, template_file.context)
+    assert html == template_file.rendered
+
+
 def test_render_sync(template_file: TemplateWrapper, api: API):
     html = api.template_sync(
         template_file.name,
