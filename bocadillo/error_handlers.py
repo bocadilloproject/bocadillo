@@ -3,6 +3,6 @@
 from bocadillo.exceptions import HTTPError
 
 
-def handle_http_error(_, response, exception: HTTPError):
-    response.status_code = exception.status_code
-    response.text = exception.status_phrase
+def handle_http_error(_, res, exc: HTTPError):
+    res.status_code = exc.status_code
+    res.html = f'<h1>{exc.status_code} {exc.status_phrase}</h1>'
