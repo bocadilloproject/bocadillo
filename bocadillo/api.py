@@ -8,6 +8,8 @@ import uvicorn
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
 from starlette.testclient import TestClient
+from uvicorn.main import run, get_logger
+from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
 from .constants import ALL_HTTP_METHODS
@@ -231,7 +233,11 @@ class API:
         with self._prevent_async_template_rendering():
             return self._get_template(name_).render(**context)
 
-    def run(self, host: str = None, port: int = None, debug: bool = False):
+    def run(self,
+            host: str = None,
+            port: int = None,
+            debug: bool = False,
+            log_level: str = 'info'):
         """Serve the application using uvicorn.
 
         Parameters
@@ -246,6 +252,9 @@ class API:
             variable.
         debug : bool, optional
             Whether to serve the application in debug mode. Defaults to `False`.
+        log_level : str, optional
+            A logging level for the debug logger. Must be compatible with
+            logging levels from the `logging` module.
 
         See Also
         --------
@@ -262,7 +271,17 @@ class API:
         if port is None:
             port = 8000
 
-        uvicorn.run(self, host=host, port=port, debug=debug)
+        if debug:
+            reloader = StatReload(get_logger(log_level))
+            reloader.run(run, {
+                'app': self,
+                'host': host,
+                'port': port,
+                'log_level': log_level,
+                'debug': debug,
+            })
+        else:
+            uvicorn.run(self, host=host, port=port)
 
     async def _dispatch(self, request: Request) -> Response:
         """Dispatch a request and return a response."""
