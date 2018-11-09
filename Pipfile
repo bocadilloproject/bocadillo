@@ -15,6 +15,7 @@ requests = "*"
 [dev-packages]
 pytest = "*"
 bumpversion = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.7"

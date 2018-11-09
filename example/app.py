@@ -35,7 +35,7 @@ class AddView:
 
 @api.route('/')
 async def index(req, resp):
-    resp.html = await api.template_async('index.html', app='Bocadillo')
+    resp.html = await api.template('index.html', app='Bocadillo')
 
 
 if __name__ == '__main__':

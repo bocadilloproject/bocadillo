@@ -1,40 +1,32 @@
 import pytest
-
 from bocadillo import API
 from bocadillo.exceptions import TemplateNotFound
 from tests.conftest import TemplateWrapper
 
 
+@pytest.mark.asyncio
+async def test_render(template_file: TemplateWrapper, api: API):
+    html = await api.template(template_file.name, **template_file.context)
+    assert html == template_file.rendered
+
+
 def test_render_sync(template_file: TemplateWrapper, api: API):
-    @api.route('/')
-    def index(req, res):
-        res.html = api.template(
-            template_file.name,
-            **template_file.context,
-        )
-
-    response = api.client.get('/')
-    assert response.status_code == 200
-    assert response.text == template_file.rendered
+    html = api.template_sync(
+        template_file.name,
+        **template_file.context,
+    )
+    assert html == template_file.rendered
 
 
-def test_render_async(template_file: TemplateWrapper, api: API):
-    @api.route('/')
-    async def index(req, res):
-        res.html = await api.template_async(
-            template_file.name,
-            **template_file.context,
-        )
-
-    response = api.client.get('/')
-    assert response.status_code == 200
-    assert response.text == template_file.rendered
+@pytest.mark.asyncio
+async def test_modify_templates_dir(
+        template_file_elsewhere: TemplateWrapper, api: API):
+    html = await api.template(template_file_elsewhere.name,
+                              **template_file_elsewhere.context)
+    assert html == template_file_elsewhere.rendered
 
 
-def test_if_template_does_not_exist_then_template_not_found_raised(api: API):
-    @api.route('/')
-    def index(req, res):
-        res.html = api.template('doesnotexist.html')
-
+@pytest.mark.asyncio
+async def test_if_template_does_not_exist_then_not_found_raised(api: API):
     with pytest.raises(TemplateNotFound):
-        api.client.get('/')
+        await api.template('doesnotexist.html')
