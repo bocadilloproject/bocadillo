@@ -195,8 +195,11 @@ class API:
         finally:
             self._templates.is_async = True
 
-    def template(self, name_: str, **context):
-        """Render a template.
+    async def template(self, name_: str,
+                       context: dict = None, **kwargs) -> Coroutine:
+        """Render a template asynchronously.
+
+        Can only be used within `async`  functions.
 
         Parameters
         ----------
@@ -207,22 +210,26 @@ class API:
         context : dict
             Context variables to inject in the template.
         """
-        # Hot fix for a bug with Jinja2's async environment, which always
-        # renders asynchronously even under `render()`.
-        # `RuntimeError: There is no current event loop in thread [...]`
-        with self._prevent_async_template_rendering():
-            return self._get_template(name_).render(**context)
+        if context is None:
+            context = {}
+        context.update(kwargs)
+        return await self._get_template(name_).render_async(**context)
 
-    async def template_async(self, name_: str, **context) -> Coroutine:
-        """Render a template asynchronously.
-
-        Can only be used within `async`  functions.
+    def template_sync(self, name_: str, context: dict = None, **kwargs) -> str:
+        """Render a template synchronously.
 
         See Also
         --------
         .template()
         """
-        return await self._get_template(name_).render_async(**context)
+        if context is None:
+            context = {}
+        context.update(kwargs)
+        # Hot fix for a bug with Jinja2's async environment, which always
+        # renders asynchronously even under `render()`.
+        # `RuntimeError: There is no current event loop in thread [...]`
+        with self._prevent_async_template_rendering():
+            return self._get_template(name_).render(**context)
 
     def run(self, host: str = None, port: int = None, debug: bool = False):
         """Serve the application using uvicorn.
