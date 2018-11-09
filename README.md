@@ -241,7 +241,7 @@ The HTTP method of the request is available at `req.method`.
 curl -X POST http://localhost:8000
 ```
 
-```
+```python
 req.method  # 'POST'
 ```
 
