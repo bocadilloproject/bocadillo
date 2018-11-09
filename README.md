@@ -1,10 +1,3 @@
-# Bocadillo
-
-[![travis](https://img.shields.io/travis-ci/florimondmanca/bocadillo.svg)][travis-url]
-[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
-[![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
-[![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
-
 <p align="center">
     <img src="https://github.com/florimondmanca/bocadillo/blob/master/docs/bocadillo.png">
 </p>
@@ -14,6 +7,13 @@
 </p>
 
 ---
+
+[![travis](https://img.shields.io/travis-ci/florimondmanca/bocadillo.svg)][travis-url]
+[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
+[![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
+[![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
+
+# Bocadillo
 
 Inspired by [Responder](http://python-responder.org), Bocadillo is a web framework that combines ideas from Falcon and Flask while leveraging modern Python async capabilities.
 
