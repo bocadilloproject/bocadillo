@@ -1,4 +1,4 @@
-from bocadillo import API
+from bocadillo import API, static
 
 FILE_DIR = 'js'
 FILE_NAME = 'foo.js'
@@ -45,3 +45,15 @@ def test_if_static_dir_is_none_then_no_assets_served(tmpdir_factory):
     api = API(static_dir=None)
 
     assert api.client.get(f'/static/{FILE_DIR}/{FILE_NAME}').status_code == 404
+
+
+def test_mount_extra_static_files_dirs(tmpdir_factory):
+    static_dir = tmpdir_factory.mktemp('staticfiles')
+    _create_asset(static_dir)
+
+    api = API(static_dir=None)
+    api.mount('assets', static(str(static_dir)))
+
+    response = api.client.get(f'/assets/{FILE_DIR}/{FILE_NAME}')
+    assert response.status_code == 200
+    assert response.text == FILE_CONTENTS
