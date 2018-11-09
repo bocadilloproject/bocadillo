@@ -11,13 +11,12 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - Plain text responses using `res.text`.
-- HTML responses by setting `res.html`.
+- HTML responses using `res.html`.
 - [Jinja2](http://jinja.pocoo.org)-powered template rendering through `await api.template()` and `api.template_sync()`.
-- Allow to mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
+- Mount ASGI or WSGI sub-apps using `app.mount(prefix, sub_app)`.
 - Static assets using [WhiteNoise](http://whitenoise.evans.io). Configurable through the `static_root` and `static_dir` arguments to `API()`. By default, the `static` folder is served at `/static`. This can be disabled by passing `static_root = None` to `API()`.
 - Register more static files locations by mounting a `bocadillo.static()` sub-app.
-- Check (at "compile time") that a route pattern begins with a forward slash. Prevents a bug at runtime.
-- Check (at "compile time") that all parameters of a route are used on its view and vice-versa. Prevents bugs at runtime.
+- Check (at "compile time") that a) a route pattern begins with a forward slash, and b) all parameters of a route are used on its view and vice-versa.
 - Use `text/plain` content type if none was set within a view.
 
 ### Changed
@@ -26,6 +25,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Allow overriding a route by reusing a route pattern. Previously, this would have raised an exception.
 - Default static root is now `/static`. It previously defaulted to the static directory, which causes issues if the latter was not a relative path.
 - The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
+- The default error handler now sends HTML content instead of plain text.
 
 ## [v0.2.1] - 2018-04-11
 
