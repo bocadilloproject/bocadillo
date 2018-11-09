@@ -22,6 +22,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [Templates](#templates)
     - [Static files](#static-files)
     - [Error handling](#error-handling)
+    - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [Changelog](#changelog)
@@ -523,6 +524,10 @@ def on_attribute_error(req, res, exc: AttributeError):
 
 api.add_error_handler(AttributeError, on_attribute_error)
 ```
+
+### Testing
+
+> TODO
 
 ### Deployment
 
