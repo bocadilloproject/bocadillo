@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.3.0] - 2018-11-09
+
 ### Added
 
 - Plain text responses using `res.text`.
@@ -65,5 +67,6 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1.post3...HEAD
+[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.3.0...HEAD
+[v0.3.0]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1.post3...v0.3.0
 [v0.2.1]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...v0.2.1.post3
