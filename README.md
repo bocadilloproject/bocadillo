@@ -203,10 +203,10 @@ Other than that, class-based view methods are just regular views:
 ```python
 class Index:
 
-    def get(self, req, res):
+    async def get(self, req, res):
         res.text = 'Classes, oh my!'
        
-    async def post(self, req, res):
+    def post(self, req, res):
         res.text = 'Roger that'
 ```
 
@@ -216,7 +216,7 @@ requests — resulting in other methods being ignored.
 ```python
 class Index:
 
-    def handle(self, req, res):
+    async def handle(self, req, res):
         res.text = 'Post it, get it, put it, delete it.'
 ```
 
@@ -228,7 +228,7 @@ To declare and register a new route, use the `@api.route()` decorator:
 
 ```python
 @api.route('/')
-def index(req, res):
+async def index(req, res):
     res.text = 'Hello, Bocadillo!'
 ```
 
@@ -240,7 +240,7 @@ are passed as additional arguments to the view:
 
 ```python
 @api.route('/posts/{slug}')
-def retrieve_post(req, res, slug: str):
+async def retrieve_post(req, res, slug: str):
     res.text = 'My awesome post'
 ```
 
@@ -252,7 +252,7 @@ to routes:
 ```python
 # Only decimal integer values for `x` will be accepted
 @api.route('/negation/{x:d}')
-def negate(req, res, x: int):
+async def negate(req, res, x: int):
     res.media = {'result': -x}
 ```
 
@@ -278,7 +278,7 @@ HTTP methods being exposed:
 
 ```python
 @api.route('/', methods=['get'])
-def index(req, res):
+async def index(req, res):
     res.text = "Come GET me, bro"
 ```
 
@@ -399,13 +399,19 @@ You can set the numeric status code on the response using `res.status_code`:
 
 ```python
 @api.route('/jobs', methods=['post'])
-def create_job(req, res):
+async def create_job(req, res):
     res.status_code = 201
 ```
 
 > Bocadillo does not provide an enum of HTTP status codes. If you prefer to
 use one, you'd be safe enough going for `HTTPStatus`, located in the standard
 library's `http` module.
+> 
+> ```python
+> from http import HTTPStatus
+> # ...
+> res.status_code = HTTPStatus.CREATED.value
+> ```
 
 #### Headers
 
@@ -545,7 +551,7 @@ Bocadillo will catch it and return an appropriate response:
 from bocadillo.exceptions import HTTPError
 
 @api.route('/fail/{status_code:d}')
-def fail(req, res, status_code: int):
+async def fail(req, res, status_code: int):
     raise HTTPError(status_code)
 ```
 
