@@ -29,6 +29,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
 - The default error handler now sends HTML content instead of plain text.
 
+### Fixed
+
+- Fixed a bug preventing Bocadillo from being installed from `pip`.
+
 ## [v0.2.1] - 2018-04-11
 
 ### Added
