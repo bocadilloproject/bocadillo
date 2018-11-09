@@ -49,8 +49,6 @@ Run it:
 
 ```bash
 python app.py
-# or directly using uvicorn:
-uvicorn app:api
 ```
 
 ```
@@ -62,7 +60,7 @@ INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 Make some requests!
 
 ```bash
-curl http://localhost:8000/add/1/2
+curl "http://localhost:8000/add/1/2"
 {"result": 3}
 ```
 
@@ -198,7 +196,7 @@ def negate(req, res, x: int):
 ```
 
 ```bash
-curl http://localhost:8000/negation/abc
+curl "http://localhost:8000/negation/abc"
 ```
 
 ```http
@@ -238,7 +236,7 @@ documented here.
 The HTTP method of the request is available at `req.method`.
 
 ```bash
-curl -X POST http://localhost:8000
+curl -X POST "http://localhost:8000"
 ```
 
 ```python
@@ -250,7 +248,7 @@ req.method  # 'POST'
 The full URL of the request is available as `req.url`:
 
 ```bash
-curl http://localhost:8000/foo/bar?add=sub
+curl "http://localhost:8000/foo/bar?add=sub"
 ```
 
 ```python
@@ -274,7 +272,7 @@ Request headers are available at `req.headers`, an immutable, case-insensitive
 Python dictionary.
 
 ```bash
-curl -H 'X-App: Bocadillo' http://localhost:8000
+curl -H 'X-App: Bocadillo' "http://localhost:8000"
 ```
 
 ```python
@@ -288,7 +286,7 @@ Query parameters are available at `req.query_params`, an immutable Python
 dictionary-like object.
 
 ```bash
-curl -H "http://localhost:8000?add=1&sub=2&sub=3"
+curl "http://localhost:8000?add=1&sub=2&sub=3"
 ```
 
 ```python
@@ -369,20 +367,20 @@ You can render a template using `await api.template()`:
 
 ```python
 async def post_detail(req, res):
-    res.html = await api.template('index.html', title='My awesome post')
+    res.html = await api.template('index.html', title='Hello, Bocadillo!')
 ```
 
-In synchronous views, use `api.template_sync()`:
+In synchronous views, use `api.template_sync()` instead:
 
 ```python
 def post_detail(req, res):
-    res.html = api.template_sync('post_detail.html', title='My awesome post')
+    res.html = api.template_sync('index.html', title='Hello, Bocadillo!')
 ```
 
 Context variables can also be given as a dictionary:
 
 ```python
-await api.template('index.html', {'title': 'My awesome post'})
+await api.template('index.html', {'title': 'Hello, Bocadillo!'})
 ```
 
 #### Templates location
@@ -394,13 +392,12 @@ to where the app is executed. For example:
 .
 ├── app.py
 └── templates
-    └── post_detail.html
+    └── index.html
 ```
 
 You can change the template directory using the `templates_dir` option:
 
 ```python
-import bocadillo
 api = bocadillo.API(templates_dir='path/to/templates')
 ```
 
@@ -420,7 +417,7 @@ h1 { color: red; }
 ```
 
 ```bash
-curl http://localhost:8000/static/css/styles.css
+curl "http://localhost:8000/static/css/styles.css"
 ```
 
 ```
@@ -429,8 +426,8 @@ h1 { color: red; }
 
 #### Static files location
 
-By default, static assets are served at the `static/` URL root and are
-searched for in a `static/` folder relative to where the app is executed.
+By default, static assets are served at the `/static/` URL root and are
+searched for in a `static/` directory relative to where the app is executed.
 For example:
 
 ```
@@ -441,25 +438,17 @@ For example:
         └── styles.css
 ```
 
-#### Customization
-
 You can modify the static files directory using the `static_dir` option:
 
 ```python
-import bocadillo
 api = bocadillo.API(static_dir='staticfiles')
 ```
 
 To modify the root URL path, use `static_root`:
 
 ```python
-import bocadillo
 api = bocadillo.API(static_root='assets')
 ```
-
-#### Disabling static files
-
-To prevent Bocadillo to serve static files altogether, set `static_dir=None`.
 
 #### Extra static files directories
 
@@ -473,6 +462,15 @@ api = bocadillo.API()
 
 # Serve more static files located in the assets/ directory
 api.mount(prefix='assets', app=bocadillo.static('assets'))
+```
+
+#### Disabling static files
+
+To prevent Bocadillo from serving static files altogether,
+you can use:
+
+```python
+api = bocadillo.API(static_dir=None)
 ```
 
 ### Error handling
@@ -491,7 +489,7 @@ def fail(req, res, status_code: int):
 ```
 
 ```bash
-curl -SD - http://localhost:8000/fail/403
+curl -SD - "http://localhost:8000/fail/403"
 ```
 
 ```http
@@ -504,7 +502,7 @@ transfer-encoding: chunked
 Forbidden
 ```
 
-#### Custom error handling
+#### Customizing error handling
 
 You can customize error handling by registering your own error handlers.
 This can be done using the `@api.error_handler()` decorator:
