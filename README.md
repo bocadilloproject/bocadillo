@@ -409,7 +409,6 @@ library's `http` module.
 > 
 > ```python
 > from http import HTTPStatus
-> # ...
 > res.status_code = HTTPStatus.CREATED.value
 > ```
 
@@ -551,7 +550,7 @@ Bocadillo will catch it and return an appropriate response:
 from bocadillo.exceptions import HTTPError
 
 @api.route('/fail/{status_code:d}')
-async def fail(req, res, status_code: int):
+def fail(req, res, status_code: int):
     raise HTTPError(status_code)
 ```
 
