@@ -153,23 +153,11 @@ uvicorn myapp:api --debug
 In Bocadillo, views are functions that take at least a request and a response
 as arguments, and mutate those objects as necessary.
 
-Views can be synchronous or asynchronous, function-based or class-based.
-
-#### Synchronous views
-
-Synchronous views are simple Python functions:
-
-```python
-def index(req, res):
-    res.html = '<h1>My website</h1>'
-```
-
-(This is also an example of a function-based view.)
+Views can be asynchronous or synchronous, function-based or class-based.
 
 #### Asynchronous views
 
-Bocadillo is asynchronous at its core, which means views can also be
-asynchronous. This allows you to call arbitrary async/await
+The recommended way to define views in Bocadillo is using the async/await syntax. This allows you to call arbitrary async/await
 Python code:
 
 ```python
@@ -183,10 +171,19 @@ async def retrieve_post(req, res, slug: str):
     res.text = await find_post_content(slug)
 ```
 
-**Note**: due to the asynchronous nature of Bocadillo, it is generally more
+#### Synchronous views
+
+While Bocadillo is asynchronous at its core, you can also use plain Python functions to define synchronous views:
+
+```python
+def index(req, res):
+    res.html = '<h1>My website</h1>'
+```
+
+**Note**: it is generally more
 efficient to use asynchronous views rather than synchronous ones.
 This is because, when given a synchronous view, Bocadillo needs to perform
-a sync-to-async conversion.
+a sync-to-async conversion, which might add extra overhead.
 
 #### Class-based views
 
