@@ -359,7 +359,7 @@ res.headers['Cache-Control'] = 'no-cache'
 
 ### Templates
 
-Bocadillo allows you to render Jinja2 templates.
+Bocadillo allows you to render [Jinja2](http://jinja.pocoo.org) templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
@@ -406,7 +406,8 @@ api = bocadillo.API(templates_dir='path/to/templates')
 
 ### Static files
 
-Bocadillo uses WhiteNoise to serve static assets for you in an efficient manner.
+Bocadillo uses [WhiteNoise](http://whitenoise.evans.io/en/stable/) to serve
+static assets for you in an efficient manner.
 
 #### Basic usage
 
