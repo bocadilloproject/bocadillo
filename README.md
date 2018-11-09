@@ -62,8 +62,8 @@ INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 Make some requests!
 
 ```bash
-curl http://localhost:8000/add/3/5
-{"result": 5}
+curl http://localhost:8000/add/1/2
+{"result": 3}
 ```
 
 🌯💥
@@ -359,7 +359,44 @@ res.headers['Cache-Control'] = 'no-cache'
 
 ### Templates
 
-> TODO
+Bocadillo allows you to render Jinja2 templates.
+You get all the niceties of the Jinja2 template engine:
+a familiar templating language, automatic escaping, template inheritance, etc.
+
+#### Rendering templates
+
+You can render a template using `await api.template()`:
+
+```python
+async def post_detail(req, res):
+    res.html = await api.template('index.html', title='My awesome post')
+```
+
+In a synchronous view, use `api.template_sync()`:
+
+```python
+def post_detail(req, res):
+    res.html = api.template_sync('post_detail.html', title='My awesome post')
+```
+
+#### Templates location
+
+By default, Bocadillo looks for templates in the `templates/` folder relative
+to where your app is executed. For example:
+
+```
+.
+├── app.py
+└── templates
+    └── post_detail.html
+```
+
+You can change the template directory using the `templates_dir` option:
+
+```python
+import bocadillo
+api = bocadillo.API(templates_dir='path/to/templates')
+```
 
 ### Static files
 
