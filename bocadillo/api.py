@@ -4,7 +4,6 @@ from contextlib import contextmanager
 from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union, \
     Coroutine
 
-import uvicorn
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
 from starlette.testclient import TestClient
@@ -281,7 +280,7 @@ class API:
                 'debug': debug,
             })
         else:
-            uvicorn.run(self, host=host, port=port)
+            run(self, host=host, port=port)
 
     async def _dispatch(self, request: Request) -> Response:
         """Dispatch a request and return a response."""
