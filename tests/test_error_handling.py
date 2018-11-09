@@ -27,7 +27,7 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
 
     response = api.client.get('/')
     assert response.status_code == status_code
-    assert response.text == phrase
+    assert phrase in response.text
 
 
 @pytest.mark.parametrize('exception_cls', [
