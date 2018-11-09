@@ -5,6 +5,8 @@
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 
+[![Bocadillo](docs/bocadillo.png)][pypi-url]
+
 Inspired by [Responder](http://python-responder.org), Bocadillo is a web framework that combines ideas from Falcon and Flask while leveraging modern Python async capabilities.
 
 Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit and the [uvicorn](https://www.uvicorn.org) ASGI server.
