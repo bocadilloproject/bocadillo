@@ -456,6 +456,24 @@ a standard Python dictionary object:
 res.headers['Cache-Control'] = 'no-cache'
 ```
 
+### Redirections
+
+Inside a view, you can redirect to another page using `api.redirect()`. It accepts either a route `name` or an internal or external `url`:
+
+```python
+@api.route('/')
+async def index(req, res):
+    api.redirect(name='home')
+    # or:
+    api.redirect(url='/home')
+    # or:
+    api.redirect(url='http://localhost:8000/home')
+
+@api.route('/home', name='home')
+async def home(req, res):
+    res.text = f'This is home!'
+```
+
 ### Templates
 
 Bocadillo allows you to render [Jinja2](http://jinja.pocoo.org) templates.

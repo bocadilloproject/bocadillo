@@ -1,3 +1,5 @@
+import pytest
+
 from bocadillo import API
 
 
@@ -60,3 +62,13 @@ def test_redirect_to_external_url(api: API):
     response = api.client.get('/', allow_redirects=False)
     assert response.status_code == 302
     assert response.headers['location'] == external_url
+
+
+def test_at_least_one_of_name_or_url_must_be_given(api: API):
+    @api.route('/')
+    def index(req, res):
+        api.redirect()
+
+    with pytest.raises(AssertionError) as ctx:
+        api.client.get('/')
+    assert all(item in str(ctx.value) for item in ('url', 'expected', 'name'))
