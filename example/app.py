@@ -38,9 +38,19 @@ async def about(req, resp, who):
     resp.html = await api.template('about.html', who=who)
 
 
-@api.route('/')
-async def index(req, resp):
+@api.route('/google')
+async def google(req, res):
+    api.redirect(url='https://www.google.com')
+
+
+@api.route('/home', name='home')
+async def home(req, resp):
     resp.html = await api.template('index.html', app='Bocadillo')
+
+
+@api.route('/')
+async def index(req, res):
+    api.redirect(name='home')
 
 
 if __name__ == '__main__':

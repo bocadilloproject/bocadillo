@@ -2,8 +2,8 @@
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
-from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union, \
-    Coroutine
+from typing import (Optional, Tuple, Type, List, Callable, Dict, Any, Union,
+                    Coroutine)
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
@@ -15,6 +15,7 @@ from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .error_handlers import handle_http_error
 from .exceptions import HTTPError
+from .redirection import Redirection
 from .request import Request
 from .response import Response
 from .route import Route
@@ -185,6 +186,12 @@ class API:
                 return pattern, kwargs
         return None, {}
 
+    def _get_route_or_404(self, name: str):
+        try:
+            return self._named_routes[name]
+        except KeyError as e:
+            raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
+
     def url_for(self, name: str, **kwargs) -> str:
         """Return the URL path for a route.
 
@@ -200,12 +207,27 @@ class API:
         HTTPError(404) :
             If no route exists for the given `name`.
         """
-        try:
-            route = self._named_routes[name]
-        except KeyError as e:
-            raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
+        route = self._get_route_or_404(name)
+        return route.url(**kwargs)
+
+    def redirect(self, *, name: str = None, url: str = None, **kwargs):
+        """Redirect to another route.
+
+        Parameters
+        ----------
+        name : str, optional
+            Name of the route to redirect to.
+        url : str, optional (unless name not given)
+            URL of the route to redirect to.
+        kwargs :
+            Route parameters.
+        """
+        if name is not None:
+            route = self._get_route_or_404(name=name)
+            url = route.url(**kwargs)
         else:
-            return route.url(**kwargs)
+            assert url is not None, 'url is expected if no route name is given'
+        raise Redirection(url=url)
 
     def _get_template_globals(self) -> dict:
         return {
@@ -342,7 +364,10 @@ class API:
             if route is None:
                 raise HTTPError(status=404)
             else:
-                await route(request, response, **kwargs)
+                try:
+                    await route(request, response, **kwargs)
+                except Redirection as redirection:
+                    response = redirection.response
         except Exception as e:
             self._handle_exception(request, response, e)
 
