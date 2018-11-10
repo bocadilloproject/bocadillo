@@ -10,6 +10,7 @@
 
 [![travis](https://img.shields.io/travis-ci/florimondmanca/bocadillo.svg)][travis-url]
 [![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
+[![downloads](https://pepy.tech/badge/bocadillo)](https://pepy.tech/project/bocadillo)
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 
