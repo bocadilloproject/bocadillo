@@ -526,6 +526,13 @@ Context variables can also be given as a dictionary:
 await api.template('index.html', {'title': 'Hello, Bocadillo!'})
 ```
 
+Lastly, you can render a template directly from a string:
+
+```python
+>>> api.template_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
+'<h1>Hello, Bocadillo!</h1>'
+```
+
 #### Templates location
 
 By default, Bocadillo looks for templates in the `templates/` folder relative

@@ -255,7 +255,15 @@ class API:
 
     @contextmanager
     def _prevent_async_template_rendering(self):
-        """If enabled, temporarily disable async template rendering."""
+        """If enabled, temporarily disable async template rendering.
+
+        Notes
+        -----
+        Hot fix for a bug with Jinja2's async environment, which always
+        renders asynchronously even under `render()`.
+        Example error:
+        `RuntimeError: There is no current event loop in thread [...]`
+        """
         if not self._templates.is_async:
             yield
             return
@@ -265,6 +273,13 @@ class API:
             yield
         finally:
             self._templates.is_async = True
+
+    @staticmethod
+    def _prepare_context(context: dict = None, **kwargs):
+        if context is None:
+            context = {}
+        context.update(kwargs)
+        return context
 
     async def template(self, name_: str,
                        context: dict = None, **kwargs) -> Coroutine:
@@ -281,10 +296,8 @@ class API:
         context : dict
             Context variables to inject in the template.
         """
-        if context is None:
-            context = {}
-        context.update(kwargs)
-        return await self._get_template(name_).render_async(**context)
+        context = self._prepare_context(context, **kwargs)
+        return await self._get_template(name_).render_async(context)
 
     def template_sync(self, name_: str, context: dict = None, **kwargs) -> str:
         """Render a template synchronously.
@@ -293,22 +306,17 @@ class API:
         --------
         .template()
         """
-        if context is None:
-            context = {}
-        context.update(kwargs)
-        # Hot fix for a bug with Jinja2's async environment, which always
-        # renders asynchronously even under `render()`.
-        # `RuntimeError: There is no current event loop in thread [...]`
+        context = self._prepare_context(context, **kwargs)
         with self._prevent_async_template_rendering():
-            return self._get_template(name_).render(**context)
+            return self._get_template(name_).render(context)
 
-    async def template_string(self, source: str, context: dict = None,
-                              **kwargs) -> str:
-        if context is None:
-            context = {}
-        context.update(**kwargs)
-        template = self._templates.from_string(source=source)
-        return await template.render_async(**context)
+    def template_string(self, source: str, context: dict = None,
+                        **kwargs) -> str:
+        """Render a template from a string (synchronous)."""
+        context = self._prepare_context(context, **kwargs)
+        with self._prevent_async_template_rendering():
+            template = self._templates.from_string(source=source)
+            return template.render(context)
 
     def run(self,
             host: str = None,

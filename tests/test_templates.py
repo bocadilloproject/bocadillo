@@ -36,3 +36,8 @@ async def test_modify_templates_dir(
 async def test_if_template_does_not_exist_then_not_found_raised(api: API):
     with pytest.raises(TemplateNotFound):
         await api.template('doesnotexist.html')
+
+
+def test_render_by_template_string(api: API):
+    html = api.template_string('<h1>{{ title }}</h1>', title='Hello')
+    assert html == '<h1>Hello</h1>'

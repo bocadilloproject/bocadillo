@@ -12,6 +12,11 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Named routes. Define a named route by passing a `name` to `@api.route()`. Get the URL path to a route using `api.url_for()` or, in templates, the `url_for()` global.
 - Redirections using `api.redirect()`. Can be by route name, internal URL, or external URL. Make it permanent with `permanent=True`.
+- Template rendering from string using `api.template_string()`.
+
+### Changed
+
+- Updated example app to demonstrate usage of redirects and named routes.
 
 ## [v0.3.1] - 2018-11-09
 

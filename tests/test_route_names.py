@@ -30,7 +30,7 @@ def test_url_for_can_be_used_in_templates(api: API):
     @api.route('/')
     async def index(req, res):
         template = '{{ url_for("about-someone", who=who) }}'
-        res.html = await api.template_string(template, who='me')
+        res.html = api.template_string(template, who='me')
 
     response = api.client.get('/')
     assert response.status_code == 200
