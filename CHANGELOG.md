@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.4.0] - 2018-11-10
+
 ### Added
 
 - Named routes. Define a named route by passing a `name` to `@api.route()`. Get the URL path to a route using `api.url_for()` or, in templates, the `url_for()` global.
@@ -89,7 +91,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/florimondmanca/bocadillo/compare/v0.3.1...v0.4.0
 [v0.3.1]: https://github.com/florimondmanca/bocadillo/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1.post3...v0.3.0
 [v0.2.1]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...v0.2.1.post3
