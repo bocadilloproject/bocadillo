@@ -1,6 +1,7 @@
 """The Bocadillo API class."""
 import os
 from contextlib import contextmanager
+from http import HTTPStatus
 from typing import Optional, Tuple, Type, List, Callable, Dict, Any, Union, \
     Coroutine
 
@@ -50,11 +51,17 @@ class API:
             static_dir: Optional[str] = 'static',
             static_root: Optional[str] = 'static'):
         self._routes: Dict[str, Route] = {}
+        self._named_routes: Dict[str, Route] = {}
+
         self._error_handlers = []
+
         self._templates = get_templates_environment([
             os.path.abspath(templates_dir),
         ])
+        self._templates.globals.update(self._get_template_globals())
+
         self._extra_apps: Dict[str, Any] = {}
+
         self.client = self._build_client()
 
         self.add_error_handler(HTTPError, handle_http_error)
@@ -125,17 +132,20 @@ class API:
         else:
             raise exception from None
 
-    def route(self, pattern: str, *, methods: List[str] = None):
+    def route(self, pattern: str, *, methods: List[str] = None,
+              name: str = None):
         """Register a new route.
 
         Parameters
         ----------
         pattern : str
             A route pattern given as an f-string expression.
-        methods : list of str
+        methods : list of str, optional
             HTTP methods supported by this route.
             Defaults to all HTTP methods.
             Ignored for class-based views.
+        name : str, optional
+            A name for this route, which must be unique.
 
         Example
         -------
@@ -156,19 +166,51 @@ class API:
                 pattern=pattern,
                 view=view,
                 methods=methods,
+                name=name,
             )
+
             self._routes[pattern] = route
+            if name is not None:
+                self._named_routes[name] = route
+
             return route
 
         return wrapper
 
-    def _find_route(self, path: str) -> Tuple[Optional[str], dict]:
+    def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""
         for pattern, route in self._routes.items():
             kwargs = route.match(path)
             if kwargs is not None:
                 return pattern, kwargs
         return None, {}
+
+    def url_for(self, name: str, **kwargs) -> str:
+        """Return the URL path for a route.
+
+        Parameters
+        ----------
+        name : str
+            Name of the route.
+        kwargs : dict
+            Route parameters.
+
+        Raises
+        ------
+        HTTPError(404) :
+            If no route exists for the given `name`.
+        """
+        try:
+            route = self._named_routes[name]
+        except KeyError as e:
+            raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
+        else:
+            return route.url(**kwargs)
+
+    def _get_template_globals(self) -> dict:
+        return {
+            'url_for': self.url_for,
+        }
 
     @property
     def templates_dir(self) -> str:
@@ -287,7 +329,7 @@ class API:
         response = Response(request)
 
         try:
-            pattern, kwargs = self._find_route(request.url.path)
+            pattern, kwargs = self._find_matching_route(request.url.path)
             route = self._routes.get(pattern)
             if route is None:
                 raise HTTPError(status=404)

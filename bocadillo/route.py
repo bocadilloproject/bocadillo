@@ -1,6 +1,6 @@
 import inspect
 from http import HTTPStatus
-from typing import AnyStr, Optional, List, Coroutine
+from typing import Optional, List
 
 from asgiref.sync import sync_to_async
 from parse import parse
@@ -15,7 +15,11 @@ class Route:
     Formatted string syntax is used for route patterns.
     """
 
-    def __init__(self, pattern: AnyStr, view: View, methods: List[str]):
+    def __init__(self,
+                 pattern: str,
+                 view: View,
+                 methods: List[str],
+                 name: str):
         self._pattern = pattern
         self._view_is_class = inspect.isclass(view)
         if self._view_is_class:
@@ -24,6 +28,15 @@ class Route:
             view = sync_to_async(view)
         self._view = view
         self._methods = methods
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    def url(self, **kwargs) -> str:
+        """Return full path for the given route parameters."""
+        return self._pattern.format(**kwargs)
 
     def match(self, path: str) -> Optional[dict]:
         """Return whether the route matches the given path.
