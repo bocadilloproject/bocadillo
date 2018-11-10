@@ -7,6 +7,7 @@ from typing import (Optional, Tuple, Type, List, Callable, Dict, Any, Union,
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
@@ -15,6 +16,7 @@ from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .error_handlers import handle_http_error
 from .exceptions import HTTPError
+from .middlewares import BaseMiddleware, AppMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -42,6 +44,10 @@ class API:
     static_root : str, optional
         The path prefix for static assets.
         Defaults to 'static'.
+    allowed_hosts : list of str, optional
+        A list of hosts which the server is allowed to run at.
+        If the list contains '*', any host is allowed.
+        Defaults to ['*'].
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -50,11 +56,14 @@ class API:
             self,
             templates_dir: str = 'templates',
             static_dir: Optional[str] = 'static',
-            static_root: Optional[str] = 'static'):
+            static_root: Optional[str] = 'static',
+            allowed_hosts: List[str] = None,
+    ):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
 
         self._error_handlers = []
+        self.add_error_handler(HTTPError, handle_http_error)
 
         self._templates = get_templates_environment([
             os.path.abspath(templates_dir),
@@ -65,12 +74,22 @@ class API:
 
         self.client = self._build_client()
 
-        self.add_error_handler(HTTPError, handle_http_error)
-
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
             self.mount(static_root, static(static_dir))
+
+        if allowed_hosts is None:
+            allowed_hosts = ['*']
+        self.allowed_hosts = allowed_hosts
+
+        # Middleware
+        self._app_middleware = AppMiddleware(self)
+        self._base_middleware = BaseMiddleware(self._app_middleware)
+        self.add_middleware(
+            TrustedHostMiddleware,
+            allowed_hosts=self.allowed_hosts,
+        )
 
     def _build_client(self) -> TestClient:
         return TestClient(self)
@@ -368,7 +387,7 @@ class API:
         else:
             run(self, host=host, port=port)
 
-    async def _dispatch(self, request: Request) -> Response:
+    async def dispatch(self, request: Request) -> Response:
         """Dispatch a request and return a response."""
         response = Response(request)
 
@@ -387,21 +406,8 @@ class API:
 
         return response
 
-    def as_asgi(self, scope):
-        """Return a new ASGI application.
-
-        See Also
-        --------
-        https://github.com/encode/uvicorn
-        """
-
-        async def asgi_app(receive, send):
-            nonlocal scope
-            request = Request(scope, receive)
-            response = await self._dispatch(request)
-            await response(receive, send)
-
-        return asgi_app
+    def add_middleware(self, middleware_cls, **kwargs):
+        self._base_middleware.add(middleware_cls, **kwargs)
 
     def _find_app(self, scope: dict) -> ASGIAppInstance:
         """Return an ASGI app depending on the scope's path."""
@@ -420,8 +426,7 @@ class API:
                 app = WsgiToAsgi(app)
                 return app(scope)
 
-        # Default to self
-        return self.as_asgi(scope)
+        return self._base_middleware(scope)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
         return self._find_app(scope)
