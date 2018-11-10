@@ -463,6 +463,8 @@ Inside a view, you can redirect to another page using `api.redirect()`, which ca
 
 #### By route name
 
+Pass the route's `name` to `api.redirect()`:
+
 ```python
 @api.route('/home', name='home')
 async def home(req, res):
@@ -472,6 +474,8 @@ async def home(req, res):
 async def index(req, res):
     api.redirect(name='home')
 ```
+
+Route parameters can be passed as additional keyword arguments to `api.redirect()`.
 
 #### By URL
 
