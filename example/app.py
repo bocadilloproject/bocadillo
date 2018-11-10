@@ -50,7 +50,7 @@ async def home(req, resp):
 
 @api.route('/')
 async def index(req, res):
-    api.redirect(name='home')
+    api.redirect(name='home', permanent=True)
 
 
 if __name__ == '__main__':

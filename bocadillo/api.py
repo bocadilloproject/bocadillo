@@ -210,7 +210,11 @@ class API:
         route = self._get_route_or_404(name)
         return route.url(**kwargs)
 
-    def redirect(self, *, name: str = None, url: str = None, **kwargs):
+    def redirect(self, *,
+                 name: str = None,
+                 url: str = None,
+                 permanent: bool = False,
+                 **kwargs):
         """Redirect to another route.
 
         Parameters
@@ -219,6 +223,9 @@ class API:
             Name of the route to redirect to.
         url : str, optional (unless name not given)
             URL of the route to redirect to.
+        permanent : bool, optional
+            If False (the default), returns a temporary redirection (302).
+            If True, returns a permanent redirection (301).
         kwargs :
             Route parameters.
         """
@@ -227,7 +234,7 @@ class API:
             url = route.url(**kwargs)
         else:
             assert url is not None, 'url is expected if no route name is given'
-        raise Redirection(url=url)
+        raise Redirection(url=url, permanent=permanent)
 
     def _get_template_globals(self) -> dict:
         return {
