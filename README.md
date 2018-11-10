@@ -732,7 +732,7 @@ To enable CORS, simply use:
 api = bocadillo.API(enable_cors=True)
 ```
 
-Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET`  for `Allow-Methods`. To customize the CORS configuration, use `cors_config`, e.g.:
+Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET` for `Allow-Methods`. To customize the CORS configuration, use `cors_config`, e.g.:
 
 ```python
 api = bocadillo.API(
