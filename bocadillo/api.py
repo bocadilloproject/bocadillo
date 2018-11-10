@@ -230,8 +230,7 @@ class API:
             Route parameters.
         """
         if name is not None:
-            route = self._get_route_or_404(name=name)
-            url = route.url(**kwargs)
+            url = self.url_for(name=name, **kwargs)
         else:
             assert url is not None, 'url is expected if no route name is given'
         raise Redirection(url=url, permanent=permanent)
