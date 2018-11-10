@@ -34,6 +34,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [Static files](#static-files)
     - [Error handling](#error-handling)
     - [Middleware](#middleware)
+    - [CORS](#cors)
     - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
@@ -719,6 +720,30 @@ You can then register the middleware using `add_middleware()`:
 api = bocadillo.API()
 api.add_middleware(PrintUrlMiddleware)
 ```
+
+### CORS
+
+Bocadillo has built-in support for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (CORS). Adding CORS headers to responses is typically required when your API is to be accessed by web browsers.
+
+To enable CORS, simply:
+
+```python
+api = bocadillo.API(enable_cors=True)
+```
+
+Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET`  as `Allow-Method`. To customize the CORS configuration, use `cors_config`, e.g.:
+
+```python
+api = bocadillo.API(
+    enable_cors=True,
+    cors_config={
+        'allow_origins': ['*'],
+        'allow_methods': ['*'],
+    }
+)
+```
+
+Please refer to Starlette's [CORSMiddleware documentation](https://www.starlette.io/middleware/#corsmiddleware) for the full list of options and defaults.
 
 ### Testing
 

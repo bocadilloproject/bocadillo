@@ -15,6 +15,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Template rendering from string using `api.template_string()`.
 - Add allowed hosts configuration through `allowed_host` argument to `API()`.
 - *Experimental* support for routing middleware through `bocadillo.RoutingMiddleware`.
+- Add CORS support with restrictive defaults. Enable using `enable_cors = True`, configure through `cors_config`.
 
 ### Changed
 

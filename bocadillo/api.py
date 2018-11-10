@@ -7,6 +7,7 @@ from typing import (Optional, Tuple, Type, List, Callable, Dict, Any, Union,
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
+from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
@@ -27,6 +28,10 @@ from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
 
+_DEFAULT_CORS_CONFIG = {
+    'allow_origins': [],
+    'allow_methods': ['GET'],
+}
 
 class API:
     """Bocadillo API.
@@ -48,6 +53,14 @@ class API:
         A list of hosts which the server is allowed to run at.
         If the list contains '*', any host is allowed.
         Defaults to ['*'].
+    enable_cors : bool, optional
+        If True, Cross Origin Resource Sharing will be configured according
+        to `cors_config`.
+        Defaults to False.
+    cors_config : dict, optional
+        A dictionary of CORS configuration parameters.
+        Defaults to `{'allow_origins': [], 'allow_methods': ['GET']}`.
+        See also: https://www.starlette.io/middleware/#corsmiddleware
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -58,6 +71,8 @@ class API:
             static_dir: Optional[str] = 'static',
             static_root: Optional[str] = 'static',
             allowed_hosts: List[str] = None,
+            enable_cors: bool = False,
+            cors_config: dict = None,
     ):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
@@ -83,6 +98,10 @@ class API:
             allowed_hosts = ['*']
         self.allowed_hosts = allowed_hosts
 
+        if cors_config is None:
+            cors_config = {}
+        self.cors_config = {**_DEFAULT_CORS_CONFIG, **cors_config}
+
         # Middleware
         self._routing_middleware = RoutingMiddleware(self)
         self._common_middleware = CommonMiddleware(self._routing_middleware)
@@ -90,6 +109,8 @@ class API:
             TrustedHostMiddleware,
             allowed_hosts=self.allowed_hosts,
         )
+        if enable_cors:
+            self.add_middleware(CORSMiddleware, **self.cors_config)
 
     def _build_client(self) -> TestClient:
         return TestClient(self)
