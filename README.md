@@ -269,6 +269,34 @@ transfer-encoding: chunked
 Not Found
 ```
 
+#### Named routes
+
+You can specify a name for a route by passing `name` to `@api.route()`:
+
+```python
+@api.route('/about/{who}', name='about')
+async def about(req, res, who):
+    res.html = f'<h1>About {who}</h1>'
+```
+
+In code, you can get the full URL path to a route using `api.url_for()`:
+
+```python
+>>> api.url_for('about', who='them')
+'/about/them'
+```
+
+In templates, you can use the `url_for()` global:
+
+```jinja2
+<h1>Hello, Bocadillo!</h1>
+<p>
+    <a href="{{ url_for('about', who='me') }}">About me</a>
+</p>
+```
+
+**Note**: referencing to a non-existing named route with `url_for()` will return a 404 error page.
+
 #### Specifying HTTP methods (function-based views only)
 
 By default, a route accepts all HTTP methods. On function-based views,
