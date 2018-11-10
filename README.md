@@ -35,6 +35,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [Error handling](#error-handling)
     - [Middleware](#middleware)
     - [CORS](#cors)
+    - [HSTS](#hsts)
     - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
@@ -725,7 +726,7 @@ api.add_middleware(PrintUrlMiddleware)
 
 Bocadillo has built-in support for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (CORS). Adding CORS headers to responses is typically required when your API is to be accessed by web browsers.
 
-To enable CORS, simply:
+To enable CORS, simply use:
 
 ```python
 api = bocadillo.API(enable_cors=True)
@@ -744,6 +745,14 @@ api = bocadillo.API(
 ```
 
 Please refer to Starlette's [CORSMiddleware documentation](https://www.starlette.io/middleware/#corsmiddleware) for the full list of options and defaults.
+
+### HSTS
+
+If you want enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS, simply use:
+
+```python
+api = bocadillo.API(enable_hsts=True)
+```
 
 ### Testing
 

@@ -8,6 +8,7 @@ from typing import (Optional, Tuple, Type, List, Callable, Dict, Any, Union,
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
@@ -32,6 +33,7 @@ _DEFAULT_CORS_CONFIG = {
     'allow_origins': [],
     'allow_methods': ['GET'],
 }
+
 
 class API:
     """Bocadillo API.
@@ -61,6 +63,10 @@ class API:
         A dictionary of CORS configuration parameters.
         Defaults to `{'allow_origins': [], 'allow_methods': ['GET']}`.
         See also: https://www.starlette.io/middleware/#corsmiddleware
+    enable_hsts : bool, optional
+        If True, enable HSTS (HTTP Strict Transport Security) and automatically
+        redirect HTTP traffic to HTTPS.
+        Defaults to False.
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -73,6 +79,7 @@ class API:
             allowed_hosts: List[str] = None,
             enable_cors: bool = False,
             cors_config: dict = None,
+            enable_hsts: bool = False,
     ):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
@@ -111,6 +118,8 @@ class API:
         )
         if enable_cors:
             self.add_middleware(CORSMiddleware, **self.cors_config)
+        if enable_hsts:
+            self.add_middleware(HTTPSRedirectMiddleware)
 
     def _build_client(self) -> TestClient:
         return TestClient(self)
