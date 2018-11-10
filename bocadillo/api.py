@@ -192,7 +192,7 @@ class API:
         ----------
         name : str
             Name of the route.
-        kwargs : dict
+        kwargs :
             Route parameters.
 
         Raises
@@ -273,6 +273,14 @@ class API:
         # `RuntimeError: There is no current event loop in thread [...]`
         with self._prevent_async_template_rendering():
             return self._get_template(name_).render(**context)
+
+    async def template_string(self, source: str, context: dict = None,
+                              **kwargs) -> str:
+        if context is None:
+            context = {}
+        context.update(**kwargs)
+        template = self._templates.from_string(source=source)
+        return await template.render_async(**context)
 
     def run(self,
             host: str = None,
