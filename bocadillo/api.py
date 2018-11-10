@@ -16,7 +16,7 @@ from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .error_handlers import handle_http_error
 from .exceptions import HTTPError
-from .middleware import BaseMiddleware, AppMiddleware
+from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -84,8 +84,8 @@ class API:
         self.allowed_hosts = allowed_hosts
 
         # Middleware
-        self._app_middleware = AppMiddleware(self)
-        self._base_middleware = BaseMiddleware(self._app_middleware)
+        self._routing_middleware = RoutingMiddleware(self)
+        self._common_middleware = CommonMiddleware(self._routing_middleware)
         self.add_middleware(
             TrustedHostMiddleware,
             allowed_hosts=self.allowed_hosts,
@@ -406,8 +406,14 @@ class API:
 
         return response
 
+    def _is_routing_middleware(self, middleware_cls) -> bool:
+        return hasattr(middleware_cls, 'dispatch')
+
     def add_middleware(self, middleware_cls, **kwargs):
-        self._base_middleware.add(middleware_cls, **kwargs)
+        if self._is_routing_middleware(middleware_cls):
+            self._routing_middleware.add(middleware_cls, **kwargs)
+        else:
+            self._common_middleware.add(middleware_cls, **kwargs)
 
     def _find_app(self, scope: dict) -> ASGIAppInstance:
         """Return an ASGI app depending on the scope's path."""
@@ -426,7 +432,7 @@ class API:
                 app = WsgiToAsgi(app)
                 return app(scope)
 
-        return self._base_middleware(scope)
+        return self._common_middleware(scope)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
         return self._find_app(scope)

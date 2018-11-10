@@ -159,6 +159,16 @@ or passing the --debug flag to uvicorn:
 uvicorn myapp:api --debug
 ```
 
+#### Configuring allowed hosts
+
+By default, a Bocadillo API can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
+
+```python
+api = bocadillo.API(allowed_hosts=['mysite.com'])
+```
+
+If a non-allowed host is used, all requests will return a 400 error.
+
 ### Views
 
 In Bocadillo, views are functions that take at least a request and a response
@@ -672,6 +682,41 @@ def on_attribute_error(req, res, exc: AttributeError):
     res.media = {'error': {'attribute_not_found': exc.args[0]}}
 
 api.add_error_handler(AttributeError, on_attribute_error)
+```
+
+### Middleware
+
+> This feature is **experimental**; the middleware API may be subject to changes.
+
+Bocadillo provides a simple middleware architecture in the form of middleware classes.
+
+A middleware class acts as an intermediate between the ASGI layer and the Bocadillo API object. In fact, it implements the ASGI protocol itself.
+
+Bocadillo provides a high-level API for performing operations before and after a request is routed to the Bocadillo application: **routing middleware classes**.
+
+#### Custom routing middleware classes
+
+To define a custom routing middleware class, create a subclass of `bocadillo.RoutingMiddleware` and implement `.before_dispatch()` and `.after_dispatch()` as necessary:
+
+```python
+import bocadillo
+
+class PrintUrlMiddleware(bocadillo.RoutingMiddleware):
+
+    def before_dispatch(self, req):
+        print(req.url)
+    
+    def after_dispatch(self, req, res):
+        print(res.url)
+```
+
+**Note**: if needed, the underlying application (which is either another routing middleware or the `API` object) is available on the `.app` attribute.
+
+You can then register the middleware using `add_middleware()`:
+
+```python
+api = bocadillo.API()
+api.add_middleware(PrintUrlMiddleware)
 ```
 
 ### Testing

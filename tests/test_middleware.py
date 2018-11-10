@@ -1,27 +1,24 @@
 from bocadillo import API
-from bocadillo.middleware import Middleware
+from bocadillo.middleware import RoutingMiddleware
 
 
-def test_if_middleware_is_added_then_it_is_called(api: API):
+def test_if_routing_middleware_is_added_then_it_is_called(api: API):
     called = False
     params = {}
 
-    class SetCalled(Middleware):
+    class SetCalled(RoutingMiddleware):
 
         def __init__(self, app, **kwargs):
             super().__init__(app)
             self._kwargs = kwargs
 
-        def __call__(self, scope: dict):
-            instance = self.app(scope)
+        def before_dispatch(self, req):
+            nonlocal called
+            called = True
 
-            async def asgi(receive, send):
-                nonlocal called, params
-                called = True
-                params = self._kwargs
-                await instance(receive, send)
-
-            return asgi
+        def after_dispatch(self, req, res):
+            nonlocal params
+            params = self._kwargs
 
     api.add_middleware(SetCalled, foo='bar')
 
