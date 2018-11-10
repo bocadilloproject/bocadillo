@@ -33,6 +33,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [Templates](#templates)
     - [Static files](#static-files)
     - [Error handling](#error-handling)
+    - [Middleware](#middleware)
     - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
@@ -690,11 +691,11 @@ api.add_error_handler(AttributeError, on_attribute_error)
 
 Bocadillo provides a simple middleware architecture in the form of middleware classes.
 
-A middleware class acts as an intermediate between the ASGI layer and the Bocadillo API object. In fact, it implements the ASGI protocol itself.
+Middleware classes provide behavior for the entire application. They act as an intermediate between the ASGI layer and the Bocadillo API object. In fact, they implement the ASGI protocol themselves.
 
-Bocadillo provides a high-level API for performing operations before and after a request is routed to the Bocadillo application: **routing middleware classes**.
+#### Routing middleware
 
-#### Custom routing middleware classes
+**Routing middleware** is a high-level API for performing operations before and after a request is routed to the Bocadillo application.
 
 To define a custom routing middleware class, create a subclass of `bocadillo.RoutingMiddleware` and implement `.before_dispatch()` and `.after_dispatch()` as necessary:
 
@@ -710,7 +711,7 @@ class PrintUrlMiddleware(bocadillo.RoutingMiddleware):
         print(res.url)
 ```
 
-**Note**: if needed, the underlying application (which is either another routing middleware or the `API` object) is available on the `.app` attribute.
+**Note**: the underlying application (which is either another routing middleware or the `API` object) is available on the `.app` attribute.
 
 You can then register the middleware using `add_middleware()`:
 
