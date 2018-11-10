@@ -13,7 +13,7 @@ def test_if_middleware_is_added_then_it_is_called(api: API):
             self._kwargs = kwargs
 
         def __call__(self, scope: dict):
-            instance = self._app(scope)
+            instance = self.app(scope)
 
             async def asgi(receive, send):
                 nonlocal called, params

@@ -25,7 +25,7 @@ class Middleware:
     """Helper for defining Bocadillo middleware."""
 
     def __init__(self, app):
-        self._app = app
+        self.app = app
 
     def __call__(self, scope: dict):
         raise NotImplementedError
@@ -35,7 +35,7 @@ class BaseMiddleware(Middleware):
     """Base middleware upon which other middleware apps can be added."""
 
     def add(self, middleware_cls, **kwargs):
-        self._app = middleware_cls(self._app, **kwargs)
+        self.app = middleware_cls(self.app, **kwargs)
 
     def __call__(self, scope: dict):
-        return self._app(scope)
+        return self.app(scope)
