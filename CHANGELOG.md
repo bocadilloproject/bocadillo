@@ -21,6 +21,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 - Updated example app to demonstrate usage of redirects and named routes.
+- Responses without content do not send an empty JSON object response anymore. Instead, an empty `text/plain` response is sent.
+- Responses with 204 status code and no content do not set the `Content-Type` header anymore.
 
 ## [v0.3.1] - 2018-11-09
 
@@ -49,7 +51,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - The `res.content` attribute is now for raw response content, and will not set the `text/plain` content type anymore. Allows to send responses of arbitrary content type.
 - The default error handler now sends HTML content instead of plain text.
 
-## [v0.2.1] - 2018-04-11
+## [v0.2.1] - 2018-11-04
 
 ### Added
 

@@ -2,10 +2,23 @@ from bocadillo import API
 from tests.utils import RouteBuilder
 
 
-def test_if_nothing_set_then_response_is_empty_json_object(builder: RouteBuilder):
-    builder.function_based('/')
-    response = builder.api.client.get('/')
-    assert response.json() == {}
+def test_if_nothing_set_then_response_is_empty(api: API):
+    @api.route('/')
+    async def index(req, res):
+        pass
+
+    response = api.client.get('/')
+    assert not response.text
+
+
+def test_if_status_code_is_no_content_then_no_content_type_set(api: API):
+    @api.route('/')
+    async def index(req, res):
+        res.status_code = 204
+
+    response = api.client.get('/')
+    assert not response.text
+    assert response.headers.get('content-type') is None
 
 
 def test_content_type_defaults_to_plaintext(api: API):

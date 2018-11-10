@@ -26,6 +26,11 @@ def negate(req, res, x: int):
     res.media = {'result': -x}
 
 
+@api.route('/no-content')
+def no_content(req, res):
+    res.status_code = 204
+
+
 @api.route('/add/{x:d}/{y:d}')
 class AddView:
 

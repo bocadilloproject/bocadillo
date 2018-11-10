@@ -34,10 +34,8 @@ class Response:
         if self.status_code is None:
             self.status_code = 200
 
-        if self._content is None:
-            self.media = {}
-
-        self.headers.setdefault('Content-Type', 'text/plain')
+        if self.status_code != 204:
+            self.headers.setdefault('Content-Type', 'text/plain')
 
         response = _Response(
             content=self._content,
