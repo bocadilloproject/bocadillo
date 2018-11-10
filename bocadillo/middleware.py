@@ -21,11 +21,18 @@ class AppMiddleware:
         return asgi
 
 
-class BaseMiddleware:
-    """Base middleware upon which other middleware apps can be added."""
+class Middleware:
+    """Helper for defining Bocadillo middleware."""
 
     def __init__(self, app):
         self._app = app
+
+    def __call__(self, scope: dict):
+        raise NotImplementedError
+
+
+class BaseMiddleware(Middleware):
+    """Base middleware upon which other middleware apps can be added."""
 
     def add(self, middleware_cls, **kwargs):
         self._app = middleware_cls(self._app, **kwargs)

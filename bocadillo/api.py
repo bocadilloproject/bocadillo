@@ -16,7 +16,7 @@ from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .error_handlers import handle_http_error
 from .exceptions import HTTPError
-from .middlewares import BaseMiddleware, AppMiddleware
+from .middleware import BaseMiddleware, AppMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
