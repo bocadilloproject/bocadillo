@@ -35,3 +35,12 @@ def test_url_for_can_be_used_in_templates(api: API):
     response = api.client.get('/')
     assert response.status_code == 200
     assert response.text == '/about/me'
+
+
+def test_on_class_based_views(api: API):
+    @api.route('/about/{who}', name='about-someone')
+    class About:
+        pass
+
+    url = api.url_for('about-someone', who='Godzilla')
+    assert url == '/about/Godzilla'
