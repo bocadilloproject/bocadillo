@@ -2,8 +2,7 @@
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
-from typing import (Optional, Tuple, Type, List, Callable, Dict, Any, Union,
-                    Coroutine)
+from typing import (Optional, Tuple, Type, List, Dict, Any, Union, Coroutine)
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
@@ -16,7 +15,8 @@ from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
 from .constants import ALL_HTTP_METHODS
-from .error_handlers import handle_http_error
+from .cors import DEFAULT_CORS_CONFIG
+from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
@@ -26,13 +26,6 @@ from .route import Route
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
-
-ErrorHandler = Callable[[Request, Response, Exception], None]
-
-_DEFAULT_CORS_CONFIG = {
-    'allow_origins': [],
-    'allow_methods': ['GET'],
-}
 
 
 class API:
@@ -107,7 +100,7 @@ class API:
 
         if cors_config is None:
             cors_config = {}
-        self.cors_config = {**_DEFAULT_CORS_CONFIG, **cors_config}
+        self.cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
 
         # Middleware
         self._routing_middleware = RoutingMiddleware(self)
