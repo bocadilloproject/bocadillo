@@ -42,4 +42,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
+    entry_points='''
+        [console_scripts]
+        boca=bocadillo.cli:boca
+    ''',
 )
