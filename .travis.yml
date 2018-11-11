@@ -13,8 +13,7 @@ matrix:
       sudo: true
 
 install:
-  - pip install pipenv
-  - pipenv install --skip-lock  # don't use nor update Pipfile.lock
+  - pip install .
 
 script:
   - pytest
