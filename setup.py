@@ -18,7 +18,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['bocadillo'],
+    packages=['bocadillo', 'bocadillo.ext'],
     install_requires=[
         'starlette',
         'uvicorn',
