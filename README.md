@@ -37,7 +37,6 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [Middleware](#middleware)
     - [CORS](#cors)
     - [HSTS](#hsts)
-    - [Databases](#databases)
     - [CLI](#cli)
     - [Testing](#testing)
     - [Deployment](#deployment)
@@ -86,19 +85,11 @@ curl "http://localhost:8000/add/1/2"
 
 ## Install
 
-Bocadillo is available on PyPI:
+Bocadillo can be installed from source or from PyPI:
 
 ```bash
 pip install bocadillo
 ```
-
-### Extensions
-
-Bocadillo also provides a number of [setuptools](https://pypi.org/project/setuptools/) extensions. These can be used to install Bocadillo as well as the dependencies for a given feature.
-
-The following extensions are available:
-
-- `bocadillo[db]`: for using [Orator] and enabling databases features (see [Databases](#databases)).
 
 ## Usage
 
