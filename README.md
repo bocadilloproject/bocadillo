@@ -778,8 +778,6 @@ Bocadillo comes with `boca`, a handy CLI built with [Click](https://click.pallet
 
 #### Basic usage
 
-> For now, `boca` only has a `help` command. More to come!
-
 ```
 Usage: boca [OPTIONS] COMMAND [ARGS]...
 
@@ -787,7 +785,8 @@ Options:
   --help  Show this message and exit.
 
 Commands:
-  help  Show help.
+  help         Show help about boca.
+  init:custom  Generate files required to build custom commands.
 ```
 
 #### Registering extra commands
