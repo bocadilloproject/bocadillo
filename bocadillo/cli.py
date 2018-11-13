@@ -8,6 +8,9 @@ from .ext import click
 
 CUSTOM_COMMANDS_FILE_ENV_VAR = 'BOCA_CUSTOM_COMMANDS_FILE'
 
+def get_custom_commands_file_path():
+    return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, 'boca.py')
+
 
 class FileGroupCLI(click.MultiCommand):
     """Multi-command CLI that loads a group of commands from a file.
@@ -95,14 +98,14 @@ def create_cli() -> click.Command:
             # Write your @cli.command() functions below.\n
             '''
         ) + '\n'
-        path = str(pathlib.Path.cwd() / 'cli.py')
+        path = get_custom_commands_file_path()
         with open(path, 'w') as f:
             f.write(custom_commands_script_contents)
-        click.echo(click.style('Generated cli.py', fg='green'))
+        click.echo(click.style(f'Generated {path}', fg='green'))
         click.echo('Open the file and start building!')
 
     custom = FileGroupCLI(
-        file_name=os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, 'cli.py'),
+        file_name=get_custom_commands_file_path(),
     )
 
     # Builtins first to prevent override in custom commands.

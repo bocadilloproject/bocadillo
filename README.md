@@ -796,10 +796,10 @@ Commands:
 
 If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
 
-To do so, use the `init:custom` command, which will generate the following `cli.py` file:
+To do so, use the `init:custom` command, which will generate the following file:
 
 ```python
-# cli.py
+# boca.py
 """Custom Bocadillo commands.
 
 Use Click to build custom commands. For documentation, see:
@@ -816,12 +816,12 @@ def cli():
 
 ```
 
-The `cli` group will be picked up and its commands merged into `boca`, provided you are located at the same level than `cli.py`.
+The `cli` group will be picked up and its commands merged into `boca`, provided you are located at the same level than the custom commands script.
 
 For example, let's add a `boca hello` command:
 
 ```python
-# cli.py
+# boca.py
 @cli.command()
 def hello():
     """Show a friendly message."""
@@ -832,7 +832,7 @@ Now see it in action:
 
 ```
 $ ls
-app.py  cli.py
+app.py  boca.py
 $ boca hello --help
 Usage: boca hello [OPTIONS]
 
