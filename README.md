@@ -38,6 +38,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [CORS](#cors)
     - [HSTS](#hsts)
     - [Databases](#databases)
+    - [CLI] (#cli)
     - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
@@ -770,6 +771,46 @@ If you want enable [HTTP Strict Transport Security](https://developer.mozilla.or
 ```python
 api = bocadillo.API(enable_hsts=True)
 ```
+
+### CLI
+
+Bocadillo comes with `boca`, a handy CLI built with [Click](https://click.palletsprojects.com) for performing common tasks when working on Bocadillo apps.
+
+#### Basic usage
+
+> For now, `boca` only has a `help` command. More to come!
+
+```
+Usage: boca [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  help  Show help.
+```
+
+#### Registering extra commands
+
+> **Note**: this feature is experimental. Use with care!
+
+If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
+
+To do so, create a `cli.py` file at the project root based on this template:
+
+```python
+from bocadillo.ext import click
+
+@click.group()
+def cli():
+    pass
+```
+
+The `cli` group will be picked up and its commands merged into `boca`.
+
+> **Tip**: the name of the custom commands file can be customized by setting the `BOCA_CUSTOM_COMMANDS_FILE` environment variable.
+
+Of course, you can leverage Click's awesome features when building custom commands. See the [Click docs](https://click.palletsprojects.com) for more information.
 
 ### Testing
 
