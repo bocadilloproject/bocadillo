@@ -789,7 +789,7 @@ Commands:
   init:custom  Generate files required to build custom commands.
 ```
 
-#### Registering extra commands
+#### Custom commands
 
 > **Note**: this feature is experimental. Use with care!
 
