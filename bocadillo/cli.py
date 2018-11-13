@@ -1,8 +1,12 @@
 """Bocadillo CLI factory."""
 import os
+import pathlib
+from inspect import cleandoc
 from typing import List
 
 from .ext import click
+
+CUSTOM_COMMANDS_FILE_ENV_VAR = 'BOCA_CUSTOM_COMMANDS_FILE'
 
 
 class FileGroupCLI(click.MultiCommand):
@@ -66,14 +70,39 @@ def create_cli() -> click.Command:
     def builtin():
         pass
 
-    @builtin.command()
+    @builtin.command(name='help')
     @click.pass_context
-    def help(ctx):
-        """Show help."""
+    def help_(ctx):
+        """Show help about boca."""
         click.echo(ctx.parent.get_help())
 
+    @builtin.command(name='init:custom')
+    def init_custom():
+        """Generate files required to build custom commands."""
+        custom_commands_script_contents = cleandoc(
+            '''"""Custom Bocadillo commands.
+    
+            Use Click to build custom commands. For documentation, see:
+            https://click.palletsprojects.com
+            """
+            from bocadillo.ext import click
+    
+    
+            @click.group()
+            def cli():
+                pass
+    
+            # Write your @cli.command() functions below.\n
+            '''
+        ) + '\n'
+        path = str(pathlib.Path.cwd() / 'cli.py')
+        with open(path, 'w') as f:
+            f.write(custom_commands_script_contents)
+        click.echo(click.style('Generated cli.py', fg='green'))
+        click.echo('Open the file and start building!')
+
     custom = FileGroupCLI(
-        file_name=os.getenv('BOCA_CUSTOM_COMMANDS_FILE', 'cli.py'),
+        file_name=os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, 'cli.py'),
     )
 
     # Builtins first to prevent override in custom commands.
