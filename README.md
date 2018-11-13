@@ -796,23 +796,39 @@ Commands:
 
 If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
 
-To do so, create a `cli.py` file at the project root based on this template:
+To do so, use the `init:custom` command, which will generate the following `cli.py` file:
 
 ```python
+# cli.py
+"""Custom Bocadillo commands.
+
+Use Click to build custom commands. For documentation, see:
+https://click.palletsprojects.com
+"""
 from bocadillo.ext import click
+
 
 @click.group()
 def cli():
     pass
 
-# Example:
-@cli.command()
-def hello():
-    """Prints a friendly message."""
-    click.echo('Hi from a custom command!')
+# Write your @cli.command() functions below.
+
 ```
 
-The `cli` group will be picked up and its commands merged into `boca`, provided you are located at the same level than `cli.py`:
+The `cli` group will be picked up and its commands merged into `boca`, provided you are located at the same level than `cli.py`.
+
+For example, let's add a `boca hello` command:
+
+```python
+# cli.py
+@cli.command()
+def hello():
+    """Show a friendly message."""
+    click.echo('Hello from a custom command!')
+```
+
+Now see it in action:
 
 ```
 $ ls
@@ -820,7 +836,7 @@ app.py  cli.py
 $ boca hello --help
 Usage: boca hello [OPTIONS]
 
-  Prints a friendly message.
+  Show a friendly message.
 
 Options:
   --help  Show this message and exit.
