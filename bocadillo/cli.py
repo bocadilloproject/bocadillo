@@ -66,9 +66,11 @@ def create_cli() -> click.Command:
     def builtin():
         pass
 
-    # v TODO: define built-in commands below
-
-    # ^
+    @builtin.command()
+    @click.pass_context
+    def help(ctx):
+        """Show help."""
+        click.echo(ctx.parent.get_help())
 
     custom = FileGroupCLI(
         file_name=os.getenv('BOCA_CUSTOM_COMMANDS_FILE', 'cli.py'),
@@ -79,4 +81,4 @@ def create_cli() -> click.Command:
 
 
 # Exposed to the setup.py entry point
-boca = create_cli()
+cli = create_cli()
