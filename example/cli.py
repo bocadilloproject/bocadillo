@@ -6,7 +6,8 @@ def cli():
     pass
 
 
+# Example command:
 @cli.command()
-def hi():
-    """Show a friendly hello message."""
-    click.echo('Hi, there!')
+def hello():
+    """Prints a friendly message."""
+    click.echo('Hi from a custom command!')

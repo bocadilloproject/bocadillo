@@ -804,9 +804,30 @@ from bocadillo.ext import click
 @click.group()
 def cli():
     pass
+
+# Example:
+@cli.command()
+def hello():
+    """Prints a friendly message."""
+    click.echo('Hi from a custom command!')
 ```
 
-The `cli` group will be picked up and its commands merged into `boca`.
+The `cli` group will be picked up and its commands merged into `boca`, provided you are located at the same level than `cli.py`:
+
+```
+$ ls
+app.py  cli.py
+$ boca hello --help
+Usage: boca hello [OPTIONS]
+
+  Prints a friendly message.
+
+Options:
+  --help  Show this message and exit.
+
+$ boca hello
+Hi from a custom command!
+```
 
 > **Tip**: the name of the custom commands file can be customized by setting the `BOCA_CUSTOM_COMMANDS_FILE` environment variable.
 
