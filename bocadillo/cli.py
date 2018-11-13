@@ -1,12 +1,12 @@
 """Bocadillo CLI factory."""
 import os
-import pathlib
 from inspect import cleandoc
 from typing import List
 
 from .ext import click
 
 CUSTOM_COMMANDS_FILE_ENV_VAR = 'BOCA_CUSTOM_COMMANDS_FILE'
+
 
 def get_custom_commands_file_path():
     return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, 'boca.py')
@@ -80,7 +80,9 @@ def create_cli() -> click.Command:
         click.echo(ctx.parent.get_help())
 
     @builtin.command(name='init:custom')
-    def init_custom():
+    @click.option('-d', '--directory', default='',
+                  help='Where files should be generated.')
+    def init_custom(directory: str):
         """Generate files required to build custom commands."""
         custom_commands_script_contents = cleandoc(
             '''"""Custom Bocadillo commands.
@@ -98,7 +100,7 @@ def create_cli() -> click.Command:
             # Write your @cli.command() functions below.\n
             '''
         ) + '\n'
-        path = get_custom_commands_file_path()
+        path = os.path.join(directory, get_custom_commands_file_path())
         with open(path, 'w') as f:
             f.write(custom_commands_script_contents)
         click.echo(click.style(f'Generated {path}', fg='green'))
