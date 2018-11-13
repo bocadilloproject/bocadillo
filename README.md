@@ -38,7 +38,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
     - [CORS](#cors)
     - [HSTS](#hsts)
     - [Databases](#databases)
-    - [CLI] (#cli)
+    - [CLI](#cli)
     - [Testing](#testing)
     - [Deployment](#deployment)
 - [Contributing](#contributing)
