@@ -19,6 +19,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - *Experimental* support for routing middleware through `bocadillo.RoutingMiddleware`.
 - Add CORS support with restrictive defaults. Enable using `enable_cors = True`, configure through `cors_config`.
 - Add HSTS support through `enable_hsts`.
+- Add `boca`, Bocadillo's extensible CLI.
+- Add `init:custom` command to generate files for building custom Boca commands.
 
 ### Changed
 

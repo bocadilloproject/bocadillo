@@ -1,5 +1,4 @@
 from bocadillo import API
-from tests.utils import RouteBuilder
 
 
 def test_if_nothing_set_then_response_is_empty(api: API):
