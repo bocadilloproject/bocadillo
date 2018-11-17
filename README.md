@@ -101,4 +101,4 @@ To see what has already been implemented for the next release, see the [Unreleas
 [travis-url]: https://travis-ci.org/florimondmanca/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
 [Orator]: https://orator-orm.com
-[docs]: https://bocadillo.github.io
+[docs]: https://florimondmanca.github.io/bocadillo
