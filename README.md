@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/florimondmanca/bocadillo/blob/master/docs/bocadillo.png">
+    <img src="https://github.com/florimondmanca/bocadillo/blob/master/assets/bocadillo.png">
 </p>
 
 <p align="center">
