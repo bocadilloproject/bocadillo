@@ -12,7 +12,7 @@ with open('README.md', 'r') as readme:
 
 setuptools.setup(
     name='bocadillo',
-    version='0.4.0',
+    version='0.5.0',
     author='Florimond Manca',
     author_email='florimond.manca@gmail.com',
     description=description,
