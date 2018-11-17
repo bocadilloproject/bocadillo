@@ -1,0 +1,30 @@
+{
+  "name": "bocadillo",
+  "version": "0.4.0",
+  "description": "A modern Python web framework filled with asynchronous salsa",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/florimondmanca/bocadillo.git"
+  },
+  "keywords": [
+    "python",
+    "web",
+    "framework",
+    "asynchronous"
+  ],
+  "author": "Florimond Manca",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/florimondmanca/bocadillo/issues"
+  },
+  "homepage": "https://github.com/florimondmanca/bocadillo#readme"
+}
