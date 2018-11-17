@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/florimondmanca/bocadillo.git"
+    "url": "git+https://github.com/bocadilloproject/bocadillo.git"
   },
   "keywords": [
     "python",
@@ -26,9 +26,9 @@
   "author": "Florimond Manca",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/florimondmanca/bocadillo/issues"
+    "url": "https://github.com/bocadilloproject/bocadillo/issues"
   },
-  "homepage": "https://github.com/florimondmanca/bocadillo#readme",
+  "homepage": "https://github.com/bocadilloproject/bocadillo#readme",
   "devDependencies": {
     "vuepress": "^0.14.5"
   }

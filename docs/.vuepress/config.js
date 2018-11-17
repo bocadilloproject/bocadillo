@@ -8,7 +8,7 @@ module.exports = {
         ['meta', {name: 'twitter:card', content: 'summary'}],
         ['meta', {
             name: 'twitter:url',
-            content: 'https://florimondmanca.github.io/bocadillo'
+            content: 'https://bocadillo.github.io'
         }],
         ['meta', {name: 'twitter:site', content: 'Bocadillo'}],
         ['meta', {name: 'twitter:creator', content: 'Florimond Manca'}],
@@ -19,11 +19,11 @@ module.exports = {
         }],
         ['meta', {
             name: 'twitter:image',
-            content: 'https://florimondmanca.github.io/bocadillo/social-image.png'
+            content: 'https://bocadilloproject.github.io/social-image.png'
         }],
     ],
     themeConfig: {
-        repo: 'florimondmanca/bocadillo',
+        repo: 'bocadilloproject/bocadillo',
         docsDir: 'docs',
         docsBranch: 'release/docs',
         editLinks: true,
@@ -39,7 +39,7 @@ module.exports = {
             },
             {
                 text: 'Changelog',
-                link: 'https://github.com/florimondmanca/bocadillo/blob/master/CHANGELOG.md',
+                link: 'https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md',
             },
             {
                 text: 'PyPI',

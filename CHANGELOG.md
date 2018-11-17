@@ -96,8 +96,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/florimondmanca/bocadillo/compare/v0.4.0...HEAD
-[v0.4.0]: https://github.com/florimondmanca/bocadillo/compare/v0.3.1...v0.4.0
-[v0.3.1]: https://github.com/florimondmanca/bocadillo/compare/v0.3.0...v0.3.1
-[v0.3.0]: https://github.com/florimondmanca/bocadillo/compare/v0.2.1.post3...v0.3.0
-[v0.2.1]: https://github.com/florimondmanca/bocadillo/compare/v0.1.0...v0.2.1.post3
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.1...v0.4.0
+[v0.3.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.0...v0.3.1
+[v0.3.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.2.1.post3...v0.3.0
+[v0.2.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.1.0...v0.2.1.post3

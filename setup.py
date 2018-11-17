@@ -28,7 +28,7 @@ setuptools.setup(
         'requests',
         'parse',
     ],
-    url='https://github.com/florimondmanca/bocadillo',
+    url='https://github.com/bocadilloproject/bocadillo',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',

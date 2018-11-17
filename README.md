@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/florimondmanca/bocadillo/blob/master/docs/.vuepress/public/banner.png">
+    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/docs/.vuepress/public/banner.png">
 </p>
 
 <p align="center">
@@ -8,7 +8,7 @@
 
 ---
 
-[![travis](https://img.shields.io/travis-ci/florimondmanca/bocadillo.svg)][travis-url]
+[![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
 [![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
 [![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
@@ -67,20 +67,20 @@ Hungry for more? Head to the [docs].
 
 ## Contributing
 
-See [CONTRIBUTING](https://github.com/florimondmanca/bocadillo/blob/master/CONTRIBUTING.md) for contribution guidelines.
+See [CONTRIBUTING](https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md) for contribution guidelines.
 
 ## Changelog
 
-See [CHANGELOG](https://github.com/florimondmanca/bocadillo/blob/master/CHANGELOG.md) for a chronological log of changes to Bocadillo.
+See [CHANGELOG](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md) for a chronological log of changes to Bocadillo.
 
 ## Roadmap
 
-To see what has already been implemented for the next release, see the [Unreleased](https://github.com/florimondmanca/bocadillo/blob/master/CHANGELOG.md#unreleased) section of our changelog.
+To see what has already been implemented for the next release, see the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section of our changelog.
 
 <!-- URLs -->
 
-[travis-url]: https://travis-ci.org/florimondmanca/bocadillo
+[travis-url]: https://travis-ci.org/bocadillo/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
 [Orator]: https://orator-orm.com
-[docs]: https://florimondmanca.github.io/bocadillo
+[docs]: https://bocadilloproject.github.io
