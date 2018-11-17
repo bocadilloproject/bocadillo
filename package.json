@@ -2,13 +2,15 @@
   "name": "bocadillo",
   "version": "0.4.0",
   "description": "A modern Python web framework filled with asynchronous salsa",
-  "main": "index.js",
   "directories": {
     "doc": "docs",
     "example": "example",
     "test": "tests"
   },
   "scripts": {
+    "start": "npm run docs:dev",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/florimondmanca/bocadillo/issues"
   },
-  "homepage": "https://github.com/florimondmanca/bocadillo#readme"
+  "homepage": "https://github.com/florimondmanca/bocadillo#readme",
+  "devDependencies": {
+    "vuepress": "^0.14.5"
+  }
 }
