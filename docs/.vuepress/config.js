@@ -1,7 +1,7 @@
 module.exports = {
     base: '/bocadillo/',
     title: 'Bocadillo',
-    description: 'A modern Python web framework filled with asynchronous salsa',
+    description: 'A modern Python web framework filled with asynchronous cheddar',
     themeConfig: {
         nav: [
             {

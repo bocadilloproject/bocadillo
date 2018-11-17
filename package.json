@@ -1,7 +1,7 @@
 {
   "name": "bocadillo",
   "version": "0.4.0",
-  "description": "A modern Python web framework filled with asynchronous salsa",
+  "description": "A modern Python web framework filled with asynchronous cheddar",
   "directories": {
     "doc": "docs",
     "example": "example",
