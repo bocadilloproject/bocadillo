@@ -7,6 +7,7 @@ cache: pip
 jobs:
   include:
     - stage: test
+      if: branch != docs
       language: python
       cache: pip
       python: "3.6"
@@ -14,6 +15,7 @@ jobs:
       script: pytest
 
     - stage: test
+      if: branch != docs
       language: python
       # Python 3.7 still not available in usual distro
       sudo: required
@@ -39,6 +41,7 @@ jobs:
           branch: docs
 
     - stage: deploy to test pypi
+      if: branch = release/test
       script: skip
       deploy:
         - provider: pypi
@@ -50,6 +53,7 @@ jobs:
             branch: release/test
 
     - stage: deploy to pypi
+      if: tag = true
       script: skip
       deploy:
         - provider: pypi
