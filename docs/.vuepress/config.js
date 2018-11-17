@@ -1,7 +1,7 @@
 module.exports = {
     base: '/bocadillo/',
     title: 'Bocadillo',
-    description: 'A modern Python web framework filled with asynchronous cheddar',
+    description: 'A modern Python web framework filled with asynchronous salsa',
     lastUpdated: true,
     themeConfig: {
         repo: 'florimondmanca/bocadillo',

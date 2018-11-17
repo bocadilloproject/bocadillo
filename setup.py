@@ -3,7 +3,7 @@
 import setuptools
 
 description = (
-    'A modern Python web framework filled with asynchronous cheddar.'
+    'A modern Python web framework filled with asynchronous salsa.'
 )
 
 with open('README.md', 'r') as readme:
