@@ -6,3 +6,4 @@ __pycache__/
 .env
 *.db
 node_modules/
+# docs/.vuepress/dist
