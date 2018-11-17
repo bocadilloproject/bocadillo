@@ -28,8 +28,14 @@ module.exports = {
         ],
         sidebar: [
             '/guide/',
-            '/guide/installation',
-            '/guide/tutorial',
+            {
+                title: 'Getting Started',
+                collapsable: false,
+                children: [
+                    '/guide/installation',
+                    '/guide/tutorial',
+                ],
+            },
             {
                 title: 'Topics',
                 collapsable: false,
