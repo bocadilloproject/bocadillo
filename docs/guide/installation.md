@@ -64,7 +64,3 @@ python -c "import bocadillo; print(bocadillo.__version__)"
 ```
 
 Note that you may have another version of Bocadillo installed.
-
-## That's it!
-
-Well done — Bocadillo is now installed!
