@@ -54,7 +54,7 @@ jobs:
             branch: release/test
 
     - stage: deploy to pypi
-      if: tag = true
+      if: tag IS present
       script: skip
       deploy:
         - provider: pypi
