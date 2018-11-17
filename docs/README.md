@@ -18,8 +18,6 @@ features:
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 ---
 
-<StarButton repo="florimondmanca/bocadillo"/>
-
 ## Get started
 
 Install it:
