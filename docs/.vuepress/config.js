@@ -6,6 +6,7 @@ module.exports = {
         repo: 'florimondmanca/bocadillo',
         docsBranch: 'docs',
         editLinks: true,
+        editLinkText: 'Edit this page on GitHub',
         nav: [
             {
                 text: 'Home',
@@ -21,11 +22,11 @@ module.exports = {
             },
             {
                 text: 'PyPI',
-                link: 'https://pypi.org/project/bocadillo',
+                link: 'https://pypi.org/project/bocadillo/',
             },
         ],
         sidebar: [
-            ['/guide/', 'Getting started'],
+            '/guide/',
             '/guide/installation',
             {
                 title: 'Usage',
