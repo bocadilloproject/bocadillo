@@ -1,3 +1,3 @@
-# Introduction
+# Getting started
 
 > TODO
