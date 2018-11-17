@@ -79,7 +79,7 @@ To see what has already been implemented for the next release, see the [Unreleas
 
 <!-- URLs -->
 
-[travis-url]: https://travis-ci.org/bocadillo/bocadillo
+[travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
 [Orator]: https://orator-orm.com
