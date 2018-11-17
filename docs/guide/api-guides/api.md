@@ -1,4 +1,4 @@
-# API
+# The API object
 
 The main object you'll manipulate in Bocadillo is the `API`  object, an
 ASGI-compliant application.

@@ -1,4 +1,4 @@
-# CLI
+# Using the CLI
 
 Bocadillo comes with `boca`, a handy CLI built with [Click](https://click.palletsprojects.com) for performing common tasks when working on Bocadillo apps.
 
