@@ -12,6 +12,11 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Add `boca`, Bocadillo's extensible CLI.
 - Add `init:custom` command to generate files for building custom Boca commands.
+- Add VuePress-powered documentation site.
+
+### Changed
+
+- Moved docs from README.md to docs site.
 
 ## [v0.4.0] - 2018-11-10
 
