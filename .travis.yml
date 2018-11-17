@@ -1,49 +1,22 @@
-language: python
-
-cache: pip
-
-python:
-  - "3.6"
-
-matrix:
-  include:
-    # Python 3.7 still not available in usual distro
-    - python: "3.7"
-      dist: xenial
-      sudo: true
-
-install:
-  - pip install .
-
-script:
-  - pytest
-
-before_deploy:
-  # PyPI deploy fails if there are unstaged changes
-  - git checkout -- .
-
-deploy:
-  - provider: pypi
-    distributions: "sdist bdist_wheel"
-    username: $PYPI_USERNAME
-    password: $PYPI_PASSWORD
-    on:
-      tags: true
-      python: "3.7"
-  - provider: pypi
-    distributions: "sdist bdist_wheel"
-    username: $TEST_PYPI_USERNAME
-    password: $TEST_PYPI_PASSWORD
-    server: https://test.pypi.org/legacy/
-    on:
-      branch: release/test
-      python: "3.7"
-
 jobs:
   include:
-    - stage: docs
+    - stage: test
+      language: python
+      cache: pip
+      python: "3.6"
+      matrix:
+        include:
+        # Python 3.7 still not available in usual distro
+        - python: "3.7"
+          dist: xenial
+          sudo: true
+      install: pip install .
+      script: pytest
+
+    - stage: build and deploy docs
       if: branch = docs
-      node_js: node
+      language: node
+      node_js: "8"
       install: npm install
       script: npm run docs:build
       deploy:
@@ -52,3 +25,24 @@ jobs:
         github-token: $GITHUB_TOKEN
         keep-history: true
         local-dir: docs/.vuepress/dist
+
+    - stage: deploy to test pypi
+      script: skip
+      deploy:
+        - provider: pypi
+          distributions: "sdist bdist_wheel"
+          username: $TEST_PYPI_USERNAME
+          password: $TEST_PYPI_PASSWORD
+          server: https://test.pypi.org/legacy/
+          on:
+            branch: release/test
+
+    - stage: deploy to pypi
+      script: skip
+      deploy:
+        - provider: pypi
+          distributions: "sdist bdist_wheel"
+          username: $PYPI_USERNAME
+          password: $PYPI_PASSWORD
+          on:
+            tags: true
