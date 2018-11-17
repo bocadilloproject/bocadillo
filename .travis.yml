@@ -38,3 +38,17 @@ deploy:
     on:
       branch: release/test
       python: "3.7"
+
+jobs:
+  include:
+    - stage: docs
+      if: branch IN (release/docs, feature/docs)
+      node_js: node
+      install: npm install
+      script: npm run docs:build
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github-token: $GITHUB_TOKEN
+        keep-history: true
+        local-dir: docs/.vuepress/dist
