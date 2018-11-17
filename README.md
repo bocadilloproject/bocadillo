@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <em>A modern Python web framework filled with asynchronous salsa.</em>
+    <em>A modern Python web framework filled with asynchronous cheddar.</em>
 </p>
 
 ---
