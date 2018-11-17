@@ -33,8 +33,10 @@ jobs:
         provider: pages
         skip_cleanup: true
         github-token: $GITHUB_TOKEN
-        keep-history: true
+        target-branch: gh-pages
         local-dir: docs/.vuepress/dist
+        on:
+          branch: docs
 
     - stage: deploy to test pypi
       script: skip
