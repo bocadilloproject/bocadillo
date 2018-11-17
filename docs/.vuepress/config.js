@@ -3,6 +3,9 @@ module.exports = {
     title: 'Bocadillo',
     description: 'A modern Python web framework filled with asynchronous cheddar',
     themeConfig: {
+        repo: 'florimondmanca/bocadillo',
+        docsBranch: 'docs',
+        editLinks: true,
         nav: [
             {
                 text: 'Home',
@@ -19,10 +22,6 @@ module.exports = {
             {
                 text: 'PyPI',
                 link: 'https://pypi.org/project/bocadillo',
-            },
-            {
-                text: 'GitHub',
-                link: 'https://github.com/florimondmanca/bocadillo',
             },
         ],
         sidebar: [
