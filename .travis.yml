@@ -42,7 +42,7 @@ deploy:
 jobs:
   include:
     - stage: docs
-      if: branch IN (release/docs, feature/docs)
+      if: branch = docs
       node_js: node
       install: npm install
       script: npm run docs:build
