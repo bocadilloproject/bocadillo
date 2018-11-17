@@ -3,6 +3,8 @@
 Welcome to Bocadillo's documentation!
 
 We recommend you read this quick introduction before you get started with Bocadillo. It will hopefully answer some of your questions about the purpose and goals of Bocadillo.
+ 
+That said, if you want to jump right in, feel free to skip to the [Installation guide](installation.md).
 
 ## What is Bocadillo?
 

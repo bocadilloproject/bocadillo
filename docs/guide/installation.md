@@ -8,9 +8,11 @@ Bocadillo being a Python web framework, it requires you to have Python installed
 
 You can download the latest Python version on [python.org](https://www.python.org/downloads/) or with your OS's package manager.
 
-::: tip COMPATIBILITY NOTE
+::: warning COMPATIBILITY NOTE
 Bocadillo is compatible with **Python 3.6 and above**.
+:::
 
+::: tip NOTE
 In the rest of the documentation, we will use `python` to refer to your Python executable. You may need to use `python3` depending on your operating system.
 :::
 
