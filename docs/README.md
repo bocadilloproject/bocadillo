@@ -1,6 +1,5 @@
 ---
 home: true
-heroImage: /icon-512x512.png
 actionText: Get Started →
 actionLink: /guide/
 features:
@@ -18,6 +17,8 @@ features:
   details: Ever used Django, Flask or Falcon? You'll feel comfortable here.
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 ---
+
+<StarButton repo="florimondmanca/bocadillo"/>
 
 ## Get started
 

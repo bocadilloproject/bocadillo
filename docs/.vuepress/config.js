@@ -2,6 +2,7 @@ module.exports = {
     base: '/bocadillo/',
     title: 'Bocadillo',
     description: 'A modern Python web framework filled with asynchronous cheddar',
+    lastUpdated: true,
     themeConfig: {
         repo: 'florimondmanca/bocadillo',
         docsBranch: 'docs',
@@ -50,10 +51,5 @@ module.exports = {
                 ],
             },
         ],
-    },
-    markdown: {
-        toc: {
-            includeLevel: [1, 2],
-        },
     },
 };
