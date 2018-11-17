@@ -1,5 +1,5 @@
 module.exports = {
-    base: '/bocadillo/',
+    base: '/',
     title: 'Bocadillo',
     description: 'A modern Python web framework filled with asynchronous salsa',
     lastUpdated: true,
