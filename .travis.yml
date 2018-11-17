@@ -1,18 +1,19 @@
+language: python
+
+python: "3.6"
+
+matrix:
+  include:
+    - python: "3.7"
+      dist: xenial
+      sudo: required
+
+install: pip install .
+
+script: pytest
+
 jobs:
   include:
-    - stage: test
-      language: python
-      cache: pip
-      python: "3.6"
-      matrix:
-        include:
-        # Python 3.7 still not available in usual distro
-        - python: "3.7"
-          dist: xenial
-          sudo: true
-      install: pip install .
-      script: pytest
-
     - stage: build and deploy docs
       if: branch = docs
       language: node
