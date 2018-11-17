@@ -36,7 +36,7 @@ jobs:
         skip_cleanup: true
         repo: bocadilloproject/bocadilloproject.github.io
         github-token: $GITHUB_TOKEN
-        target-branch: gh-pages
+        target-branch: master
         local-dir: docs/.vuepress/dist
         on:
           branch: release/docs
