@@ -5,7 +5,7 @@ module.exports = {
     lastUpdated: true,
     head: [
         // Twitter card meta tags
-        ['meta', {name: 'twitter:card', content: 'website'}],
+        ['meta', {name: 'twitter:card', content: 'summary'}],
         ['meta', {
             name: 'twitter:url',
             content: 'https://florimondmanca.github.io/bocadillo'
