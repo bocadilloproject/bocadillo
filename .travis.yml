@@ -7,7 +7,7 @@ cache: pip
 jobs:
   include:
     - stage: test
-      if: branch != docs
+      if: branch != release/docs
       language: python
       cache: pip
       python: "3.6"
@@ -15,7 +15,7 @@ jobs:
       script: pytest
 
     - stage: test
-      if: branch != docs
+      if: branch != release/docs
       language: python
       # Python 3.7 still not available in usual distro
       sudo: required
@@ -25,7 +25,7 @@ jobs:
       script: pytest
 
     - stage: build and deploy docs
-      if: branch = docs
+      if: branch = release/docs
       before_install:
         - nvm install 8
         - nvm use 8
@@ -38,7 +38,7 @@ jobs:
         target-branch: gh-pages
         local-dir: docs/.vuepress/dist
         on:
-          branch: docs
+          branch: release/docs
 
     - stage: deploy to test pypi
       if: branch = release/test

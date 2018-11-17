@@ -24,7 +24,8 @@ module.exports = {
     ],
     themeConfig: {
         repo: 'florimondmanca/bocadillo',
-        docsBranch: 'docs',
+        docsDir: 'docs',
+        docsBranch: 'release/docs',
         editLinks: true,
         editLinkText: 'Edit this page on GitHub',
         nav: [
