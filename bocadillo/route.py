@@ -5,6 +5,7 @@ from typing import Optional, List
 from asgiref.sync import sync_to_async
 from parse import parse
 
+from bocadillo.hooks import HookFunction
 from .exceptions import HTTPError
 from .view import View, CallableView
 
@@ -22,13 +23,18 @@ class Route:
                  name: str):
         self._pattern = pattern
         self._view_is_class = inspect.isclass(view)
+
         if self._view_is_class:
             view = view()
         elif not inspect.iscoroutinefunction(view):
             view = sync_to_async(view)
+
         self._view = view
         self._methods = methods
         self._name = name
+
+        self.before = None
+        self.after = None
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
@@ -49,6 +55,29 @@ class Route:
         if result is not None:
             return result.named
         return None
+
+    @classmethod
+    def before_hook(cls, hook_function: HookFunction, *args):
+        return cls._add_hook('before', hook_function, *args)
+
+    @classmethod
+    def after_hook(cls, hook_function: HookFunction, *args):
+        return cls._add_hook('after', hook_function, *args)
+
+    @staticmethod
+    def _add_hook(hook: str, hook_function: HookFunction, *args):
+        def decorator(route):
+            nonlocal hook_function
+            if args:
+                full_hook_function = hook_function
+
+                def hook_function(req, res, view, params):
+                    return full_hook_function(req, res, view, params, *args)
+
+            setattr(route, hook, hook_function)
+            return route
+
+        return decorator
 
     def _find_view(self, request) -> CallableView:
         """Find a view able to handle the request.
@@ -76,4 +105,11 @@ class Route:
 
     async def __call__(self, request, response, **kwargs) -> None:
         view = self._find_view(request)
+
+        if self.before is not None:
+            self.before(request, response, view, kwargs)
+
         await view(request, response, **kwargs)
+
+        if self.after is not None:
+            self.after(request, response, view, kwargs)

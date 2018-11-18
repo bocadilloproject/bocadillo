@@ -13,6 +13,7 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
+from bocadillo.hooks import HookFunction
 from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
@@ -219,6 +220,14 @@ class API:
             return route
 
         return wrapper
+
+    @staticmethod
+    def before(hook_function: HookFunction, *args):
+        """Register a before hook on a route.
+
+        Note: @api.before() must be above @api.route().
+        """
+        return Route.before_hook(hook_function, *args)
 
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""
