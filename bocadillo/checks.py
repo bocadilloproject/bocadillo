@@ -10,25 +10,26 @@ from .view import get_declared_method_views, View, get_view_name
 
 def check_route(pattern: str, view: View, methods: List[str]) -> None:
     """Check compatibility of a route pattern and a view."""
-    _check_methods(view, methods)
-    _check_route_pattern(pattern, view)
+    view_name = get_view_name(view)
+    _check_methods(methods, view_name)
+    _check_route_pattern(pattern, view_name)
     _check_route_parameters(pattern, view)
 
 
-def _check_methods(view: View, methods: List[str]) -> None:
+def _check_methods(methods: List[str], view_name: str) -> None:
     for method in methods:
         if method not in ALL_HTTP_METHODS:
             raise RouteDeclarationError(
-                f'Route "{view.__name__}" accepts method "{method}" '
+                f'Route "{view_name}" accepts method "{method}" '
                 'but it is not one of the valid HTTP methods: '
                 f'{", ".join(ALL_HTTP_METHODS)}'
             )
 
 
-def _check_route_pattern(pattern: str, view: View) -> None:
+def _check_route_pattern(pattern: str, view_name: str) -> None:
     if not pattern.startswith('/'):
         raise RouteDeclarationError(
-            f'Route pattern "{pattern}" on view "{view.__name__}" '
+            f'Route pattern "{pattern}" on view "{view_name}" '
             f'must start with "/" to avoid ambiguities.'
         )
 
@@ -46,11 +47,7 @@ def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
     parsed_format = Formatter().parse(pattern)
     route_parameters: set = {name for _, name, _, _ in parsed_format if name}
 
-    if inspect.isclass(view):
-        views = get_declared_method_views(view)
-        for method_view in views:
-            _check_route_parameters(pattern, method_view, _base=view)
-    else:
+    if callable(view):
         view_name = get_view_name(view=view, base=_base)
         view_parameters = dict(inspect.signature(view).parameters)
 
@@ -81,3 +78,6 @@ def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
                     f'"{view_name}" but was not declared in the '
                     'route pattern.'
                 )
+    else:
+        for method, method_view in get_declared_method_views(view):
+            _check_route_parameters(pattern, method_view, _base=view)
