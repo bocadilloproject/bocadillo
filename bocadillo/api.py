@@ -229,6 +229,14 @@ class API:
         """
         return Route.before_hook(hook_function, *args)
 
+    @staticmethod
+    def after(hook_function: HookFunction, *args):
+        """Register an after hook on a route.
+
+        Note: @api.after() must be above @api.route().
+        """
+        return Route.after_hook(hook_function, *args)
+
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""
         for pattern, route in self._routes.items():
