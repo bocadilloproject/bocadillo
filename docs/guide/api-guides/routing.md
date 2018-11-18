@@ -91,3 +91,66 @@ async def index(req, res):
 **Note**: the `methods` argument is ignored on class-based views.
 You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
+
+## Route hooks
+
+Hooks allows you to call arbitrary code before and after a view is executed. They materialize as the `api.before()` and `api.after()` decorators.
+
+```python
+from bocadillo.exceptions import HTTPError
+
+def validate_has_my_header(req, res, view, params):
+    if 'x-my-header' not in req.headers:
+        raise HTTPError(400)
+
+@api.before(validate_has_my_header)
+@api.route('/foo')
+async def foo(req, res):
+    pass
+```
+
+::: warning
+Always position `@api.before()` or `@api.after()` above the `@api.route()` decorator.
+:::
+
+As a first level of reusability, you can pass extra arguments for the hook function directly to `before()` and `after()`:
+
+```python
+def validate_has_header(req, res, view, params, header):
+    if header not in req.headers:
+        raise HTTPError(400)
+
+@api.before(validate_has_header, 'x-my-header')
+@api.route('/foo')
+async def foo(req, res):
+    pass
+```
+
+A hook function only just needs to be a callable, so it can be a class that implements `__call__()` too. This is very convenient for building reusable hook functions:
+
+```python
+class RequestHasHeader:
+    
+    def __init__(self, header):
+        self.header = header
+       
+    def __call__(self, req, res, view, params):
+        if self.header not in req.headers:
+            raise HTTPError(400)
+
+@api.before(RequestHasHeader('x-my-header'))
+@api.route('/foo')
+async def foo(req, res):
+    pass
+```
+
+You can, of course, use before and after hooks on class-based views too:
+
+```python
+@api.route('/')
+class Foo:
+
+    @api.before(RequestHasHeader('x-my-header'))
+    async def get(self, req, res):
+        pass
+```

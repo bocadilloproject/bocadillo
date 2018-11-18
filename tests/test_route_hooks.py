@@ -50,3 +50,27 @@ def test_can_pass_extra_args(api: API):
     api.client.get('/foo')
     assert before_called
     assert after_called
+
+
+def test_hook_can_be_callable_class(api: API):
+    flags = {'before': False, 'after': False}
+
+    class SetFlag:
+
+        def __init__(self, flag, value):
+            self.flag = flag
+            self.value = value
+
+        def __call__(self, req, res, view, params):
+            nonlocal flags
+            flags[self.flag] = self.value
+
+    @api.before(SetFlag('before', True))
+    @api.after(SetFlag('after', True))
+    @api.route('/foo')
+    async def foo(req, res):
+        pass
+
+    api.client.get('/foo')
+    assert flags['before']
+    assert flags['after']
