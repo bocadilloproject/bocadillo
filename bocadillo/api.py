@@ -14,12 +14,12 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
-from bocadillo.hooks import HookFunction
 from .checks import check_route
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
+from .hooks import HookFunction
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
