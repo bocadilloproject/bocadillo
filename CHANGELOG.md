@@ -8,6 +8,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Route hooks via `@api.before()` and `@api.after()`.
+
 ## [v0.5.0] - 2018-11-18
 
 ### Added
