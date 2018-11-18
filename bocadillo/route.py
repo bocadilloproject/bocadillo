@@ -5,7 +5,7 @@ from typing import Optional, List
 from asgiref.sync import sync_to_async
 from parse import parse
 
-from bocadillo.exceptions import HTTPError
+from .exceptions import HTTPError
 from .view import View, CallableView
 
 
@@ -29,10 +29,6 @@ class Route:
         self._view = view
         self._methods = methods
         self._name = name
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
@@ -81,7 +77,3 @@ class Route:
     async def __call__(self, request, response, **kwargs) -> None:
         view = self._find_view(request)
         await view(request, response, **kwargs)
-
-    @property
-    def name(self) -> str:
-        return self._view.__name__
