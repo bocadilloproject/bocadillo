@@ -1,4 +1,5 @@
 """The Bocadillo API class."""
+import inspect
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
@@ -204,6 +205,8 @@ class API:
         methods = [method.upper() for method in methods]
 
         def wrapper(view):
+            if inspect.isclass(view):
+                view = view()
             check_route(pattern, view, methods)
             route = Route(
                 pattern=pattern,
