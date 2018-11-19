@@ -59,4 +59,4 @@ curl http://localhost:8000/greet/Bocadillo
 {"message": "Hi, Bocadillo!"}
 ```
 
-Hungry for more? Read the [guide](/guide/).
+Hungry for more? [Read the guide](/guide/) to get started.
