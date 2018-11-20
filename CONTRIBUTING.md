@@ -10,7 +10,7 @@ To get started, you should only need to install NPM dependencies (`npm install`)
 
 All documentation lives in the `docs/guide/` directory. It is structured as follows:
 
-- `api-guides`: technical reference for Bocadillo's machinery; describes how it works and how to use it, assuming a basic understanding of the key concpets.
+- `api-guides`: technical reference for Bocadillo's machinery; describes how it works and how to use it, assuming a basic understanding of the key concepts.
 - `topics`: discuss key topics and concepts at a fairly high level, while providing useful information and background. For example: 'Working with JSON data'.
 - `how-to`: recipes for solving common problems. For example: 'Deploying Bocadillo apps' or 'Writing custom CLI commands'.
 
