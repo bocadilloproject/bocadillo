@@ -1,4 +1,5 @@
 """The Bocadillo API class."""
+import inspect
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
@@ -18,6 +19,7 @@ from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
+from .hooks import HookFunction
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
@@ -204,6 +206,8 @@ class API:
         methods = [method.upper() for method in methods]
 
         def wrapper(view):
+            if inspect.isclass(view):
+                view = view()
             check_route(pattern, view, methods)
             route = Route(
                 pattern=pattern,
@@ -219,6 +223,22 @@ class API:
             return route
 
         return wrapper
+
+    @staticmethod
+    def before(hook_function: HookFunction, *args, **kwargs):
+        """Register a before hook on a route.
+
+        Note: @api.before() must be above @api.route().
+        """
+        return Route.before_hook(hook_function, *args, **kwargs)
+
+    @staticmethod
+    def after(hook_function: HookFunction, *args, **kwargs):
+        """Register an after hook on a route.
+
+        Note: @api.after() must be above @api.route().
+        """
+        return Route.after_hook(hook_function, *args, **kwargs)
 
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""

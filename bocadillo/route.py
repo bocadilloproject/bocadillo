@@ -1,12 +1,12 @@
-import inspect
-from http import HTTPStatus
-from typing import Optional, List
+from collections import defaultdict
+from functools import wraps
+from typing import Optional, List, Union, Callable, Dict
 
-from asgiref.sync import sync_to_async
 from parse import parse
 
-from .exceptions import HTTPError
-from .view import View, CallableView
+from .compat import call_async
+from .hooks import HookFunction, BEFORE, AFTER, empty_hook
+from .view import View, create_callable_view
 
 
 class Route:
@@ -21,14 +21,12 @@ class Route:
                  methods: List[str],
                  name: str):
         self._pattern = pattern
-        self._view_is_class = inspect.isclass(view)
-        if self._view_is_class:
-            view = view()
-        elif not inspect.iscoroutinefunction(view):
-            view = sync_to_async(view)
-        self._view = view
+
+        self._view = create_callable_view(view=view, methods=methods)
         self._methods = methods
         self._name = name
+
+        self.hooks: Dict[str, HookFunction] = defaultdict(lambda: empty_hook)
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
@@ -50,30 +48,57 @@ class Route:
             return result.named
         return None
 
-    def _find_view(self, request) -> CallableView:
-        """Find a view able to handle the request.
+    @classmethod
+    def before_hook(cls, hook_function: HookFunction, *args, **kwargs):
+        return cls._add_hook(BEFORE, hook_function, *args, **kwargs)
 
-        Supports both function-based views and class-based views.
-        """
-        not_allowed_error = HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
+    @classmethod
+    def after_hook(cls, hook_function: HookFunction, *args, **kwargs):
+        return cls._add_hook(AFTER, hook_function, *args, **kwargs)
 
-        if self._view_is_class:
-            if hasattr(self._view, 'handle'):
-                view: CallableView = self._view.handle
+    @staticmethod
+    def _add_hook(hook: str, hook_function: HookFunction, *args, **kwargs):
+        def decorator(hookable: Union[Route, Callable]):
+            """Bind the hook function to the given hookable object.
+
+            Support for decorating a route or a class method enables
+            using hooks in the following contexts:
+            - On a function-based view (before @api.route()).
+            - On top of a class-based view (before @api.route()).
+            - On a class-based view method.
+
+            Parameters
+            ----------
+            hookable : Route or (unbound) class method
+            """
+            nonlocal hook_function
+            full_hook_function = hook_function
+
+            async def hook_function(req, res, params):
+                return await call_async(full_hook_function,
+                                        req, res, params, *args, **kwargs)
+
+            if isinstance(hookable, Route):
+                route = hookable
+                route.hooks[hook] = hook_function
+                return route
             else:
-                method_func_name = request.method.lower()
-                view: CallableView = getattr(self._view, method_func_name, None)
-                if view is None:
-                    raise not_allowed_error
-            if not inspect.iscoroutinefunction(view):
-                view = sync_to_async(view)
-        else:
-            if request.method not in self._methods:
-                raise not_allowed_error
-            view = self._view
+                view: Callable = hookable
 
-        return view
+                @wraps(view)
+                async def with_hook(self, req, res, **kwargs):
+                    if hook == BEFORE:
+                        await hook_function(req, res, kwargs)
+                    await call_async(view, self, req, res, **kwargs)
+                    if hook == AFTER:
+                        await hook_function(req, res, kwargs)
+
+                return with_hook
+
+        return decorator
 
     async def __call__(self, request, response, **kwargs) -> None:
-        view = self._find_view(request)
+        view = self._view
+        await call_async(self.hooks[BEFORE], request, response, kwargs)
         await view(request, response, **kwargs)
+        await call_async(self.hooks[AFTER], request, response, kwargs)

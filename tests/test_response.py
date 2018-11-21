@@ -16,6 +16,7 @@ def test_if_status_code_is_no_content_then_no_content_type_set(api: API):
         res.status_code = 204
 
     response = api.client.get('/')
+    assert response.status_code == 204
     assert not response.text
     assert response.headers.get('content-type') is None
 
