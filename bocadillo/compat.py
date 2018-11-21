@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 from typing import Callable, Coroutine
 
@@ -25,6 +26,6 @@ async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
     If the function is synchronous (or the `sync` hint flag is set),
     it is run in the asyncio thread pool.
     """
-    if sync or not inspect.iscoroutinefunction(func):
+    if sync or not asyncio.iscoroutinefunction(func):
         return await run_in_threadpool(func, *args, **kwargs)
     return await func(*args, **kwargs)

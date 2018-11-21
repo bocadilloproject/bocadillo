@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 from functools import wraps
 from http import HTTPStatus
@@ -36,7 +37,7 @@ View = Union[CallableView, ClassBasedView]
 
 def create_callable_view(view: View, methods: List[str]):
     """Create callable view from function (sync/async) or class based view."""
-    if inspect.iscoroutinefunction(view):
+    if asyncio.iscoroutinefunction(view):
         return _from_async_function(view, methods)
     elif inspect.isfunction(view):
         return _from_sync_function(view, methods)
