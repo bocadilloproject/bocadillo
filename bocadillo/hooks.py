@@ -10,5 +10,5 @@ BEFORE = 'before'
 AFTER = 'after'
 
 
-def empty_hook(req, res, view, params):
+def empty_hook(req, res, params):
     pass

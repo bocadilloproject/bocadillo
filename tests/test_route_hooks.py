@@ -8,12 +8,12 @@ from bocadillo import API
 def function_hooks(before_value: Any = True, after_value: Any = True):
     flags = {'before': False, 'after': False}
 
-    def before(req, res, view, params, value=before_value):
+    def before(req, res, params, value=before_value):
         nonlocal flags
         assert not flags['after']
         flags['before'] = value
 
-    def after(req, res, view, params, value=after_value):
+    def after(req, res, params, value=after_value):
         nonlocal flags
         assert flags['before']
         flags['after'] = value
@@ -28,12 +28,12 @@ def function_hooks(before_value: Any = True, after_value: Any = True):
 def async_function_hooks():
     flags = {'before': False, 'after': False}
 
-    async def before(req, res, view, params):
+    async def before(req, res, params):
         nonlocal flags
         assert not flags['after']
         flags['before'] = True
 
-    async def after(req, res, view, params):
+    async def after(req, res, params):
         nonlocal flags
         assert flags['before']
         flags['after'] = True
@@ -54,7 +54,7 @@ def class_hooks():
             self.flag = flag
             self.value = value
 
-        def __call__(self, req, res, view, params):
+        def __call__(self, req, res, params):
             nonlocal flags
             flags[self.flag] = self.value
 

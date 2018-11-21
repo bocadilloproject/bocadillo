@@ -74,12 +74,9 @@ class Route:
             nonlocal hook_function
             full_hook_function = hook_function
 
-            async def hook_function(req, res, view_, params):
-                return await call_async(
-                    full_hook_function,
-                    req, res, view_, params,
-                    *args, **kwargs,
-                )
+            async def hook_function(req, res, params):
+                return await call_async(full_hook_function,
+                                        req, res, params, *args, **kwargs)
 
             if isinstance(hookable, Route):
                 route = hookable
@@ -91,10 +88,10 @@ class Route:
                 @wraps(view)
                 async def with_hook(self, req, res, **kwargs):
                     if hook == BEFORE:
-                        await hook_function(req, res, view, kwargs)
+                        await hook_function(req, res, kwargs)
                     await call_async(view, self, req, res, **kwargs)
                     if hook == AFTER:
-                        await hook_function(req, res, view, kwargs)
+                        await hook_function(req, res, kwargs)
 
                 return with_hook
 
@@ -102,6 +99,6 @@ class Route:
 
     async def __call__(self, request, response, **kwargs) -> None:
         view = self._view
-        await call_async(self.hooks[BEFORE], request, response, view, kwargs)
+        await call_async(self.hooks[BEFORE], request, response, kwargs)
         await view(request, response, **kwargs)
-        await call_async(self.hooks[AFTER], request, response, view, kwargs)
+        await call_async(self.hooks[AFTER], request, response, kwargs)
