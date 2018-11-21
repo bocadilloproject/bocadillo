@@ -6,6 +6,10 @@ We recommend you read this quick introduction before you get started with Bocadi
  
 That said, if you want to jump right in, feel free to skip to the [Installation guide](installation.md).
 
+::: warning STATUS NOTE
+Bocadillo is still in **Alpha**. The documentation is regularly updated as new features are added and new guides are written. If you'd like to contribute, join us on [GitHub](https:github.com/bocadilloproject/bocadillo) or use the "Edit" link on each page of this site!
+:::
+
 ## What is Bocadillo?
 
 Bocadillo is a Python web framework that provides **a sane toolkit for quickly building performant web applications and services**, while encouraging best practices and keeping developer experience in mind.

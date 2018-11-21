@@ -64,9 +64,15 @@ module.exports = {
                     '/guide/topics/request-handling',
                     '/guide/topics/json',
                     '/guide/topics/templates',
-                    '/guide/topics/cli',
                     '/guide/topics/testing',
                     '/guide/topics/deployment',
+                ],
+            },
+            {
+                title: 'How To',
+                collapsable: false,
+                children: [
+                    '/guide/how-to/custom-cli-commands',
                 ],
             },
             {
@@ -83,6 +89,7 @@ module.exports = {
                     '/guide/api-guides/static-files',
                     '/guide/api-guides/error-handling',
                     '/guide/api-guides/middleware',
+                    '/guide/api-guides/cli',
                     '/guide/api-guides/cors',
                     '/guide/api-guides/hsts',
                 ],

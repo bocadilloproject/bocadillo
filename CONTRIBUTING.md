@@ -2,9 +2,25 @@
 
 All contributions to Bocadillo are welcome! Here are some guidelines to get you started.
 
+## Documentation
+
+Bocadillo's documentation site is made with [VuePress](https://vuepress.vuejs.org) and hosted on GitHub Pages.
+
+To get started, you should only need to install NPM dependencies (`npm install`) and run `npm start` to run the hot-reloaded development docs site.
+
+All documentation lives in the `docs/guide/` directory. It is structured as follows:
+
+- `api-guides`: technical reference for Bocadillo's machinery; describes how it works and how to use it, assuming a basic understanding of the key concepts.
+- `topics`: discuss key topics and concepts at a fairly high level, while providing useful information and background. For example: 'Working with JSON data'.
+- `how-to`: recipes for solving common problems. For example: 'Deploying Bocadillo apps' or 'Writing custom CLI commands'.
+
+To write a new page for the docs, create a new `.md` file in the appropriate directory, then update the `sidebar` configuration in `config.js` to add a route for your page in the sidebar.
+
+Feel free to refer to the [VuePress docs](https://vuepress.vuejs.org) if needed.
+
 ## Install
 
-Python 3.6+ is required.
+Python 3.6+ is required to install Bocadillo locally.
 
 Install [Pipenv](https://github.com/pypa/pipenv) if you haven't already:
 

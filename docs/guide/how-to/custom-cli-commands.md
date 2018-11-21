@@ -1,25 +1,8 @@
-# Using the CLI
-
-Bocadillo comes with `boca`, a handy CLI built with [Click](https://click.palletsprojects.com) for performing common tasks when working on Bocadillo apps.
-
-## Basic usage
-
-```
-Usage: boca [OPTIONS] COMMAND [ARGS]...
-
-Options:
-  --help  Show this message and exit.
-
-Commands:
-  help         Show help about boca.
-  init:custom  Generate files required to build custom commands.
-```
-
-## Custom commands
+# Write custom CLI commands
 
 > **Note**: this feature is experimental. Use with care!
 
-If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
+Bocadillo provides a handy [CLI](../api-guides/cli.md) for performing common tasks. If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
 
 To do so, use the `init:custom` command, which will generate the following file:
 
