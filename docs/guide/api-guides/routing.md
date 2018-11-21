@@ -96,21 +96,27 @@ the exposition of HTTP methods.
 
 Hooks allows you to call arbitrary code before and after a view is executed. They materialize as the `api.before()` and `api.after()` decorators.
  
- These decorators take a **hook function**, which is a function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
+ These decorators take a **hook function**, which is a synchronous or asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
 
 Here's an example:
 
 ```python
+from asyncio import sleep
 from bocadillo.exceptions import HTTPError
 
 def validate_has_my_header(req, res, params):
     if 'x-my-header' not in req.headers:
         raise HTTPError(400)
 
+async def validate_response_is_json(req, res, params):
+    await sleep(1)  # for the sake of example
+    assert res.headers['content-type'] == 'application/json'
+
 @api.before(validate_has_my_header)
+@api.after(validate_response_is_json)
 @api.route('/foo')
 async def foo(req, res):
-    pass
+    res.media = {'message': 'valid!'}
 ```
 
 ::: warning
