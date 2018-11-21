@@ -19,11 +19,12 @@ def empty_wsgi_app() -> WSGIApp:
     return wsgi
 
 
-async def call_async(func: Callable, *args, **kwargs) -> Coroutine:
+async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
     """Call a function in an async manner.
 
-    If the function is synchronous, it is run in the asyncio thread pool.
+    If the function is synchronous (or the `sync` hint flag is set),
+    it is run in the asyncio thread pool.
     """
-    if inspect.iscoroutinefunction(func):
-        return await func(*args, **kwargs)
-    return await run_in_threadpool(func, *args, **kwargs)
+    if sync or not inspect.iscoroutinefunction(func):
+        return await run_in_threadpool(func, *args, **kwargs)
+    return await func(*args, **kwargs)

@@ -3,8 +3,7 @@ from functools import wraps
 from http import HTTPStatus
 from typing import Callable, Union, List
 
-from asgiref.sync import sync_to_async
-
+from .compat import call_async
 from .constants import ALL_HTTP_METHODS
 from .exceptions import HTTPError
 from .request import Request
@@ -56,7 +55,11 @@ def _from_async_function(view: Callable, methods: List[str]):
 
 
 def _from_sync_function(view: Callable, methods: List[str]):
-    return _from_async_function(sync_to_async(view), methods)
+    @wraps(view)
+    async def callable_view(req, res, **kwargs):
+        await call_async(view, req, res, sync=True, **kwargs)
+
+    return _from_async_function(callable_view, methods)
 
 
 def _from_class_instance(view: ClassBasedView):
@@ -70,9 +73,7 @@ def _from_class_instance(view: ClassBasedView):
         view_ = _find_for_method(req.method)
         if view_ is None:
             raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
-        if not inspect.iscoroutinefunction(view_):
-            view_ = sync_to_async(view_)
-        await view_(req, res, **kwargs)
+        await call_async(view_, req, res, **kwargs)
 
     return callable_view
 
