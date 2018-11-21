@@ -4,6 +4,7 @@ from typing import Optional, List, Union, Callable, Dict
 
 from parse import parse
 
+from .compat import call_async
 from .hooks import HookFunction, BEFORE, AFTER, empty_hook
 from .view import View, create_callable_view
 
@@ -48,15 +49,15 @@ class Route:
         return None
 
     @classmethod
-    def before_hook(cls, hook_function: HookFunction, *args):
-        return cls._add_hook(BEFORE, hook_function, *args)
+    def before_hook(cls, hook_function: HookFunction, *args, **kwargs):
+        return cls._add_hook(BEFORE, hook_function, *args, **kwargs)
 
     @classmethod
-    def after_hook(cls, hook_function: HookFunction, *args):
-        return cls._add_hook(AFTER, hook_function, *args)
+    def after_hook(cls, hook_function: HookFunction, *args, **kwargs):
+        return cls._add_hook(AFTER, hook_function, *args, **kwargs)
 
     @staticmethod
-    def _add_hook(hook: str, hook_function: HookFunction, *args):
+    def _add_hook(hook: str, hook_function: HookFunction, *args, **kwargs):
         def decorator(hookable: Union[Route, Callable]):
             """Bind the hook function to the given hookable object.
 
@@ -71,26 +72,29 @@ class Route:
             hookable : Route or (unbound) class method
             """
             nonlocal hook_function
-            if args:
-                full_hook_function = hook_function
+            full_hook_function = hook_function
 
-                def hook_function(req, res, view, params):
-                    return full_hook_function(req, res, view, params, *args)
+            async def hook_function(req, res, view_, params):
+                return await call_async(
+                    full_hook_function,
+                    req, res, view_, params,
+                    *args, **kwargs,
+                )
 
             if isinstance(hookable, Route):
                 route = hookable
                 route.hooks[hook] = hook_function
                 return route
             else:
-                unbound_method_view = hookable
+                view: Callable = hookable
 
-                @wraps(unbound_method_view)
+                @wraps(view)
                 async def with_hook(self, req, res, **kwargs):
                     if hook == BEFORE:
-                        hook_function(req, res, unbound_method_view, kwargs)
-                    await unbound_method_view(self, req, res, **kwargs)
+                        await hook_function(req, res, view, kwargs)
+                    await call_async(view, self, req, res, **kwargs)
                     if hook == AFTER:
-                        hook_function(req, res, unbound_method_view, kwargs)
+                        await hook_function(req, res, view, kwargs)
 
                 return with_hook
 
@@ -98,6 +102,6 @@ class Route:
 
     async def __call__(self, request, response, **kwargs) -> None:
         view = self._view
-        self.hooks[BEFORE](request, response, view, kwargs)
+        await call_async(self.hooks[BEFORE], request, response, view, kwargs)
         await view(request, response, **kwargs)
-        self.hooks[AFTER](request, response, view, kwargs)
+        await call_async(self.hooks[AFTER], request, response, view, kwargs)

@@ -225,20 +225,20 @@ class API:
         return wrapper
 
     @staticmethod
-    def before(hook_function: HookFunction, *args):
+    def before(hook_function: HookFunction, *args, **kwargs):
         """Register a before hook on a route.
 
         Note: @api.before() must be above @api.route().
         """
-        return Route.before_hook(hook_function, *args)
+        return Route.before_hook(hook_function, *args, **kwargs)
 
     @staticmethod
-    def after(hook_function: HookFunction, *args):
+    def after(hook_function: HookFunction, *args, **kwargs):
         """Register an after hook on a route.
 
         Note: @api.after() must be above @api.route().
         """
-        return Route.after_hook(hook_function, *args)
+        return Route.after_hook(hook_function, *args, **kwargs)
 
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""
