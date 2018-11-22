@@ -42,3 +42,14 @@ class HTTPError(Exception):
 
     def __str__(self):
         return f'{self.status_code} {self.status_phrase}'
+
+
+class UnsupportedMediaType(Exception):
+    """Raised when trying to use an unsupported media type."""
+
+    def __init__(self, media_type, available):
+        self._media_type = media_type
+        self._available = available
+
+    def __str__(self):
+        return f'{self._media_type} (available: {", ".join(self._available)})'
