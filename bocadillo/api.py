@@ -20,6 +20,7 @@ from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
 from .hooks import HookFunction
+from .media import Media
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
@@ -62,6 +63,10 @@ class API:
         If True, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
         Defaults to False.
+    media_type : str, optional
+        Determines how values given to `res._media` are serialized.
+        Can be one of the supported _media types.
+        Defaults to 'application/json'.
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -75,6 +80,7 @@ class API:
             enable_cors: bool = False,
             cors_config: dict = None,
             enable_hsts: bool = False,
+            media_type: Optional[str] = Media.JSON,
     ):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
@@ -104,6 +110,8 @@ class API:
             cors_config = {}
         self.cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
 
+        self._media = Media(media_type=media_type)
+
         # Middleware
         self._routing_middleware = RoutingMiddleware(self)
         self._common_middleware = CommonMiddleware(self._routing_middleware)
@@ -124,6 +132,22 @@ class API:
         if not prefix.startswith('/'):
             prefix = '/' + prefix
         self._extra_apps[prefix] = app
+
+    @property
+    def media_type(self) -> str:
+        return self._media.type
+
+    @media_type.setter
+    def media_type(self, media_type: str):
+        self._media.type = media_type
+
+    @property
+    def media_handlers(self) -> dict:
+        return self._media.handlers
+
+    @media_handlers.setter
+    def media_handlers(self, media_handlers: dict):
+        self._media.handlers = media_handlers
 
     def add_error_handler(self, exception_cls: Type[Exception],
                           handler: ErrorHandler):
@@ -432,7 +456,7 @@ class API:
 
     async def dispatch(self, request: Request) -> Response:
         """Dispatch a request and return a response."""
-        response = Response(request)
+        response = Response(request, media=self._media)
 
         try:
             pattern, kwargs = self._find_matching_route(request.url.path)

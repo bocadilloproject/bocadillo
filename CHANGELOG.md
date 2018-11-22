@@ -11,6 +11,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - Route hooks via `@api.before()` and `@api.after()`.
+- Media types and media handlers: `API([media_type='application/json'])`, `api.media_type`,
+`api.media_handlers`.
 
 ## [v0.5.0] - 2018-11-18
 
