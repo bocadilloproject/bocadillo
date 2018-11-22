@@ -39,5 +39,4 @@ def test_allowed_method_must_be_valid_http_method(builder: RouteBuilder):
     with pytest.raises(RouteDeclarationError):
         builder.function_based('/', methods=['foo'])
 
-    with pytest.raises(RouteDeclarationError):
-        builder.class_based('/', methods=['bar'])
+    builder.class_based('/', methods=['bar'])

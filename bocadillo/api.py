@@ -31,6 +31,7 @@ from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
+
 class API:
     """Bocadillo API.
 
@@ -230,8 +231,11 @@ class API:
         methods = [method.upper() for method in methods]
 
         def wrapper(view):
+            nonlocal methods
             if inspect.isclass(view):
                 view = view()
+                methods = [m.upper() for m in dir(view) if m.upper() in ALL_HTTP_METHODS]
+                view._methods = methods
             check_route(pattern, view, methods)
             route = Route(
                 pattern=pattern,
