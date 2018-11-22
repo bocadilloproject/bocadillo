@@ -24,8 +24,7 @@ def test_can_specify_media_type_when_creating_the_api_object():
 
 
 def test_media_type_is_accessible_on_api(api: API):
-    assert hasattr(api, 'media')
-    assert hasattr(api.media, 'type')
+    assert hasattr(api, 'media_type')
 
 
 @pytest.mark.parametrize('media_type, expected_text', [
@@ -34,7 +33,7 @@ def test_media_type_is_accessible_on_api(api: API):
     (Media.HTML, str),
 ])
 def test_use_builtin_media_handlers(api: API, media_type, expected_text):
-    api.media.type = media_type
+    api.media_type = media_type
     data = {'message': 'hello'}
 
     @api.route('/')
@@ -52,8 +51,8 @@ def test_add_and_use_custom_media_handler(api: API):
         return f'FOO: {value}'
 
     foo_type = 'application/foo'
-    api.media.handlers[foo_type] = handle_foo
-    api.media.type = foo_type
+    api.media_handlers[foo_type] = handle_foo
+    api.media_type = foo_type
 
     @api.route('/')
     async def index(req, res):
@@ -67,7 +66,7 @@ def test_add_and_use_custom_media_handler(api: API):
 
 def test_if_media_type_not_supported_then_setting_it_raises_error(api: API):
     with pytest.raises(UnsupportedMediaType):
-        api.media.type = 'application/foo'
+        api.media_type = 'application/foo'
 
     with pytest.raises(UnsupportedMediaType):
         API(media_type='application/foo')

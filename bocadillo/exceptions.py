@@ -45,7 +45,7 @@ class HTTPError(Exception):
 
 
 class UnsupportedMediaType(Exception):
-    """Raised when trying to use an unsupported media type."""
+    """Raised when trying to use an unsupported _media type."""
 
     def __init__(self, media_type, available):
         self._media_type = media_type
