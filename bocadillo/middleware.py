@@ -46,8 +46,8 @@ class RoutingMiddleware(Middleware):
 
     async def dispatch(
         self, request,
-        before: List[Callable]=None,
-        after: List[Callable]=None
+        before: List[Callable] = None,
+        after: List[Callable] = None,
     ):
         if before:
             before.append(self.before_dispatch)
@@ -62,7 +62,7 @@ class RoutingMiddleware(Middleware):
         response = await self.app.dispatch(
             request,
             before=before,
-            after=after
+            after=after,
         )
         return response
 

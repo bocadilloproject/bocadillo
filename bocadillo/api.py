@@ -234,7 +234,11 @@ class API:
             nonlocal methods
             if inspect.isclass(view):
                 view = view()
-                methods = [m.upper() for m in dir(view) if m.upper() in ALL_HTTP_METHODS]
+if hasattr(view, 'handle'):
+    methods = ALL_HTTP_METHODS
+else:
+    methods = [method for method in ALL_HTTP_METHODS
+                         if method.lower() in dir(view)]
                 view._methods = methods
             check_route(pattern, view, methods)
             route = Route(
@@ -459,9 +463,10 @@ class API:
             run(self, host=host, port=port)
 
     async def dispatch(
-        self, request: Request,
-        before: List[Callable]=None,
-        after: List[Callable]=None
+        self,
+        request: Request,
+        before: List[Callable] = None,
+        after: List[Callable] = None,
     ) -> Response:
         """Dispatch a request and return a response."""
         response = Response(request, media=self._media)
