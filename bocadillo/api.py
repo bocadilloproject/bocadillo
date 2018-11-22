@@ -3,7 +3,7 @@ import inspect
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
-from typing import (Optional, Tuple, Type, List, Dict, Any, Union, Coroutine)
+from typing import (Optional, Tuple, Type, List, Dict, Any, Union, Coroutine, Callable)
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
@@ -15,6 +15,7 @@ from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
+from .compat import call_async
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
@@ -29,7 +30,6 @@ from .route import Route
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
-
 
 class API:
     """Bocadillo API.
@@ -454,7 +454,11 @@ class API:
         else:
             run(self, host=host, port=port)
 
-    async def dispatch(self, request: Request) -> Response:
+    async def dispatch(
+        self, request: Request,
+        before: List[Callable]=None,
+        after: List[Callable]=None
+    ) -> Response:
         """Dispatch a request and return a response."""
         response = Response(request, media=self._media)
 
@@ -465,11 +469,19 @@ class API:
                 raise HTTPError(status=404)
             else:
                 try:
+                    if before:
+                        for func in before:
+                            await call_async(func, request)
+
                     await route(request, response, **kwargs)
                 except Redirection as redirection:
                     response = redirection.response
         except Exception as e:
             self._handle_exception(request, response, e)
+
+        if after:
+            for func in after:
+                await call_async(func, request, response)
 
         return response
 

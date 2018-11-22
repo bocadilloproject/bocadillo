@@ -10,6 +10,8 @@ routing occurs.
 Common middleware should be called first, then routing middleware, which should
 end up calling the actual Bocadillo API object.
 """
+from typing import Callable, List
+
 from .request import Request
 
 
@@ -42,10 +44,26 @@ class RoutingMiddleware(Middleware):
     def after_dispatch(self, req, res):
         pass
 
-    async def dispatch(self, request):
-        self.before_dispatch(request)
-        response = await self.app.dispatch(request)
-        self.after_dispatch(request, response)
+    async def dispatch(
+        self, request,
+        before: List[Callable]=None,
+        after: List[Callable]=None
+    ):
+        if before:
+            before.append(self.before_dispatch)
+        else:
+            before = [self.before_dispatch]
+
+        if after:
+            after.append(self.after_dispatch)
+        else:
+            after = [self.after_dispatch]
+
+        response = await self.app.dispatch(
+            request,
+            before=before,
+            after=after
+        )
         return response
 
     def __call__(self, scope: dict):

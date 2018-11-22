@@ -1,10 +1,12 @@
 from collections import defaultdict
 from functools import wraps
+from http import HTTPStatus
 from typing import Optional, List, Union, Callable, Dict
 
 from parse import parse
 
 from .compat import call_async
+from .exceptions import HTTPError
 from .hooks import HookFunction, BEFORE, AFTER, empty_hook
 from .view import View, create_callable_view
 
@@ -87,6 +89,9 @@ class Route:
 
                 @wraps(view)
                 async def with_hook(self, req, res, **kwargs):
+                    if req.method not in self._methods:
+                        raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
                     if hook == BEFORE:
                         await hook_function(req, res, kwargs)
                     await call_async(view, self, req, res, **kwargs)
@@ -98,6 +103,9 @@ class Route:
         return decorator
 
     async def __call__(self, request, response, **kwargs) -> None:
+        if request.method not in self._methods:
+            raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
+
         view = self._view
         await call_async(self.hooks[BEFORE], request, response, kwargs)
         await view(request, response, **kwargs)
