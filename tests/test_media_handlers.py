@@ -33,7 +33,7 @@ def test_media_type_is_accessible_on_api(api: API):
     (Media.PLAIN_TEXT, str),
     (Media.HTML, str),
 ])
-def test_use_media_types(api: API, media_type, expected_text):
+def test_use_builtin_media_handlers(api: API, media_type, expected_text):
     api.media.type = media_type
     data = {'message': 'hello'}
 
