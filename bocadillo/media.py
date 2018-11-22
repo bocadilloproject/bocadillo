@@ -44,7 +44,7 @@ class Media:
         if handlers is None:
             handlers = get_default_handlers()
         self.handlers = handlers
-        self._default_type = media_type
+        self.type = media_type
 
     def serialize(self, value: Any, media_type: Optional[str] = None):
         """Serialize a value using the given media type.

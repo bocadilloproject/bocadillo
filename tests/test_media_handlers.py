@@ -68,3 +68,6 @@ def test_add_and_use_custom_media_handler(api: API):
 def test_if_media_type_not_supported_then_setting_it_raises_error(api: API):
     with pytest.raises(UnsupportedMediaType):
         api.media.type = 'application/foo'
+
+    with pytest.raises(UnsupportedMediaType):
+        API(media_type='application/foo')

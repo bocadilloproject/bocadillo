@@ -64,7 +64,7 @@ class API:
         redirect HTTP traffic to HTTPS.
         Defaults to False.
     media_type : str, optional
-        Determines how the value given to `res.media` is serialized.
+        Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
         Defaults to 'application/json'.
     """
