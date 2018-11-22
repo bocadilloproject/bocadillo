@@ -73,6 +73,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                     '/guide/how-to/custom-cli-commands',
+                    '/guide/how-to/extra-media-handlers',
                 ],
             },
             {
