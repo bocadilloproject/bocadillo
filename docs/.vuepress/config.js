@@ -89,6 +89,7 @@ module.exports = {
                     '/guide/api-guides/templates',
                     '/guide/api-guides/static-files',
                     '/guide/api-guides/error-handling',
+                    '/guide/api-guides/media',
                     '/guide/api-guides/middleware',
                     '/guide/api-guides/cli',
                     '/guide/api-guides/cors',

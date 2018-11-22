@@ -1,8 +1,8 @@
-# Extra media handlers
+# Register extra media handlers
 
 In Bocadillo, the default behavior for `res.media` is to send JSON data.
 
-To support other **media types** — such as YAML or MessagePack — you can register extra **media handlers** on your Bocadillo application.
+To support other **media types** — such as [YAML] or [MessagePack] — you can register extra **media handlers** on your Bocadillo application.
 
 For example, let's say we want to build an API that sends YAML data. First, install `PyYaml` using `pip install pyyaml`, then write a new media handler and register it on the API object:
 
@@ -23,8 +23,7 @@ To use the YAML media handler, configure `media.type` on the `API` object:
 api.media_type = 'application/x-yaml'
 ```
 
-You can also pass the `media_type` argument when building the `API` object.
+For more information on media handlers, please refer to the [Media](../api-guides/media.md) API guide.
 
-```python
-api = bocadillo.API(media_type='application/x-yaml')
-```
+[YAML]: http://yaml.org
+[MessagePack]: https://msgpack.org
