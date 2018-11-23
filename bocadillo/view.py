@@ -1,12 +1,9 @@
 import asyncio
 import inspect
-from functools import wraps, partial
-from http import HTTPStatus
-from typing import Callable, Union, List, Coroutine
+from typing import Callable, Union, Coroutine
 
 from .compat import call_async
 from .constants import ALL_HTTP_METHODS
-from .exceptions import HTTPError
 from .request import Request
 from .response import Response
 
