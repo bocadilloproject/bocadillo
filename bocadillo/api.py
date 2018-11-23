@@ -483,14 +483,14 @@ else:
                             await call_async(func, request)
 
                     await route(request, response, **kwargs)
+
+                    if after:
+                        for func in after:
+                            await call_async(func, request, response)
                 except Redirection as redirection:
                     response = redirection.response
         except Exception as e:
             self._handle_exception(request, response, e)
-
-        if after:
-            for func in after:
-                await call_async(func, request, response)
 
         return response
 
