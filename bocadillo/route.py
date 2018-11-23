@@ -89,9 +89,6 @@ class Route:
 
                 @wraps(view)
                 async def with_hook(self, req, res, **kwargs):
-                    if req.method not in self._methods:
-                        raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
-
                     if hook == BEFORE:
                         await hook_function(req, res, kwargs)
                     await call_async(view, self, req, res, **kwargs)

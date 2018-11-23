@@ -234,12 +234,13 @@ class API:
             nonlocal methods
             if inspect.isclass(view):
                 view = view()
-if hasattr(view, 'handle'):
-    methods = ALL_HTTP_METHODS
-else:
-    methods = [method for method in ALL_HTTP_METHODS
-                         if method.lower() in dir(view)]
-                view._methods = methods
+                if hasattr(view, 'handle'):
+                    methods = ALL_HTTP_METHODS
+                else:
+                    methods = [
+                        method for method in ALL_HTTP_METHODS
+                        if method.lower() in dir(view)
+                    ]
             check_route(pattern, view, methods)
             route = Route(
                 pattern=pattern,
