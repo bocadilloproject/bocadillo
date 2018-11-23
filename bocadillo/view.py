@@ -1,8 +1,8 @@
 import asyncio
 import inspect
-from functools import wraps
+from functools import wraps, partial
 from http import HTTPStatus
-from typing import Callable, Union, List
+from typing import Callable, Union, List, Coroutine
 
 from .compat import call_async
 from .constants import ALL_HTTP_METHODS
@@ -31,36 +31,21 @@ class ClassBasedView:
 
 
 # Types
-CallableView = Callable[[Request, Response, dict], None]
+CallableView = Callable[[Request, Response, dict], Coroutine]
 View = Union[CallableView, ClassBasedView]
 
 
-def create_callable_view(view: View, methods: List[str]):
+def create_callable_view(view: View) -> CallableView:
     """Create callable view from function (sync/async) or class based view."""
     if asyncio.iscoroutinefunction(view):
-        return _from_async_function(view, methods)
+        return view
     elif inspect.isfunction(view):
-        return _from_sync_function(view, methods)
+        async def callable_view(req, res, **kwargs):
+            await call_async(view, req, res, sync=True, **kwargs)
+
+        return callable_view
     else:
         return _from_class_instance(view)
-
-
-def _from_async_function(view: Callable, methods: List[str]):
-    @wraps(view)
-    async def callable_view(req, res, **kwargs):
-        if req.method not in methods:
-            raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
-        await view(req, res, **kwargs)
-
-    return callable_view
-
-
-def _from_sync_function(view: Callable, methods: List[str]):
-    @wraps(view)
-    async def callable_view(req, res, **kwargs):
-        await call_async(view, req, res, sync=True, **kwargs)
-
-    return _from_async_function(callable_view, methods)
 
 
 def _from_class_instance(view: ClassBasedView):
@@ -68,12 +53,10 @@ def _from_class_instance(view: ClassBasedView):
         try:
             return getattr(view, 'handle')
         except AttributeError:
-            return getattr(view, method.lower(), None)
+            return getattr(view, method.lower())
 
     async def callable_view(req, res, **kwargs):
         view_ = _find_for_method(req.method)
-        if view_ is None:
-            raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
         await call_async(view_, req, res, **kwargs)
 
     return callable_view

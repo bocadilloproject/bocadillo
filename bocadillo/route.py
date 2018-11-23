@@ -24,7 +24,7 @@ class Route:
                  name: str):
         self._pattern = pattern
 
-        self._view = create_callable_view(view=view, methods=methods)
+        self._view = create_callable_view(view=view)
         self._methods = methods
         self._name = name
 
@@ -88,12 +88,12 @@ class Route:
                 view: Callable = hookable
 
                 @wraps(view)
-                async def with_hook(self, req, res, **kwargs):
+                async def with_hook(self, req, res, **kw):
                     if hook == BEFORE:
-                        await hook_function(req, res, kwargs)
-                    await call_async(view, self, req, res, **kwargs)
+                        await hook_function(req, res, kw)
+                    await call_async(view, self, req, res, **kw)
                     if hook == AFTER:
-                        await hook_function(req, res, kwargs)
+                        await hook_function(req, res, kw)
 
                 return with_hook
 
