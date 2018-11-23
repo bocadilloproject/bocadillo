@@ -5,3 +5,12 @@ repos:
   - id: black
     language_version: python3.7
     args: [-S, -l 80]
+- repo: local
+  hooks:
+  - id: pytest
+    name: pytest
+    stages: [push]
+    entry: pytest
+    language: system
+    pass_filenames: false
+    types: [python]
