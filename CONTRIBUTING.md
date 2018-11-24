@@ -31,8 +31,14 @@ pip install pipenv
 Then run:
 
 ```bash
-pipenv install
+pipenv install --dev
 ```
+
+## Code style
+
+To reduce format-related issues and make code review more efficient, this repo uses the [Black](https://github.com/ambv/black) auto-formatter to format your code on commit. This is implemented using [pre-commit](https://pre-commit.com).
+
+If you wish to manually apply Black before a commit, run `$ pre-commit`.
 
 ## Running the tests
 
