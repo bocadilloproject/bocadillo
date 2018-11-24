@@ -44,35 +44,51 @@ As an introduction to asynchronous programming in Python, I strongly recommend y
 
 ## Why not…?
 
+::: warning DISCLAIMER
+All projects listed here are of great quality and absolutely deserve your attention.
+
+The sole purpose of this section is for you to understand how Bocadillo differs from existing Python web frameworks,.
+:::
+
 ### Django
 
 [Django] is probably the most popular Python web framework out there. It's got a huge community, great documentation and tons of features built-in.
 
 However, Django also has a very steep learning curve. It's best suited for building large apps, so if you want to build simple web services, chances are Django will be too much.
 
-Also, Django's only support for asynchronous Python is [Channels], which comes with its own set of abstractions and opinions, adding to the overall learning curve. Instead, Bocadillo's asynchronous-first approach makes writing async/await code a breeze, without any dependencies.
+Also, Django's only support for asynchronous Python is [Channels], which comes with its own set of abstractions and opinions, adding to the overall learning curve. Instead, Bocadillo's async-first approach makes writing async/await code a breeze, without any extra dependencies.
 
 ### Flask
 
 [Flask] is a very popular Python microframework. It's got a very simple API and allows one to build apps very quickly.
 
-But because Flask provides a simple core and lets the developer fully in control of the rest, this often results in relying on a lot of third-party extensions, which quickly becomes a burden. On the other hand, Bocadillo keeps developer experience in mind and provides simple yet powerful tools to solve common problems when building modern web applications and services.
+Flask provides a simple core and lets the developer fully in control of the rest. However, this often results in relying on a lot of third-party extensions, which quickly becomes a burden.
 
-Also, Flask "is just not designed for asynchronous servers" and "will never have a database layer" ([design decisions](http://flask.pocoo.org/docs/1.0/design/#design-decisions-in-flask)).
+On the other hand, Bocadillo keeps developer experience in mind and provides simple yet powerful tools to help you solve common (and more advanced) problems when building modern web applications and services.
+
+Side note: as per Flask's [design decisions](http://flask.pocoo.org/docs/1.0/design/#design-decisions-in-flask), Flask "is just not designed for asynchronous servers" and "will never have a database layer". The latter is scheduled to be provided by Bocadillo.
 
 ### Falcon
 
-[Falcon] is a fast, minimalist Python web framework specifically targeted at building backend services and APIs. It's very good at what it does, but you'll have to do a fair amount of customization to use Falcon for anything else than REST APIs. Plus, again, Falcon does not support async/await by itself.
+[Falcon] is a fast, minimalist Python web framework specifically targeted at building backend services and APIs.
+
+It's very good at what it does, but you'll have to do a fair amount of customization to use Falcon for anything else than REST APIs.
+
+Plus, again, Falcon does not support async/await by itself (it officially recommends integrating with gevent).
 
 ### Responder
 
-[Responder] presents itself as "a mix between Flask/Falcon, but with ease of developer sanity kept in mind. Expect the Requests experience, but for building services" ([tweet from oct. 2018](https://twitter.com/kennethreitz/status/1050723571004309505)).
+Kenneth Reitz presents [Responder] as "a mix between Flask/Falcon, but with ease of developer sanity kept in mind. Expect the Requests experience, but for building services" ([Oct. 2018](https://twitter.com/kennethreitz/status/1050723571004309505)).
 
-As a result, it shares a lot of features from Flask (templates, decorator-based routing) and Falcon (request/response passed along views, class-based views), which has also inspired the design of Bocadillo.
+As a result, it borrows a lot of ideas from Flask and Falcon — and so does Bocadillo.
 
-Plus, it is one of the very few Python web frameworks that support async/await — like Bocadillo, it is powered by the [Starlette] ASGI toolkit. It also has some funky features such as GraphQL support.
+Responder is also one of the very few Python web frameworks that support async/await while providing a familiar API. Like Bocadillo, Responder is powered by the [Starlette] ASGI toolkit. It also has some original features such as built-in GraphQL support.
 
-However, Responder is specifically targeted at web services too, and does not come with a database layer nor any specific development tooling.
+The key differences between Responder and Bocadillo are that a) Responder is solely targeted at web services (APIs), and b) its design is intentionally kept minimalistic, while Bocadillo takes a more progressive approach.
+
+### Tornado
+
+> TODO
 
 ## Features
 
@@ -88,9 +104,9 @@ Here's a sneak peak into what you'll find in Bocadillo:
 - [Jinja] template rendering
 - Built-in CORS and HSTS support
 - Customizable CLI built with [Click]
-- Extensions distributed as setuptools extras
+- (Soon) Third-party extensions framework
 - (Soon) WebSocket support
-- (Soon) Databases and ORM (powered by [Orator])
+- (Soon) Databases and async ORM
 
 [ASGI]: https://asgi.readthedocs.io
 [Django]: https://www.djangoproject.com
