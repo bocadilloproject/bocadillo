@@ -25,7 +25,7 @@ from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
-from .compat import call_async
+from .compat import call_async, call_all_async
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
@@ -488,6 +488,11 @@ class API:
         after: List[Callable] = None,
     ) -> Response:
         """Dispatch a request and return a response."""
+        if before is None:
+            before = []
+        if after is None:
+            after = []
+
         response = Response(request, media=self._media)
 
         try:
@@ -495,19 +500,13 @@ class API:
             route = self._routes.get(pattern)
             if route is None:
                 raise HTTPError(status=404)
-            else:
-                try:
-                    if before:
-                        for func in before:
-                            await call_async(func, request)
-
-                    await route(request, response, **kwargs)
-
-                    if after:
-                        for func in after:
-                            await call_async(func, request, response)
-                except Redirection as redirection:
-                    response = redirection.response
+            route.raise_for_method(request)
+            try:
+                await call_all_async(before, request)
+                await route(request, response, **kwargs)
+                await call_all_async(after, request, response)
+            except Redirection as redirection:
+                response = redirection.response
         except Exception as e:
             self._handle_exception(request, response, e)
 

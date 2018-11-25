@@ -96,10 +96,11 @@ class Route:
 
         return decorator
 
-    async def __call__(self, request, response, **kwargs) -> None:
+    def raise_for_method(self, request):
         if request.method not in self._methods:
             raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
+    async def __call__(self, request, response, **kwargs) -> None:
         view = self._view
         await call_async(self.hooks[BEFORE], request, response, kwargs)
         await view(request, response, **kwargs)

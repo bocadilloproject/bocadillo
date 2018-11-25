@@ -1,6 +1,5 @@
 import asyncio
-import inspect
-from typing import Callable, Coroutine
+from typing import Callable, Coroutine, Iterable
 
 from starlette.concurrency import run_in_threadpool
 
@@ -29,3 +28,9 @@ async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
     if sync or not asyncio.iscoroutinefunction(func):
         return await run_in_threadpool(func, *args, **kwargs)
     return await func(*args, **kwargs)
+
+
+async def call_all_async(funcs: Iterable[Callable], *args, **kwargs):
+    """Call functions in an async manner (with the same arguments)."""
+    for func in funcs:
+        await call_async(func, *args, **kwargs)
