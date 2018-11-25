@@ -1,3 +1,4 @@
+from asyncio import sleep
 from contextlib import contextmanager
 
 from bocadillo import API
@@ -5,7 +6,9 @@ from bocadillo.middleware import RoutingMiddleware
 
 
 @contextmanager
-def build_middleware(expect_before=True, expect_after=True, expect_kwargs=None):
+def build_middleware(
+    expect_before=True, expect_after=True, expect_kwargs=None, is_async=False
+):
     called = {'before': False, 'after': False}
     kwargs = None
 
@@ -15,13 +18,27 @@ def build_middleware(expect_before=True, expect_after=True, expect_kwargs=None):
             super().__init__(app)
             kwargs = kw
 
-        def before_dispatch(self, req):
-            nonlocal called
-            called['before'] = True
+        if is_async:
 
-        def after_dispatch(self, req, res):
-            nonlocal called
-            called['after'] = True
+            async def before_dispatch(self, req):
+                nonlocal called
+                await sleep(0.01)
+                called['before'] = True
+
+            async def after_dispatch(self, req, res):
+                nonlocal called
+                await sleep(0.01)
+                called['after'] = True
+
+        else:
+
+            def before_dispatch(self, req):
+                nonlocal called
+                called['before'] = True
+
+            def after_dispatch(self, req, res):
+                nonlocal called
+                called['after'] = True
 
     yield SetCalled
 
@@ -66,3 +83,15 @@ def test_callbacks_not_called_if_method_not_allowed(api: API):
 
         response = api.client.put('/')
         assert response.status_code == 405
+
+
+def test_callbacks_can_be_async(api: API):
+    with build_middleware(is_async=True) as middleware:
+        api.add_middleware(middleware)
+
+        @api.route('/')
+        async def index(req, res):
+            pass
+
+        response = api.client.get('/')
+        assert response.status_code == 200
