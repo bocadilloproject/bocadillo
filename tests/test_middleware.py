@@ -99,14 +99,6 @@ def test_callbacks_can_be_async(api: API):
         assert response.status_code == 200
 
 
-class BeforeError(Exception):
-    pass
-
-
-class AfterError(Exception):
-    pass
-
-
 @pytest.mark.parametrize('when', ['before', 'after'])
 def test_errors_raised_in_before_are_caught(api: API, when):
     class CustomError(Exception):
