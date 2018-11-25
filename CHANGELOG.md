@@ -14,12 +14,21 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Media types and media handlers: `API([media_type='application/json'])`, `api.media_type`,
 `api.media_handlers`.
 - Support for async callbacks on `RoutingMiddleware`.
+- Documentation for the above.
+- (Development) Black auto-formatting with pre-commit.
+- (Development) Documentation guide in `CONTRIBUTING.md`.
+
+### Changed
+
+- Documentation improvements.
 
 ### Fixed
 
 - Exceptions raised inside a middleware callback
 (`before_dispatch()` or `after_dispatch()`) are now properly handled by
 registered error handlers (they were previously left uncaught).
+- Middleware callbacks (especially `before_dispatch()`)
+won't be called anymore if the HTTP method is not allowed.
 
 ## [v0.5.0] - 2018-11-18
 

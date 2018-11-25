@@ -1,6 +1,8 @@
 # Middleware
 
-> This feature is **experimental**; the middleware API may be subject to changes.
+::: warning
+This feature is **experimental**; the middleware API may be subject to changes.
+:::
 
 Bocadillo provides a simple middleware architecture in the form of middleware classes.
 
@@ -24,7 +26,13 @@ class PrintUrlMiddleware(bocadillo.RoutingMiddleware):
         print(res.url)
 ```
 
-> **Note**: the underlying application (which is either another routing middleware or the `API` object) is available on the `.app` attribute.
+::: tip
+The `.before_dispatch()` and `.after_dispatch()` can be `async`. Use this when, for example, accessing the request's body.
+:::
+
+::: tip
+The underlying application (which is either another routing middleware or the `API` object) is available on the `.app` attribute.
+:::
 
 You can then register the middleware using `add_middleware()`:
 
