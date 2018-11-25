@@ -35,7 +35,7 @@ class Route:
 
         Examples
         -------
-        >>> route = Route('/{age:d}', lambda req, resp: None)
+        >>> route = Route('/{age:d}', lambda req, res: None)
         >>> route.match('/42')
         {'age': 42}
         >>> route.match('/john')

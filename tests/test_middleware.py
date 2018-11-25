@@ -1,6 +1,8 @@
 from asyncio import sleep
 from contextlib import contextmanager
 
+import pytest
+
 from bocadillo import API
 from bocadillo.middleware import RoutingMiddleware
 
@@ -95,3 +97,39 @@ def test_callbacks_can_be_async(api: API):
 
         response = api.client.get('/')
         assert response.status_code == 200
+
+
+class BeforeError(Exception):
+    pass
+
+
+class AfterError(Exception):
+    pass
+
+
+@pytest.mark.parametrize('when', ['before', 'after'])
+def test_errors_raised_in_before_are_caught(api: API, when):
+    class CustomError(Exception):
+        pass
+
+    @api.error_handler(CustomError)
+    def handle_error(req, res, exception):
+        pass  # mute exception
+
+    class MiddlewareWithErrors(RoutingMiddleware):
+        async def before_dispatch(self, req):
+            if when == 'before':
+                raise CustomError
+
+        async def after_dispatch(self, req, res):
+            if when == 'after':
+                raise CustomError
+
+    api.add_middleware(MiddlewareWithErrors)
+
+    @api.route('/')
+    async def index(req, res):
+        pass
+
+    response = api.client.get('/')
+    assert response.status_code == 200
