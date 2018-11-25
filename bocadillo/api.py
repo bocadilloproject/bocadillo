@@ -500,14 +500,13 @@ class API:
             route = self._routes.get(pattern)
             if route is None:
                 raise HTTPError(status=404)
-            else:
-                route.raise_for_method(request)
-                try:
-                    await call_all_async(before, request)
-                    await route(request, response, **kwargs)
-                    await call_all_async(after, request, response)
-                except Redirection as redirection:
-                    response = redirection.response
+            route.raise_for_method(request)
+            try:
+                await call_all_async(before, request)
+                await route(request, response, **kwargs)
+                await call_all_async(after, request, response)
+            except Redirection as redirection:
+                response = redirection.response
         except Exception as e:
             self._handle_exception(request, response, e)
 
