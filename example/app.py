@@ -6,18 +6,18 @@ api = bocadillo.API(static_root='assets')
 
 
 # @api.error_handler(HTTPError)
-def handle(req, resp: Response, exception: HTTPError):
-    resp.status_code = exception.status_code
-    resp.text = f'GOTCHA! Overridden {exception.status_code}'
+def handle(req, res: Response, exception: HTTPError):
+    res.status_code = exception.status_code
+    res.text = f'GOTCHA! Overridden {exception.status_code}'
 
 
 @api.route('/greet/{person}', methods=['post'])
-def greet(req, resp: Response, person: str):
-    resp.text = f'Hello, {person}!'
+def greet(req, res: Response, person: str):
+    res.text = f'Hello, {person}!'
 
 
 @api.route('/fail/{status:d}')
-def fail(req, resp, status: int):
+def fail(req, res, status: int):
     raise HTTPError(status=status)
 
 
@@ -33,14 +33,13 @@ def no_content(req, res):
 
 @api.route('/add/{x:d}/{y:d}')
 class AddView:
-
-    async def get(self, req, resp, x: int, y: int):
-        resp.media = {'result': x + y}
+    async def get(self, req, res, x: int, y: int):
+        res.media = {'result': x + y}
 
 
 @api.route('/about/{who}', name='about')
-async def about(req, resp, who):
-    resp.html = await api.template('about.html', who=who)
+async def about(req, res, who):
+    res.html = await api.template('about.html', who=who)
 
 
 @api.route('/google')
@@ -49,8 +48,8 @@ async def google(req, res):
 
 
 @api.route('/home', name='home')
-async def home(req, resp):
-    resp.html = await api.template('index.html', app='Bocadillo')
+async def home(req, res):
+    res.html = await api.template('index.html', app='Bocadillo')
 
 
 @api.route('/')

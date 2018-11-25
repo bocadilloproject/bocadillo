@@ -234,7 +234,7 @@ class API:
         >>> import bocadillo
         >>> api = bocadillo.API()
         >>> @api.route('/greet/{person}')
-        ... def greet(req, resp, person: str):
+        ... def greet(req, res, person: str):
         ...     pass
         """
         if methods is None:
