@@ -17,11 +17,7 @@ class Route:
     Formatted string syntax is used for route patterns.
     """
 
-    def __init__(self,
-                 pattern: str,
-                 view: View,
-                 methods: List[str],
-                 name: str):
+    def __init__(self, pattern: str, view: View, methods: List[str], name: str):
         self._pattern = pattern
 
         self._view = create_callable_view(view=view)
@@ -39,7 +35,7 @@ class Route:
 
         Examples
         -------
-        >>> route = Route('/{age:d}', lambda req, resp: None)
+        >>> route = Route('/{age:d}', lambda req, res: None)
         >>> route.match('/42')
         {'age': 42}
         >>> route.match('/john')
@@ -77,8 +73,9 @@ class Route:
             full_hook_function = hook_function
 
             async def hook_function(req, res, params):
-                return await call_async(full_hook_function,
-                                        req, res, params, *args, **kwargs)
+                return await call_async(
+                    full_hook_function, req, res, params, *args, **kwargs
+                )
 
             if isinstance(hookable, Route):
                 route = hookable
