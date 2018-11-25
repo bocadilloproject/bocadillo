@@ -17,11 +17,7 @@ class Route:
     Formatted string syntax is used for route patterns.
     """
 
-    def __init__(self,
-                 pattern: str,
-                 view: View,
-                 methods: List[str],
-                 name: str):
+    def __init__(self, pattern: str, view: View, methods: List[str], name: str):
         self._pattern = pattern
 
         self._view = create_callable_view(view=view)
@@ -77,8 +73,9 @@ class Route:
             full_hook_function = hook_function
 
             async def hook_function(req, res, params):
-                return await call_async(full_hook_function,
-                                        req, res, params, *args, **kwargs)
+                return await call_async(
+                    full_hook_function, req, res, params, *args, **kwargs
+                )
 
             if isinstance(hookable, Route):
                 route = hookable
@@ -99,10 +96,11 @@ class Route:
 
         return decorator
 
-    async def __call__(self, request, response, **kwargs) -> None:
+    def raise_for_method(self, request):
         if request.method not in self._methods:
             raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
+    async def __call__(self, request, response, **kwargs) -> None:
         view = self._view
         await call_async(self.hooks[BEFORE], request, response, kwargs)
         await view(request, response, **kwargs)

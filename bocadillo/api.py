@@ -3,7 +3,17 @@ import inspect
 import os
 from contextlib import contextmanager
 from http import HTTPStatus
-from typing import (Optional, Tuple, Type, List, Dict, Any, Union, Coroutine, Callable)
+from typing import (
+    Optional,
+    Tuple,
+    Type,
+    List,
+    Dict,
+    Any,
+    Union,
+    Coroutine,
+    Callable,
+)
 
 from asgiref.wsgi import WsgiToAsgi
 from jinja2 import FileSystemLoader
@@ -15,7 +25,7 @@ from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
-from .compat import call_async
+from .compat import call_async, call_all_async
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
@@ -73,15 +83,15 @@ class API:
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
 
     def __init__(
-            self,
-            templates_dir: str = 'templates',
-            static_dir: Optional[str] = 'static',
-            static_root: Optional[str] = 'static',
-            allowed_hosts: List[str] = None,
-            enable_cors: bool = False,
-            cors_config: dict = None,
-            enable_hsts: bool = False,
-            media_type: Optional[str] = Media.JSON,
+        self,
+        templates_dir: str = 'templates',
+        static_dir: Optional[str] = 'static',
+        static_root: Optional[str] = 'static',
+        allowed_hosts: List[str] = None,
+        enable_cors: bool = False,
+        cors_config: dict = None,
+        enable_hsts: bool = False,
+        media_type: Optional[str] = Media.JSON,
     ):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
@@ -89,9 +99,9 @@ class API:
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
 
-        self._templates = get_templates_environment([
-            os.path.abspath(templates_dir),
-        ])
+        self._templates = get_templates_environment(
+            [os.path.abspath(templates_dir)]
+        )
         self._templates.globals.update(self._get_template_globals())
 
         self._extra_apps: Dict[str, Any] = {}
@@ -117,8 +127,7 @@ class API:
         self._routing_middleware = RoutingMiddleware(self)
         self._common_middleware = CommonMiddleware(self._routing_middleware)
         self.add_middleware(
-            TrustedHostMiddleware,
-            allowed_hosts=self.allowed_hosts,
+            TrustedHostMiddleware, allowed_hosts=self.allowed_hosts
         )
         if enable_cors:
             self.add_middleware(CORSMiddleware, **self.cors_config)
@@ -150,8 +159,9 @@ class API:
     def media_handlers(self, media_handlers: dict):
         self._media.handlers = media_handlers
 
-    def add_error_handler(self, exception_cls: Type[Exception],
-                          handler: ErrorHandler):
+    def add_error_handler(
+        self, exception_cls: Type[Exception], handler: ErrorHandler
+    ):
         """Register a new error handler.
 
         Parameters
@@ -184,7 +194,8 @@ class API:
 
     def _find_handlers(self, exception):
         return (
-            handler for err_type, handler in self._error_handlers
+            handler
+            for err_type, handler in self._error_handlers
             if isinstance(exception, err_type)
         )
 
@@ -202,8 +213,9 @@ class API:
         else:
             raise exception from None
 
-    def route(self, pattern: str, *, methods: List[str] = None,
-              name: str = None):
+    def route(
+        self, pattern: str, *, methods: List[str] = None, name: str = None
+    ):
         """Register a new route.
 
         Parameters
@@ -238,15 +250,13 @@ class API:
                     methods = ALL_HTTP_METHODS
                 else:
                     methods = [
-                        method for method in ALL_HTTP_METHODS
+                        method
+                        for method in ALL_HTTP_METHODS
                         if method.lower() in dir(view)
                     ]
             check_route(pattern, view, methods)
             route = Route(
-                pattern=pattern,
-                view=view,
-                methods=methods,
-                name=name,
+                pattern=pattern, view=view, methods=methods, name=name
             )
 
             self._routes[pattern] = route
@@ -305,11 +315,14 @@ class API:
         route = self._get_route_or_404(name)
         return route.url(**kwargs)
 
-    def redirect(self, *,
-                 name: str = None,
-                 url: str = None,
-                 permanent: bool = False,
-                 **kwargs):
+    def redirect(
+        self,
+        *,
+        name: str = None,
+        url: str = None,
+        permanent: bool = False,
+        **kwargs
+    ):
         """Redirect to another route.
 
         Parameters
@@ -331,9 +344,7 @@ class API:
         raise Redirection(url=url, permanent=permanent)
 
     def _get_template_globals(self) -> dict:
-        return {
-            'url_for': self.url_for,
-        }
+        return {'url_for': self.url_for}
 
     @property
     def templates_dir(self) -> str:
@@ -376,8 +387,9 @@ class API:
         context.update(kwargs)
         return context
 
-    async def template(self, name_: str,
-                       context: dict = None, **kwargs) -> Coroutine:
+    async def template(
+        self, name_: str, context: dict = None, **kwargs
+    ) -> Coroutine:
         """Render a template asynchronously.
 
         Can only be used within `async`  functions.
@@ -405,19 +417,22 @@ class API:
         with self._prevent_async_template_rendering():
             return self._get_template(name_).render(context)
 
-    def template_string(self, source: str, context: dict = None,
-                        **kwargs) -> str:
+    def template_string(
+        self, source: str, context: dict = None, **kwargs
+    ) -> str:
         """Render a template from a string (synchronous)."""
         context = self._prepare_context(context, **kwargs)
         with self._prevent_async_template_rendering():
             template = self._templates.from_string(source=source)
             return template.render(context)
 
-    def run(self,
-            host: str = None,
-            port: int = None,
-            debug: bool = False,
-            log_level: str = 'info'):
+    def run(
+        self,
+        host: str = None,
+        port: int = None,
+        debug: bool = False,
+        log_level: str = 'info',
+    ):
         """Serve the application using uvicorn.
 
         Parameters
@@ -453,13 +468,16 @@ class API:
 
         if debug:
             reloader = StatReload(get_logger(log_level))
-            reloader.run(run, {
-                'app': self,
-                'host': host,
-                'port': port,
-                'log_level': log_level,
-                'debug': debug,
-            })
+            reloader.run(
+                run,
+                {
+                    'app': self,
+                    'host': host,
+                    'port': port,
+                    'log_level': log_level,
+                    'debug': debug,
+                },
+            )
         else:
             run(self, host=host, port=port)
 
@@ -470,6 +488,11 @@ class API:
         after: List[Callable] = None,
     ) -> Response:
         """Dispatch a request and return a response."""
+        if before is None:
+            before = []
+        if after is None:
+            after = []
+
         response = Response(request, media=self._media)
 
         try:
@@ -478,16 +501,11 @@ class API:
             if route is None:
                 raise HTTPError(status=404)
             else:
+                route.raise_for_method(request)
                 try:
-                    if before:
-                        for func in before:
-                            await call_async(func, request)
-
+                    await call_all_async(before, request)
                     await route(request, response, **kwargs)
-
-                    if after:
-                        for func in after:
-                            await call_async(func, request, response)
+                    await call_all_async(after, request, response)
                 except Redirection as redirection:
                     response = redirection.response
         except Exception as e:
@@ -514,7 +532,7 @@ class API:
                 continue
             # Remove prefix from path so that the request is made according
             # to the mounted app's point of view.
-            scope['path'] = path[len(prefix):]
+            scope['path'] = path[len(prefix) :]
             try:
                 return app(scope)
             except TypeError:
