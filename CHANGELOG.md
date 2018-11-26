@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.6.0] - 2018-11-26
+
 ### Added
 
 - Route hooks via `@api.before()` and `@api.after()`.
@@ -125,7 +127,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...HEAD
+[v0.6.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.1...v0.4.0
 [v0.3.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.0...v0.3.1
