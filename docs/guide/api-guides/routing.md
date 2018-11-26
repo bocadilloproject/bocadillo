@@ -78,7 +78,9 @@ In templates, you can use the `url_for()` global:
 
 ## Specifying HTTP methods (function-based views only)
 
-By default, a route accepts all HTTP methods. On function-based views,
+By default, a route exposes the following HTTP methods: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH.
+
+On function-based views,
 you can use the `methods` argument to `@api.route()` to specify the set of
 HTTP methods being exposed:
 
@@ -88,13 +90,16 @@ async def index(req, res):
     res.text = "Come GET me, bro"
 ```
 
-**Note**: the `methods` argument is ignored on class-based views.
-You should instead decide which methods are implemented on the class to control
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks](#hooks) and [middleware](./middleware.md) callbacks will not be called either.
+
+::: tip
+The `methods` argument is ignored on class-based views. You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
+:::
 
 ## Hooks
 
-Hooks allows you to call arbitrary code before and after a view is executed. They materialize as the `api.before()` and `api.after()` decorators.
+Hooks allow you to call arbitrary code before and after a view is executed. They materialize as the `@api.before()` and `@api.after()` decorators.
  
  These decorators take a **hook function**, which is a synchronous or asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
 
