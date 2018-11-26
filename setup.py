@@ -2,9 +2,7 @@
 
 import setuptools
 
-description = (
-    'A modern Python web framework filled with asynchronous salsa.'
-)
+description = 'A modern Python web framework filled with asynchronous salsa.'
 
 with open('README.md', 'r') as readme:
     long_description = readme.read()
@@ -12,7 +10,7 @@ with open('README.md', 'r') as readme:
 
 setuptools.setup(
     name='bocadillo',
-    version='0.5.0',
+    version='0.6.0',
     author='Florimond Manca',
     author_email='florimond.manca@gmail.com',
     description=description,
@@ -42,9 +40,5 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
-    entry_points={
-        'console_scripts': [
-            'boca=bocadillo.cli:cli',
-        ]
-    },
+    entry_points={'console_scripts': ['boca=bocadillo.cli:cli']},
 )
