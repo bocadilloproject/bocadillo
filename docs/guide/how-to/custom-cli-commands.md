@@ -1,6 +1,8 @@
 # Write custom CLI commands
 
-> **Note**: this feature is experimental. Use with care!
+::: warning
+This CLI extension mechanism is experimental and may be subject to changes.
+:::
 
 Bocadillo provides a handy [CLI](../api-guides/cli.md) for performing common tasks. If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
 
