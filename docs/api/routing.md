@@ -90,7 +90,7 @@ async def index(req, res):
     res.text = "Come GET me, bro"
 ```
 
-When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks](#hooks) and [middleware](./middleware.md) callbacks will not be called either.
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks](#hooks) and [middleware](middleware.md) callbacks will not be called either.
 
 ::: tip
 The `methods` argument is ignored on class-based views. You should instead decide which methods are implemented on the class to control

@@ -4,7 +4,7 @@
 This CLI extension mechanism is experimental and may be subject to changes.
 :::
 
-Bocadillo provides a handy [CLI](../api-guides/cli.md) for performing common tasks. If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
+Bocadillo provides a handy [CLI](../api/cli.md) for performing common tasks. If you find yourself repeating certain tasks, you can automate them via a custom `boca` command.
 
 To do so, use the `init:custom` command, which will generate the following file:
 

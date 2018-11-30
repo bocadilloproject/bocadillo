@@ -34,8 +34,20 @@ module.exports = {
                 link: '/',
             },
             {
-                text: 'Guide',
-                link: '/guide/',
+                text: 'Get Started',
+                link: '/getting-started/',
+            },
+            {
+                text: 'Topics',
+                link: '/topics/',
+            },
+            {
+                text: 'How To',
+                link: '/how-to/',
+            },
+            {
+                text: 'API',
+                link: '/api/',
             },
             {
                 text: 'Changelog',
@@ -46,56 +58,94 @@ module.exports = {
                 link: 'https://pypi.org/project/bocadillo/',
             },
         ],
-        sidebar: [
-            '/guide/',
-            {
-                title: 'Getting Started',
-                collapsable: false,
-                children: [
-                    '/guide/installation',
-                    '/guide/tutorial',
-                ],
-            },
-            {
-                title: 'Topics',
-                collapsable: false,
-                children: [
-                    '/guide/topics/async-vs-sync',
-                    '/guide/topics/request-handling',
-                    '/guide/topics/json',
-                    '/guide/topics/templates',
-                    '/guide/topics/testing',
-                    '/guide/topics/deployment',
-                ],
-            },
-            {
-                title: 'How To',
-                collapsable: false,
-                children: [
-                    '/guide/how-to/custom-cli-commands',
-                    '/guide/how-to/extra-media-handlers',
-                ],
-            },
-            {
-                title: 'API Guide',
-                collapsable: false,
-                children: [
-                    '/guide/api-guides/api',
-                    '/guide/api-guides/views',
-                    '/guide/api-guides/routing',
-                    '/guide/api-guides/requests',
-                    '/guide/api-guides/responses',
-                    '/guide/api-guides/redirecting',
-                    '/guide/api-guides/templates',
-                    '/guide/api-guides/static-files',
-                    '/guide/api-guides/error-handling',
-                    '/guide/api-guides/media',
-                    '/guide/api-guides/middleware',
-                    '/guide/api-guides/cli',
-                    '/guide/api-guides/cors',
-                    '/guide/api-guides/hsts',
-                ],
-            },
-        ],
+        sidebar: {
+            '/getting-started/': [
+                {
+                    title: 'Getting Started',
+                    collapsable: false,
+                    children: [
+                        '/getting-started/',
+                        '/getting-started/installation',
+                        '/getting-started/tutorial',
+                        '/getting-started/next-steps',
+                    ],
+                },
+            ],
+            '/topics/': [
+                {
+                    title: 'Handling HTTP requests',
+                    collapsable: false,
+                    children: [
+                        '/topics/request-handling/routes-url-design',
+                        '/topics/request-handling/writing-views',
+                    ]
+                },
+                {
+                    title: 'Common functionality',
+                    collapsable: false,
+                    children: [
+                        '/topics/templates',
+                        '/topics/static-files',
+                        '/topics/json',
+                    ],
+                },
+                {
+                    title: 'Middleware',
+                    collapsable: false,
+                    children: [
+                        '/topics/middleware/overview',
+                        '/topics/middleware/builtin',
+                        '/topics/middleware/writing-routing-middleware',
+                    ],
+                },
+                {
+                    title: 'Beyond development',
+                    collapsable: false,
+                    children: [
+                        '/topics/testing',
+                        '/topics/deployment',
+                    ],
+                },
+                {
+                    title: 'Discussions',
+                    collapsable: false,
+                    children: [
+                        '/topics/async-vs-sync',
+                    ]
+                }
+            ],
+            '/how-to/': [
+                {
+                    title: 'How To',
+                    collapsable: false,
+                    children: [
+                        '/how-to/custom-cli-commands',
+                        '/how-to/extra-media-handlers',
+                    ],
+                },
+            ],
+            '/api/': [
+                {
+                    title: 'API Reference',
+                    collapsable: false,
+                    children: [
+                        '/api/api',
+                        '/api/views',
+                        '/api/routing',
+                        '/api/requests',
+                        '/api/responses',
+                        '/api/redirecting',
+                        '/api/templates',
+                        '/api/static-files',
+                        '/api/error-handling',
+                        '/api/media',
+                        '/api/middleware',
+                        '/api/cli',
+                        '/api/cors',
+                        '/api/hsts',
+                    ],
+                },
+            ],
+        },
     },
 };

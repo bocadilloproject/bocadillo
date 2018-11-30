@@ -7,7 +7,7 @@ Views can be asynchronous or synchronous, function-based or class-based.
 
 ## Asynchronous views
 
-The recommended way to define views in Bocadillo is using the async/await syntax. This allows you to call arbitrary async/await
+The recommended way to define views in Bocadillo is using the async/await syntax (as in the previous example). This allows you to call arbitrary async/await
 Python code:
 
 ```python
