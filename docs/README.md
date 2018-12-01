@@ -1,7 +1,7 @@
 ---
 home: true
 actionText: Get Started →
-actionLink: /guide/
+actionLink: /getting-started/
 features:
 - title: Simple and productive
   details: A minimal setup and carefully chosen included batteries help you solve common (and more advanced) problems in no time. 
