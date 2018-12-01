@@ -39,14 +39,16 @@ async def create_job(req, res):
     res.status_code = 201
 ```
 
-> Bocadillo does not provide an enum of HTTP status codes. If you prefer to
+::: tip
+Bocadillo does not provide an enum of HTTP status codes. If you prefer to
 use one, you'd be safe enough going for `HTTPStatus`, located in the standard
 library's `http` module.
-> 
-> ```python
-> from http import HTTPStatus
-> res.status_code = HTTPStatus.CREATED.value
-> ```
+
+```python
+from http import HTTPStatus
+res.status_code = HTTPStatus.CREATED.value
+```
+:::
 
 ## Headers
 
