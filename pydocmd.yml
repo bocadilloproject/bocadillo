@@ -6,8 +6,8 @@ generate:
     - bocadillo.api.API+
 
 pages:
-- bocadillo.api: docs/api.md
+- bocadillo.api: api.md
 
-gens_dir: ./docs/api-reference
+gens_dir: ./docs/api
 
 headers: markdown
