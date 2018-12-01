@@ -25,7 +25,7 @@ from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
 from .checks import check_route
-from .compat import call_async, call_all_async
+from .compat import call_all_async
 from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error

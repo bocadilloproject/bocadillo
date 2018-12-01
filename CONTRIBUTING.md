@@ -18,6 +18,16 @@ To write a new page for the docs, create a new `.md` file in the appropriate dir
 
 Feel free to refer to the [VuePress docs](https://vuepress.vuejs.org) if needed.
 
+### API Reference
+
+Once you have installed Bocadillo for development (see next section) API Reference can be generate by using:
+
+```bash
+pymdoc generate
+```
+
+See `pymdoc.yml` and [PydocMarkdown] documentation for the details.
+
 ## Install
 
 Python 3.6+ is required to install Bocadillo locally.
@@ -98,3 +108,5 @@ When ready to release a new version to production:
 ```bash
 $ git push --tags
 ```
+
+[PydocMarkdown]: https://github.com/NiklasRosenstein/pydoc-markdown

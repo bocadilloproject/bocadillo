@@ -1,0 +1,13 @@
+site_name: "Bocadillo API Reference"
+
+generate:
+- api.md:
+  - bocadillo.api:
+    - bocadillo.api.API+
+
+pages:
+- bocadillo.api: docs/api.md
+
+gens_dir: ./docs/api-reference
+
+headers: markdown
