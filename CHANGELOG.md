@@ -12,6 +12,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Documentation on the routing algorithm.
 - More documentation on how to write views.
+- API reference for the `API` class.
 
 ### Changed
 
