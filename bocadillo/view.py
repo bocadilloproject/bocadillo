@@ -11,19 +11,19 @@ from .response import Response
 class ClassBasedView:
     """Class-based view interface."""
 
-    def get(self, request: Request, response: Response, **kwargs):
+    def get(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
-    def post(self, request: Request, response: Response, **kwargs):
+    def post(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
-    def put(self, request: Request, response: Response, **kwargs):
+    def put(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
-    def patch(self, request: Request, response: Response, **kwargs):
+    def patch(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
-    def delete(self, request: Request, response: Response, **kwargs):
+    def delete(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
 
@@ -37,6 +37,7 @@ def create_callable_view(view: View) -> CallableView:
     if asyncio.iscoroutinefunction(view):
         return view
     elif inspect.isfunction(view):
+
         async def callable_view(req, res, **kwargs):
             await call_async(view, req, res, sync=True, **kwargs)
 
