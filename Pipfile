@@ -17,6 +17,7 @@ pytest = "*"
 bumpversion = "*"
 pytest-asyncio = "*"
 pre-commit = "*"
+pydoc-markdown = "*"
 
 [requires]
 python_version = "3.7"
