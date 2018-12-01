@@ -43,41 +43,65 @@ from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 
 class API:
-    """Bocadillo API.
+    """The all-mighty API class.
 
-    Parameters
-    ----------
-    templates_dir : str, optional
-        The name of the directory containing templates, relative to
-        the application entry point.
-        Defaults to 'templates'.
-    static_dir: str, optional
+    This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
+
+    # Example
+
+    ```python
+    >>> import bocadillo
+    >>> api = bocadillo.API()
+    ```
+
+    # Parameters
+
+    templates_dir (str):
+        The name of the directory where templates are searched for,
+        relative to the application entry point.
+        Defaults to `'templates'`.
+    static_dir (str):
         The name of the directory containing static files, relative to
-        the application entry point.
-        Defaults to 'static'.
-    static_root : str, optional
+        the application entry point. Set to `None` to not serve any static
+        files.
+        Defaults to `'static'`.
+    static_root (str):
         The path prefix for static assets.
-        Defaults to 'static'.
-    allowed_hosts : list of str, optional
+        Defaults to `'static'`.
+    allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
-        If the list contains '*', any host is allowed.
-        Defaults to ['*'].
-    enable_cors : bool, optional
-        If True, Cross Origin Resource Sharing will be configured according
-        to `cors_config`.
-        Defaults to False.
-    cors_config : dict, optional
+        If the list contains `'*'`, any host is allowed.
+        Defaults to `['*']`.
+    enable_cors (bool):
+        If `True`, Cross Origin Resource Sharing will be configured according
+        to `cors_config`. Defaults to `False`.
+        See also [CORS](../topics/features/cors.md).
+    cors_config (dict):
         A dictionary of CORS configuration parameters.
-        Defaults to `{'allow_origins': [], 'allow_methods': ['GET']}`.
-        See also: https://www.starlette.io/middleware/#corsmiddleware
-    enable_hsts : bool, optional
-        If True, enable HSTS (HTTP Strict Transport Security) and automatically
+        Defaults to `dict(allow_origins=[], allow_methods=['GET'])`.
+    enable_hsts (bool):
+        If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
-        Defaults to False.
-    media_type : str, optional
-        Determines how values given to `res._media` are serialized.
-        Can be one of the supported _media types.
-        Defaults to 'application/json'.
+        Defaults to `False`.
+        See also [HSTS](../topics/features/hsts.md).
+    media_type (str):
+        Determines how values given to `res.media` are serialized.
+        Can be one of the supported media types.
+        Defaults to `'application/json'`.
+        See also [Media](../topics/request-handling/media.md).
+
+    # Attributes
+
+    media_type (str):
+        The currently configured media type.
+        When setting it to a value outside of built-in or custom media types,
+        an `UnsupportedMediaType` exception is raised.
+    media_handlers (dict):
+        The dictionary of supported media handlers.
+        You can access, edit or replace this at will.
+    templates_dir (str):
+        The absolute path where templates are searched for (built from the
+        `templates_dir` parameter).
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -138,7 +162,12 @@ class API:
         return TestClient(self)
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
-        """Mount another WSGI or ASGI app at the given prefix."""
+        """Mount another WSGI or ASGI app at the given prefix.
+
+        # Parameters
+        prefix (str): A path prefix where the app should be mounted, e.g. `'/myapp'`.
+        app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+        """
         if not prefix.startswith('/'):
             prefix = '/' + prefix
         self._extra_apps[prefix] = app
@@ -164,26 +193,27 @@ class API:
     ):
         """Register a new error handler.
 
-        Parameters
-        ----------
-        exception_cls : Exception class
+        # Parameters
+        exception_cls (Exception class):
             The type of exception that should be handled.
-        handler : (request, response, exception) -> None
+        handler (callable):
             The actual error handler, which is called when an instance of
             `exception_cls` is caught.
+            Should accept a `req`, a `res` and an `exc`.
         """
         self._error_handlers.insert(0, (exception_cls, handler))
 
     def error_handler(self, exception_cls: Type[Exception]):
         """Register a new error handler (decorator syntax).
 
-        Example
-        -------
+        # Example
+        ```python
         >>> import bocadillo
         >>> api = bocadillo.API()
         >>> @api.error_handler(KeyError)
         ... def on_key_error(req, res, exc):
         ...     pass  # perhaps set res.content and res.status_code
+        ```
         """
 
         def wrapper(handler):
@@ -216,26 +246,29 @@ class API:
     def route(
         self, pattern: str, *, methods: List[str] = None, name: str = None
     ):
-        """Register a new route.
+        """Register a new route by decorating a view.
 
-        Parameters
-        ----------
-        pattern : str
-            A route pattern given as an f-string expression.
-        methods : list of str, optional
+        # Parameters
+        pattern (str):
+            An URL pattern given as a format string.
+        methods (list of str):
             HTTP methods supported by this route.
             Defaults to all HTTP methods.
             Ignored for class-based views.
-        name : str, optional
+        name (str):
             A name for this route, which must be unique.
 
-        Example
-        -------
+        # Raises
+        RouteDeclarationError: if the internal call to #checks.check_route() fails.
+
+        # Example
+        ```python
         >>> import bocadillo
         >>> api = bocadillo.API()
         >>> @api.route('/greet/{person}')
         ... def greet(req, res, person: str):
         ...     pass
+        ```
         """
         if methods is None:
             methods = ALL_HTTP_METHODS
@@ -271,7 +304,13 @@ class API:
     def before(hook_function: HookFunction, *args, **kwargs):
         """Register a before hook on a route.
 
-        Note: @api.before() must be above @api.route().
+        ::: tip NOTE
+        `@api.before()` should beplaced  **above** `@api.route()`
+        when decorating a view.
+        :::
+
+        # Parameters
+        hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
         """
         return Route.before_hook(hook_function, *args, **kwargs)
 
@@ -279,7 +318,13 @@ class API:
     def after(hook_function: HookFunction, *args, **kwargs):
         """Register an after hook on a route.
 
-        Note: @api.after() must be above @api.route().
+        ::: tip NOTE
+        `@api.after()` should be placed **above** `@api.route()`
+        when decorating a view.
+        :::
+
+        # Parameters
+        hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
         """
         return Route.after_hook(hook_function, *args, **kwargs)
 
@@ -298,19 +343,17 @@ class API:
             raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
 
     def url_for(self, name: str, **kwargs) -> str:
-        """Return the URL path for a route.
+        """
 
-        Parameters
-        ----------
-        name : str
-            Name of the route.
-        kwargs :
-            Route parameters.
+        # Parameters
+        name (str): the name of the route.
+        kwargs (dict): route parameters.
 
-        Raises
-        ------
-        HTTPError(404) :
-            If no route exists for the given `name`.
+        # Returns
+        url (str): the URL path for a route.
+
+        # Raises
+        HTTPError(404) : if no route exists for the given `name`.
         """
         route = self._get_route_or_404(name)
         return route.url(**kwargs)
@@ -325,17 +368,17 @@ class API:
     ):
         """Redirect to another route.
 
-        Parameters
-        ----------
-        name : str, optional
-            Name of the route to redirect to.
-        url : str, optional (unless name not given)
-            URL of the route to redirect to.
-        permanent : bool, optional
-            If False (the default), returns a temporary redirection (302).
-            If True, returns a permanent redirection (301).
-        kwargs :
+        # Parameters
+        name (str): name of the route to redirect to.
+        url (str): URL of the route to redirect to, required if `name` is ommitted.
+        permanent (bool):
+            If `False` (the default), returns a temporary redirection (302).
+            If `True`, returns a permanent redirection (301).
+        kwargs (dict):
             Route parameters.
+
+        # Raises
+        Redirection: an exception that will be caught by #API.dispatch().
         """
         if name is not None:
             url = self.url_for(name=name, **kwargs)
@@ -392,15 +435,17 @@ class API:
     ) -> Coroutine:
         """Render a template asynchronously.
 
-        Can only be used within `async`  functions.
+        Can only be used within `async` functions.
 
-        Parameters
-        ----------
-        name_ : str
+        # Parameters
+
+        name (str):
             Name of the template, located inside `templates_dir`.
-            Trailing underscore to avoid collisions with a potential
-            context variable named 'name'.
-        context : dict
+            The trailing underscore avoids collisions with a potential
+            context variable named `name`.
+        context (dict):
+            Context variables to inject in the template.
+        kwargs (dict):
             Context variables to inject in the template.
         """
         context = self._prepare_context(context, **kwargs)
@@ -409,9 +454,7 @@ class API:
     def template_sync(self, name_: str, context: dict = None, **kwargs) -> str:
         """Render a template synchronously.
 
-        See Also
-        --------
-        .template()
+        See also: #API.template().
         """
         context = self._prepare_context(context, **kwargs)
         with self._prevent_async_template_rendering():
@@ -420,11 +463,110 @@ class API:
     def template_string(
         self, source: str, context: dict = None, **kwargs
     ) -> str:
-        """Render a template from a string (synchronous)."""
+        """Render a template from a string (synchronous).
+
+        # Parameters
+        source (str): a template given as a string.
+
+        For other parameters, see #API.template().
+        """
         context = self._prepare_context(context, **kwargs)
         with self._prevent_async_template_rendering():
             template = self._templates.from_string(source=source)
             return template.render(context)
+
+    def _is_routing_middleware(self, middleware_cls) -> bool:
+        return hasattr(middleware_cls, 'dispatch')
+
+    def add_middleware(self, middleware_cls, **kwargs):
+        """Register a middleware class.
+
+        See also [Middleware](../topics/features/middleware.md).
+
+        # Parameters
+
+        middleware_cls (Middleware class):
+            It should be a #~some.middleware.RoutingMiddleware class (not an instance!), or any
+            concrete subclass or #~some.middleware.Middleware.
+        """
+        if self._is_routing_middleware(middleware_cls):
+            self._routing_middleware.add(middleware_cls, **kwargs)
+        else:
+            self._common_middleware.add(middleware_cls, **kwargs)
+
+    async def dispatch(
+        self,
+        request: Request,
+        before: List[Callable] = None,
+        after: List[Callable] = None,
+    ) -> Response:
+        """Dispatch a request and return a response.
+
+        For the exact algorithm, see
+        [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
+
+        # Parameters
+        request (Request): an inbound HTTP request.
+        before (list of callables): a list of middleware `before_dispatch` hooks.
+        after (list of callables): a list of middleware `after_dispatch` hooks.
+
+        # Returns
+        response (Response): an HTTP response.
+        """
+        if before is None:
+            before = []
+        if after is None:
+            after = []
+
+        response = Response(request, media=self._media)
+
+        try:
+            pattern, kwargs = self._find_matching_route(request.url.path)
+            route = self._routes.get(pattern)
+            if route is None:
+                raise HTTPError(status=404)
+            route.raise_for_method(request)
+            try:
+                await call_all_async(before, request)
+                await route(request, response, **kwargs)
+                await call_all_async(after, request, response)
+            except Redirection as redirection:
+                response = redirection.response
+        except Exception as e:
+            self._handle_exception(request, response, e)
+
+        return response
+
+    def find_app(self, scope: dict) -> ASGIAppInstance:
+        """Return the ASGI application suited to the given ASGI scope.
+
+        This is also what `API.__call__(self)` returns.
+
+        # Parameters
+        scope (dict):
+            An ASGI scope.
+
+        # Returns
+        app:
+            An ASGI application instance
+            (either `self` or an instance of a sub-app).
+        """
+        path: str = scope['path']
+
+        # Return a sub-mounted extra app, if found
+        for prefix, app in self._extra_apps.items():
+            if not path.startswith(prefix):
+                continue
+            # Remove prefix from path so that the request is made according
+            # to the mounted app's point of view.
+            scope['path'] = path[len(prefix) :]
+            try:
+                return app(scope)
+            except TypeError:
+                app = WsgiToAsgi(app)
+                return app(scope)
+
+        return self._common_middleware(scope)
 
     def run(
         self,
@@ -433,27 +575,27 @@ class API:
         debug: bool = False,
         log_level: str = 'info',
     ):
-        """Serve the application using uvicorn.
+        """Serve the application using [uvicorn](https://www.uvicorn.org).
 
-        Parameters
-        ----------
-        host : str, optional
+        For further details, refer to
+        [uvicorn settings](https://www.uvicorn.org/settings/).
+
+        # Parameters
+
+        host (str):
             The host to bind to.
-            Defaults to '127.0.0.1' (localhost). If not given and `PORT` is set,
-            '0.0.0.0' will be used to serve to all known hosts.
-        port : int, optional
+            Defaults to `'127.0.0.1'` (localhost).
+            If not given and `$PORT` is set, `'0.0.0.0'` will be used to
+            serve to all known hosts.
+        port (int):
             The port to bind to.
-            Defaults to 8000 or (if set) the value of the `PORT` environment
+            Defaults to `8000` or (if set) the value of the `$PORT` environment
             variable.
-        debug : bool, optional
+        debug (bool):
             Whether to serve the application in debug mode. Defaults to `False`.
-        log_level : str, optional
-            A logging level for the debug logger. Must be compatible with
-            logging levels from the `logging` module.
-
-        See Also
-        --------
-        https://www.uvicorn.org/settings/
+        log_level (str):
+            A logging level for the debug logger. Must be a logging level
+            from the `logging` module. Defaults to `'info'`.
         """
         if 'PORT' in os.environ:
             port = int(os.environ['PORT'])
@@ -481,64 +623,5 @@ class API:
         else:
             run(self, host=host, port=port)
 
-    async def dispatch(
-        self,
-        request: Request,
-        before: List[Callable] = None,
-        after: List[Callable] = None,
-    ) -> Response:
-        """Dispatch a request and return a response."""
-        if before is None:
-            before = []
-        if after is None:
-            after = []
-
-        response = Response(request, media=self._media)
-
-        try:
-            pattern, kwargs = self._find_matching_route(request.url.path)
-            route = self._routes.get(pattern)
-            if route is None:
-                raise HTTPError(status=404)
-            route.raise_for_method(request)
-            try:
-                await call_all_async(before, request)
-                await route(request, response, **kwargs)
-                await call_all_async(after, request, response)
-            except Redirection as redirection:
-                response = redirection.response
-        except Exception as e:
-            self._handle_exception(request, response, e)
-
-        return response
-
-    def _is_routing_middleware(self, middleware_cls) -> bool:
-        return hasattr(middleware_cls, 'dispatch')
-
-    def add_middleware(self, middleware_cls, **kwargs):
-        if self._is_routing_middleware(middleware_cls):
-            self._routing_middleware.add(middleware_cls, **kwargs)
-        else:
-            self._common_middleware.add(middleware_cls, **kwargs)
-
-    def _find_app(self, scope: dict) -> ASGIAppInstance:
-        """Return an ASGI app depending on the scope's path."""
-        path: str = scope['path']
-
-        # Return a sub-mounted extra app, if found
-        for prefix, app in self._extra_apps.items():
-            if not path.startswith(prefix):
-                continue
-            # Remove prefix from path so that the request is made according
-            # to the mounted app's point of view.
-            scope['path'] = path[len(prefix) :]
-            try:
-                return app(scope)
-            except TypeError:
-                app = WsgiToAsgi(app)
-                return app(scope)
-
-        return self._common_middleware(scope)
-
     def __call__(self, scope: dict) -> ASGIAppInstance:
-        return self._find_app(scope)
+        return self.find_app(scope)

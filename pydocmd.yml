@@ -2,8 +2,7 @@ site_name: "Bocadillo API Reference"
 
 generate:
 - api.md:
-  - bocadillo.api:
-    - bocadillo.api.API+
+  - bocadillo.api.API+
 
 pages:
 - bocadillo.api: api.md

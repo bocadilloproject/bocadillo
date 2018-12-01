@@ -21,9 +21,9 @@ class HTTPError(Exception):
         if isinstance(status, int):
             status = HTTPStatus(status)
         else:
-            assert isinstance(status, HTTPStatus), (
-                f'Expected int or HTTPStatus, got {type(status)}'
-            )
+            assert isinstance(
+                status, HTTPStatus
+            ), f'Expected int or HTTPStatus, got {type(status)}'
         self._status = status
 
     @property
@@ -45,7 +45,7 @@ class HTTPError(Exception):
 
 
 class UnsupportedMediaType(Exception):
-    """Raised when trying to use an unsupported _media type."""
+    """Raised when trying to use an unsupported media type."""
 
     def __init__(self, media_type, available):
         self._media_type = media_type

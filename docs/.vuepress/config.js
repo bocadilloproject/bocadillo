@@ -130,7 +130,9 @@ module.exports = {
                 {
                     title: 'API Reference',
                     collapsable: false,
-                    children: [],
+                    children: [
+                        '/api/api',
+                    ],
                 },
             ],
         },
