@@ -72,41 +72,46 @@ module.exports = {
                 },
             ],
             '/topics/': [
+                '/topics/api',
                 {
                     title: 'Handling HTTP requests',
                     collapsable: false,
                     children: [
                         '/topics/request-handling/routes-url-design',
                         '/topics/request-handling/writing-views',
+                        '/topics/request-handling/requests',
+                        '/topics/request-handling/responses',
                         '/topics/request-handling/redirecting',
-                        '/topics/request-handling/hooks',
                         '/topics/request-handling/media',
-                    ]
-                },
-                {
-                    title: 'Common functionality',
-                    collapsable: false,
-                    children: [
-                        '/topics/common/templates',
-                        '/topics/common/static-files',
-                        '/topics/common/cors',
-                        '/topics/common/hsts',
-                        '/topics/common/middleware',
                     ],
                 },
                 {
-                    title: 'Beyond development',
+                    title: 'Features',
                     collapsable: false,
                     children: [
-                        '/topics/testing',
-                        '/topics/deployment',
+                        '/topics/features/views',
+                        '/topics/features/templates',
+                        '/topics/features/static-files',
+                        '/topics/features/hooks',
+                        '/topics/features/cors',
+                        '/topics/features/hsts',
+                        '/topics/features/middleware',
+                    ],
+                },
+                {
+                    title: 'Tooling',
+                    collapsable: false,
+                    children: [
+                        '/topics/tooling/cli',
+                        '/topics/tooling/testing',
+                        '/topics/tooling/deployment',
                     ],
                 },
                 {
                     title: 'Discussions',
                     collapsable: false,
                     children: [
-                        '/topics/async-vs-sync',
+                        '/topics/discussions/async-vs-sync',
                     ]
                 }
             ],

@@ -1,6 +1,6 @@
 # CLI
 
-Bocadillo comes with `boca`, a handy CLI built with [Click](https://click.palletsprojects.com) for performing common tasks when working on Bocadillo apps.
+Bocadillo comes with `boca`, a handy CLI built with [Click] for performing common tasks when working on Bocadillo apps.
 
 ## Basic usage
 
@@ -19,4 +19,7 @@ Commands:
 
 You can write custom CLI commands to help you automate certain tasks.
 
-See our how-to guide: [Write custom CLI commands](../how-to/custom-cli-commands.md).
+See our how-to guide: [Write custom CLI commands].
+
+[Click]: https://click.palletsprojects.com
+[Write custom CLI commands]: ../../how-to/custom-cli-commands.md

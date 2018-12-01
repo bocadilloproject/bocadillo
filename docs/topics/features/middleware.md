@@ -1,4 +1,4 @@
-# Middleware overview
+# Middleware
 
 ::: warning
 This feature is **experimental**; the middleware API may be subject to changes.
@@ -18,5 +18,5 @@ Middleware classes provide behavior for the entire application. They act as an i
 
 > TODO
 
-[API object]: ../../api/api.md
+[API object]: ../api.md
 [ASGI]: https://asgi.readthedocs.io

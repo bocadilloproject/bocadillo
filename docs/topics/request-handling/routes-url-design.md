@@ -123,10 +123,10 @@ The `methods` argument is ignored on class-based views. You should instead decid
 the exposition of HTTP methods.
 :::
 
-[Request]: ../requests.md
-[Response]: ../responses.md
+[Request]: requests.md
+[Response]: responses.md
 [F-string notation]: https://www.python.org/dev/peps/pep-0498/
 [format specifiers]: https://www.python.org/dev/peps/pep-0498/#format-specifiers
 [parse]: https://pypi.org/project/parse/
-[hooks]: ./hooks.md
-[middleware]: ../common/middleware.md
+[hooks]: ../features/hooks.md
+[middleware]: ../features/middleware.md
