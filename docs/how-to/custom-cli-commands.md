@@ -1,4 +1,4 @@
-# Write custom CLI commands
+# Writing custom CLI commands
 
 ::: warning
 This CLI extension mechanism is experimental and may be subject to changes.

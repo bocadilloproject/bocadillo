@@ -42,7 +42,7 @@ module.exports = {
                 link: '/topics/',
             },
             {
-                text: 'How To',
+                text: 'How-To',
                 link: '/how-to/',
             },
             {
@@ -117,7 +117,7 @@ module.exports = {
             ],
             '/how-to/': [
                 {
-                    title: 'How To',
+                    title: 'How-To',
                     collapsable: false,
                     children: [
                         '/how-to/custom-cli-commands',
