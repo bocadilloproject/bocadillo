@@ -2,7 +2,7 @@
 
 In Bocadillo, **media** refers to data of a specific format — e.g. JSON or YAML — that generally needs some kind of serialization before being sent over the wire.
 
-Each Bocadillo application has a **media type** (a valid [MIME type]) which determines how values given to `res.media` (see [Responses](responses.md)) are handled.
+Each Bocadillo application has a **media type** (a valid [MIME type]) which determines how values given to `res.media` (see [Responses](../responses.md)) are handled.
 
 The default media type is `application/json`.
 
@@ -69,6 +69,6 @@ api.media_handlers = {
 }
 ```
 
-For a practical example, read our [how to register extra media handlers](../how-to/extra-media-handlers.md) guide.
+For a practical example, read our [how to register extra media handlers](../../how-to/extra-media-handlers.md) guide.
 
 [MIME type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types

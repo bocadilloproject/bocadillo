@@ -78,24 +78,20 @@ module.exports = {
                     children: [
                         '/topics/request-handling/routes-url-design',
                         '/topics/request-handling/writing-views',
+                        '/topics/request-handling/redirecting',
+                        '/topics/request-handling/hooks',
+                        '/topics/request-handling/media',
                     ]
                 },
                 {
                     title: 'Common functionality',
                     collapsable: false,
                     children: [
-                        '/topics/templates',
-                        '/topics/static-files',
-                        '/topics/json',
-                    ],
-                },
-                {
-                    title: 'Middleware',
-                    collapsable: false,
-                    children: [
-                        '/topics/middleware/overview',
-                        '/topics/middleware/builtin',
-                        '/topics/middleware/writing-routing-middleware',
+                        '/topics/common/templates',
+                        '/topics/common/static-files',
+                        '/topics/common/cors',
+                        '/topics/common/hsts',
+                        '/topics/common/middleware',
                     ],
                 },
                 {
@@ -121,6 +117,7 @@ module.exports = {
                     children: [
                         '/how-to/custom-cli-commands',
                         '/how-to/extra-media-handlers',
+                        '/how-to/routing-middleware',
                     ],
                 },
             ],
@@ -128,22 +125,7 @@ module.exports = {
                 {
                     title: 'API Reference',
                     collapsable: false,
-                    children: [
-                        '/api/api',
-                        '/api/views',
-                        '/api/routing',
-                        '/api/requests',
-                        '/api/responses',
-                        '/api/redirecting',
-                        '/api/templates',
-                        '/api/static-files',
-                        '/api/error-handling',
-                        '/api/media',
-                        '/api/middleware',
-                        '/api/cli',
-                        '/api/cors',
-                        '/api/hsts',
-                    ],
+                    children: [],
                 },
             ],
         },

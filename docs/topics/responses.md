@@ -18,7 +18,7 @@ Setting a response type attribute automatically sets the
 appropriate `Content-Type`, as depicted above.
 
 ::: tip
-The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media](media.md) for more information.
+The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media](request-handling/media.md) for more information.
 :::
 
 If you need to send another content type, use `.content` and set

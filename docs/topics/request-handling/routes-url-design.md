@@ -11,8 +11,8 @@ In Bocadillo, **routes** map an URL pattern to a view function, class or method.
 
 When an inbound HTTP requests hits your Bocadillo application, the following algorithm is used to determine which view gets executed:
 
-1. Bocadillo runs through each URL pattern and stops at the first matching one, extracting the route parameters as well. If none can be found or any of the route parameters fails validation, an [`HTTPError(404)`][HTTPError] exception is raised.
-2. Bocadillo checks that the matching route supports the requested HTTP method and raises an [`HTTPError(405)`][HTTPError] exception if it does not.
+1. Bocadillo runs through each URL pattern and stops at the first matching one, extracting the route parameters as well. If none can be found or any of the route parameters fails validation, an `HTTPError(404)` exception is raised.
+2. Bocadillo checks that the matching route supports the requested HTTP method and raises an `HTTPError(405)` exception if it does not.
 3. When this is done, Bocadillo calls the view attached to the route, converting it to an `async` function if necessary. The view is passed the following arguments:
     - An instance of [`Request`][Request].
     - An instance of [`Response`][Response].
@@ -102,9 +102,31 @@ In templates, you can use the `url_for()` template global:
 Referencing a non-existing named route with `url_for()` will trigger an `HTTPError(404)` exception — **even in templates**.
 :::
 
-[Request]: ../../api/requests.md
-[Response]: ../../api/responses.md
+## Specifying HTTP methods
+
+By default, a route exposes the following HTTP methods: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH.
+
+On function-based views,
+you can use the `methods` argument to `@api.route()` to specify the set of
+HTTP methods being exposed:
+
+```python
+@api.route('/', methods=['get'])
+async def index(req, res):
+    res.text = "Come GET me, bro"
+```
+
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks] and [middleware] callbacks will not be called either.
+
+::: tip
+The `methods` argument is ignored on class-based views. You should instead decide which methods are implemented on the class to control
+the exposition of HTTP methods.
+:::
+
+[Request]: ../requests.md
+[Response]: ../responses.md
 [F-string notation]: https://www.python.org/dev/peps/pep-0498/
 [format specifiers]: https://www.python.org/dev/peps/pep-0498/#format-specifiers
-[HTTPError]: ../../api/error-handling.md
 [parse]: https://pypi.org/project/parse/
+[hooks]: ./hooks.md
+[middleware]: ../common/middleware.md
