@@ -39,7 +39,7 @@ async def index(req, res):
     res.html = await api.template('index.html')
 
 @api.route('/greet/{person}')
-def greet(req, res, person):
+async def greet(req, res, person):
     res.media = {'message': f'Hi, {person}!'}
 
 if __name__ == '__main__':
