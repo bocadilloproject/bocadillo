@@ -8,11 +8,12 @@ Bocadillo's documentation site is made with [VuePress](https://vuepress.vuejs.or
 
 To get started, you should only need to install NPM dependencies (`npm install`) and run `npm start` to run the hot-reloaded development docs site.
 
-All documentation lives in the `docs/guide/` directory. It is structured as follows:
+All documentation lives in the `docs/` directory. It is structured as follows:
 
-- `api-guides`: technical reference for Bocadillo's machinery; describes how it works and how to use it, assuming a basic understanding of the key concepts.
-- `topics`: discuss key topics and concepts at a fairly high level, while providing useful information and background. For example: 'Working with JSON data'.
-- `how-to`: recipes for solving common problems. For example: 'Deploying Bocadillo apps' or 'Writing custom CLI commands'.
+- `getting-started`: instructions for getting started with Bocadillo.
+- `topics`: discussions about key topics and concepts, including background, information and usage hints.
+- `how-to`: recipes for solving key problems and specific use cases.
+- `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
 
 To write a new page for the docs, create a new `.md` file in the appropriate directory, then update the `sidebar` configuration in `config.js` to add a route for your page in the sidebar.
 

@@ -8,6 +8,15 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Documentation on the routing algorithm.
+- More documentation on how to write views.
+
+### Changed
+
+- Restructure documentation into 4 clear sections: Getting Started, Topics, How-To and API Reference.
+
 ## [v0.6.0] - 2018-11-26
 
 ### Added

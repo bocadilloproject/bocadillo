@@ -46,7 +46,7 @@ module.exports = {
                 link: '/how-to/',
             },
             {
-                text: 'API',
+                text: 'API Reference',
                 link: '/api/',
             },
             {
