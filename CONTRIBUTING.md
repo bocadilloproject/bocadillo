@@ -121,13 +121,13 @@ The docs site is hot-reloaded on any changes to the contents of the `docs/` dire
 
 #### Creating documentation pages
 
-To write a new page for the docs, create a new `.md` file in the appropriate directory, then update the `sidebar` configuration in `config.js` to add a route for your page in the sidebar.
+To write a new page for the docs, create a new `.md` file in the appropriate directory (see [How the documentation is structured](#how-the-documentation-is-structured)), then add a route in the appropriate `sidebar` configuration in `docs/.vuepress/config.js`.
 
-Feel free to refer to the [VuePress docs](https://vuepress.vuejs.org) if needed.
+Feel free to refer to the [VuePress] docs if needed.
 
 #### Generating the API Reference
 
-Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from docstrings of modules, classes and functions in the Python code. The generated `.md` file are then wired up in the `.vuepress/config.js` file.
+Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstring. The generated `.md` file are then wired up in the `config.js` file.
 
 In order to view the changes you've made to Python dosctrings in the docs site, you'll need to regenerate the API reference:
 
@@ -141,9 +141,9 @@ See `pymdoc.yml` for the configuration details and [Pydoc-Markdown] documentatio
 
 #### Debugging the docs site
 
-There may be times when the documentation site does not seem to behave properly. For example, the sidebar may not display the correct items.
+It may happen that the documentation site does not seem to behave properly.
 
-Your first reflex should be to open your browser's dev tools and check for any errors. VuePress errors generally give enough clues as to what's been wrong.
+You should first open your browser's dev tools and check for any errors. VuePress errors generally give enough clues as to what's wrong and how you can fix it.
 
 If there is an issue with VuePress' hot-reloading, you need to close the current tab and open a fresh copy of the docs site in a new tab.
 
