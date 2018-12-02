@@ -93,6 +93,7 @@ module.exports = {
                         '/topics/features/templates',
                         '/topics/features/static-files',
                         '/topics/features/hooks',
+                        '/topics/features/recipes',
                         '/topics/features/cors',
                         '/topics/features/hsts',
                         '/topics/features/middleware',

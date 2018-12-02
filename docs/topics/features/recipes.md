@@ -1,16 +1,18 @@
 # Recipes
 
-Recipes (pun intended!) are objects that can be used to **group together a set of related routes**. They can later be applied to the main `API` object in order to extend its functionality in a flexible fashion.
+**Recipes** are objects that can be used to **group together a set of related routes**. They can later be applied to the main `API` object in order to extend its functionality in a flexible fashion.
 
 Recipes are particularly useful when building larger, more complex applications because they allow code to be split into smaller, more manageable components.
 
-Recipes expose the same functionality as the `API` object: you can use templates, middleware, redirects, static files, hooks, routes as you would on the regular `API` object.
+Recipes expose the same features as the `API` object: you can use routes, templates, middleware, redirects, static files, and hooks as you would on the regular `API` object.
+
+This feature was inspired by Flask's blueprints.
 
 ## Write a recipe
 
-The following shows an example of a very simple recipe which registers a view on the `/{ingredient}` endpoint.
+The following shows an example of a very simple recipe which registers a view at the `/{ingredient}` endpoint.
 
-```python
+```python{4}
 # tacos.py
 from bocadillo import Recipe
 
@@ -21,13 +23,19 @@ def retrieve_taco(req, res, ingredient: str):
     res.media = {'ingredient': ingredient}
 ```
 
+The recipe is given the name `'tacos'`. This name is used to infer the path prefix for the recipe, i.e. `/tacos`. You can also pass a path `prefix` explicitly:
+
+```python
+tacos = Recipe('tacos', prefix='/tacos')
+```
+
 ## Apply a recipe
 
 Once you have a recipe, you can apply it to the `API` object.
 
-```python
-from tacos import tacos
+```python{5}
 import bocadillo
+from tacos import tacos
 
 api = bocadillo.API()
 api.recipe(tacos)
@@ -42,7 +50,7 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 Sometimes, you may want to group many recipes together so they can be apply all at once to the `API` object. To achieve this, you can write a **recipe book**.
 
-Consider this example project structure, where functionality related to "entities" (people or companies) is grouped together:
+Consider this example project structure, where functionality related people and companies has been grouped together in an `entities` package:
 
 ```
 .
@@ -56,13 +64,13 @@ Consider this example project structure, where functionality related to "entitie
         └── interns.py
 ``` 
 
-The recipe book could be assembled as follows:
+The `entities` recipe book could be assembled as follows:
 
 ```python
 # entities/people/employees.py
 from bocadillo import Recipe
 
-employees = Recipe('people_employees', prefix='/employees')
+employees = Recipe('employees')
 
 @employees.route('/{pk:d}')
 async def get_employee(req, res, pk: int):
@@ -73,14 +81,15 @@ async def get_employee(req, res, pk: int):
 # entities/people/interns.py
 from bocadillo import Recipe
 
-interns = Recipe('people_interns', prefix='/interns')
+interns = Recipe('interns')
 
 @interns.route('/{pk:d}')
 async def get_intern(req, res, pk: int):
     res.media = {'id': pk, 'name': 'Don Joe'}
 ```
 
-```python
+```python{7}
+# entities/people/__init__.py
 from bocadillo import Recipe
 
 from .employees import employees
@@ -100,7 +109,7 @@ async def list_companies(req, res):
     res.media = ['Python Software Foundation']
 ```
 
-```python
+```python{7}
 # entities/__init__.py
 from bocadillo import Recipe
 
@@ -112,7 +121,7 @@ entities = Recipe.book(people, companies, prefix='/entities')
 
 Applying the `entities` book is straight-forward:
 
-```python
+```python{5}
 import bocadillo
 from .entities import entities
 
@@ -129,13 +138,17 @@ You'll end up with the following routes:
 - `/entities/people/employees/{pk}`
 - `/entities/companies/`
 
+::: warning
+Recipe books do not expose the `API` API. They only serve as a means of grouping recipes together.
+:::
+
 ## Named routes and `url_for`
 
 If a recipe defines a named route, you'll need to prefix its name with the name of the recipe when building the full URL using `api.url_for()`.
 
 For example:
 
-```python
+```python{7}
 from bocadillo import Recipe
 
 tacos = Recipe('tacos')
