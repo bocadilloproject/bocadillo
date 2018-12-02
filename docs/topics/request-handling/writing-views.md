@@ -104,8 +104,6 @@ def on_attribute_error(req, res, exc: AttributeError):
 api.add_error_handler(AttributeError, on_attribute_error)
 ```
 
-See also the [Error handling API reference](../../api/error-handling.md).
-
 [Routes and URL design]: ./routes-url-design.md
 [Request]: requests.md
 [Response]: responses.md
