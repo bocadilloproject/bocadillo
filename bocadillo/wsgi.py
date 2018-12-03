@@ -1,5 +1,5 @@
 """WSGI compatibility utilities."""
-from bocadillo.types import WSGIApp
+from .types import WSGIApp
 
 
 def empty_wsgi_app() -> WSGIApp:
