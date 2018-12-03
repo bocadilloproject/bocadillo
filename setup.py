@@ -25,6 +25,7 @@ setuptools.setup(
         'whitenoise',
         'requests',
         'parse',
+        'async_generator',
     ],
     url='https://github.com/bocadilloproject/bocadillo',
     license='MIT',

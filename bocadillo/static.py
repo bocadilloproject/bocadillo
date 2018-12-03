@@ -1,7 +1,7 @@
 from whitenoise import WhiteNoise
 
-from .compat import empty_wsgi_app
 from .types import WSGIApp
+from .wsgi import empty_wsgi_app
 
 
 def static(directory: str) -> WSGIApp:

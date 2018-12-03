@@ -65,6 +65,37 @@ __Attributes__
     The absolute path where templates are searched for (built from the
     `templates_dir` parameter).
 
+## before
+```python
+API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+```
+Register a before hook on a route.
+
+::: tip NOTE
+`@api.before()` should be placed  **above** `@api.route()`
+when decorating a view.
+:::
+
+__Parameters__
+
+- __hook_function (callable)__: A synchronous or asynchronous function with the signature: `(req, res, params) -> None`.
+
+## after
+```python
+API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+```
+Register an after hook on a route.
+
+::: tip NOTE
+`@api.after()` should be placed **above** `@api.route()`
+when decorating a view.
+:::
+
+__Parameters__
+
+- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
+    `(req, res, params) -> None`.
+
 ## mount
 ```python
 API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable, Callable], Coroutine]], Callable[[dict, Callable], List[bytes]]])
@@ -142,36 +173,6 @@ __Example__
 ... def greet(req, res, person: str):
 ...     pass
 ```
-
-## before
-```python
-API.before(hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, Union[dict, NoneType]], NoneType], *args, **kwargs)
-```
-Register a before hook on a route.
-
-::: tip NOTE
-`@api.before()` should be placed  **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__: A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
-
-## after
-```python
-API.after(hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, Union[dict, NoneType]], NoneType], *args, **kwargs)
-```
-Register an after hook on a route.
-
-::: tip NOTE
-`@api.after()` should be placed **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__: A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
 
 ## url_for
 ```python

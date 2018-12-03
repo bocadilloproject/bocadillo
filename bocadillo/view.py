@@ -28,12 +28,12 @@ class ClassBasedView:
 
 
 # Types
-CallableView = Callable[[Request, Response, dict], Coroutine]
-View = Union[CallableView, ClassBasedView]
+AsyncView = Callable[[Request, Response, dict], Coroutine]
+View = Union[AsyncView, ClassBasedView]
 
 
-def create_callable_view(view: View) -> CallableView:
-    """Create callable view from function (sync/async) or class based view."""
+def create_async_view(view: View) -> AsyncView:
+    """Create function asynchronous view from function or class-based view."""
     if asyncio.iscoroutinefunction(view):
         return view
     elif inspect.isfunction(view):

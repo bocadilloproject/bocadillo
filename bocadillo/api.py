@@ -26,19 +26,20 @@ from .compat import call_all_async
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
-from .hooks import HookFunction
+from .hooks import HooksMixin
 from .media import Media
+from .meta import APIMeta
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import Route, Router
+from .routing import Router
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 
-class API:
+class API(HooksMixin, metaclass=APIMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -274,34 +275,6 @@ class API:
             pattern=pattern, methods=methods, name=name
         )
 
-    @staticmethod
-    def before(hook_function: HookFunction, *args, **kwargs):
-        """Register a before hook on a route.
-
-        ::: tip NOTE
-        `@api.before()` should be placed  **above** `@api.route()`
-        when decorating a view.
-        :::
-
-        # Parameters
-        hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
-        """
-        return Route.before_hook(hook_function, *args, **kwargs)
-
-    @staticmethod
-    def after(hook_function: HookFunction, *args, **kwargs):
-        """Register an after hook on a route.
-
-        ::: tip NOTE
-        `@api.after()` should be placed **above** `@api.route()`
-        when decorating a view.
-        :::
-
-        # Parameters
-        hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
-        """
-        return Route.after_hook(hook_function, *args, **kwargs)
-
     def url_for(self, name: str, **kwargs) -> str:
         """Build the URL path for a named route.
 
@@ -490,7 +463,9 @@ class API:
 
             try:
                 await call_all_async(before, request)
-                await route(request, response, **params)
+                hooks = self.get_hooks().on(route, request, response, params)
+                async with hooks:
+                    await route(request, response, **params)
                 await call_all_async(after, request, response)
             except Redirection as redirection:
                 response = redirection.response
