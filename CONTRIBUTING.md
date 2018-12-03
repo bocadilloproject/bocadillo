@@ -1,65 +1,266 @@
 # Contributing to Bocadillo
 
-All contributions to Bocadillo are welcome! Here are some guidelines to get you started.
+## Contents
 
-## Documentation
+- [Introduction](#introduction)
+- [Getting started](#getting-started)
+- [Code style](#code-style)
+- [Pull Request process](#pull-request-process)
+- [Notes to maintainers](#notes-to-maintainers)
 
-Bocadillo's documentation site is made with [VuePress](https://vuepress.vuejs.org) and hosted on GitHub Pages.
+## Introduction
 
-To get started, you should only need to install NPM dependencies (`npm install`) and run `npm start` to run the hot-reloaded development docs site.
+### What is this document about?
 
-All documentation lives in the `docs/` directory. It is structured as follows:
+Have you found a bug? You'd like to add a new feature or improve the docs? Fantastic news! All contributions are happily welcome.
 
-- `getting-started`: instructions for getting started with Bocadillo.
-- `topics`: discussions about key topics and concepts, including background, information and usage hints.
-- `how-to`: recipes for solving key problems and specific use cases.
-- `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
+Here, we point lay out a few guidelines that you should follow in order to get your contribution accepted.
 
-To write a new page for the docs, create a new `.md` file in the appropriate directory, then update the `sidebar` configuration in `config.js` to add a route for your page in the sidebar.
+### Always discuss ideas!
 
-Feel free to refer to the [VuePress docs](https://vuepress.vuejs.org) if needed.
+Before submitting any code changes for review, you should first **open an issue** so that maintainers and contributors can discuss it with you.
 
-### API Reference
+This step is important because there may be aspects you didn't think about, or there may be ways to expand or focus your suggestions. Eventually, discussing your suggestions with others can only improve the quality of the contribution you'll make.
 
-Once you have installed Bocadillo for development (see next section) API Reference can be generate by using:
+## Getting started
 
-```bash
-pymdoc generate
-```
+Bocadillo has a single repository for both the `bocadillo` package and its documentation.
 
-See `pymdoc.yml` and [PydocMarkdown] documentation for the details.
+### Setting up the repo
 
-## Install
+Here's how to get your copy of the repo ready for development:
 
-Python 3.6+ is required to install Bocadillo locally.
+- Fork the `bocadilloproject/bocadillo` repo.
+- Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo`.
+- Checkout the `master` branch and grab its latest version: `git pull origin master`.
+- Install the project (see installation steps below).
+- Create a branch (e.g. `fix/some-bug`) and work on it.
+- Push to your remote: `git push origin fix/some-bug`.
+- [Open a pull request] and follow the [PR process](#pull-request-process) below.
 
-Install [Pipenv](https://github.com/pypa/pipenv) if you haven't already:
+### Installing Bocadillo for development
+
+#### Installing the `bocadillo` package
+
+In order to install Bocadillo for development, you'll need **Python 3.6+**.
+
+Project dependencies are managed through [Pipenv]. You should install it if you haven't already:
 
 ```bash
 pip install pipenv
 ```
 
-Then run:
+Then run the following in order to install dependencies:
 
 ```bash
 pipenv install --dev
 ```
 
-## Code style
+To verify Python dependencies have been correctly installed, first [run the tests](#running-tests). You can also fiddle with Bocadillo in the interpreter:
 
-To reduce format-related issues and make code review more efficient, this repo uses the [Black](https://github.com/ambv/black) auto-formatter to format your code on commit. This is implemented using [pre-commit](https://pre-commit.com).
+```python
+>>> import bocadillo
+>>> bocadillo.__version__
+'0.6.0'
+```
 
-If you wish to manually apply Black before a commit, run `$ pre-commit`.
+#### Installing the documentation packages
 
-## Running the tests
+If you're planning to contribute documentation, you should also install the NPM dependencies. Make sure you have [Node] and [NPM] installed, then run:
 
-To run the test suite, run:
+```bash
+npm install
+```
+
+To verify the NPM packages are correctly installed, you can fire up the docs site:
+
+```bash
+npm start
+```
+
+and access it at http://localhost:8080.
+
+#### Running tests
+
+Before making any changes, you should first run the tests in order to make sure everything is correcly setup.
+
+Bocadillo uses [pytest] as its testing framework. The test suite can be run using:
 
 ```bash
 pytest
 ```
 
-## Versioning
+### Contributing documentation
+
+There are a few extra things you need to known in order to contribute documentation for Bocadillo.
+
+This section supposes that you have already installed Bocadillo's [documentation dependencies](#installing-the-documentation-packages).
+
+**Note**: Bocadillo's documentation site is made with [VuePress]. You may need to refer to its documentation, although the main problems you'll encounter are listed here.
+
+#### How the documentation is structured
+
+All documentation lives in the `docs/` directory. It is structured as follows:
+
+- `getting-started`: resources for users getting started with Bocadillo.
+- `topics`: discussions about key topics and concepts, including background, information and usage hints.
+- `how-to`: recipes for solving key problems or addressing specific use cases.
+- `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
+
+#### Running the docs site
+
+To run the documentation site, run:
+
+```bash
+npm start
+```
+
+It will be accessible at http://localhost:8080.
+
+The docs site is hot-reloaded on any changes to the contents of the `docs/` directory. The only exception to this is the API Reference (see [Generating the API Reference](#generating-the-api-reference)).
+
+#### Creating documentation pages
+
+To write a new page for the docs, create a new `.md` file in the appropriate directory (see [How the documentation is structured](#how-the-documentation-is-structured)), then add a route in the appropriate `sidebar` configuration in `docs/.vuepress/config.js`.
+
+Feel free to refer to the [VuePress] docs if needed.
+
+#### Generating the API Reference
+
+Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstring. The generated `.md` file are then wired up in the `config.js` file.
+
+In order to view the changes you've made to Python dosctrings in the docs site, you'll need to regenerate the API reference:
+
+```bash
+pymdoc generate
+```
+
+The `docs/api` will be hot-reloaded and the docs site will display the updated API Reference docs.
+
+See `pymdoc.yml` for the configuration details and [Pydoc-Markdown] documentation for usage reference.
+
+#### Debugging the docs site
+
+It may happen that the documentation site does not seem to behave properly.
+
+You should first open your browser's dev tools and check for any errors. VuePress errors generally give enough clues as to what's wrong and how you can fix it.
+
+If there is an issue with VuePress' hot-reloading, you need to close the current tab and open a fresh copy of the docs site in a new tab.
+
+## Code style
+
+### Black formatting
+
+In order to reduce format-related issues and make code reviews more efficient, this repo uses the [Black](https://github.com/ambv/black) auto-formatter to format your code on commit. This is implemented using a [pre-commit](https://pre-commit.com) hook.
+
+In practice, Black may intervene and reformat some of the Python files when committing to your local. When this happens, the commit will abort and you'll need to `git add` files edited by Black and `git commit` again.
+
+If you wish to manually apply Black before a commit, run `$ pre-commit`.
+
+### Type annotations
+
+Bocadillo makes heavy use of type annotations in order to document input and output types of functions and methods, as well as facilitate early detection of bugs.
+
+You are encouraged to provide annotations for each and every function and method you write.
+
+Do:
+
+```python
+def add(x: int, y: int) -> int:
+    return x + y
+```
+
+Don't:
+
+```
+def add(x, y):
+    return x + y
+```
+
+For background on the benefits of type annotations, I recommend Stav Shamir's [The other (great) benefit of Python type annotations](https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b).
+
+If you need help when writing type annotations, be sure to check out the official documentation of the [typing] module.
+
+### Code documentation
+
+Comments and docstrings are crucial in order to convey key information about the code. You should use them when needed.
+
+Be sure, however, not to over-comment. **Code should be self-documenting**. For example, if you find yourself adding comments to delimit your code, it may be worth refactoring — e.g. into a few descriptively-named functions.
+
+There are 3 types of code documentation you may find yourself using.
+
+#### Module docstrings
+
+All modules should have a descriptive docstring at their top. For example:
+
+```python
+"""Exception classes."""
+
+class MyException(Exception):
+    pass
+```
+
+#### Function, method or class docstrings
+
+Every public function, method or class should have a proper docstring.
+
+The formatting of the docstring is inspired by the [NumPyDoc] style. It should be followed so that your code can be properly picked up by [Pydoc-Markdown] to generate API reference.
+
+Here is an example of a compliant class with its methods:
+
+```python
+"""Definition of the Foo class."""
+import operator
+from functools import reduce
+
+
+class Foo:
+    """Some really cool kind of foo.
+    
+    # Parameters
+    bar (str): used to configure XYZ.
+    """
+
+    def __init__(self, bar: str):
+        self._bar = bar
+
+    @property
+    def zed(self) -> str:
+        """z with an exclamation mark."""
+        return 'z!'
+       
+    def create_baz(self) -> int:
+        """Create `baz` from the current `bar`.
+        
+        # Returns
+        baz (int): multiplication the ASCII codes for each letter in `bar`.
+        """
+        return reduce(operator.mul, map(ord, self._bar))
+```
+
+#### Comments
+
+A comment is a line that starts with `#`. There are two use cases to comments:
+
+- To explain complex code that may not be easily understood by future developers.
+- To explain **why** a portion of code was implemented the way it was.
+
+As a rule of thumb, don't use comments to explain *what* your code is doing, but to explain *why* it's doing what it's doing. Again, code should be self-documenting. If you need to explain *what* your code is doing, try simplifying it into smaller components (functions, methods, objects) with descriptive names.
+
+## Pull Request process
+
+1. Make sure to **open an issue** before submitting a PR (see [Always discuss ideas](#always-discuss-ideas)). Note: not all features can be accepted, as some may be out-of-scope and would be better off as third-party packages. It would be sad if you worked on a PR for days but it gets rejected because of reasons that could have been quickly pointed at if you discussed it in an issue.
+2. Ensure your changes are well-commented and you haven't left any commented-out lines of code or debug `print` statements.
+3. If your changes imply additions or changes in interface, make sure to the documentation. This includes environment variables, file locations, extra keyword arguments, etc.
+4. You must add [tests](#running-tests) for the feature or bug fix you are providing.
+5. Your PR must pass the Travis CI builds. It will not be merged if the tests fail.
+6. The PR can be merged once it has obtained approval from at least one collaborator or maintainer.
+
+## Notes to maintainers
+
+**This section is solely aimed at maintainers and owners of the Bocadillo repository.**
+
+### Versioning
 
 Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion/).
 
@@ -73,11 +274,11 @@ This will create a new commit tagged with the new version.
 
 See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options.
 
-## Releasing
+### Releasing
 
 This section documents how to release new versions to PyPI.
 
-### Testing
+#### Testing
 
 It is recommended to make a test release to TestPyPI before releasing a new version to production.
 
@@ -98,7 +299,7 @@ git merge master
 git push
 ```
 
-### Production
+#### Production
 
 When ready to release a new version to production:
 
@@ -110,4 +311,13 @@ When ready to release a new version to production:
 $ git push --tags
 ```
 
-[PydocMarkdown]: https://github.com/NiklasRosenstein/pydoc-markdown
+[Open a pull request]: https://github.com/bocadilloproject/bocadillo/compare
+[type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
+[typing]: https://docs.python.org/3/library/typing.html
+[NumPyDoc]: https://numpydoc.readthedocs.io
+[Pydoc-Markdown]: https://niklasrosenstein.github.io/pydoc-markdown/
+[Node]: https://nodejs.org/en
+[NPM]: https://www.npmjs.com
+[Pipenv]: https://github.com/pypa/pipenv
+[pytest]: https://docs.pytest.org
+[VuePress]: https://vuepress.vuejs.org
