@@ -77,11 +77,15 @@ class Hooks:
         return decorator
 
     @asynccontextmanager
-    async def for_route(self, route, request, response, params):
+    async def on(self, route, request, response, params):
         """Execute `before` hooks on enter and `after` hooks on exit."""
         await call_async(self._hooks[BEFORE][route], request, response, params)
         yield
         await call_async(self._hooks[AFTER][route], request, response, params)
+
+
+# Default hooks collection
+_hooks = Hooks()
 
 
 class HooksMixin:
@@ -119,10 +123,3 @@ class HooksMixin:
             `(req, res, params) -> None`.
         """
         return self.get_hooks().after(hook_function, *args, **kwargs)
-
-
-# Pre-bind methods to module
-_hooks = Hooks()
-before = _hooks.before
-after = _hooks.after
-for_route = _hooks.for_route

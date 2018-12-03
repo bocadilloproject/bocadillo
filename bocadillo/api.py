@@ -22,14 +22,13 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
-from . import hooks
-from .meta import APIMeta
 from .compat import call_all_async
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
 from .hooks import HooksMixin
 from .media import Media
+from .meta import APIMeta
 from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
@@ -464,7 +463,8 @@ class API(HooksMixin, metaclass=APIMeta):
 
             try:
                 await call_all_async(before, request)
-                async with hooks.for_route(route, request, response, params):
+                hooks = self.get_hooks().on(route, request, response, params)
+                async with hooks:
                     await route(request, response, **params)
                 await call_all_async(after, request, response)
             except Redirection as redirection:
