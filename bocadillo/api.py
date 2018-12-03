@@ -22,6 +22,7 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
+from . import hooks
 from .compat import call_all_async
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
@@ -32,7 +33,7 @@ from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import Route, Router
+from .routing import Router
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
@@ -286,7 +287,7 @@ class API:
         # Parameters
         hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
         """
-        return Route.before_hook(hook_function, *args, **kwargs)
+        return hooks.before(hook_function, *args, **kwargs)
 
     @staticmethod
     def after(hook_function: HookFunction, *args, **kwargs):
@@ -300,7 +301,7 @@ class API:
         # Parameters
         hook_function (callable): A synchronous or asynchronous function with the signature: `(req, res[, params]) -> None`.
         """
-        return Route.after_hook(hook_function, *args, **kwargs)
+        return hooks.after(hook_function, *args, **kwargs)
 
     def url_for(self, name: str, **kwargs) -> str:
         """Build the URL path for a named route.
@@ -490,7 +491,8 @@ class API:
 
             try:
                 await call_all_async(before, request)
-                await route(request, response, **params)
+                async with hooks.for_route(route, request, response, params):
+                    await route(request, response, **params)
                 await call_all_async(after, request, response)
             except Redirection as redirection:
                 response = redirection.response

@@ -8,6 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
+from ..view import create_async_view
 
 
 class RouteMatch(NamedTuple):
@@ -41,6 +42,7 @@ class Router:
 
         check_route(pattern, view, methods)
 
+        view = create_async_view(view)
         route = Route(pattern=pattern, view=view, methods=methods, name=name)
 
         self._routes[pattern] = route

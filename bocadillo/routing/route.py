@@ -1,14 +1,10 @@
-from collections import defaultdict
-from functools import wraps
 from http import HTTPStatus
-from typing import Optional, List, Union, Callable, Dict
+from typing import Optional, List
 
 from parse import parse
 
-from ..compat import call_async
 from ..exceptions import HTTPError
-from ..hooks import HookFunction, BEFORE, AFTER, empty_hook
-from ..view import View, create_callable_view
+from ..view import AsyncView
 
 
 class Route:
@@ -17,14 +13,17 @@ class Route:
     Formatted string syntax is used for route patterns.
     """
 
-    def __init__(self, pattern: str, view: View, methods: List[str], name: str):
+    def __init__(
+        self, pattern: str, view: AsyncView, methods: List[str], name: str
+    ):
         self._pattern = pattern
-
-        self._view = create_callable_view(view=view)
+        self._view = view
         self._methods = methods
         self._name = name
 
-        self.hooks: Dict[str, HookFunction] = defaultdict(lambda: empty_hook)
+    @property
+    def pattern(self) -> str:
+        return self._pattern
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
@@ -52,62 +51,9 @@ class Route:
             return result.named
         return None
 
-    @classmethod
-    def before_hook(cls, hook_function: HookFunction, *args, **kwargs):
-        return cls._add_hook(BEFORE, hook_function, *args, **kwargs)
-
-    @classmethod
-    def after_hook(cls, hook_function: HookFunction, *args, **kwargs):
-        return cls._add_hook(AFTER, hook_function, *args, **kwargs)
-
-    @staticmethod
-    def _add_hook(hook: str, hook_function: HookFunction, *args, **kwargs):
-        def decorator(hookable: Union[Route, Callable]):
-            """Bind the hook function to the given hookable object.
-
-            Support for decorating a route or a class method enables
-            using hooks in the following contexts:
-            - On a function-based view (before @api.route()).
-            - On top of a class-based view (before @api.route()).
-            - On a class-based view method.
-
-            Parameters
-            ----------
-            hookable : Route or (unbound) class method
-            """
-            nonlocal hook_function
-            full_hook_function = hook_function
-
-            async def hook_function(req, res, params):
-                return await call_async(
-                    full_hook_function, req, res, params, *args, **kwargs
-                )
-
-            if isinstance(hookable, Route):
-                route = hookable
-                route.hooks[hook] = hook_function
-                return route
-            else:
-                view: Callable = hookable
-
-                @wraps(view)
-                async def with_hook(self, req, res, **kw):
-                    if hook == BEFORE:
-                        await hook_function(req, res, kw)
-                    await call_async(view, self, req, res, **kw)
-                    if hook == AFTER:
-                        await hook_function(req, res, kw)
-
-                return with_hook
-
-        return decorator
-
     def raise_for_method(self, request):
         if request.method not in self._methods:
             raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     async def __call__(self, request, response, **kwargs) -> None:
-        view = self._view
-        await call_async(self.hooks[BEFORE], request, response, kwargs)
-        await view(request, response, **kwargs)
-        await call_async(self.hooks[AFTER], request, response, kwargs)
+        await self._view(request, response, **kwargs)
