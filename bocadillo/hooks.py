@@ -1,6 +1,6 @@
 from collections import defaultdict
 from functools import wraps
-from typing import Callable, Optional, Union, Dict, Coroutine
+from typing import Callable, Union, Dict, Coroutine
 
 from .compat import call_async, asynccontextmanager
 from .request import Request
