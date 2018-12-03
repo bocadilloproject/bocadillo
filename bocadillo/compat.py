@@ -1,7 +1,14 @@
 import asyncio
+import sys
 from typing import Callable, Coroutine, Iterable
 
 from starlette.concurrency import run_in_threadpool
+
+try:
+    from contextlib import asynccontextmanager
+except ImportError:
+    assert sys.version_info[:2] == (3, 6)
+    from async_generator import asynccontextmanager
 
 from .types import WSGIApp
 

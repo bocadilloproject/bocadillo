@@ -1,9 +1,8 @@
 from collections import defaultdict
-from contextlib import asynccontextmanager
 from functools import wraps
 from typing import Callable, Optional, Union, Dict, Coroutine
 
-from .compat import call_async
+from .compat import call_async, asynccontextmanager
 from .request import Request
 from .response import Response
 from .routing import Route
