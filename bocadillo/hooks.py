@@ -7,7 +7,7 @@ from .request import Request
 from .response import Response
 from .routing import Route
 
-HookFunction = Callable[[Request, Response, Optional[dict]], Coroutine]
+HookFunction = Callable[[Request, Response, dict], Coroutine]
 HookCollection = Dict[Route, HookFunction]
 
 BEFORE = 'before'
@@ -82,6 +82,43 @@ class Hooks:
         await call_async(self._hooks[BEFORE][route], request, response, params)
         yield
         await call_async(self._hooks[AFTER][route], request, response, params)
+
+
+class HooksMixin:
+    """Mixin that provides hooks to application classes."""
+
+    def get_hooks(self):
+        return _hooks
+
+    def before(self, hook_function: HookFunction, *args, **kwargs):
+        """Register a before hook on a route.
+
+        ::: tip NOTE
+        `@api.before()` should be placed  **above** `@api.route()`
+        when decorating a view.
+        :::
+
+        # Parameters
+        hook_function (callable):\
+            A synchronous or asynchronous function with the signature:
+            `(req, res, params) -> None`.
+        """
+        return self.get_hooks().before(hook_function, *args, **kwargs)
+
+    def after(self, hook_function: HookFunction, *args, **kwargs):
+        """Register an after hook on a route.
+
+        ::: tip NOTE
+        `@api.after()` should be placed **above** `@api.route()`
+        when decorating a view.
+        :::
+
+        # Parameters
+        hook_function (callable):\
+            A synchronous or asynchronous function with the signature:
+            `(req, res, params) -> None`.
+        """
+        return self.get_hooks().after(hook_function, *args, **kwargs)
 
 
 # Pre-bind methods to module
