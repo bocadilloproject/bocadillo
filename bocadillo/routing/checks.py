@@ -3,9 +3,9 @@ import inspect
 from string import Formatter
 from typing import List
 
-from .constants import ALL_HTTP_METHODS
+from bocadillo.constants import ALL_HTTP_METHODS
+from bocadillo.view import get_declared_method_views, View, get_view_name
 from .exceptions import RouteDeclarationError
-from .view import get_declared_method_views, View, get_view_name
 
 
 def check_route(pattern: str, view: View, methods: List[str]) -> None:

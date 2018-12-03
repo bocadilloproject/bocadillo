@@ -1,7 +1,7 @@
 import pytest
 
 from bocadillo import API
-from bocadillo.exceptions import RouteDeclarationError
+from bocadillo.routing import RouteDeclarationError
 from tests.utils import RouteBuilder
 
 
@@ -33,6 +33,7 @@ def test_route_must_start_with_slash(builder: RouteBuilder):
 
 def test_route_must_expect_request_and_response(api: API):
     with pytest.raises(RouteDeclarationError):
+
         @api.route('/foo/{bar}')
         def foo(bar):
             pass

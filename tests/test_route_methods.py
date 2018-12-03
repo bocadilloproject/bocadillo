@@ -1,15 +1,14 @@
 import pytest
 
 from bocadillo import API
-from bocadillo.exceptions import RouteDeclarationError
+from bocadillo.routing import RouteDeclarationError
 from tests.utils import RouteBuilder
 
 
-@pytest.mark.parametrize('methods, method, status', [
-    (['get', 'post'], 'get', 200),
-    (['post'], 'get', 405),
-    ([], 'put', 405),
-])
+@pytest.mark.parametrize(
+    'methods, method, status',
+    [(['get', 'post'], 'get', 200), (['post'], 'get', 405), ([], 'put', 405)],
+)
 def test_allowed_methods(builder: RouteBuilder, methods, method, status):
     builder.function_based('/', methods=methods)
 
@@ -17,11 +16,10 @@ def test_allowed_methods(builder: RouteBuilder, methods, method, status):
     assert response.status_code == status
 
 
-@pytest.mark.parametrize('methods, method', [
-    (['get', 'post'], 'get'),
-    (['post'], 'get'),
-    ([], 'put'),
-])
+@pytest.mark.parametrize(
+    'methods, method',
+    [(['get', 'post'], 'get'), (['post'], 'get'), ([], 'put')],
+)
 def test_route_methods_ignored_on_class_based_views(api: API, methods, method):
     @api.route('/class', methods=methods)
     class Index:

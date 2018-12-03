@@ -5,10 +5,10 @@ from typing import Optional, List, Union, Callable, Dict
 
 from parse import parse
 
-from .compat import call_async
-from .exceptions import HTTPError
-from .hooks import HookFunction, BEFORE, AFTER, empty_hook
-from .view import View, create_callable_view
+from ..compat import call_async
+from ..exceptions import HTTPError
+from ..hooks import HookFunction, BEFORE, AFTER, empty_hook
+from ..view import View, create_callable_view
 
 
 class Route:
@@ -30,15 +30,21 @@ class Route:
         """Return full path for the given route parameters."""
         return self._pattern.format(**kwargs)
 
-    def match(self, path: str) -> Optional[dict]:
-        """Return whether the route matches the given path.
+    def parse(self, path: str) -> Optional[dict]:
+        """Parse an URL path against the route's URL pattern.
 
-        Examples
-        -------
+        # Returns
+
+        result (dict or None):
+            If the URL path matches the URL pattern, this is a dictionary
+            containing the route parameters, otherwise None.
+
+        # Examples
+
         >>> route = Route('/{age:d}', lambda req, res: None)
-        >>> route.match('/42')
+        >>> route.parse('/42')
         {'age': 42}
-        >>> route.match('/john')
+        >>> route.parse('/john')
         None
         """
         result = parse(self._pattern, path)
