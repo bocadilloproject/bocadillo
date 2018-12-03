@@ -126,7 +126,12 @@ __Parameters__
 
 __Raises__
 
-- `RouteDeclarationError`: if the internal call to `checks.check_route()` fails.
+- `RouteDeclarationError`:
+    If any method is not a valid HTTP method,
+    if `pattern` defines a parameter that the view does not accept,
+    if the view uses a parameter not defined in `pattern`,
+    if the `pattern` does not start with `/`,
+    or if the view did not accept the `req` and `res` parameters.
 
 __Example__
 
@@ -145,7 +150,7 @@ API.before(hook_function: Callable[[starlette.requests.Request, bocadillo.respon
 Register a before hook on a route.
 
 ::: tip NOTE
-`@api.before()` should beplaced  **above** `@api.route()`
+`@api.before()` should be placed  **above** `@api.route()`
 when decorating a view.
 :::
 
@@ -172,7 +177,7 @@ __Parameters__
 ```python
 API.url_for(self, name: str, **kwargs) -> str
 ```
-
+Build the URL path for a named route.
 
 __Parameters__
 

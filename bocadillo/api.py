@@ -1,8 +1,6 @@
 """The Bocadillo API class."""
-import inspect
 import os
 from contextlib import contextmanager
-from http import HTTPStatus
 from typing import (
     Optional,
     Tuple,
@@ -24,9 +22,7 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
-from .checks import check_route
 from .compat import call_all_async
-from .constants import ALL_HTTP_METHODS
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, handle_http_error
 from .exceptions import HTTPError
@@ -36,7 +32,7 @@ from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .route import Route
+from .routing import Route, Router
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
@@ -117,8 +113,7 @@ class API:
         enable_hsts: bool = False,
         media_type: Optional[str] = Media.JSON,
     ):
-        self._routes: Dict[str, Route] = {}
-        self._named_routes: Dict[str, Route] = {}
+        self._router = Router()
 
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
@@ -259,7 +254,12 @@ class API:
             A name for this route, which must be unique.
 
         # Raises
-        RouteDeclarationError: if the internal call to #checks.check_route() fails.
+        RouteDeclarationError:
+            If any method is not a valid HTTP method,
+            if `pattern` defines a parameter that the view does not accept,
+            if the view uses a parameter not defined in `pattern`,
+            if the `pattern` does not start with `/`,
+            or if the view did not accept the `req` and `res` parameters.
 
         # Example
         ```python
@@ -270,42 +270,16 @@ class API:
         ...     pass
         ```
         """
-        if methods is None:
-            methods = ALL_HTTP_METHODS
-
-        methods = [method.upper() for method in methods]
-
-        def wrapper(view):
-            nonlocal methods
-            if inspect.isclass(view):
-                view = view()
-                if hasattr(view, 'handle'):
-                    methods = ALL_HTTP_METHODS
-                else:
-                    methods = [
-                        method
-                        for method in ALL_HTTP_METHODS
-                        if method.lower() in dir(view)
-                    ]
-            check_route(pattern, view, methods)
-            route = Route(
-                pattern=pattern, view=view, methods=methods, name=name
-            )
-
-            self._routes[pattern] = route
-            if name is not None:
-                self._named_routes[name] = route
-
-            return route
-
-        return wrapper
+        return self._router.route_decorator(
+            pattern=pattern, methods=methods, name=name
+        )
 
     @staticmethod
     def before(hook_function: HookFunction, *args, **kwargs):
         """Register a before hook on a route.
 
         ::: tip NOTE
-        `@api.before()` should beplaced  **above** `@api.route()`
+        `@api.before()` should be placed  **above** `@api.route()`
         when decorating a view.
         :::
 
@@ -328,22 +302,8 @@ class API:
         """
         return Route.after_hook(hook_function, *args, **kwargs)
 
-    def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
-        """Find a route matching the given path."""
-        for pattern, route in self._routes.items():
-            kwargs = route.match(path)
-            if kwargs is not None:
-                return pattern, kwargs
-        return None, {}
-
-    def _get_route_or_404(self, name: str):
-        try:
-            return self._named_routes[name]
-        except KeyError as e:
-            raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
-
     def url_for(self, name: str, **kwargs) -> str:
-        """
+        """Build the URL path for a named route.
 
         # Parameters
         name (str): the name of the route.
@@ -355,7 +315,7 @@ class API:
         # Raises
         HTTPError(404) : if no route exists for the given `name`.
         """
-        route = self._get_route_or_404(name)
+        route = self._router.get_route_or_404(name)
         return route.url(**kwargs)
 
     def redirect(
@@ -521,17 +481,20 @@ class API:
         response = Response(request, media=self._media)
 
         try:
-            pattern, kwargs = self._find_matching_route(request.url.path)
-            route = self._routes.get(pattern)
-            if route is None:
+            match = self._router.match(request.url.path)
+            if match is None:
                 raise HTTPError(status=404)
+
+            route, params = match.route, match.params
             route.raise_for_method(request)
+
             try:
                 await call_all_async(before, request)
-                await route(request, response, **kwargs)
+                await route(request, response, **params)
                 await call_all_async(after, request, response)
             except Redirection as redirection:
                 response = redirection.response
+
         except Exception as e:
             self._handle_exception(request, response, e)
 
