@@ -1,6 +1,6 @@
 from whitenoise import WhiteNoise
 
-from .compat import empty_wsgi_app
+from bocadillo.wsgi import empty_wsgi_app
 from .types import WSGIApp
 
 

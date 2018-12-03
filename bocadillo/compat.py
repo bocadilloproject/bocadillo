@@ -1,3 +1,4 @@
+"""Compatibility utilities (version-dependant, sync/async, etc.)."""
 import asyncio
 import sys
 from typing import Callable, Coroutine, Iterable
@@ -9,21 +10,6 @@ try:
 except ImportError:
     assert sys.version_info[:2] == (3, 6)
     from async_generator import asynccontextmanager
-
-from .types import WSGIApp
-
-
-def empty_wsgi_app() -> WSGIApp:
-    """Return a WSGI app that always returns 404 Not Found."""
-
-    def wsgi(environ, start_response):
-        status = '404 Not Found'
-        body = b'Not Found'
-        headers = [('Content-Type', 'text/plain')]
-        start_response(status, headers)
-        return [body]
-
-    return wsgi
 
 
 async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
