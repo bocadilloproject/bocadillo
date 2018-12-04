@@ -33,13 +33,13 @@ from .middleware import CommonMiddleware, RoutingMiddleware
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import Router
+from .routing import RoutingMixin
 from .static import static
 from .templates import Template, get_templates_environment
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 
-class API(HooksMixin, metaclass=APIMeta):
+class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -114,7 +114,7 @@ class API(HooksMixin, metaclass=APIMeta):
         enable_hsts: bool = False,
         media_type: Optional[str] = Media.JSON,
     ):
-        self._router = Router()
+        super().__init__()
 
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
@@ -238,58 +238,6 @@ class API(HooksMixin, metaclass=APIMeta):
             break
         else:
             raise exception from None
-
-    def route(
-        self, pattern: str, *, methods: List[str] = None, name: str = None
-    ):
-        """Register a new route by decorating a view.
-
-        # Parameters
-        pattern (str):
-            An URL pattern given as a format string.
-        methods (list of str):
-            HTTP methods supported by this route.
-            Defaults to all HTTP methods.
-            Ignored for class-based views.
-        name (str):
-            A name for this route, which must be unique.
-
-        # Raises
-        RouteDeclarationError:
-            If any method is not a valid HTTP method,
-            if `pattern` defines a parameter that the view does not accept,
-            if the view uses a parameter not defined in `pattern`,
-            if the `pattern` does not start with `/`,
-            or if the view did not accept the `req` and `res` parameters.
-
-        # Example
-        ```python
-        >>> import bocadillo
-        >>> api = bocadillo.API()
-        >>> @api.route('/greet/{person}')
-        ... def greet(req, res, person: str):
-        ...     pass
-        ```
-        """
-        return self._router.route_decorator(
-            pattern=pattern, methods=methods, name=name
-        )
-
-    def url_for(self, name: str, **kwargs) -> str:
-        """Build the URL path for a named route.
-
-        # Parameters
-        name (str): the name of the route.
-        kwargs (dict): route parameters.
-
-        # Returns
-        url (str): the URL path for a route.
-
-        # Raises
-        HTTPError(404) : if no route exists for the given `name`.
-        """
-        route = self._router.get_route_or_404(name)
-        return route.url(**kwargs)
 
     def redirect(
         self,
