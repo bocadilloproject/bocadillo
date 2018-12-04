@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.6.1] - 2018-12-04
+
 ### Added
 
 - Documentation on the routing algorithm.
@@ -139,7 +141,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...HEAD
+[v0.6.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.1...v0.4.0
