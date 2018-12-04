@@ -41,6 +41,7 @@ api = bocadillo.API()
 
 @api.route('/')
 async def index(req, res):
+    # Use a template from the ./templates directory 
     res.html = await api.template('index.html')
 
 @api.route('/greet/{person}')
