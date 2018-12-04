@@ -4,8 +4,6 @@
 
 Recipes are particularly useful when building larger, more complex applications because they allow code to be split into smaller, more manageable components.
 
-Recipes expose the same features as the `API` object: you can use routes, templates, middleware, redirects, static files, and hooks as you would on the regular `API` object.
-
 This feature was inspired by Flask's blueprints.
 
 ## Write a recipe
@@ -23,7 +21,7 @@ def retrieve_taco(req, res, ingredient: str):
     res.media = {'ingredient': ingredient}
 ```
 
-The recipe is given the name `'tacos'`. This name is used to infer the path prefix for the recipe, i.e. `/tacos`. You can also pass a path `prefix` explicitly:
+The recipe is given the name `'tacos'`. This name is used to infer the path prefix for the recipe, i.e. `/tacos`. You can also pass a path `prefix` explicitly (which must start with `/`):
 
 ```python
 tacos = Recipe('tacos', prefix='/tacos')
@@ -45,6 +43,22 @@ if __name__ == '__main__':
 ```
 
 This will add all the routes in the `tacos` recipe under the `/tacos` path, meaning your app is now equipped with the `retrieve_taco` view at `/tacos/{ingredient}`. Yummy!
+
+## Which features are available on recipes?
+
+Recipes expose the following features, which can be used just as you would on the `API` object:
+
+- [Routes](../request-handling/routes-url-design.md), e.g. `@recipe.route()`.
+- [Templates](./templates.md), e.g. `await recipe.template()`.
+- [Hooks](./hooks.md), e.g. `@recipe.before()`.
+
+::: tip
+If your recipe needs to use its own templates, you should pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.
+:::
+
+::: warning CAVEAT
+Note that recipes apply the exact same [routing algorithm](../request-handling/routes-url-design.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
+:::
 
 ## Recipe books
 

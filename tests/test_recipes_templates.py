@@ -9,10 +9,17 @@ def test_use_template_string():
     assert html == '<h1>Numbers</h1>'
 
 
-def test_if_render_template_then_templates_dir_is_that_of_api(api: API):
+def test_if_templates_dir_is_that_of_api_by_default(api: API):
     numbers = Recipe('numbers')
     api.recipe(numbers)
     assert numbers.templates_dir == api.templates_dir
+
+
+def test_if_templates_dir_given_then_it_is_used(api: API):
+    other_dir = 'my_recipe/templates'
+    numbers = Recipe('numbers', templates_dir=other_dir)
+    api.recipe(numbers)
+    assert numbers.templates_dir == other_dir != api.templates_dir
 
 
 def test_render_template_in_recipe_route(
