@@ -17,7 +17,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 
 - Restructure documentation into 4 clear sections: Getting Started, Topics, How-To and API Reference.
-- All things related to routing are now in a dedicated `bocadillo.routing` package. This does not introduce any API changes.
+- All things related to routing are now in a dedicated `bocadillo.routing` package, which provides a reusable `RoutingMixin`. This does not introduce any API changes.
 - Refactor hooks code. This does not introduce any API changes.
 
 ## [v0.6.0] - 2018-11-26
