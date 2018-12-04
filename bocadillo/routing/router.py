@@ -8,7 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from ..view import create_async_view, AsyncView
+from ..view import create_async_view, AsyncView, View
 
 
 class RouteMatch(NamedTuple):
@@ -50,15 +50,27 @@ class Router:
         name: str = None,
     ):
         route = Route(pattern=pattern, view=view, methods=methods, name=name)
+
         self._routes[pattern] = route
         if name is not None:
             self._named_routes[name] = route
+
         return route
 
     def add_route(
-        self, view, pattern: str, *, methods: List[str] = None, name: str = None
+        self,
+        view: View,
+        pattern: str,
+        *,
+        methods: List[str] = None,
+        name: str = None,
     ):
-        """Register a route."""
+        """Build and register a route."""
+        if methods is None:
+            methods = ALL_HTTP_METHODS
+
+        methods = [method.upper() for method in methods]
+
         if inspect.isclass(view):
             view = view()
             if hasattr(view, 'handle'):
@@ -82,16 +94,23 @@ class Router:
         self, pattern: str, *, methods: List[str] = None, name: str = None
     ):
         """Register a route by decorating a view."""
-        if methods is None:
-            methods = ALL_HTTP_METHODS
-
-        methods = [method.upper() for method in methods]
-
         return partial(
             self.add_route, pattern=pattern, methods=methods, name=name
         )
 
     def get(self, pattern: str) -> Optional[Route]:
+        """Get the route for the given pattern, if exists.
+
+        # Parameters
+
+        pattern (str):
+            An URL pattern.
+
+        # Returns
+
+        route (Route or None):
+            The route registered at `pattern`, or `None`.
+        """
         return self._routes.get(pattern)
 
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
