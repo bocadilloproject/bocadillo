@@ -37,11 +37,10 @@ class Router:
             pattern = prefix + route.pattern
             self._register_from(route, pattern=pattern, name=name)
 
-    def _register_from(self, route, **kwargs):
-        kwargs.setdefault('pattern', route.pattern)
-        kwargs.setdefault('view', route.view)
-        kwargs.setdefault('methods', route.methods)
-        return self._register(**kwargs)
+    def _register_from(self, route: Route, name: str = None, **kwargs):
+        for attr in 'pattern', 'view', 'methods':
+            kwargs.setdefault(attr, getattr(route, attr))
+        return self._register(name=name, **kwargs)
 
     def _register(
         self,

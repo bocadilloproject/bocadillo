@@ -1,4 +1,4 @@
-from bocadillo.base import Applicable
+from .base import Applicable
 from .hooks import HooksMixin
 from .routing import RoutingMixin
 from .templates import TemplatesMixin
