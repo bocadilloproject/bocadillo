@@ -1,20 +1,8 @@
 """The Bocadillo API class."""
 import os
-from contextlib import contextmanager
-from typing import (
-    Optional,
-    Tuple,
-    Type,
-    List,
-    Dict,
-    Any,
-    Union,
-    Coroutine,
-    Callable,
-)
+from typing import Optional, Tuple, Type, List, Dict, Any, Union, Callable
 
 from asgiref.wsgi import WsgiToAsgi
-from jinja2 import FileSystemLoader
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -35,11 +23,11 @@ from .request import Request
 from .response import Response
 from .routing import RoutingMixin
 from .static import static
-from .templates import Template, get_templates_environment
+from .templates import TemplatesMixin
 from .types import ASGIApp, WSGIApp, ASGIAppInstance
 
 
-class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
+class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -86,19 +74,6 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
         Can be one of the supported media types.
         Defaults to `'application/json'`.
         See also [Media](../topics/request-handling/media.md).
-
-    # Attributes
-
-    media_type (str):
-        The currently configured media type.
-        When setting it to a value outside of built-in or custom media types,
-        an `UnsupportedMediaType` exception is raised.
-    media_handlers (dict):
-        The dictionary of supported media handlers.
-        You can access, edit or replace this at will.
-    templates_dir (str):
-        The absolute path where templates are searched for (built from the
-        `templates_dir` parameter).
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -114,15 +89,10 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
         enable_hsts: bool = False,
         media_type: Optional[str] = Media.JSON,
     ):
-        super().__init__()
+        super().__init__(templates_dir=templates_dir)
 
         self._error_handlers = []
         self.add_error_handler(HTTPError, handle_http_error)
-
-        self._templates = get_templates_environment(
-            [os.path.abspath(templates_dir)]
-        )
-        self._templates.globals.update(self._get_template_globals())
 
         self._extra_apps: Dict[str, Any] = {}
 
@@ -154,6 +124,9 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
         if enable_hsts:
             self.add_middleware(HTTPSRedirectMiddleware)
 
+    def get_template_globals(self):
+        return {'url_for': self.url_for}
+
     def _build_client(self) -> TestClient:
         return TestClient(self)
 
@@ -170,6 +143,11 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
 
     @property
     def media_type(self) -> str:
+        """The currently configured media type.
+
+        When setting it to a value outside of built-in or custom media types,
+        an `UnsupportedMediaType` exception is raised.
+        """
         return self._media.type
 
     @media_type.setter
@@ -178,6 +156,10 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
 
     @property
     def media_handlers(self) -> dict:
+        """The dictionary of supported media handlers.
+
+        You can access, edit or replace this at will.
+        """
         return self._media.handlers
 
     @media_handlers.setter
@@ -266,95 +248,6 @@ class API(RoutingMixin, HooksMixin, metaclass=APIMeta):
         else:
             assert url is not None, 'url is expected if no route name is given'
         raise Redirection(url=url, permanent=permanent)
-
-    def _get_template_globals(self) -> dict:
-        return {'url_for': self.url_for}
-
-    @property
-    def templates_dir(self) -> str:
-        loader: FileSystemLoader = self._templates.loader
-        return loader.searchpath[0]
-
-    @templates_dir.setter
-    def templates_dir(self, templates_dir: str):
-        loader: FileSystemLoader = self._templates.loader
-        loader.searchpath = [os.path.abspath(templates_dir)]
-
-    def _get_template(self, name: str) -> Template:
-        return self._templates.get_template(name)
-
-    @contextmanager
-    def _prevent_async_template_rendering(self):
-        """If enabled, temporarily disable async template rendering.
-
-        Notes
-        -----
-        Hot fix for a bug with Jinja2's async environment, which always
-        renders asynchronously even under `render()`.
-        Example error:
-        `RuntimeError: There is no current event loop in thread [...]`
-        """
-        if not self._templates.is_async:
-            yield
-            return
-
-        self._templates.is_async = False
-        try:
-            yield
-        finally:
-            self._templates.is_async = True
-
-    @staticmethod
-    def _prepare_context(context: dict = None, **kwargs):
-        if context is None:
-            context = {}
-        context.update(kwargs)
-        return context
-
-    async def template(
-        self, name_: str, context: dict = None, **kwargs
-    ) -> Coroutine:
-        """Render a template asynchronously.
-
-        Can only be used within `async` functions.
-
-        # Parameters
-
-        name (str):
-            Name of the template, located inside `templates_dir`.
-            The trailing underscore avoids collisions with a potential
-            context variable named `name`.
-        context (dict):
-            Context variables to inject in the template.
-        kwargs (dict):
-            Context variables to inject in the template.
-        """
-        context = self._prepare_context(context, **kwargs)
-        return await self._get_template(name_).render_async(context)
-
-    def template_sync(self, name_: str, context: dict = None, **kwargs) -> str:
-        """Render a template synchronously.
-
-        See also: #API.template().
-        """
-        context = self._prepare_context(context, **kwargs)
-        with self._prevent_async_template_rendering():
-            return self._get_template(name_).render(context)
-
-    def template_string(
-        self, source: str, context: dict = None, **kwargs
-    ) -> str:
-        """Render a template from a string (synchronous).
-
-        # Parameters
-        source (str): a template given as a string.
-
-        For other parameters, see #API.template().
-        """
-        context = self._prepare_context(context, **kwargs)
-        with self._prevent_async_template_rendering():
-            template = self._templates.from_string(source=source)
-            return template.render(context)
 
     def _is_routing_middleware(self, middleware_cls) -> bool:
         return hasattr(middleware_cls, 'dispatch')

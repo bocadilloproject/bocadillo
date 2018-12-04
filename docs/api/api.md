@@ -51,19 +51,20 @@ __Parameters__
     Defaults to `'application/json'`.
     See also [Media](../topics/request-handling/media.md).
 
-__Attributes__
+## media_handlers
+The dictionary of supported media handlers.
 
+You can access, edit or replace this at will.
 
-- `media_type (str)`:
-    The currently configured media type.
-    When setting it to a value outside of built-in or custom media types,
-    an `UnsupportedMediaType` exception is raised.
-- `media_handlers (dict)`:
-    The dictionary of supported media handlers.
-    You can access, edit or replace this at will.
-- `templates_dir (str)`:
-    The absolute path where templates are searched for (built from the
-    `templates_dir` parameter).
+## media_type
+The currently configured media type.
+
+When setting it to a value outside of built-in or custom media types,
+an `UnsupportedMediaType` exception is raised.
+
+## templates_dir
+The absolute path where templates are searched for (built from the
+`templates_dir` parameter).
 
 ## route
 ```python
@@ -120,6 +121,34 @@ __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
 
+## template
+```python
+API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
+```
+Render a template asynchronously.
+
+Can only be used within `async` functions.
+
+__Parameters__
+
+
+- __name (str)__:
+    Name of the template, located inside `templates_dir`.
+    The trailing underscore avoids collisions with a potential
+    context variable named `name`.
+- __context (dict)__:
+    Context variables to inject in the template.
+- __kwargs (dict)__:
+    Context variables to inject in the template.
+
+## template_sync
+```python
+API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
+```
+Render a template synchronously.
+
+See also: `API.template()`.
+
 ## before
 ```python
 API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
@@ -135,6 +164,18 @@ __Parameters__
 
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
+
+## template_string
+```python
+API.template_string(self, source: str, context: dict = None, **kwargs) -> str
+```
+Render a template from a string (synchronous).
+
+__Parameters__
+
+- __source (str)__: a template given as a string.
+
+For other parameters, see `API.template()`.
 
 ## after
 ```python
@@ -213,46 +254,6 @@ __Parameters__
 __Raises__
 
 - `Redirection`: an exception that will be caught by `API.dispatch()`.
-
-## template
-```python
-API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
-```
-Render a template asynchronously.
-
-Can only be used within `async` functions.
-
-__Parameters__
-
-
-- __name (str)__:
-    Name of the template, located inside `templates_dir`.
-    The trailing underscore avoids collisions with a potential
-    context variable named `name`.
-- __context (dict)__:
-    Context variables to inject in the template.
-- __kwargs (dict)__:
-    Context variables to inject in the template.
-
-## template_sync
-```python
-API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
-```
-Render a template synchronously.
-
-See also: `API.template()`.
-
-## template_string
-```python
-API.template_string(self, source: str, context: dict = None, **kwargs) -> str
-```
-Render a template from a string (synchronous).
-
-__Parameters__
-
-- __source (str)__: a template given as a string.
-
-For other parameters, see `API.template()`.
 
 ## add_middleware
 ```python

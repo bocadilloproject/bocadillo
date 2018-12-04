@@ -6,7 +6,8 @@ from .router import Router
 class RoutingMixin:
     """Provide routing capabilities to a class."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._router = Router()
 
     def route(
