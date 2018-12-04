@@ -8,7 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from ..view import create_async_view
+from ..view import create_async_view, AsyncView
 
 
 class RouteMatch(NamedTuple):
@@ -24,6 +24,37 @@ class Router:
     def __init__(self):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
+
+    def mount(self, prefix: str, other: 'Router'):
+        """Mount another router at the given prefix.
+
+        In practice, copy routes and named routes by adding `prefix` to
+        each route's pattern.
+        """
+        for pattern, route in other._routes.items():
+            self._register_from(route, pattern=prefix + pattern)
+        for name, route in other._named_routes.items():
+            pattern = prefix + route.pattern
+            self._register_from(route, pattern=pattern, name=name)
+
+    def _register_from(self, route, **kwargs):
+        kwargs.setdefault('pattern', route.pattern)
+        kwargs.setdefault('view', route.view)
+        kwargs.setdefault('methods', route.methods)
+        return self._register(**kwargs)
+
+    def _register(
+        self,
+        pattern: str,
+        view: AsyncView,
+        methods: List[str],
+        name: str = None,
+    ):
+        route = Route(pattern=pattern, view=view, methods=methods, name=name)
+        self._routes[pattern] = route
+        if name is not None:
+            self._named_routes[name] = route
+        return route
 
     def add_route(
         self, view, pattern: str, *, methods: List[str] = None, name: str = None
@@ -43,13 +74,10 @@ class Router:
         check_route(pattern, view, methods)
 
         view = create_async_view(view)
-        route = Route(pattern=pattern, view=view, methods=methods, name=name)
 
-        self._routes[pattern] = route
-        if name is not None:
-            self._named_routes[name] = route
-
-        return route
+        return self._register(
+            pattern=pattern, view=view, methods=methods, name=name
+        )
 
     def route_decorator(
         self, pattern: str, *, methods: List[str] = None, name: str = None

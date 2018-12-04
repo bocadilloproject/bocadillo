@@ -1,14 +1,19 @@
 from typing import List
 
 from .router import Router
+from ..base import Applicable
 
 
-class RoutingMixin:
+class RoutingMixin(Applicable):
     """Provide routing capabilities to a class."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._router = Router()
+
+    def apply(self, other: 'RoutingMixin', prefix):
+        super().apply(other, prefix)
+        self._router.mount(prefix, other._router)
 
     def route(
         self, pattern: str, *, methods: List[str] = None, name: str = None

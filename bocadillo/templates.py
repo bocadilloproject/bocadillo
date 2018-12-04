@@ -8,6 +8,9 @@ from jinja2 import Template as _Template
 Template = _Template
 
 
+DEFAULT_TEMPLATES_DIR = 'templates'
+
+
 def get_templates_environment(template_dirs: List[str]):
     return Environment(
         loader=FileSystemLoader(template_dirs),
@@ -19,7 +22,7 @@ def get_templates_environment(template_dirs: List[str]):
 class TemplatesMixin:
     """Provide templating capabilities to a class."""
 
-    def __init__(self, templates_dir: str, **kwargs):
+    def __init__(self, templates_dir: str = DEFAULT_TEMPLATES_DIR, **kwargs):
         super().__init__(**kwargs)
         self._templates = get_templates_environment(
             [os.path.abspath(templates_dir)]

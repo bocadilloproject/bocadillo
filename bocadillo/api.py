@@ -18,6 +18,7 @@ from .hooks import HooksMixin
 from .media import Media
 from .meta import APIMeta
 from .middleware import CommonMiddleware, RoutingMiddleware
+from .recipes import Recipe
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -140,6 +141,9 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         if not prefix.startswith('/'):
             prefix = '/' + prefix
         self._extra_apps[prefix] = app
+
+    def recipe(self, recipe: Recipe):
+        self.apply(recipe, prefix=recipe.prefix)
 
     @property
     def media_type(self) -> str:
