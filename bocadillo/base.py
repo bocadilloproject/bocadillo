@@ -1,3 +1,11 @@
+"""Application base classes, interfaces and meta classes."""
+
+
 class Applicable:
-    def apply(self, other, prefix: str):
+    """Base interface for "applicable" classes.
+
+    This is a key interface for the recipes system.
+    """
+
+    def apply(self, other: 'Applicable', prefix: str):
         pass

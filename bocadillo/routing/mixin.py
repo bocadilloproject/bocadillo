@@ -11,7 +11,7 @@ class RoutingMixin(Applicable):
         super().__init__(**kwargs)
         self._router = Router()
 
-    def apply(self, other: 'RoutingMixin', prefix):
+    def apply(self, other: 'RoutingMixin', prefix: str):
         super().apply(other, prefix)
         self._router.mount(prefix, other._router)
 
