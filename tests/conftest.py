@@ -24,7 +24,6 @@ class TemplateWrapper(NamedTuple):
 
 
 def _create_template(api, tmpdir_factory, dirname):
-    api.templates_dir = dirname
     templates_dir = tmpdir_factory.mktemp(dirname)
     template_file = templates_dir.join('hello.html')
     template_file.write('<h1>Hello, {{ name }}!</h1>')

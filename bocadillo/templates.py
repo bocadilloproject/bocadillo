@@ -5,6 +5,8 @@ from typing import List, Coroutine
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from jinja2 import Template as _Template
 
+from bocadillo.base import Applicable
+
 Template = _Template
 
 
@@ -19,7 +21,7 @@ def get_templates_environment(template_dirs: List[str]):
     )
 
 
-class TemplatesMixin:
+class TemplatesMixin(Applicable):
     """Provide templating capabilities to a class."""
 
     def __init__(self, templates_dir: str = DEFAULT_TEMPLATES_DIR, **kwargs):
@@ -28,6 +30,10 @@ class TemplatesMixin:
             [os.path.abspath(templates_dir)]
         )
         self._templates.globals.update(self.get_template_globals())
+
+    def apply(self, other: 'TemplatesMixin', prefix: str):
+        super().apply(other, prefix)
+        other.templates_dir = self.templates_dir
 
     def get_template_globals(self) -> dict:
         return {}
