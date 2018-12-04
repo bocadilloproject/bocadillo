@@ -1,11 +1,14 @@
 """Application meta classes."""
+
+from bocadillo.templates import TemplatesMixin
 from .hooks import HooksMixin
+from .routing import RoutingMixin
 
 
 class APIMeta(type):
     """Metaclass for API."""
 
-    _bases_with_docs = [HooksMixin]
+    _bases_with_docs = [HooksMixin, RoutingMixin, TemplatesMixin]
 
     def __new__(mcs, name, bases, namespace):
         mcs._prepare_for_docs(bases, namespace)

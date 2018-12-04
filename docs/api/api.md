@@ -51,19 +51,103 @@ __Parameters__
     Defaults to `'application/json'`.
     See also [Media](../topics/request-handling/media.md).
 
-__Attributes__
+## media_handlers
+The dictionary of supported media handlers.
+
+You can access, edit or replace this at will.
+
+## media_type
+The currently configured media type.
+
+When setting it to a value outside of built-in or custom media types,
+an `UnsupportedMediaType` exception is raised.
+
+## templates_dir
+The absolute path where templates are searched for (built from the
+`templates_dir` parameter).
+
+## route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__:
+    An URL pattern given as a format string.
+- __methods (list of str)__:
+    HTTP methods supported by this route.
+    Defaults to all HTTP methods.
+    Ignored for class-based views.
+- __name (str)__:
+    A name for this route, which must be unique.
+
+__Raises__
+
+- `RouteDeclarationError`:
+    If any method is not a valid HTTP method,
+    if `pattern` defines a parameter that the view does not accept,
+    if the view uses a parameter not defined in `pattern`,
+    if the `pattern` does not start with `/`,
+    or if the view did not accept the `req` and `res` parameters.
+
+__Example__
+
+```python
+>>> import bocadillo
+>>> api = bocadillo.API()
+>>> @api.route('/greet/{person}')
+... def greet(req, res, person: str):
+...     pass
+```
+
+## url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
+
+## template
+```python
+API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
+```
+Render a template asynchronously.
+
+Can only be used within `async` functions.
+
+__Parameters__
 
 
-- `media_type (str)`:
-    The currently configured media type.
-    When setting it to a value outside of built-in or custom media types,
-    an `UnsupportedMediaType` exception is raised.
-- `media_handlers (dict)`:
-    The dictionary of supported media handlers.
-    You can access, edit or replace this at will.
-- `templates_dir (str)`:
-    The absolute path where templates are searched for (built from the
-    `templates_dir` parameter).
+- __name (str)__:
+    Name of the template, located inside `templates_dir`.
+    The trailing underscore avoids collisions with a potential
+    context variable named `name`.
+- __context (dict)__:
+    Context variables to inject in the template.
+- __kwargs (dict)__:
+    Context variables to inject in the template.
+
+## template_sync
+```python
+API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
+```
+Render a template synchronously.
+
+See also: `API.template()`.
 
 ## before
 ```python
@@ -78,7 +162,20 @@ when decorating a view.
 
 __Parameters__
 
-- __hook_function (callable)__: A synchronous or asynchronous function with the signature: `(req, res, params) -> None`.
+- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
+    `(req, res, params) -> None`.
+
+## template_string
+```python
+API.template_string(self, source: str, context: dict = None, **kwargs) -> str
+```
+Render a template from a string (synchronous).
+
+__Parameters__
+
+- __source (str)__: a template given as a string.
+
+For other parameters, see `API.template()`.
 
 ## after
 ```python
@@ -138,61 +235,6 @@ __Example__
 ...     pass  # perhaps set res.content and res.status_code
 ```
 
-## route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None)
-```
-Register a new route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__:
-    An URL pattern given as a format string.
-- __methods (list of str)__:
-    HTTP methods supported by this route.
-    Defaults to all HTTP methods.
-    Ignored for class-based views.
-- __name (str)__:
-    A name for this route, which must be unique.
-
-__Raises__
-
-- `RouteDeclarationError`:
-    If any method is not a valid HTTP method,
-    if `pattern` defines a parameter that the view does not accept,
-    if the view uses a parameter not defined in `pattern`,
-    if the `pattern` does not start with `/`,
-    or if the view did not accept the `req` and `res` parameters.
-
-__Example__
-
-```python
->>> import bocadillo
->>> api = bocadillo.API()
->>> @api.route('/greet/{person}')
-... def greet(req, res, person: str):
-...     pass
-```
-
-## url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
-
 ## redirect
 ```python
 API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
@@ -212,46 +254,6 @@ __Parameters__
 __Raises__
 
 - `Redirection`: an exception that will be caught by `API.dispatch()`.
-
-## template
-```python
-API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
-```
-Render a template asynchronously.
-
-Can only be used within `async` functions.
-
-__Parameters__
-
-
-- __name (str)__:
-    Name of the template, located inside `templates_dir`.
-    The trailing underscore avoids collisions with a potential
-    context variable named `name`.
-- __context (dict)__:
-    Context variables to inject in the template.
-- __kwargs (dict)__:
-    Context variables to inject in the template.
-
-## template_sync
-```python
-API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
-```
-Render a template synchronously.
-
-See also: `API.template()`.
-
-## template_string
-```python
-API.template_string(self, source: str, context: dict = None, **kwargs) -> str
-```
-Render a template from a string (synchronous).
-
-__Parameters__
-
-- __source (str)__: a template given as a string.
-
-For other parameters, see `API.template()`.
 
 ## add_middleware
 ```python
