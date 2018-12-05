@@ -3,4 +3,4 @@ from .static import static
 from .middleware import RoutingMiddleware
 from .media import Media
 
-__version__ = '0.6.0'
+__version__ = '0.6.1'

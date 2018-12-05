@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.6.1] - 2018-12-04
+
 ### Added
 
 - Documentation on the routing algorithm.
@@ -18,7 +20,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Restructure documentation into 4 clear sections: Getting Started, Topics, How-To and API Reference.
 - All things related to routing are now in a dedicated `bocadillo.routing` package, which provides a reusable `RoutingMixin`. This does not introduce any API changes.
-- Refactor hooks code. This does not introduce any API changes.
+- Code refactoring for the hooks and templates features. No API changes involved.
+- Rewritten `CONTRIBUTING.md`.
 
 ## [v0.6.0] - 2018-11-26
 
@@ -139,7 +142,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...HEAD
+[v0.6.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.4.0...v0.5.0
 [v0.4.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.3.1...v0.4.0
