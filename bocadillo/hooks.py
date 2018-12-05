@@ -2,6 +2,7 @@ from collections import defaultdict
 from functools import wraps
 from typing import Callable, Union, Dict, Coroutine
 
+from bocadillo.base import Applicable
 from .compat import call_async, asynccontextmanager
 from .request import Request
 from .response import Response
@@ -85,15 +86,14 @@ class Hooks:
         await call_async(self._hooks[AFTER][route], request, response, params)
 
 
-# Default hooks collection
-_hooks = Hooks()
-
-
 class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
+    def __init__(self, **kwargs):
+        self._hooks = Hooks()
+
     def get_hooks(self):
-        return _hooks
+        return self._hooks
 
     def before(self, hook_function: HookFunction, *args, **kwargs):
         """Register a before hook on a route.
