@@ -22,8 +22,7 @@ async def empty_hook(req: Request, res: Response, params: dict):
 class Hooks:
     """Collection of hooks."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
         self._hooks: Dict[str, HookCollection] = {
             BEFORE: defaultdict(lambda: empty_hook),
             AFTER: defaultdict(lambda: empty_hook),
@@ -90,6 +89,7 @@ class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._hooks = Hooks()
 
     def get_hooks(self):
