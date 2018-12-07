@@ -74,7 +74,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         See #API.
     """
 
-    hooks_manager_class = RecipeHooks
+    _hooks_manager_class = RecipeHooks
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(**kwargs)

@@ -142,11 +142,6 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
-## Hooks
-```python
-API.Hooks(self)
-```
-A concrete hooks manager that stores hooks by route.
 ## template_sync
 ```python
 API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str

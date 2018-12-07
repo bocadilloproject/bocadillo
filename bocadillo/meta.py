@@ -16,6 +16,9 @@ class APIMeta(type):
         # we need to force it.
         for base in bases:
             for key, value in base.__dict__.items():
+                if key.startswith('_'):
+                    # Don't include private attributes and methods
+                    continue
                 if key in namespace:
                     # Don't prevent overriding on API class
                     continue

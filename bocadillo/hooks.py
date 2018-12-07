@@ -107,11 +107,11 @@ class Hooks(HooksBase):
 class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
-    hooks_manager_class = Hooks
+    _hooks_manager_class = Hooks
 
     def __init__(self):
         super().__init__()
-        self._hooks = self.hooks_manager_class()
+        self._hooks = self._hooks_manager_class()
 
     def get_hooks(self):
         return self._hooks
