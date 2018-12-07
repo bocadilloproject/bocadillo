@@ -63,8 +63,9 @@ When setting it to a value outside of built-in or custom media types,
 an `UnsupportedMediaType` exception is raised.
 
 ## templates_dir
-The absolute path where templates are searched for (built from the
-`templates_dir` parameter).
+The path where templates are searched for, or `None` if not set.
+
+This is built from the `templates_dir` parameter.
 
 ## route
 ```python
@@ -111,7 +112,7 @@ Build the URL path for a named route.
 __Parameters__
 
 - __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
+- ___kwargs (dict)__: route parameters.
 
 __Returns__
 
@@ -141,6 +142,11 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
+## Hooks
+```python
+API.Hooks(self)
+```
+A concrete hooks manager that stores hooks by route.
 ## template_sync
 ```python
 API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
@@ -148,22 +154,6 @@ API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
 Render a template synchronously.
 
 See also: `API.template()`.
-
-## before
-```python
-API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
-```
-Register a before hook on a route.
-
-::: tip NOTE
-`@api.before()` should be placed  **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
-    `(req, res, params) -> None`.
 
 ## template_string
 ```python
@@ -177,14 +167,14 @@ __Parameters__
 
 For other parameters, see `API.template()`.
 
-## after
+## before
 ```python
-API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
-Register an after hook on a route.
+Register a before hook on a route.
 
 ::: tip NOTE
-`@api.after()` should be placed **above** `@api.route()`
+`@api.before()` should be placed  **above** `@api.route()`
 when decorating a view.
 :::
 
@@ -203,6 +193,22 @@ __Parameters__
 
 - __prefix (str)__: A path prefix where the app should be mounted, e.g. `'/myapp'`.
 - __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+
+## after
+```python
+API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+```
+Register an after hook on a route.
+
+::: tip NOTE
+`@api.after()` should be placed **above** `@api.route()`
+when decorating a view.
+:::
+
+__Parameters__
+
+- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
+    `(req, res, params) -> None`.
 
 ## add_error_handler
 ```python
