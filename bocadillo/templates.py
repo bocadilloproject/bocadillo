@@ -20,7 +20,7 @@ def get_templates_environment(template_dirs: List[str]):
     )
 
 
-class TemplatesMixin(Applicable):
+class TemplatesMixin:
     """Provide templating capabilities to a class."""
 
     def __init__(self, templates_dir: str = None, **kwargs):
@@ -31,11 +31,6 @@ class TemplatesMixin(Applicable):
             dirs = [templates_dir]
         self._templates = get_templates_environment(dirs)
         self._templates.globals.update(self.get_template_globals())
-
-    def apply(self, other: 'TemplatesMixin', prefix: str):
-        super().apply(other, prefix)
-        if other.templates_dir is None:
-            other.templates_dir = self.templates_dir
 
     def get_template_globals(self) -> dict:
         return {}

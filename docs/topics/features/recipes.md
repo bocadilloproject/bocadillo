@@ -50,6 +50,7 @@ Recipes expose the following features, which can be used just as you would on th
 
 - [Routes](../request-handling/routes-url-design.md), e.g. `@recipe.route()`.
 - [Templates](./templates.md), e.g. `await recipe.template()`.
+- [Hooks](./hooks.md), e.g. `@recipe.before()`.
 
 ::: tip
 If your recipe needs to use its own templates, you should pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.

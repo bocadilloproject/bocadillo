@@ -42,38 +42,25 @@ class Hooks:
 
             Support for decorating a route or a class method enables
             using hooks in the following contexts:
-            - On a function-based view (before @api.route()).
-            - On top of a class-based view (before @api.route()).
-            - On a class-based view method.
+            - On a function-based _view (before @api.route()).
+            - On top of a class-based _view (before @api.route()).
+            - On a class-based _view method.
 
             Parameters
             ----------
             hookable : Route or (unbound) class method
             """
             nonlocal hook_function
-            full_hook_function = hook_function
-
-            async def hook_function(req: Request, res: Response, params: dict):
-                await call_async(
-                    full_hook_function, req, res, params, *args, **kwargs
-                )
+            hook_function = ensure_async_hook_function(
+                hook_function, *args, **kwargs
+            )
 
             if isinstance(hookable, Route):
                 route = hookable
                 self._hooks[hook][route] = hook_function
                 return route
             else:
-                view: Callable = hookable
-
-                @wraps(view)
-                async def with_hook(self, req, res, **kw):
-                    if hook == BEFORE:
-                        await hook_function(req, res, kw)
-                    await call_async(view, self, req, res, **kw)
-                    if hook == AFTER:
-                        await hook_function(req, res, kw)
-
-                return with_hook
+                return with_hook(hookable, hook, hook_function)
 
         return decorator
 
@@ -85,11 +72,30 @@ class Hooks:
         await call_async(self._hooks[AFTER][route], request, response, params)
 
 
+def ensure_async_hook_function(full_hook_function, *args, **kwargs):
+    async def hook_function(req: Request, res: Response, params: dict):
+        await call_async(full_hook_function, req, res, params, *args, **kwargs)
+
+    return hook_function
+
+
+def with_hook(view: Callable, hook: str, hook_function: HookFunction):
+    @wraps(view)
+    async def view_with_hook(self, req, res, **kw):
+        if hook == BEFORE:
+            await hook_function(req, res, kw)
+        await call_async(view, self, req, res, **kw)
+        if hook == AFTER:
+            await hook_function(req, res, kw)
+
+    return view_with_hook
+
+
 class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._hooks = Hooks()
 
     def get_hooks(self):
@@ -100,7 +106,7 @@ class HooksMixin:
 
         ::: tip NOTE
         `@api.before()` should be placed  **above** `@api.route()`
-        when decorating a view.
+        when decorating a _view.
         :::
 
         # Parameters
@@ -115,7 +121,7 @@ class HooksMixin:
 
         ::: tip NOTE
         `@api.after()` should be placed **above** `@api.route()`
-        when decorating a view.
+        when decorating a _view.
         :::
 
         # Parameters

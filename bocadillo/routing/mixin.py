@@ -4,16 +4,12 @@ from .router import Router
 from ..base import Applicable
 
 
-class RoutingMixin(Applicable):
+class RoutingMixin:
     """Provide routing capabilities to a class."""
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._router = Router()
-
-    def apply(self, other: 'RoutingMixin', prefix: str):
-        super().apply(other, prefix)
-        self._router.mount(prefix, other._router)
 
     def route(
         self, pattern: str, *, methods: List[str] = None, name: str = None
@@ -56,7 +52,7 @@ class RoutingMixin(Applicable):
 
         # Parameters
         name (str): the name of the route.
-        kwargs (dict): route parameters.
+        _kwargs (dict): route parameters.
 
         # Returns
         url (str): the URL path for a route.

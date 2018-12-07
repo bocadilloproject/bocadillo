@@ -169,7 +169,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         self._extra_apps[prefix] = app
 
     def recipe(self, recipe: Recipe):
-        self.apply(recipe, prefix=recipe.prefix)
+        recipe.apply(self)
 
     @property
     def media_type(self) -> str:
