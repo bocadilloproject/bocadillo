@@ -8,7 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from ..view import create_async_view, AsyncView, View
+from ..view import create_async_view, View
 
 
 class RouteMatch(NamedTuple):
@@ -24,38 +24,6 @@ class Router:
     def __init__(self):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
-
-    def mount(self, prefix: str, other: 'Router'):
-        """Mount another router at the given prefix.
-
-        In practice, copy routes and named routes by adding `prefix` to
-        each route's pattern.
-        """
-        for pattern, route in other._routes.items():
-            self._register_from(route, pattern=prefix + pattern)
-        for name, route in other._named_routes.items():
-            pattern = prefix + route.pattern
-            self._register_from(route, pattern=pattern, name=name)
-
-    def _register_from(self, route: Route, name: str = None, **kwargs):
-        for attr in 'pattern', 'view', 'methods':
-            kwargs.setdefault(attr, getattr(route, attr))
-        return self._register(name=name, **kwargs)
-
-    def _register(
-        self,
-        pattern: str,
-        view: AsyncView,
-        methods: List[str],
-        name: str = None,
-    ):
-        route = Route(pattern=pattern, view=view, methods=methods, name=name)
-
-        self._routes[pattern] = route
-        if name is not None:
-            self._named_routes[name] = route
-
-        return route
 
     def add_route(
         self,
@@ -83,12 +51,14 @@ class Router:
                 ]
 
         check_route(pattern, view, methods)
-
         view = create_async_view(view)
 
-        return self._register(
-            pattern=pattern, view=view, methods=methods, name=name
-        )
+        route = Route(pattern=pattern, view=view, methods=methods, name=name)
+        self._routes[pattern] = route
+        if name is not None:
+            self._named_routes[name] = route
+
+        return route
 
     def route_decorator(
         self, pattern: str, *, methods: List[str] = None, name: str = None
@@ -128,7 +98,7 @@ class Router:
                 return RouteMatch(route=route, params=params)
         return None
 
-    def get_route_or_404(self, name: str):
+    def get_route_or_404(self, name: str) -> Route:
         try:
             return self._named_routes[name]
         except KeyError as e:
