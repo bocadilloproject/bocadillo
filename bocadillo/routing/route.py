@@ -21,18 +21,6 @@ class Route:
         self._methods = methods
         self._name = name
 
-    @property
-    def pattern(self) -> str:
-        return self._pattern
-
-    @property
-    def view(self) -> AsyncView:
-        return self._view
-
-    @property
-    def methods(self) -> List[str]:
-        return list(self._methods)
-
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
         return self._pattern.format(**kwargs)
