@@ -8,6 +8,11 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Recipes: a way to group stuff together and allow composition of bocadillos.
+- Recipe books: a way to group multiple recipes into a single recipe.
+
 ## [v0.6.1] - 2018-12-04
 
 ### Added
