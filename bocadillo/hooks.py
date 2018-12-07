@@ -44,9 +44,9 @@ class Hooks(Generic[R]):
 
             Support for decorating a route or a class method enables
             using hooks in the following contexts:
-            - On a function-based _view (before @api.route()).
-            - On top of a class-based _view (before @api.route()).
-            - On a class-based _view method.
+            - On a function-based view (before @api.route()).
+            - On top of a class-based view (before @api.route()).
+            - On a class-based view method.
 
             Parameters
             ----------
@@ -94,7 +94,7 @@ class HooksMixin:
 
         ::: tip NOTE
         `@api.before()` should be placed  **above** `@api.route()`
-        when decorating a _view.
+        when decorating a view.
         :::
 
         # Parameters
@@ -109,7 +109,7 @@ class HooksMixin:
 
         ::: tip NOTE
         `@api.after()` should be placed **above** `@api.route()`
-        when decorating a _view.
+        when decorating a view.
         :::
 
         # Parameters
