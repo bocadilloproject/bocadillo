@@ -27,19 +27,18 @@ class RecipeRoute:
         prefix (str):
             A path prefix.
         """
-        # Build the route.
         route = api.route(prefix + self._pattern, *self._args, **self._kwargs)(
             self._view
         )
 
-        # Register hooks registered via @before and/or @after on top of
-        # the @route decorator.
-        def _register_hook(hook, register):
+        # Hooks registered via @before and/or @after on top of the @route
+        # decorator need to be manually registered with @api.before, @api.after.
+        def _register_hook(hook, hook_decorator):
             nonlocal self, route
             if self.hooks.get(hook) is None:
                 return
             hook_function = self.hooks[hook]
-            route = register(hook_function)(route)
+            route = hook_decorator(hook_function)(route)
 
         _register_hook('before', api.before)
         _register_hook('after', api.after)
