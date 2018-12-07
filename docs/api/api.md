@@ -112,7 +112,7 @@ Build the URL path for a named route.
 __Parameters__
 
 - __name (str)__: the name of the route.
-- ___kwargs (dict)__: route parameters.
+- __kwargs (dict)__: route parameters.
 
 __Returns__
 
