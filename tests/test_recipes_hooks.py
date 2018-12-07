@@ -1,5 +1,4 @@
-from bocadillo import API
-from bocadillo.recipes import Recipe
+from bocadillo import API, Recipe
 from .utils import async_function_hooks
 
 

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Sequence
 
 from .hooks import HooksMixin, HooksBase, HookFunction
 from .templates import TemplatesMixin
@@ -102,11 +102,15 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         if self.templates_dir is None:
             self.templates_dir = api.templates_dir
 
+    @classmethod
+    def book(cls, *recipes: 'Recipe', prefix: str) -> 'RecipeBook':
+        return RecipeBook(recipes, prefix=prefix)
+
 
 class RecipeBook(RecipeBase):
     """A composition of multiple recipes."""
 
-    def __init__(self, *recipes: Recipe, prefix: str):
+    def __init__(self, recipes: Sequence[Recipe], prefix: str):
         self._recipes = recipes
         self._prefix = prefix
 

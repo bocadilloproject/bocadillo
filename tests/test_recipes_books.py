@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import API
-from bocadillo.recipes import Recipe, RecipeBook
+from bocadillo import API, Recipe
 
 
 @pytest.fixture
@@ -19,7 +18,7 @@ def numbers():
     async def convert(req, res, x):
         res.media = {'value': float(x)}
 
-    return RecipeBook(integers, floats, prefix='/numbers')
+    return Recipe.book(integers, floats, prefix='/numbers')
 
 
 def test_recipe_book(api: API, numbers):

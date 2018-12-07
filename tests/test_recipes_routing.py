@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import API
-from bocadillo.recipes import Recipe
+from bocadillo import API, Recipe
 
 
 def test_if_prefix_not_given_then_routes_mounted_at_slash_name(api: API):

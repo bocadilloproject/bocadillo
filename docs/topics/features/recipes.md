@@ -1,5 +1,9 @@
 # Recipes
 
+```python
+from bocadillo import Recipe
+```
+
 **Recipes** are objects that can be used to **group together a set of related routes**. They can later be applied to the main `API` object in order to extend its functionality in a flexible fashion.
 
 Recipes are particularly useful when building larger, more complex applications because they allow code to be split into smaller, more manageable components.
