@@ -45,7 +45,7 @@ class RecipeRoute:
         _register_hook('after', api.after)
 
 
-class RecipeHooks(Hooks[RecipeRoute]):
+class RecipeHooks(Hooks):
     """A custom hooks manager for recipes."""
 
     route_class = RecipeRoute

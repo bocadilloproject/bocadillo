@@ -1,15 +1,14 @@
 from collections import defaultdict
 from functools import wraps
-from typing import Callable, Union, Dict, Coroutine, Generic, TypeVar, Type
+from typing import Callable, Union, Dict, Coroutine
 
 from .compat import call_async, asynccontextmanager
 from .request import Request
 from .response import Response
 from .routing import Route
 
-R = TypeVar('R')
 HookFunction = Callable[[Request, Response, dict], Coroutine]
-HookCollection = Dict[R, HookFunction]
+HookCollection = Dict[Route, HookFunction]
 
 BEFORE = 'before'
 AFTER = 'after'
@@ -19,10 +18,10 @@ async def empty_hook(req: Request, res: Response, params: dict):
     pass
 
 
-class Hooks(Generic[R]):
+class Hooks:
     """Collection of hooks."""
 
-    route_class: Type[R] = Route
+    route_class = Route
 
     def __init__(self):
         self._hooks: Dict[str, HookCollection] = {
@@ -39,7 +38,7 @@ class Hooks(Generic[R]):
     def _hook_decorator(
         self, hook: str, hook_function: HookFunction, *args, **kwargs
     ):
-        def decorator(hookable: Union[R, Callable]):
+        def decorator(hookable: Union[Route, Callable]):
             """Bind the hook function to the given hookable object.
 
             Support for decorating a route or a class method enables
@@ -66,7 +65,7 @@ class Hooks(Generic[R]):
 
         return decorator
 
-    def store_hook(self, hook: str, hook_function: HookFunction, route: R):
+    def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
         self._hooks[hook][route] = hook_function
 
     @asynccontextmanager
