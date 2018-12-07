@@ -58,7 +58,18 @@ class RecipeHooks(Hooks[RecipeRoute]):
 
 
 class Recipe(TemplatesMixin, HooksMixin):
-    """A grouping of capabilities that can be merged back into an API."""
+    """A grouping of capabilities that can be merged back into an API.
+
+    # Parameters
+
+    name (str):
+        A name for the recipe.
+    prefix (str):
+        The path prefix where the recipe will be mounted.
+        Defaults to `'/' + name`.
+    templates_dir (str):
+        See #API.
+    """
 
     hooks_manager_class = RecipeHooks
 
