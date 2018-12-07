@@ -51,7 +51,7 @@ class RoutingMixin:
 
         # Parameters
         name (str): the name of the route.
-        _kwargs (dict): route parameters.
+        kwargs (dict): route parameters.
 
         # Returns
         url (str): the URL path for a route.
