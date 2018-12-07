@@ -1,7 +1,6 @@
 from typing import List
 
 from .router import Router
-from ..base import Applicable
 
 
 class RoutingMixin:

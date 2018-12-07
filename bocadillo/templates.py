@@ -4,8 +4,6 @@ from typing import List, Coroutine, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from jinja2 import Template as _Template
 
-from .base import Applicable
-
 Template = _Template
 
 
