@@ -1,10 +1,15 @@
 from typing import List
 
-from .hooks import with_hook, ensure_async_hook_function
+from .hooks import HooksMixin, Hooks, HookFunction
 from .templates import TemplatesMixin
 
 
 class RecipeRoute:
+    """A mock route to be stored in a recipe.
+
+    The route can be registered later on an API object.
+    """
+
     def __init__(self, pattern, view, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
@@ -12,76 +17,73 @@ class RecipeRoute:
         self._view = view
         self.hooks = {}
 
-    def register(self, api, prefix: str):
+    def register(self, api, prefix: str) -> None:
+        """Register the route on the API object at the given prefix.
+
+        # Parameters
+
+        api (API):
+            A Bocadillo application.
+        prefix (str):
+            A path prefix.
+        """
+        # Build the route.
         route = api.route(prefix + self._pattern, *self._args, **self._kwargs)(
             self._view
         )
 
+        # Register hooks registered via @before and/or @after on top of
+        # the @route decorator.
         def _register_hook(hook, register):
             nonlocal self, route
             if self.hooks.get(hook) is None:
                 return
-            hook_function, args, kwargs = self.hooks[hook]
-            route = register(hook_function, *args, **kwargs)(route)
+            hook_function = self.hooks[hook]
+            route = register(hook_function)(route)
 
         _register_hook('before', api.before)
         _register_hook('after', api.after)
 
 
-class Recipe(TemplatesMixin):
-    """A grouping of capabilities that can be merged back into an API.
+class RecipeHooks(Hooks[RecipeRoute]):
+    """A custom hooks manager for recipes."""
 
-    # Supported capabilities
+    route_class = RecipeRoute
 
-    - Templates
-    - Hooks
-    - Routing
-    """
+    def store_hook(
+        self, hook: str, hook_function: HookFunction, route: RecipeRoute
+    ):
+        # Store the hook on the RecipeRoute object
+        route.hooks[hook] = hook_function
+
+
+class Recipe(TemplatesMixin, HooksMixin):
+    """A grouping of capabilities that can be merged back into an API."""
+
+    hooks_manager_class = RecipeHooks
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(**kwargs)
-        self._name = name
         if prefix is None:
             prefix = f'/{name}'
         assert prefix.startswith('/'), 'recipe prefix must start with "/"'
+        self._name = name
         self._prefix = prefix
         self._routes: List[RecipeRoute] = []
 
-    @property
-    def prefix(self):
-        return self._prefix
-
-    def route(self, pattern: str, *args, **kwargs):
+    def route(self, *args, **kwargs):
         def register(view):
-            route = RecipeRoute(pattern=pattern, view=view, *args, **kwargs)
+            route = RecipeRoute(*args, view=view, **kwargs)
             self._routes.append(route)
             return route
 
         return register
 
-    def before(self, hook_function, *args, **kwargs):
-        return self._hook('before', hook_function, *args, **kwargs)
-
-    def after(self, hook_function, *args, **kwargs):
-        return self._hook('after', hook_function, *args, **kwargs)
-
-    def _hook(self, hook, hook_function, *args, **kwargs):
-        def register(hookable):
-            nonlocal hook_function
-            if isinstance(hookable, RecipeRoute):
-                hookable.hooks[hook] = (hook_function, args, kwargs)
-                return hookable
-            else:
-                hook_function = ensure_async_hook_function(
-                    hook_function, *args, **kwargs
-                )
-                return with_hook(hookable, hook, hook_function)
-
-        return register
-
     def apply(self, api):
+        # Apply routes on the API
         for route in self._routes:
             route.register(api, self._prefix)
 
+        # Look for templates where the API does, if not specified
         if self.templates_dir is None:
             self.templates_dir = api.templates_dir

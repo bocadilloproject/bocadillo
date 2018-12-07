@@ -1,15 +1,15 @@
 from collections import defaultdict
 from functools import wraps
-from typing import Callable, Union, Dict, Coroutine
+from typing import Callable, Union, Dict, Coroutine, Generic, TypeVar, Type
 
-from bocadillo.base import Applicable
 from .compat import call_async, asynccontextmanager
 from .request import Request
 from .response import Response
 from .routing import Route
 
+R = TypeVar('R')
 HookFunction = Callable[[Request, Response, dict], Coroutine]
-HookCollection = Dict[Route, HookFunction]
+HookCollection = Dict[R, HookFunction]
 
 BEFORE = 'before'
 AFTER = 'after'
@@ -19,8 +19,10 @@ async def empty_hook(req: Request, res: Response, params: dict):
     pass
 
 
-class Hooks:
+class Hooks(Generic[R]):
     """Collection of hooks."""
+
+    route_class: Type[R] = Route
 
     def __init__(self):
         self._hooks: Dict[str, HookCollection] = {
@@ -37,7 +39,7 @@ class Hooks:
     def _hook_decorator(
         self, hook: str, hook_function: HookFunction, *args, **kwargs
     ):
-        def decorator(hookable: Union[Route, Callable]):
+        def decorator(hookable: Union[R, Callable]):
             """Bind the hook function to the given hookable object.
 
             Support for decorating a route or a class method enables
@@ -50,19 +52,22 @@ class Hooks:
             ----------
             hookable : Route or (unbound) class method
             """
-            nonlocal hook_function
-            hook_function = ensure_async_hook_function(
+            nonlocal self, hook_function
+            hook_function = _prepare_async_hook_function(
                 hook_function, *args, **kwargs
             )
 
-            if isinstance(hookable, Route):
+            if isinstance(hookable, self.route_class):
                 route = hookable
-                self._hooks[hook][route] = hook_function
+                self.store_hook(hook, hook_function, route)
                 return route
             else:
-                return with_hook(hookable, hook, hook_function)
+                return _with_hook(hookable, hook, hook_function)
 
         return decorator
+
+    def store_hook(self, hook: str, hook_function: HookFunction, route: R):
+        self._hooks[hook][route] = hook_function
 
     @asynccontextmanager
     async def on(self, route, request, response, params):
@@ -72,31 +77,14 @@ class Hooks:
         await call_async(self._hooks[AFTER][route], request, response, params)
 
 
-def ensure_async_hook_function(full_hook_function, *args, **kwargs):
-    async def hook_function(req: Request, res: Response, params: dict):
-        await call_async(full_hook_function, req, res, params, *args, **kwargs)
-
-    return hook_function
-
-
-def with_hook(view: Callable, hook: str, hook_function: HookFunction):
-    @wraps(view)
-    async def view_with_hook(self, req, res, **kw):
-        if hook == BEFORE:
-            await hook_function(req, res, kw)
-        await call_async(view, self, req, res, **kw)
-        if hook == AFTER:
-            await hook_function(req, res, kw)
-
-    return view_with_hook
-
-
 class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
+    hooks_manager_class = Hooks
+
     def __init__(self):
         super().__init__()
-        self._hooks = Hooks()
+        self._hooks = self.hooks_manager_class()
 
     def get_hooks(self):
         return self._hooks
@@ -130,3 +118,24 @@ class HooksMixin:
             `(req, res, params) -> None`.
         """
         return self.get_hooks().after(hook_function, *args, **kwargs)
+
+
+def _prepare_async_hook_function(
+    full_hook_function, *args, **kwargs
+) -> HookFunction:
+    async def hook_function(req: Request, res: Response, params: dict):
+        await call_async(full_hook_function, req, res, params, *args, **kwargs)
+
+    return hook_function
+
+
+def _with_hook(view: Callable, hook: str, hook_function: HookFunction):
+    @wraps(view)
+    async def with_hook(self, req, res, **kw):
+        if hook == BEFORE:
+            await hook_function(req, res, kw)
+        await call_async(view, self, req, res, **kw)
+        if hook == AFTER:
+            await hook_function(req, res, kw)
+
+    return with_hook
