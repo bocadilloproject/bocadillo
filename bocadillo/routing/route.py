@@ -21,10 +21,6 @@ class Route:
         self._methods = methods
         self._name = name
 
-    @property
-    def pattern(self) -> str:
-        return self._pattern
-
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters."""
         return self._pattern.format(**kwargs)

@@ -8,7 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from ..view import create_async_view, AsyncView, View
+from ..view import create_async_view, View
 
 
 class RouteMatch(NamedTuple):
@@ -24,21 +24,6 @@ class Router:
     def __init__(self):
         self._routes: Dict[str, Route] = {}
         self._named_routes: Dict[str, Route] = {}
-
-    def _register(
-        self,
-        view: AsyncView,
-        pattern: str,
-        methods: List[str],
-        name: str = None,
-    ):
-        route = Route(pattern=pattern, view=view, methods=methods, name=name)
-
-        self._routes[pattern] = route
-        if name is not None:
-            self._named_routes[name] = route
-
-        return route
 
     def add_route(
         self,
@@ -66,12 +51,14 @@ class Router:
                 ]
 
         check_route(pattern, view, methods)
-
         view = create_async_view(view)
 
-        return self._register(
-            pattern=pattern, view=view, methods=methods, name=name
-        )
+        route = Route(pattern=pattern, view=view, methods=methods, name=name)
+        self._routes[pattern] = route
+        if name is not None:
+            self._named_routes[name] = route
+
+        return route
 
     def route_decorator(
         self, pattern: str, *, methods: List[str] = None, name: str = None
@@ -111,7 +98,7 @@ class Router:
                 return RouteMatch(route=route, params=params)
         return None
 
-    def get_route_or_404(self, name: str):
+    def get_route_or_404(self, name: str) -> Route:
         try:
             return self._named_routes[name]
         except KeyError as e:

@@ -1,11 +1,13 @@
-import os
 from contextlib import contextmanager
-from typing import List, Coroutine
+from typing import List, Coroutine, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from jinja2 import Template as _Template
 
 Template = _Template
+
+
+DEFAULT_TEMPLATES_DIR = 'templates'
 
 
 def get_templates_environment(template_dirs: List[str]):
@@ -19,28 +21,34 @@ def get_templates_environment(template_dirs: List[str]):
 class TemplatesMixin:
     """Provide templating capabilities to a class."""
 
-    def __init__(self, templates_dir: str, **kwargs):
+    def __init__(self, templates_dir: str = None, **kwargs):
         super().__init__(**kwargs)
-        self._templates = get_templates_environment(
-            [os.path.abspath(templates_dir)]
-        )
+        if templates_dir is None:
+            dirs = []
+        else:
+            dirs = [templates_dir]
+        self._templates = get_templates_environment(dirs)
         self._templates.globals.update(self.get_template_globals())
 
     def get_template_globals(self) -> dict:
         return {}
 
     @property
-    def templates_dir(self) -> str:
-        """The absolute path where templates are searched for (built from the
-        `templates_dir` parameter).
+    def templates_dir(self) -> Optional[str]:
+        """The path where templates are searched for, or `None` if not set.
+
+        This is built from the `templates_dir` parameter.
         """
         loader: FileSystemLoader = self._templates.loader
-        return loader.searchpath[0]
+        try:
+            return loader.searchpath[0]
+        except IndexError:
+            return None
 
     @templates_dir.setter
     def templates_dir(self, templates_dir: str):
         loader: FileSystemLoader = self._templates.loader
-        loader.searchpath = [os.path.abspath(templates_dir)]
+        loader.searchpath = [templates_dir]
 
     def _get_template(self, name: str) -> Template:
         return self._templates.get_template(name)

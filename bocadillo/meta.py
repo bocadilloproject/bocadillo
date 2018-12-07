@@ -1,14 +1,8 @@
-"""Application meta classes."""
-
-from bocadillo.templates import TemplatesMixin
-from .hooks import HooksMixin
-from .routing import RoutingMixin
+"""Meta classes."""
 
 
 class APIMeta(type):
     """Metaclass for API."""
-
-    _bases_with_docs = [HooksMixin, RoutingMixin, TemplatesMixin]
 
     def __new__(mcs, name, bases, namespace):
         mcs._prepare_for_docs(bases, namespace)
@@ -20,13 +14,12 @@ class APIMeta(type):
         # Pydoc-Markdown only takes documented members from the class'
         # `__dict__`. This is not added automatically when subclassing, so
         # we need to force it.
-        for base in filter(mcs._should_include_docs, bases):
+        for base in bases:
             for key, value in base.__dict__.items():
+                if key.startswith('_'):
+                    # Don't include private attributes and methods
+                    continue
                 if key in namespace:
                     # Don't prevent overriding on API class
                     continue
                 namespace[key] = value
-
-    @classmethod
-    def _should_include_docs(mcs, base):
-        return any(issubclass(base, other) for other in mcs._bases_with_docs)
