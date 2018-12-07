@@ -1,6 +1,6 @@
 from collections import defaultdict
 from functools import wraps
-from typing import Callable, Union, Dict, Coroutine
+from typing import Callable, Union, Dict, Coroutine, Type
 
 from .compat import call_async, asynccontextmanager
 from .request import Request
@@ -18,16 +18,32 @@ async def empty_hook(req: Request, res: Response, params: dict):
     pass
 
 
-class Hooks:
-    """Collection of hooks."""
+class HooksBase:
+    """Base class for hooks managers.
 
-    route_class = Route
+    When subclassing:
 
-    def __init__(self):
-        self._hooks: Dict[str, HookCollection] = {
-            BEFORE: defaultdict(lambda: empty_hook),
-            AFTER: defaultdict(lambda: empty_hook),
-        }
+    - `route_class` should be defined.
+    - `store_hook()` should be implemented.
+    """
+
+    route_class = None
+
+    def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
+        """Store a hook function for a route.
+
+        The implementation must be defined by subclasses.
+
+        # Parameters
+
+        hook (str):
+            The name of the hook.
+        hook_function (HookFunction):
+            A hook function.
+        route (Route):
+            A route object.
+        """
+        raise NotImplementedError
 
     def before(self, hook_function: HookFunction, *args, **kwargs):
         return self._hook_decorator(BEFORE, hook_function, *args, **kwargs)
@@ -64,6 +80,18 @@ class Hooks:
                 return _with_hook(hookable, hook, hook_function)
 
         return decorator
+
+
+class Hooks(HooksBase):
+    """A concrete hooks manager that stores hooks by route."""
+
+    route_class = Route
+
+    def __init__(self):
+        self._hooks: Dict[str, HookCollection] = {
+            BEFORE: defaultdict(lambda: empty_hook),
+            AFTER: defaultdict(lambda: empty_hook),
+        }
 
     def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
         self._hooks[hook][route] = hook_function

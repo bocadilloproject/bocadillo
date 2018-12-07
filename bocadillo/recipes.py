@@ -1,6 +1,6 @@
 from typing import List
 
-from .hooks import HooksMixin, Hooks, HookFunction
+from .hooks import HooksMixin, HooksBase, HookFunction
 from .templates import TemplatesMixin
 
 
@@ -45,15 +45,14 @@ class RecipeRoute:
         _register_hook('after', api.after)
 
 
-class RecipeHooks(Hooks):
-    """A custom hooks manager for recipes."""
+class RecipeHooks(HooksBase):
+    """A hooks manager for recipes that stores hooks on the routes."""
 
     route_class = RecipeRoute
 
     def store_hook(
         self, hook: str, hook_function: HookFunction, route: RecipeRoute
     ):
-        # Store the hook on the RecipeRoute object
         route.hooks[hook] = hook_function
 
 
