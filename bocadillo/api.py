@@ -18,7 +18,7 @@ from .hooks import HooksMixin
 from .media import Media
 from .meta import APIMeta
 from .middleware import CommonMiddleware, RoutingMiddleware
-from .recipes import Recipe
+from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -142,7 +142,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             prefix = '/' + prefix
         self._extra_apps[prefix] = app
 
-    def recipe(self, recipe: Recipe):
+    def recipe(self, recipe: RecipeBase):
         recipe.apply(self)
 
     @property

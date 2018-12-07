@@ -55,7 +55,12 @@ class RecipeHooks(HooksBase):
         route.hooks[hook] = hook_function
 
 
-class Recipe(TemplatesMixin, HooksMixin):
+class RecipeBase:
+    def apply(self, api, root: str = ''):
+        raise NotImplementedError
+
+
+class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
@@ -88,11 +93,23 @@ class Recipe(TemplatesMixin, HooksMixin):
 
         return register
 
-    def apply(self, api):
+    def apply(self, api, root: str = ''):
         # Apply routes on the API
         for route in self._routes:
-            route.register(api, self._prefix)
+            route.register(api, root + self._prefix)
 
         # Look for templates where the API does, if not specified
         if self.templates_dir is None:
             self.templates_dir = api.templates_dir
+
+
+class RecipeBook(RecipeBase):
+    """A composition of multiple recipes."""
+
+    def __init__(self, *recipes: Recipe, prefix: str):
+        self._recipes = recipes
+        self._prefix = prefix
+
+    def apply(self, api, root: str = ''):
+        for recipe in self._recipes:
+            recipe.apply(api, self._prefix)
