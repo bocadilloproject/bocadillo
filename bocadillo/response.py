@@ -3,7 +3,7 @@ from typing import AnyStr, Any
 from starlette.requests import Request
 from starlette.responses import Response as _Response
 
-from bocadillo.media import Media
+from .media import Media
 
 
 class Response:
