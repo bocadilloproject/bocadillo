@@ -262,7 +262,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         """Dispatch a req and return a response.
 
         For the exact algorithm, see
-        [How are requests processed?](../topics/req-handling/routes-url-design.md#how-are-requests-processed).
+        [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
 
         # Parameters
         req (Request): an inbound HTTP req.

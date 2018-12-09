@@ -8,7 +8,7 @@ from .utils import RouteBuilder
 
 @pytest.fixture
 def api():
-    return API(debug=True)
+    return API()
 
 
 @pytest.fixture
