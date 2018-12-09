@@ -3,8 +3,7 @@ from contextlib import contextmanager
 
 import pytest
 
-from bocadillo import API
-from bocadillo.middleware import Middleware
+from bocadillo import API, Middleware
 
 
 @contextmanager
