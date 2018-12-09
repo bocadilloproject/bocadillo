@@ -1,5 +1,6 @@
 """The Bocadillo API class."""
 import os
+from functools import partial
 from typing import Optional, Tuple, Type, List, Dict, Any, Union
 
 from asgiref.wsgi import WsgiToAsgi
@@ -335,14 +336,11 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         return app(scope)
 
     async def _get_response(self, req: Request) -> Response:
-        dispatch = convert_exception_to_response(
-            self.dispatch, media=self._media
-        )
+        convert = partial(convert_exception_to_response, media=self._media)
+        dispatch = convert(self.dispatch)
         for cls, kwargs in self._middleware:
             middleware = cls(dispatch, **kwargs)
-            dispatch = convert_exception_to_response(
-                middleware, media=self._media
-            )
+            dispatch = convert(middleware)
         return await dispatch(req)
 
     def _starlette_middleware_chain(self, app: ASGIApp) -> ASGIApp:

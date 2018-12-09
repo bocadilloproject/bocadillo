@@ -9,8 +9,7 @@ from .response import Response
 
 def _handle_http_error(req, res, exc: HTTPError):
     res.status_code = exc.status_code
-    res.headers['content-type'] = 'text/html'
-    res.content = f'<h1>{exc.status_code} {exc.status_phrase}</h1>'
+    res.html = f'<h1>{exc.status_code} {exc.status_phrase}</h1>'
 
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
