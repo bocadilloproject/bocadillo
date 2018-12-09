@@ -8,7 +8,9 @@ Bocadillo provides a simple middleware architecture in the form of middleware cl
 
 ## What are middleware classes?
 
-Middleware classes provide behavior for the entire application. They act as an intermediate between the ASGI layer and the [API object]. In fact, they implement the [ASGI] protocol themselves.
+Middleware classes provide behavior for the entire application. They act as wrappers around the [API object] and its request processing algorithm.
+
+> TODO
 
 ## How middleware is applied
 
