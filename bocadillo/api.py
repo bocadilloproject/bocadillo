@@ -265,7 +265,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
 
         # Parameters
-        req (Request): an inbound HTTP req.
+        req (Request): an inbound HTTP request.
 
         # Returns
         response (Response): an HTTP response.
