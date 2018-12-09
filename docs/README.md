@@ -36,11 +36,11 @@ api = bocadillo.API()
 
 @api.route('/')
 async def index(req, res):
+    # Use a template from the ./templates directory
     res.html = await api.template('index.html')
 
 @api.route('/greet/{person}')
 async def greet(req, res, person):
-    # Use a template from the ./templates directory
     res.media = {'message': f'Hi, {person}!'}
 
 if __name__ == '__main__':
