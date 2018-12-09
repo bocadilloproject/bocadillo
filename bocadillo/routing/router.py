@@ -6,9 +6,9 @@ from typing import Dict, List, Tuple, Optional, NamedTuple
 
 from .checks import check_route
 from .route import Route
+from ..compat import camel_to_snake
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from bocadillo.compat import camel_to_snake
 from ..view import create_async_view, View
 
 
