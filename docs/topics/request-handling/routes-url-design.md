@@ -46,7 +46,7 @@ Note that:
 - Every URL pattern *must* start with a leading slash.
 - Bocadillo honors the presence or absence of a trailing slash on the URL. It will not perform any redirection by default.
 - Route parameters are defined using the [F-string notation].
-- Route parameters can optionally use [format specifiers] to perform validation and conversion. By default, route parameters are passed as strings. For instance, in `get_listing()`, `{id:d}` validates that `id` is an integer (which `foo` obviously isn't).
+- Route parameters can optionally use [format specifiers] to perform validation and conversion. For instance, in `get_listing()`, `{id:d}` validates that `id` is an integer. By default, route parameters are extracted as strings.
 
 Here's how a few example requests would be handled:
 
@@ -62,13 +62,13 @@ For your information, [parse] is used to match the path against a known URL patt
 
 ## Route error handling
 
-When Bocadillo could not find a matching route for the requested URL, a `404 Not Found` error response is returned.
+When Bocadillo cannot find a matching route for the requested URL, a `404 Not Found` error response is returned.
 
 If a route was found but it did not supported the requested HTTP method (e.g. `POST` or `DELETE`), a `405 Method Not Allowed` error response is returned.
 
 See [customizing error handling](./writing-views.md#customizing-error-handling) for how to customize this behavior.
 
-## Defining named routes
+## Naming routes
 
 Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes accross the whole code base.
 
@@ -119,7 +119,7 @@ async def index(req, res):
 When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks] and [middleware] callbacks will not be called either.
 
 ::: tip
-The `methods` argument is ignored on class-based views. You should instead decide which methods are implemented on the class to control
+The `methods` argument is ignored on [class-based views](../features/views.md#class-based-views). You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
 :::
 
