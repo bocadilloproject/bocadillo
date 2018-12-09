@@ -42,9 +42,8 @@ def test_permanent_redirect(api: API):
 
 
 def test_at_least_one_of_name_or_url_must_be_given(api: API):
-    _setup_views_with_redirect(api)
     with pytest.raises(AssertionError) as ctx:
-        api.client.get('/')
+        api.redirect()
     assert all(item in str(ctx.value) for item in ('url', 'expected', 'name'))
 
 

@@ -13,6 +13,18 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Recipes: a way to group stuff together and allow composition of bocadillos.
 - Recipe books: a way to group multiple recipes into a single recipe.
 
+### Changed
+
+- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now *always* lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
+
+### Deprecated
+
+- `RoutingMiddleware` has been renamed to `Middleware`. It will still be available as `RoutingMiddleware` until v0.8.
+
+### Fixed
+
+- Errors returned by custom error handlers could have 200 status in case the handler did not set any status code. It now defaults to 500.
+
 ## [v0.6.1] - 2018-12-04
 
 ### Added

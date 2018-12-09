@@ -124,7 +124,7 @@ module.exports = {
                     children: [
                         '/how-to/custom-cli-commands',
                         '/how-to/extra-media-handlers',
-                        '/how-to/routing-middleware',
+                        '/how-to/middleware',
                     ],
                 },
             ],

@@ -1,6 +1,6 @@
 from .api import API
 from .static import static
-from .middleware import RoutingMiddleware
+from .middleware import Middleware
 from .media import Media
 from .recipes import Recipe
 
