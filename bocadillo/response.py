@@ -1,9 +1,12 @@
-from typing import AnyStr, Any
+from typing import AnyStr, Any, Callable, Coroutine, Optional
 
+from starlette.background import BackgroundTask
 from starlette.requests import Request
 from starlette.responses import Response as _Response
 
 from .media import Media
+
+BackgroundFunc = Callable[[], Coroutine]
 
 
 class Response:
@@ -15,6 +18,7 @@ class Response:
         self.status_code: int = None
         self.headers = {}
         self._media = media
+        self._background: BackgroundFunc = None
 
     def _set_media(self, value: Any, media_type: str):
         content = self._media.serialize(value, media_type=media_type)
@@ -33,6 +37,24 @@ class Response:
         else:
             super().__setattr__(key, value)
 
+    def background(self, func: BackgroundFunc):
+        """Register a coroutine function to be executed in the background.
+
+        # Parameters
+
+        func (coroutine function):
+            A no-argument coroutine function to be executed after
+            the response is sent.
+        """
+        self._background = func
+        return func
+
+    @property
+    def background_task(self) -> Optional[BackgroundTask]:
+        if self._background is not None:
+            return BackgroundTask(self._background)
+        return None
+
     async def __call__(self, receive, send):
         """Build and send the response."""
         if self.status_code is None:
@@ -45,5 +67,6 @@ class Response:
             content=self._content,
             headers=self.headers,
             status_code=self.status_code,
+            background=self.background_task,
         )
         await response(receive, send)
