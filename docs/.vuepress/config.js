@@ -94,6 +94,7 @@ module.exports = {
                         '/topics/features/static-files',
                         '/topics/features/hooks',
                         '/topics/features/recipes',
+                        '/topics/features/background-tasks',
                         '/topics/features/cors',
                         '/topics/features/hsts',
                         '/topics/features/middleware',
