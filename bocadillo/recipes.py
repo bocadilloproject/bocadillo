@@ -87,7 +87,9 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
 
     def route(self, *args, **kwargs):
         def register(view):
-            route = RecipeRoute(*args, view=view, **kwargs)
+            route = RecipeRoute(
+                *args, view=view, namespace=self._name, **kwargs
+            )
             self._routes.append(route)
             return route
 

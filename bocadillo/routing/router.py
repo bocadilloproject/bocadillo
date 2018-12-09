@@ -8,6 +8,7 @@ from .checks import check_route
 from .route import Route
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
+from bocadillo.compat import camel_to_snake
 from ..view import create_async_view, View
 
 
@@ -23,7 +24,6 @@ class Router:
 
     def __init__(self):
         self._routes: Dict[str, Route] = {}
-        self._named_routes: Dict[str, Route] = {}
 
     def add_route(
         self,
@@ -32,12 +32,22 @@ class Router:
         *,
         methods: List[str] = None,
         name: str = None,
+        namespace: str = None,
     ):
         """Build and register a route."""
         if methods is None:
             methods = ALL_HTTP_METHODS
 
         methods = [method.upper() for method in methods]
+
+        if name is None:
+            if inspect.isclass(view):
+                name = camel_to_snake(view.__name__)
+            else:
+                name = view.__name__
+
+        if namespace is not None:
+            name = namespace + ':' + name
 
         if inspect.isclass(view):
             view = view()
@@ -54,41 +64,20 @@ class Router:
         view = create_async_view(view)
 
         route = Route(pattern=pattern, view=view, methods=methods, name=name)
-        self._routes[pattern] = route
-        if name is not None:
-            self._named_routes[name] = route
+        self._routes[name] = route
 
         return route
 
-    def route_decorator(
-        self, pattern: str, *, methods: List[str] = None, name: str = None
-    ):
+    def route_decorator(self, *args, **kwargs):
         """Register a route by decorating a view."""
-        return partial(
-            self.add_route, pattern=pattern, methods=methods, name=name
-        )
-
-    def get(self, pattern: str) -> Optional[Route]:
-        """Get the route for the given pattern, if exists.
-
-        # Parameters
-
-        pattern (str):
-            An URL pattern.
-
-        # Returns
-
-        route (Route or None):
-            The route registered at `pattern`, or `None`.
-        """
-        return self._routes.get(pattern)
+        return partial(self.add_route, *args, **kwargs)
 
     def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
         """Find a route matching the given path."""
-        for pattern, route in self._routes.items():
+        for name, route in self._routes.items():
             kwargs = route.parse(path)
             if kwargs is not None:
-                return pattern, kwargs
+                return route.pattern, kwargs
         return None, {}
 
     def match(self, path: str) -> Optional[RouteMatch]:
@@ -100,6 +89,6 @@ class Router:
 
     def get_route_or_404(self, name: str) -> Route:
         try:
-            return self._named_routes[name]
+            return self._routes[name]
         except KeyError as e:
             raise HTTPError(HTTPStatus.NOT_FOUND.value) from e

@@ -11,7 +11,12 @@ class RoutingMixin:
         self._router = Router()
 
     def route(
-        self, pattern: str, *, methods: List[str] = None, name: str = None
+        self,
+        pattern: str,
+        *,
+        methods: List[str] = None,
+        name: str = None,
+        namespace: str = None,
     ):
         """Register a new route by decorating a view.
 
@@ -23,7 +28,12 @@ class RoutingMixin:
             Defaults to all HTTP methods.
             Ignored for class-based views.
         name (str):
-            A name for this route, which must be unique.
+            A name for this route, which must be unique. Defaults to
+            a name based on the view.
+        namespace (str):
+            A namespace for this route (optional).
+            If given, will be prefixed to the `name` and separated by a colon,
+            e.g. `'blog:index'`.
 
         # Raises
         RouteDeclarationError:
@@ -43,7 +53,7 @@ class RoutingMixin:
         ```
         """
         return self._router.route_decorator(
-            pattern=pattern, methods=methods, name=name
+            pattern=pattern, methods=methods, name=name, namespace=namespace
         )
 
     def url_for(self, name: str, **kwargs) -> str:
