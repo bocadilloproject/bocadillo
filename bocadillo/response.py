@@ -38,14 +38,7 @@ class Response:
             super().__setattr__(key, value)
 
     def background(self, func: BackgroundFunc, *args, **kwargs):
-        """Register a coroutine function to be executed in the background.
-
-        # Parameters
-
-        func (coroutine function):
-            A no-argument coroutine function to be executed after
-            the response is sent.
-        """
+        """Register a coroutine function to be executed in the background."""
 
         async def background():
             await func(*args, **kwargs)
