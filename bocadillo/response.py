@@ -6,7 +6,7 @@ from starlette.responses import Response as _Response
 
 from .media import Media
 
-BackgroundFunc = Callable[[], Coroutine]
+BackgroundFunc = Callable[..., Coroutine]
 
 
 class Response:
@@ -37,7 +37,7 @@ class Response:
         else:
             super().__setattr__(key, value)
 
-    def background(self, func: BackgroundFunc):
+    def background(self, func: BackgroundFunc, *args, **kwargs):
         """Register a coroutine function to be executed in the background.
 
         # Parameters
@@ -46,7 +46,11 @@ class Response:
             A no-argument coroutine function to be executed after
             the response is sent.
         """
-        self._background = func
+
+        async def background():
+            await func(*args, **kwargs)
+
+        self._background = background
         return func
 
     @property
