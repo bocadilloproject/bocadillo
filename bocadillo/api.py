@@ -87,7 +87,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         cors_config: dict = None,
         enable_hsts: bool = False,
         media_type: Optional[str] = Media.JSON,
-        debug: bool = False,
     ):
         super().__init__(templates_dir=templates_dir)
 
@@ -116,8 +115,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         self._media = Media(media_type=media_type)
 
         self._middleware = []
-
-        self._debug = debug
 
     def get_template_globals(self):
         return {'url_for': self.url_for}
