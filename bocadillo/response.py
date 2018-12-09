@@ -1,4 +1,4 @@
-from typing import AnyStr, Any
+from typing import AnyStr, Any, Optional
 
 from starlette.requests import Request
 from starlette.responses import Response as _Response
@@ -21,6 +21,14 @@ class Response:
         self.headers['content-type'] = media_type
         self._content = content
 
+    @property
+    def content(self) -> Optional[AnyStr]:
+        return self._content
+
+    @content.setter
+    def content(self, content: AnyStr):
+        self._content = content
+
     def __setattr__(self, key, value):
         if key == 'text':
             self._set_media(value, media_type=Media.PLAIN_TEXT)
@@ -28,8 +36,6 @@ class Response:
             self._set_media(value, media_type=Media.HTML)
         elif key == 'media':
             self._set_media(value, media_type=self._media.type)
-        elif key == 'content':
-            self._content = value
         else:
             super().__setattr__(key, value)
 

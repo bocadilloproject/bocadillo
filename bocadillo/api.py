@@ -1,6 +1,6 @@
 """The Bocadillo API class."""
 import os
-from typing import Optional, Tuple, Type, List, Dict, Any, Union, Callable
+from typing import Optional, Tuple, Type, List, Dict, Any, Union
 
 from asgiref.wsgi import WsgiToAsgi
 from starlette.middleware.cors import CORSMiddleware
@@ -10,14 +10,12 @@ from starlette.testclient import TestClient
 from uvicorn.main import run, get_logger
 from uvicorn.reloaders.statreload import StatReload
 
-from .compat import call_all_async
 from .cors import DEFAULT_CORS_CONFIG
-from .error_handlers import ErrorHandler, handle_http_error
+from .error_handlers import ErrorHandler, convert_exception_to_response
 from .exceptions import HTTPError
 from .hooks import HooksMixin
 from .media import Media
 from .meta import APIMeta
-from .middleware import CommonMiddleware, RoutingMiddleware
 from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
@@ -89,11 +87,11 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         cors_config: dict = None,
         enable_hsts: bool = False,
         media_type: Optional[str] = Media.JSON,
+        debug: bool = False,
     ):
         super().__init__(templates_dir=templates_dir)
 
         self._error_handlers = []
-        self.add_error_handler(HTTPError, handle_http_error)
 
         self._extra_apps: Dict[str, Any] = {}
 
@@ -108,22 +106,18 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             allowed_hosts = ['*']
         self.allowed_hosts = allowed_hosts
 
+        self.enable_cors = enable_cors
+        self.enable_hsts = enable_hsts
+
         if cors_config is None:
             cors_config = {}
         self.cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
 
         self._media = Media(media_type=media_type)
 
-        # Middleware
-        self._routing_middleware = RoutingMiddleware(self)
-        self._common_middleware = CommonMiddleware(self._routing_middleware)
-        self.add_middleware(
-            TrustedHostMiddleware, allowed_hosts=self.allowed_hosts
-        )
-        if enable_cors:
-            self.add_middleware(CORSMiddleware, **self.cors_config)
-        if enable_hsts:
-            self.add_middleware(HTTPSRedirectMiddleware)
+        self._middleware = []
+
+        self._debug = debug
 
     def get_template_globals(self):
         return {'url_for': self.url_for}
@@ -221,6 +215,8 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         """
         for handler in self._find_handlers(exception):
             handler(request, response, exception)
+            if response.status_code is None:
+                response.status_code = 500
             break
         else:
             raise exception from None
@@ -253,9 +249,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             assert url is not None, 'url is expected if no route name is given'
         raise Redirection(url=url, permanent=permanent)
 
-    def _is_routing_middleware(self, middleware_cls) -> bool:
-        return hasattr(middleware_cls, 'dispatch')
-
     def add_middleware(self, middleware_cls, **kwargs):
         """Register a middleware class.
 
@@ -264,61 +257,44 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         # Parameters
 
         middleware_cls (Middleware class):
-            It should be a #~some.middleware.RoutingMiddleware class (not an instance!), or any
-            concrete subclass or #~some.middleware.Middleware.
+            A subclass of #~some.middleware.Middleware.
         """
-        if self._is_routing_middleware(middleware_cls):
-            self._routing_middleware.add(middleware_cls, **kwargs)
-        else:
-            self._common_middleware.add(middleware_cls, **kwargs)
+        self._middleware.insert(0, (middleware_cls, kwargs))
 
-    async def dispatch(
-        self,
-        request: Request,
-        before: List[Callable] = None,
-        after: List[Callable] = None,
-    ) -> Response:
-        """Dispatch a request and return a response.
+    async def dispatch(self, req: Request) -> Response:
+        """Dispatch a req and return a response.
 
         For the exact algorithm, see
-        [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
+        [How are requests processed?](../topics/req-handling/routes-url-design.md#how-are-requests-processed).
 
         # Parameters
-        request (Request): an inbound HTTP request.
-        before (list of callables): a list of middleware `before_dispatch` hooks.
-        after (list of callables): a list of middleware `after_dispatch` hooks.
+        req (Request): an inbound HTTP req.
 
         # Returns
         response (Response): an HTTP response.
         """
-        if before is None:
-            before = []
-        if after is None:
-            after = []
 
-        response = Response(request, media=self._media)
+        res = Response(req, media=self._media)
 
         try:
-            match = self._router.match(request.url.path)
+            match = self._router.match(req.url.path)
             if match is None:
                 raise HTTPError(status=404)
 
             route, params = match.route, match.params
-            route.raise_for_method(request)
+            route.raise_for_method(req)
 
             try:
-                await call_all_async(before, request)
-                hooks = self.get_hooks().on(route, request, response, params)
+                hooks = self.get_hooks().on(route, req, res, params)
                 async with hooks:
-                    await route(request, response, **params)
-                await call_all_async(after, request, response)
+                    await route(req, res, **params)
             except Redirection as redirection:
-                response = redirection.response
+                res = redirection.response
 
         except Exception as e:
-            self._handle_exception(request, response, e)
+            self._handle_exception(req, res, e)
 
-        return response
+        return res
 
     def find_app(self, scope: dict) -> ASGIAppInstance:
         """Return the ASGI application suited to the given ASGI scope.
@@ -349,7 +325,41 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
                 app = WsgiToAsgi(app)
                 return app(scope)
 
-        return self._common_middleware(scope)
+        def app(s: dict):
+            async def asgi(receive, send):
+                nonlocal s
+                req = Request(s, receive)
+                res = await self._get_response(req)
+                await res(receive, send)
+
+            return asgi
+
+        app = self._starlette_middleware_chain(app)
+        return app(scope)
+
+    async def _get_response(self, req: Request) -> Response:
+        dispatch = convert_exception_to_response(
+            self.dispatch, media=self._media
+        )
+        for cls, kwargs in self._middleware:
+            middleware = cls(dispatch, **kwargs)
+            dispatch = convert_exception_to_response(
+                middleware, media=self._media
+            )
+        return await dispatch(req)
+
+    def _starlette_middleware_chain(self, app: ASGIApp) -> ASGIApp:
+        # Starlette-provided middleware is lower-level than Bocadillo
+        # middleware. We wrap an ASGI app around them as configured on this
+        # API.
+        app: ASGIApp = TrustedHostMiddleware(
+            app, allowed_hosts=self.allowed_hosts
+        )
+        if self.enable_cors:
+            app: ASGIApp = CORSMiddleware(app, **self.cors_config)
+        if self.enable_hsts:
+            app: ASGIApp = HTTPSRedirectMiddleware(app)
+        return app
 
     def run(
         self,
