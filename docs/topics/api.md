@@ -35,7 +35,7 @@ i.e. `localhost` on port 8000.
 
 To customize the host and port, you can:
 
-- Specify them on `app.run()`:
+- Specify them on `api.run()`:
 
 ```python
 api.run(host='mydomain.org', port=5045)
@@ -45,12 +45,12 @@ api.run(host='mydomain.org', port=5045)
 it up and automatically use the host `0.0.0.0` to accept all existing hosts
 on the machine. This is especially useful when running the app in a
 container or on a cloud hosting service. If needed, you can still specify
-the `host` on `app.run()`.
+the `host` on `api.run()`.
 
 ## Debug mode
 
 You can toggle debug mode (full display of traceback in responses + hot reload)
-by passing `debug=True` to `app.run()`:
+by passing `debug=True` to `api.run()`:
 
 ```python
 api.run(debug=True)
