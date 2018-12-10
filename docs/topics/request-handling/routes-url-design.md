@@ -70,23 +70,52 @@ See [customizing error handling](./writing-views.md#customizing-error-handling) 
 
 ## Naming routes
 
-Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes accross the whole code base.
+Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes across the whole code base.
 
-To overcome this, you can specify a `name` when defining a route:
+To overcome this, all routes are given a name based on the name of the function (for function-based views) or class (for class-based views).
+
+The inferred route name is always `snake_cased`, as shown in the table below.
+
+| View declaration | Inferred route name |
+|------------------|---------------------|
+| `async def do_stuff(req, res)` | `'do_stuff'` |
+| `class DoStuff:` | `'do_stuff'` |
+
+### Explicit route names
+
+If you wish to specify an explicit name, use the `name` parameter to `@api.route()`:
 
 ```python
-@api.route('/about/{who}', name='about')
+@api.route('/about/{who}', name='about_page')
 async def about(req, res, who):
     res.html = f'<h1>About {who}</h1>'
 ```
 
+### Namespacing routes
+
+You can specify a namespace in order to group route names together:
+
+```python
+@api.route('/blog/', namespace='blog')
+async def home(req, res):
+    pass
+```
+
+The namespace will be prepended to the route's name (either inferred or explicit) and separated by a colon, e.g. resulting in `blog:home` for the above example.
+
+::: tip
+If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](../features/recipes.md).
+:::
+
 ## Reversing named routes
 
-To get back the full URL path to a named route, use `api.url_for()`, passing required route parameters as keyword arguments:
+To get back the full URL path to a named route (including its optional namespace), use `api.url_for()`, passing required route parameters as keyword arguments:
 
 ```python
 >>> api.url_for('about', who='them')
 '/about/them'
+>>> api.url_for('blog:home')
+'/blog/'
 ```
 
 In templates, you can use the `url_for()` template global:

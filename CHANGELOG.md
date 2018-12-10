@@ -12,10 +12,13 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Recipes: a way to group stuff together and allow composition of bocadillos.
 - Recipe books: a way to group multiple recipes into a single recipe.
+- Route namespaces via `namespace` argument to `@api.route()`.
 
 ### Changed
 
 - Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now *always* lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
+- All routes now have an inferred `name` based on their function or class name. Explicit route naming is still possible.
+- Because of the above, names of routes in recipes now use the recipe's name as a namespace, i.e. `recipe_name:route_name` instead of `route_name`.
 
 ### Deprecated
 

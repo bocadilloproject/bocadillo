@@ -49,7 +49,7 @@ def test_at_least_one_of_name_or_url_must_be_given(api: API):
 
 def test_redirect_to_internal_url(api: API):
     @api.route('/about/{who}')
-    def index(req, res, who):
+    def about(req, res, who):
         res.text = who
 
     @api.route('/')
