@@ -17,6 +17,18 @@ def test_allowed_methods(builder: RouteBuilder, methods, method, status):
 
 
 @pytest.mark.parametrize(
+    'method', ['post', 'delete', 'put', 'patch', 'options']
+)
+def test_unsafe_methods_not_supported_by_default(api: API, method):
+    @api.route('/')
+    async def index(req, res):
+        pass
+
+    response = getattr(api.client, method)('/')
+    assert response.status_code == 405
+
+
+@pytest.mark.parametrize(
     'methods, method',
     [(['get', 'post'], 'get'), (['post'], 'get'), ([], 'put')],
 )

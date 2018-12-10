@@ -133,7 +133,7 @@ Referencing a non-existing named route with `url_for()` will trigger an `HTTPErr
 
 ## Specifying HTTP methods
 
-By default, a route exposes the following HTTP methods: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH.
+By default, a route only exposes the safe HTTP methods, i.e. `GET` and `HEAD`.
 
 On function-based views,
 you can use the `methods` argument to `@api.route()` to specify the set of

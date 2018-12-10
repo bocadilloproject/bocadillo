@@ -45,7 +45,7 @@ class Router:
     ):
         """Build and register a route."""
         if methods is None:
-            methods = ALL_HTTP_METHODS
+            methods = ['get', 'head']
 
         methods = [method.upper() for method in methods]
 
