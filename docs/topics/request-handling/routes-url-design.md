@@ -114,8 +114,7 @@ To get back the full URL path to a named route (including its optional namespace
 ```python
 >>> api.url_for('about', who='them')
 '/about/them'
->>> 
-api.url_for('blog:home')
+>>> api.url_for('blog:home')
 '/blog/'
 ```
 
