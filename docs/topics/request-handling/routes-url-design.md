@@ -140,17 +140,26 @@ you can use the `methods` argument to `@api.route()` to specify the set of
 HTTP methods being exposed:
 
 ```python
-@api.route('/', methods=['get'])
-async def index(req, res):
-    res.text = "Come GET me, bro"
+@api.route('/posts/{pk}', methods=['delete'])
+async def delete_blog_post(req, res, pk):
+    res.status_code = 204
 ```
 
-When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks] and [middleware] callbacks will not be called either.
+Methods passed to `@api.route()` are case-insensitive.
 
-::: tip
+::: tip NOTE
 The `methods` argument is ignored on [class-based views](../features/views.md#class-based-views). You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
 :::
+
+### How are unsupported methods handled?
+
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. [Hooks] callbacks will not be called either (but request [middleware] will).
+
+::: tip
+Bocadillo implements the `HEAD` method automatically if your route supports `GET`. It is safe and systems such as URL checkers may use it to access your application without transferring the full request body.
+:::
+
 
 [Request]: requests.md
 [Response]: responses.md

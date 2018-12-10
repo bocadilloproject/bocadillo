@@ -19,6 +19,15 @@ class RouteMatch(NamedTuple):
     params: dict
 
 
+def _ensure_head_if_get(view: View, methods: List[str]) -> None:
+    if inspect.isclass(view):
+        if hasattr(view, 'get') and not hasattr(view, 'head'):
+            view.head = view.get
+    else:
+        if 'GET' in methods and 'HEAD' not in methods:
+            methods.append('HEAD')
+
+
 class Router:
     """A collection of routes."""
 
@@ -48,6 +57,8 @@ class Router:
 
         if namespace is not None:
             name = namespace + ':' + name
+
+        _ensure_head_if_get(view, methods)
 
         if inspect.isclass(view):
             view = view()

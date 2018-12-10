@@ -27,6 +27,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 - Errors returned by custom error handlers could have 200 status in case the handler did not set any status code. It now defaults to 500.
+- If `GET` is supported, `HEAD` will automatically be implemented.
 
 ## [v0.6.1] - 2018-12-04
 

@@ -1,4 +1,5 @@
 """Built-in error handlers."""
+import traceback
 from functools import wraps
 from typing import Callable
 
@@ -19,6 +20,8 @@ async def _res_for_exc(req: Request, exc: Exception, **kwargs):
     if isinstance(exc, HTTPError):
         res = Response(req, **kwargs)
         _handle_http_error(req, res, exc)
+        if exc.status_code == 500:
+            traceback.print_exc()
     else:
         res = await _res_for_exc(req, HTTPError(500), **kwargs)
     return res
