@@ -26,6 +26,12 @@ class ClassBasedView:
     def delete(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
+    def head(self, req: Request, res: Response, **kwargs):
+        raise NotImplementedError
+
+    def options(self, req: Request, res: Response, **kwargs):
+        raise NotImplementedError
+
 
 # Types
 AsyncView = Callable[[Request, Response, dict], Coroutine]

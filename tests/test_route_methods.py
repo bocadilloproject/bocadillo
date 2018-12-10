@@ -38,3 +38,20 @@ def test_allowed_method_must_be_valid_http_method(builder: RouteBuilder):
         builder.function_based('/', methods=['foo'])
 
     builder.class_based('/', methods=['bar'])
+
+
+def test_if_get_implemented_by_class_based_view_then_head_mapped(api: API):
+    @api.route('/')
+    class Index:
+        async def get(self, req, res):
+            pass
+
+    assert api.client.head('/').status_code == 200
+
+
+def test_if_get_in_function_view_methods_then_head_mapped(api: API):
+    @api.route('/', methods=['get'])
+    async def index(req, res):
+        pass
+
+    assert api.client.head('/').status_code == 200
