@@ -153,6 +153,12 @@ If there is an issue with VuePress' hot-reloading, you need to close the current
 
 In order to reduce format-related issues and make code reviews more efficient, this repo uses the [Black](https://github.com/ambv/black) auto-formatter to format your code on commit. This is implemented using a [pre-commit](https://pre-commit.com) hook.
 
+To make sure your code is formatted automatically before any commit, run this inside the repo after installing all dependencies:
+
+```shell
+pre-commit install
+```
+
 In practice, Black may intervene and reformat some of the Python files when committing to your local. When this happens, the commit will abort and you'll need to `git add` files edited by Black and `git commit` again.
 
 If you wish to manually apply Black before a commit, run `$ pre-commit`.
@@ -216,7 +222,7 @@ from functools import reduce
 
 class Foo:
     """Some really cool kind of foo.
-    
+
     # Parameters
     bar (str): used to configure XYZ.
     """
@@ -228,10 +234,10 @@ class Foo:
     def zed(self) -> str:
         """z with an exclamation mark."""
         return 'z!'
-       
+
     def create_baz(self) -> int:
         """Create `baz` from the current `bar`.
-        
+
         # Returns
         baz (int): multiplication the ASCII codes for each letter in `bar`.
         """
