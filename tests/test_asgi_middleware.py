@@ -3,7 +3,7 @@ from starlette.middleware.gzip import GZipMiddleware
 from bocadillo import API
 
 
-def test_if_gzip_enabled_and_response_is_compressed():
+def test_if_asgi_middleware_is_applied():
     api = API(enable_gzip=False)
     api.add_asgi_middleware(GZipMiddleware, minimum_size=0)
 
