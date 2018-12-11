@@ -280,6 +280,19 @@ __Parameters__
     It should be a #~some.middleware.RoutingMiddleware class (not an instance!), or any
     concrete subclass or #~some.middleware.Middleware.
 
+## add_asgi_middleware
+```python
+API.add_asgi_middleware(self, middleware_cls, *args, **kwargs)
+```
+Register an ASGI middleware class.
+
+__Parameters__
+
+
+- __middleware_cls (Middleware class)__:
+    It should be a class (not an instance!) that
+    conforms to the ASGI standard.
+
 ## dispatch
 ```python
 API.dispatch(self, request: starlette.requests.Request, before: List[Callable] = None, after: List[Callable] = None) -> bocadillo.response.Response

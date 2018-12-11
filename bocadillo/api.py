@@ -130,6 +130,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         self._media = Media(media_type=media_type)
 
         self._middleware = []
+        self._asgi_middleware = []
 
     def get_template_globals(self):
         return {"url_for": self.url_for}
@@ -273,6 +274,16 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         """
         self._middleware.insert(0, (middleware_cls, kwargs))
 
+    def add_asgi_middleware(self, middleware_cls, *args, **kwargs):
+        """Register an ASGI middleware class.
+
+        # Parameters
+
+        middleware_cls (Middleware class):
+            A class that conforms to ASGI standard.
+        """
+        self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
+
     async def dispatch(self, req: Request) -> Response:
         """Dispatch a req and return a response.
 
@@ -347,6 +358,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             return asgi
 
         app = self._starlette_middleware_chain(app)
+        app = self._asgi_middleware_chain(app)
         return app(scope)
 
     async def _get_response(self, req: Request) -> Response:
@@ -370,6 +382,11 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             app: ASGIApp = HTTPSRedirectMiddleware(app)
         if self.enable_gzip:
             app: ASGIApp = GZipMiddleware(app, minimum_size=self.gzip_min_size)
+        return app
+
+    def _asgi_middleware_chain(self, app: ASGIApp) -> ASGIApp:
+        for middleware_cls, args, kwargs in self._asgi_middleware:
+            app: ASGIApp = middleware_cls(app, *args, **kwargs)
         return app
 
     def run(
