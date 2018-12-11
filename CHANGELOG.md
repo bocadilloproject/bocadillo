@@ -14,7 +14,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Recipe books: a way to group multiple recipes into a single recipe.
 - Route namespaces via `namespace` argument to `@api.route()`.
 - Add GZip support through `enable_gzip`.
-
+- Add ASGI-compliant middleware support via `api.add_asgi_middleware()`.
 
 ### Changed
 
