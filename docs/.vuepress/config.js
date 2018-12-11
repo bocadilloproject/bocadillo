@@ -97,6 +97,7 @@ module.exports = {
                         '/topics/features/background-tasks',
                         '/topics/features/cors',
                         '/topics/features/hsts',
+                        '/topics/features/gzip',
                         '/topics/features/middleware',
                     ],
                 },
