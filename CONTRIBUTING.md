@@ -14,7 +14,7 @@
 
 Have you found a bug? You'd like to add a new feature or improve the docs? Fantastic news! All contributions are happily welcome.
 
-Here, we point lay out a few guidelines that you should follow in order to get your contribution accepted.
+Here, we point at a few guidelines that you should follow in order to get your contribution accepted.
 
 ### Always discuss ideas!
 
