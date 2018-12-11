@@ -114,23 +114,28 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
                 static_root = static_dir
             self.mount(static_root, static(static_dir))
 
-        if allowed_hosts is None:
-            allowed_hosts = ["*"]
-        self.allowed_hosts = allowed_hosts
-
-        self.enable_cors = enable_cors
-        self.enable_hsts = enable_hsts
-        self.enable_gzip = enable_gzip
-
-        self.gzip_min_size = gzip_min_size
-        if cors_config is None:
-            cors_config = {}
-        self.cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
-
         self._media = Media(media_type=media_type)
 
         self._middleware = []
         self._asgi_middleware = []
+
+        if allowed_hosts is None:
+            allowed_hosts = ["*"]
+        self.add_asgi_middleware(
+            TrustedHostMiddleware, allowed_hosts=allowed_hosts
+        )
+
+        if enable_cors:
+            if cors_config is None:
+                cors_config = {}
+            cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
+            self.add_asgi_middleware(CORSMiddleware, **cors_config)
+
+        if enable_hsts:
+            self.add_asgi_middleware(HTTPSRedirectMiddleware)
+
+        if enable_gzip:
+            self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
     def get_template_globals(self):
         return {"url_for": self.url_for}
@@ -357,7 +362,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
             return asgi
 
-        app = self._starlette_middleware_chain(app)
         app = self._asgi_middleware_chain(app)
         return app(scope)
 
@@ -368,21 +372,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             middleware = cls(dispatch, **kwargs)
             dispatch = convert(middleware)
         return await dispatch(req)
-
-    def _starlette_middleware_chain(self, app: ASGIApp) -> ASGIApp:
-        # Starlette-provided middleware is lower-level than Bocadillo
-        # middleware. We wrap an ASGI app around them as configured on this
-        # API.
-        app: ASGIApp = TrustedHostMiddleware(
-            app, allowed_hosts=self.allowed_hosts
-        )
-        if self.enable_cors:
-            app: ASGIApp = CORSMiddleware(app, **self.cors_config)
-        if self.enable_hsts:
-            app: ASGIApp = HTTPSRedirectMiddleware(app)
-        if self.enable_gzip:
-            app: ASGIApp = GZipMiddleware(app, minimum_size=self.gzip_min_size)
-        return app
 
     def _asgi_middleware_chain(self, app: ASGIApp) -> ASGIApp:
         for middleware_cls, args, kwargs in self._asgi_middleware:
