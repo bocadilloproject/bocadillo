@@ -12,8 +12,8 @@ except ImportError:
     assert sys.version_info[:2] == (3, 6)
     from async_generator import asynccontextmanager
 
-_camel_regex = re.compile(r'(.)([A-Z][a-z]+)')
-_snake_regex = re.compile(r'([a-z0-9])([A-Z])')
+_camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
+_snake_regex = re.compile(r"([a-z0-9])([A-Z])")
 
 
 async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
@@ -35,5 +35,5 @@ async def call_all_async(funcs: Iterable[Callable], *args, **kwargs):
 
 def camel_to_snake(name: str) -> str:
     """Convert a CamelCase name to its snake_case version."""
-    s1 = _camel_regex.sub(r'\1_\2', name)
-    return _snake_regex.sub(r'\1_\2', s1).lower()
+    s1 = _camel_regex.sub(r"\1_\2", name)
+    return _snake_regex.sub(r"\1_\2", s1).lower()

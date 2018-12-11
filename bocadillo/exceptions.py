@@ -20,7 +20,7 @@ class HTTPError(Exception):
         else:
             assert isinstance(
                 status, HTTPStatus
-            ), f'Expected int or HTTPStatus, got {type(status)}'
+            ), f"Expected int or HTTPStatus, got {type(status)}"
         self._status = status
 
     @property
@@ -34,11 +34,11 @@ class HTTPError(Exception):
 
     @property
     def status_phrase(self) -> str:
-        """Return the HTTP error's status phrase, i.e. 'Not Found'."""
+        """Return the HTTP error's status phrase, i.e. `"Not Found"`."""
         return self._status.phrase
 
     def __str__(self):
-        return f'{self.status_code} {self.status_phrase}'
+        return f"{self.status_code} {self.status_phrase}"
 
 
 class UnsupportedMediaType(Exception):

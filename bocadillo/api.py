@@ -44,26 +44,26 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
     templates_dir (str):
         The name of the directory where templates are searched for,
         relative to the application entry point.
-        Defaults to `'templates'`.
+        Defaults to `"templates"`.
     static_dir (str):
         The name of the directory containing static files, relative to
         the application entry point. Set to `None` to not serve any static
         files.
-        Defaults to `'static'`.
+        Defaults to `"static"`.
     static_root (str):
         The path prefix for static assets.
-        Defaults to `'static'`.
+        Defaults to `"static"`.
     allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
-        If the list contains `'*'`, any host is allowed.
-        Defaults to `['*']`.
+        If the list contains `"*"`, any host is allowed.
+        Defaults to `["*"]`.
     enable_cors (bool):
         If `True`, Cross Origin Resource Sharing will be configured according
         to `cors_config`. Defaults to `False`.
         See also [CORS](../topics/features/cors.md).
     cors_config (dict):
         A dictionary of CORS configuration parameters.
-        Defaults to `dict(allow_origins=[], allow_methods=['GET'])`.
+        Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
     enable_hsts (bool):
         If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
@@ -72,7 +72,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
     media_type (str):
         Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
-        Defaults to `'application/json'`.
+        Defaults to `"application/json"`.
         See also [Media](../topics/request-handling/media.md).
     """
 
@@ -80,9 +80,9 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
     def __init__(
         self,
-        templates_dir: str = 'templates',
-        static_dir: Optional[str] = 'static',
-        static_root: Optional[str] = 'static',
+        templates_dir: str = "templates",
+        static_dir: Optional[str] = "static",
+        static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
         enable_cors: bool = False,
         cors_config: dict = None,
@@ -103,7 +103,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             self.mount(static_root, static(static_dir))
 
         if allowed_hosts is None:
-            allowed_hosts = ['*']
+            allowed_hosts = ["*"]
         self.allowed_hosts = allowed_hosts
 
         self.enable_cors = enable_cors
@@ -118,7 +118,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         self._middleware = []
 
     def get_template_globals(self):
-        return {'url_for': self.url_for}
+        return {"url_for": self.url_for}
 
     def _build_client(self) -> TestClient:
         return TestClient(self)
@@ -127,11 +127,11 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         """Mount another WSGI or ASGI app at the given prefix.
 
         # Parameters
-        prefix (str): A path prefix where the app should be mounted, e.g. `'/myapp'`.
+        prefix (str): A path prefix where the app should be mounted, e.g. `"/myapp"`.
         app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
         """
-        if not prefix.startswith('/'):
-            prefix = '/' + prefix
+        if not prefix.startswith("/"):
+            prefix = "/" + prefix
         self._extra_apps[prefix] = app
 
     def recipe(self, recipe: RecipeBase):
@@ -244,7 +244,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         if name is not None:
             url = self.url_for(name=name, **kwargs)
         else:
-            assert url is not None, 'url is expected if no route name is given'
+            assert url is not None, "url is expected if no route name is given"
         raise Redirection(url=url, permanent=permanent)
 
     def add_middleware(self, middleware_cls, **kwargs):
@@ -308,7 +308,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             An ASGI application instance
             (either `self` or an instance of a sub-app).
         """
-        path: str = scope['path']
+        path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
         for prefix, app in self._extra_apps.items():
@@ -316,7 +316,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
                 continue
             # Remove prefix from path so that the request is made according
             # to the mounted app's point of view.
-            scope['path'] = path[len(prefix) :]
+            scope["path"] = path[len(prefix) :]
             try:
                 return app(scope)
             except TypeError:
@@ -361,7 +361,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         host: str = None,
         port: int = None,
         debug: bool = False,
-        log_level: str = 'info',
+        log_level: str = "info",
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
@@ -372,8 +372,8 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         host (str):
             The host to bind to.
-            Defaults to `'127.0.0.1'` (localhost).
-            If not given and `$PORT` is set, `'0.0.0.0'` will be used to
+            Defaults to `"127.0.0.1"` (localhost).
+            If not given and `$PORT` is set, `"0.0.0.0"` will be used to
             serve to all known hosts.
         port (int):
             The port to bind to.
@@ -383,15 +383,15 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             Whether to serve the application in debug mode. Defaults to `False`.
         log_level (str):
             A logging level for the debug logger. Must be a logging level
-            from the `logging` module. Defaults to `'info'`.
+            from the `logging` module. Defaults to `"info"`.
         """
-        if 'PORT' in os.environ:
-            port = int(os.environ['PORT'])
+        if "PORT" in os.environ:
+            port = int(os.environ["PORT"])
             if host is None:
-                host = '0.0.0.0'
+                host = "0.0.0.0"
 
         if host is None:
-            host = '127.0.0.1'
+            host = "127.0.0.1"
 
         if port is None:
             port = 8000
@@ -401,11 +401,11 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             reloader.run(
                 run,
                 {
-                    'app': self,
-                    'host': host,
-                    'port': port,
-                    'log_level': log_level,
-                    'debug': debug,
+                    "app": self,
+                    "host": host,
+                    "port": port,
+                    "log_level": log_level,
+                    "debug": debug,
                 },
             )
         else:

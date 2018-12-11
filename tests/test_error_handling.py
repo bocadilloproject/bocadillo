@@ -5,37 +5,37 @@ from bocadillo.exceptions import HTTPError
 
 
 @pytest.mark.parametrize(
-    'status',
+    "status",
     [
-        '400 Bad Request',
-        '401 Unauthorized',
-        '403 Forbidden',
-        '405 Method Not Allowed',
-        '500 Internal Server Error',
+        "400 Bad Request",
+        "401 Unauthorized",
+        "403 Forbidden",
+        "405 Method Not Allowed",
+        "500 Internal Server Error",
         # Non-error codes are supported too. Be responsible.
-        '200 OK',
-        '201 Created',
-        '202 Accepted',
-        '204 No Content',
+        "200 OK",
+        "201 Created",
+        "202 Accepted",
+        "204 No Content",
     ],
 )
 def test_if_http_error_is_raised_then_automatic_response_is_sent(
     api: API, status: str
 ):
-    status_code, phrase = status.split(' ', 1)
+    status_code, phrase = status.split(" ", 1)
     status_code = int(status_code)
 
-    @api.route('/')
+    @api.route("/")
     def index(req, res):
         raise HTTPError(status_code)
 
-    response = api.client.get('/')
+    response = api.client.get("/")
     assert response.status_code == status_code
     assert phrase in response.text
 
 
 @pytest.mark.parametrize(
-    'exception_cls', [KeyError, ValueError, AttributeError]
+    "exception_cls", [KeyError, ValueError, AttributeError]
 )
 def test_custom_error_handler(api: API, exception_cls):
 
@@ -44,19 +44,19 @@ def test_custom_error_handler(api: API, exception_cls):
     @api.error_handler(KeyError)
     def on_key_error(req, res, exc):
         nonlocal called
-        res.text = 'Oops!'
+        res.text = "Oops!"
         called = True
 
-    @api.route('/')
+    @api.route("/")
     def index(req, res):
-        raise exception_cls('foo')
+        raise exception_cls("foo")
 
     if exception_cls == KeyError:
-        response = api.client.get('/')
+        response = api.client.get("/")
         assert called
         assert response.status_code == 500
-        assert response.text == 'Oops!'
+        assert response.text == "Oops!"
     else:
-        response = api.client.get('/')
+        response = api.client.get("/")
         assert response.status_code == 500
         assert not called

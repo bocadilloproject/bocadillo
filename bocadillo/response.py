@@ -22,7 +22,7 @@ class Response:
 
     def _set_media(self, value: Any, media_type: str):
         content = self._media.serialize(value, media_type=media_type)
-        self.headers['content-type'] = media_type
+        self.headers["content-type"] = media_type
         self._content = content
 
     @property
@@ -34,11 +34,11 @@ class Response:
         self._content = content
 
     def __setattr__(self, key, value):
-        if key == 'text':
+        if key == "text":
             self._set_media(value, media_type=Media.PLAIN_TEXT)
-        elif key == 'html':
+        elif key == "html":
             self._set_media(value, media_type=Media.HTML)
-        elif key == 'media':
+        elif key == "media":
             self._set_media(value, media_type=self._media.type)
         else:
             super().__setattr__(key, value)
@@ -64,7 +64,7 @@ class Response:
             self.status_code = 200
 
         if self.status_code != 204:
-            self.headers.setdefault('content-type', Media.PLAIN_TEXT)
+            self.headers.setdefault("content-type", Media.PLAIN_TEXT)
 
         response = _Response(
             content=self._content,

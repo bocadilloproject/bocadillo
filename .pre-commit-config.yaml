@@ -4,4 +4,4 @@ repos:
   hooks:
   - id: black
     language_version: python3.7
-    args: [-S, -l 80]
+    args: [-l 80]

@@ -7,13 +7,13 @@ from jinja2 import Template as _Template
 Template = _Template
 
 
-DEFAULT_TEMPLATES_DIR = 'templates'
+DEFAULT_TEMPLATES_DIR = "templates"
 
 
 def get_templates_environment(template_dirs: List[str]):
     return Environment(
         loader=FileSystemLoader(template_dirs),
-        autoescape=select_autoescape(['html', 'xml']),
+        autoescape=select_autoescape(["html", "xml"]),
         enable_async=True,
     )
 

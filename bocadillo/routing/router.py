@@ -21,11 +21,11 @@ class RouteMatch(NamedTuple):
 
 def _ensure_head_if_get(view: View, methods: List[str]) -> None:
     if inspect.isclass(view):
-        if hasattr(view, 'get') and not hasattr(view, 'head'):
+        if hasattr(view, "get") and not hasattr(view, "head"):
             view.head = view.get
     else:
-        if 'GET' in methods and 'HEAD' not in methods:
-            methods.append('HEAD')
+        if "GET" in methods and "HEAD" not in methods:
+            methods.append("HEAD")
 
 
 class Router:
@@ -45,7 +45,7 @@ class Router:
     ):
         """Build and register a route."""
         if methods is None:
-            methods = ['get', 'head']
+            methods = ["get", "head"]
 
         methods = [method.upper() for method in methods]
 
@@ -56,13 +56,13 @@ class Router:
                 name = view.__name__
 
         if namespace is not None:
-            name = namespace + ':' + name
+            name = namespace + ":" + name
 
         _ensure_head_if_get(view, methods)
 
         if inspect.isclass(view):
             view = view()
-            if hasattr(view, 'handle'):
+            if hasattr(view, "handle"):
                 methods = ALL_HTTP_METHODS
             else:
                 methods = [

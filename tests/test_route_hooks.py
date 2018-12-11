@@ -7,11 +7,11 @@ def test_can_use_function_flags(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo')
+        @api.route("/foo")
         async def foo(req, res):
             pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_use_hook_on_sync_function_view(api: API):
@@ -19,11 +19,11 @@ def test_use_hook_on_sync_function_view(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo')
+        @api.route("/foo")
         def foo(req, res):
             pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_can_pass_extra_args(api: API):
@@ -31,11 +31,11 @@ def test_can_pass_extra_args(api: API):
 
         @api.before(before, True)  # positional
         @api.after(after, value=1)  # keyword
-        @api.route('/foo')
+        @api.route("/foo")
         async def foo(req, res):
             pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_hook_can_be_callable_class(api: API):
@@ -43,11 +43,11 @@ def test_hook_can_be_callable_class(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo')
+        @api.route("/foo")
         async def foo(req, res):
             pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_use_hook_on_class_based_view(api: API):
@@ -55,38 +55,38 @@ def test_use_hook_on_class_based_view(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo')
+        @api.route("/foo")
         class Foo:
             async def get(self, req, res):
                 pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_use_hook_on_method(api: API):
     with class_hooks() as (before, after):
 
-        @api.route('/foo')
+        @api.route("/foo")
         class Foo:
             @api.before(before)
             @api.after(after)
             async def get(self, req, res):
                 pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_use_hook_on_sync_method(api: API):
     with class_hooks() as (before, after):
 
-        @api.route('/foo')
+        @api.route("/foo")
         class Foo:
             @api.before(before)
             @api.after(after)
             def get(self, req, res):
                 pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_hooks_can_be_async(api: API):
@@ -94,11 +94,11 @@ def test_hooks_can_be_async(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo')
+        @api.route("/foo")
         async def foo(req, res):
             pass
 
-        api.client.get('/foo')
+        api.client.get("/foo")
 
 
 def test_before_does_not_run_if_method_not_allowed(api: API):
@@ -106,9 +106,9 @@ def test_before_does_not_run_if_method_not_allowed(api: API):
 
         @api.before(before)
         @api.after(after)
-        @api.route('/foo', methods=['get'])
+        @api.route("/foo", methods=["get"])
         async def foo(req, res):
             pass
 
-        response = api.client.put('/foo')
+        response = api.client.put("/foo")
         assert response.status_code == 405

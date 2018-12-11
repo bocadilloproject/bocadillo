@@ -33,7 +33,7 @@ class RoutingMixin:
         namespace (str):
             A namespace for this route (optional).
             If given, will be prefixed to the `name` and separated by a colon,
-            e.g. `'blog:index'`.
+            e.g. `"blog:index"`.
 
         # Raises
         RouteDeclarationError:
@@ -47,7 +47,7 @@ class RoutingMixin:
         ```python
         >>> import bocadillo
         >>> api = bocadillo.API()
-        >>> @api.route('/greet/{person}')
+        >>> @api.route("/greet/{person}")
         ... def greet(req, res, person: str):
         ...     pass
         ```

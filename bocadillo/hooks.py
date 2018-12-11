@@ -10,8 +10,8 @@ from .routing import Route
 HookFunction = Callable[[Request, Response, dict], Coroutine]
 HookCollection = Dict[Route, HookFunction]
 
-BEFORE = 'before'
-AFTER = 'after'
+BEFORE = "before"
+AFTER = "after"
 
 
 async def empty_hook(req: Request, res: Response, params: dict):

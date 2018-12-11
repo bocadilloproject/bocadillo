@@ -5,11 +5,11 @@ from typing import List
 
 from .ext import click
 
-CUSTOM_COMMANDS_FILE_ENV_VAR = 'BOCA_CUSTOM_COMMANDS_FILE'
+CUSTOM_COMMANDS_FILE_ENV_VAR = "BOCA_CUSTOM_COMMANDS_FILE"
 
 
 def get_custom_commands_file_path():
-    return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, 'boca.py')
+    return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, "boca.py")
 
 
 class FileGroupCLI(click.MultiCommand):
@@ -37,8 +37,8 @@ class FileGroupCLI(click.MultiCommand):
         path = self.file_name
 
         try:
-            with open(path, 'r') as f:
-                code = compile(source=f.read(), filename=path, mode='exec')
+            with open(path, "r") as f:
+                code = compile(source=f.read(), filename=path, mode="exec")
                 eval(code, ns, ns)
         except FileNotFoundError:
             # User did not create custom commands, use an empty group.
@@ -51,7 +51,7 @@ class FileGroupCLI(click.MultiCommand):
                 break
         else:
             raise click.ClickException(
-                f'Expected at least one group in {path}, none found.'
+                f"Expected at least one group in {path}, none found."
             )
 
     @property
@@ -73,19 +73,21 @@ def create_cli() -> click.Command:
     def builtin():
         pass
 
-    @builtin.command(name='help')
+    @builtin.command(name="help")
     @click.pass_context
     def help_(ctx):
         """Show help about boca."""
         click.echo(ctx.parent.get_help())
 
-    @builtin.command(name='init:custom')
-    @click.option('-d', '--directory', default='',
-                  help='Where files should be generated.')
+    @builtin.command(name="init:custom")
+    @click.option(
+        "-d", "--directory", default="", help="Where files should be generated."
+    )
     def init_custom(directory: str):
         """Generate files required to build custom commands."""
-        custom_commands_script_contents = cleandoc(
-            '''"""Custom Bocadillo commands.
+        custom_commands_script_contents = (
+            cleandoc(
+                '''"""Custom Bocadillo commands.
     
             Use Click to build custom commands. For documentation, see:
             https://click.palletsprojects.com
@@ -99,16 +101,16 @@ def create_cli() -> click.Command:
     
             # Write your @cli.command() functions below.\n
             '''
-        ) + '\n'
+            )
+            + "\n"
+        )
         path = os.path.join(directory, get_custom_commands_file_path())
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             f.write(custom_commands_script_contents)
-        click.echo(click.style(f'Generated {path}', fg='green'))
-        click.echo('Open the file and start building!')
+        click.echo(click.style(f"Generated {path}", fg="green"))
+        click.echo("Open the file and start building!")
 
-    custom = FileGroupCLI(
-        file_name=get_custom_commands_file_path(),
-    )
+    custom = FileGroupCLI(file_name=get_custom_commands_file_path())
 
     # Builtins first to prevent override in custom commands.
     return click.CommandCollection(sources=[builtin, custom])

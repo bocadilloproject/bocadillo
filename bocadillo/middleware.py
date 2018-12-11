@@ -19,12 +19,12 @@ class Middleware:
     async def __call__(self, req: Request) -> Response:
         res: Response = None
 
-        if hasattr(self, 'before_dispatch'):
+        if hasattr(self, "before_dispatch"):
             res = await call_async(self.before_dispatch, req)
 
         res = res or await self.dispatch(req)
 
-        if hasattr(self, 'after_dispatch'):
+        if hasattr(self, "after_dispatch"):
             res = await call_async(self.after_dispatch, req, res) or res
 
         return res

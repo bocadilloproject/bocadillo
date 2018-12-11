@@ -6,37 +6,37 @@ from tests.utils import RouteBuilder
 
 
 def test_can_register_class_based_view(builder: RouteBuilder):
-    builder.class_based('/')
+    builder.class_based("/")
 
 
-@pytest.mark.parametrize('method', map(str.lower, ALL_HTTP_METHODS))
+@pytest.mark.parametrize("method", map(str.lower, ALL_HTTP_METHODS))
 def test_if_method_not_implemented_then_405(builder: RouteBuilder, method: str):
-    builder.class_based('/')
+    builder.class_based("/")
 
-    response = getattr(builder.api.client, method)('/')
+    response = getattr(builder.api.client, method)("/")
     assert response.status_code == 405
 
 
 def test_if_method_implemented_then_as_normal(api: API):
-    @api.route('/')
+    @api.route("/")
     class Index:
         def get(self, req, res):
-            res.text = 'Get!'
+            res.text = "Get!"
 
-    response = api.client.get('/')
+    response = api.client.get("/")
     assert response.status_code == 200
-    assert response.text == 'Get!'
+    assert response.text == "Get!"
 
 
 def test_if_handle_is_implemented_then_bypasses_other_methods(api: API):
-    @api.route('/')
+    @api.route("/")
     class Index:
         def handle(self, req, res):
-            res.text = 'Handle!'
+            res.text = "Handle!"
 
         def get(self, req, res):
-            res.text = 'Get!'
+            res.text = "Get!"
 
-    response = api.client.get('/')
+    response = api.client.get("/")
     assert response.status_code == 200
-    assert response.text == 'Handle!'
+    assert response.text == "Handle!"

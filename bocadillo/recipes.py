@@ -40,8 +40,8 @@ class RecipeRoute:
             hook_function = self.hooks[hook]
             route = hook_decorator(hook_function)(route)
 
-        _register_hook('before', api.before)
-        _register_hook('after', api.after)
+        _register_hook("before", api.before)
+        _register_hook("after", api.after)
 
 
 class RecipeHooks(HooksBase):
@@ -56,7 +56,7 @@ class RecipeHooks(HooksBase):
 
 
 class RecipeBase:
-    def apply(self, api, root: str = ''):
+    def apply(self, api, root: str = ""):
         raise NotImplementedError
 
 
@@ -69,7 +69,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         A name for the recipe.
     prefix (str):
         The path prefix where the recipe will be mounted.
-        Defaults to `'/' + name`.
+        Defaults to `"/" + name`.
     templates_dir (str):
         See #API.
     """
@@ -79,8 +79,8 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
     def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(**kwargs)
         if prefix is None:
-            prefix = f'/{name}'
-        assert prefix.startswith('/'), 'recipe prefix must start with "/"'
+            prefix = f"/{name}"
+        assert prefix.startswith("/"), "recipe prefix must start with '/'"
         self._name = name
         self._prefix = prefix
         self._routes: List[RecipeRoute] = []
@@ -95,7 +95,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
 
         return register
 
-    def apply(self, api, root: str = ''):
+    def apply(self, api, root: str = ""):
         # Apply routes on the API
         for route in self._routes:
             route.register(api, root + self._prefix)
@@ -105,7 +105,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
             self.templates_dir = api.templates_dir
 
     @classmethod
-    def book(cls, *recipes: 'Recipe', prefix: str) -> 'RecipeBook':
+    def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
         return RecipeBook(recipes, prefix=prefix)
 
 
@@ -116,6 +116,6 @@ class RecipeBook(RecipeBase):
         self._recipes = recipes
         self._prefix = prefix
 
-    def apply(self, api, root: str = ''):
+    def apply(self, api, root: str = ""):
         for recipe in self._recipes:
             recipe.apply(api, self._prefix)
