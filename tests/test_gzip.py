@@ -1,7 +1,7 @@
 from bocadillo import API
 
 
-def test_if_gzip_enabled_and_response_is_compressed():
+def test_if_gzip_enabled_then_response_is_compressed():
     api = API(enable_gzip=True, gzip_min_size=0)
 
     @api.route('/')
