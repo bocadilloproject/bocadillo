@@ -1,14 +1,15 @@
 """The Bocadillo API class."""
 import os
 from functools import partial
-from typing import Optional, Tuple, Type, List, Dict, Any, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from asgiref.wsgi import WsgiToAsgi
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.testclient import TestClient
-from uvicorn.main import run, get_logger
+from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
 from .cors import DEFAULT_CORS_CONFIG
@@ -24,7 +25,7 @@ from .response import Response
 from .routing import RoutingMixin
 from .static import static
 from .templates import TemplatesMixin
-from .types import ASGIApp, WSGIApp, ASGIAppInstance
+from .types import ASGIApp, ASGIAppInstance, WSGIApp
 
 
 class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
@@ -69,6 +70,15 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         redirect HTTP traffic to HTTPS.
         Defaults to `False`.
         See also [HSTS](../topics/features/hsts.md).
+    enable_gzip (bool):
+        If `True`, enable GZip compression and automatically
+        compress responses for clients that support it.
+        Defaults to `False`.
+        See also [GZip](../topics/features/gzip.md).
+    gzip_min_size (int):
+        If specified, compress only responses that
+        have more bytes than the specified value.
+        Defaults to `1024`.
     media_type (str):
         Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
@@ -87,6 +97,8 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         enable_cors: bool = False,
         cors_config: dict = None,
         enable_hsts: bool = False,
+        enable_gzip: bool = False,
+        gzip_min_size: int = 1024,
         media_type: Optional[str] = Media.JSON,
     ):
         super().__init__(templates_dir=templates_dir)
@@ -108,7 +120,9 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         self.enable_cors = enable_cors
         self.enable_hsts = enable_hsts
+        self.enable_gzip = enable_gzip
 
+        self.gzip_min_size = gzip_min_size
         if cors_config is None:
             cors_config = {}
         self.cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
@@ -354,6 +368,8 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             app: ASGIApp = CORSMiddleware(app, **self.cors_config)
         if self.enable_hsts:
             app: ASGIApp = HTTPSRedirectMiddleware(app)
+        if self.enable_gzip:
+            app: ASGIApp = GZipMiddleware(app, minimum_size=self.gzip_min_size)
         return app
 
     def run(

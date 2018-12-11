@@ -1,6 +1,6 @@
 # API
 ```python
-API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, media_type: Union[str, NoneType] = 'application/json')
+API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: Union[str, NoneType] = 'application/json')
 ```
 The all-mighty API class.
 
@@ -45,6 +45,15 @@ __Parameters__
     redirect HTTP traffic to HTTPS.
     Defaults to `False`.
     See also [HSTS](../topics/features/hsts.md).
+- __enable_gzip (bool)__:
+    If `True`, enable GZip compression and automatically
+    compress responses for clients that support it.
+    Defaults to `False`.
+    See also [GZip](../topics/features/gzip.md).
+- __gzip_min_size (int)__:
+    If specified, compress only responses that
+    have more bytes than the specified value.
+    Defaults to `1024`.
 - __media_type (str)__:
     Determines how values given to `res.media` are serialized.
     Can be one of the supported media types.

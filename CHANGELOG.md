@@ -13,6 +13,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Recipes: a way to group stuff together and allow composition of bocadillos.
 - Recipe books: a way to group multiple recipes into a single recipe.
 - Route namespaces via `namespace` argument to `@api.route()`.
+- Add GZip support through `enable_gzip`.
+
 
 ### Changed
 
