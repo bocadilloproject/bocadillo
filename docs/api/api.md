@@ -20,26 +20,26 @@ __Parameters__
 - __templates_dir (str)__:
     The name of the directory where templates are searched for,
     relative to the application entry point.
-    Defaults to `'templates'`.
+    Defaults to `"templates"`.
 - __static_dir (str)__:
     The name of the directory containing static files, relative to
     the application entry point. Set to `None` to not serve any static
     files.
-    Defaults to `'static'`.
+    Defaults to `"static"`.
 - __static_root (str)__:
     The path prefix for static assets.
-    Defaults to `'static'`.
+    Defaults to `"static"`.
 - __allowed_hosts (list of str, optional)__:
     A list of hosts which the server is allowed to run at.
-    If the list contains `'*'`, any host is allowed.
-    Defaults to `['*']`.
+    If the list contains `"*"`, any host is allowed.
+    Defaults to `["*"]`.
 - __enable_cors (bool)__:
     If `True`, Cross Origin Resource Sharing will be configured according
     to `cors_config`. Defaults to `False`.
     See also [CORS](../topics/features/cors.md).
 - __cors_config (dict)__:
     A dictionary of CORS configuration parameters.
-    Defaults to `dict(allow_origins=[], allow_methods=['GET'])`.
+    Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
 - __enable_hsts (bool)__:
     If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
     redirect HTTP traffic to HTTPS.
@@ -57,7 +57,7 @@ __Parameters__
 - __media_type (str)__:
     Determines how values given to `res.media` are serialized.
     Can be one of the supported media types.
-    Defaults to `'application/json'`.
+    Defaults to `"application/json"`.
     See also [Media](../topics/request-handling/media.md).
 
 ## media_handlers
@@ -78,7 +78,7 @@ This is built from the `templates_dir` parameter.
 
 ## route
 ```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None)
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
 ```
 Register a new route by decorating a view.
 
@@ -91,7 +91,12 @@ __Parameters__
     Defaults to all HTTP methods.
     Ignored for class-based views.
 - __name (str)__:
-    A name for this route, which must be unique.
+    A name for this route, which must be unique. Defaults to
+    a name based on the view.
+- __namespace (str)__:
+    A namespace for this route (optional).
+    If given, will be prefixed to the `name` and separated by a colon,
+- __e.g. `"blog__:index"`.
 
 __Raises__
 
@@ -107,7 +112,7 @@ __Example__
 ```python
 >>> import bocadillo
 >>> api = bocadillo.API()
->>> @api.route('/greet/{person}')
+>>> @api.route("/greet/{person}")
 ... def greet(req, res, person: str):
 ...     pass
 ```
@@ -187,17 +192,6 @@ __Parameters__
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
 
-## mount
-```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable, Callable], Coroutine]], Callable[[dict, Callable], List[bytes]]])
-```
-Mount another WSGI or ASGI app at the given prefix.
-
-__Parameters__
-
-- __prefix (str)__: A path prefix where the app should be mounted, e.g. `'/myapp'`.
-- __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
-
 ## after
 ```python
 API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
@@ -213,6 +207,17 @@ __Parameters__
 
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
+
+## mount
+```python
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable, Callable], Coroutine]], Callable[[dict, Callable], List[bytes]]])
+```
+Mount another WSGI or ASGI app at the given prefix.
+
+__Parameters__
+
+- __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
+- __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
 
 ## add_error_handler
 ```python
@@ -277,8 +282,7 @@ __Parameters__
 
 
 - __middleware_cls (Middleware class)__:
-    It should be a #~some.middleware.RoutingMiddleware class (not an instance!), or any
-    concrete subclass or #~some.middleware.Middleware.
+    A subclass of #~some.middleware.Middleware.
 
 ## add_asgi_middleware
 ```python
@@ -290,23 +294,20 @@ __Parameters__
 
 
 - __middleware_cls (Middleware class)__:
-    It should be a class (not an instance!) that
-    conforms to the ASGI standard.
+    A class that conforms to ASGI standard.
 
 ## dispatch
 ```python
-API.dispatch(self, request: starlette.requests.Request, before: List[Callable] = None, after: List[Callable] = None) -> bocadillo.response.Response
+API.dispatch(self, req: starlette.requests.Request) -> bocadillo.response.Response
 ```
-Dispatch a request and return a response.
+Dispatch a req and return a response.
 
 For the exact algorithm, see
 [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
 
 __Parameters__
 
-- __request (Request)__: an inbound HTTP request.
-- __before (list of callables)__: a list of middleware `before_dispatch` hooks.
-- __after (list of callables)__: a list of middleware `after_dispatch` hooks.
+- __req (Request)__: an inbound HTTP request.
 
 __Returns__
 
@@ -345,8 +346,8 @@ __Parameters__
 
 - __host (str)__:
     The host to bind to.
-    Defaults to `'127.0.0.1'` (localhost).
-    If not given and `$PORT` is set, `'0.0.0.0'` will be used to
+    Defaults to `"127.0.0.1"` (localhost).
+    If not given and `$PORT` is set, `"0.0.0.0"` will be used to
     serve to all known hosts.
 - __port (int)__:
     The port to bind to.
@@ -356,5 +357,5 @@ __Parameters__
     Whether to serve the application in debug mode. Defaults to `False`.
 - __log_level (str)__:
     A logging level for the debug logger. Must be a logging level
-    from the `logging` module. Defaults to `'info'`.
+    from the `logging` module. Defaults to `"info"`.
 
