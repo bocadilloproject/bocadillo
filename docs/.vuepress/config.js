@@ -66,8 +66,7 @@ module.exports = {
                     children: [
                         '/getting-started/',
                         '/getting-started/installation',
-                        '/getting-started/tutorial',
-                        '/getting-started/next-steps',
+                        '/getting-started/quickstart',
                     ],
                 },
             ],

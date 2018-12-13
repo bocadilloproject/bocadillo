@@ -64,3 +64,5 @@ python -c "import bocadillo; print(bocadillo.__version__)"
 ```
 
 Note that you may have another version of Bocadillo installed.
+
+Now that you're all set up, go take a look at our [quickstart](./quickstart.md) guide to see some of Bocadillo's most delicious features.
