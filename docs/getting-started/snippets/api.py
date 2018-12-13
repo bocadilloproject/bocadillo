@@ -71,6 +71,8 @@ class Analytics:
 # Now, we define application-level helpers: middleware, hooks.
 
 # Middleware!
+
+
 class TokenMiddleware(bocadillo.Middleware):
     """Token-based authorization middleware."""
 
@@ -118,8 +120,7 @@ async def validate_course(req, res, params):
             raise HTTPError(400)
 
 
-# The following is the actual application definition.
-# It assembles what we've built previously.
+# Now, let's assemble the actual application, shall we?
 
 api = bocadillo.API(
     # Built-in CORS, HSTS and GZip!
@@ -129,7 +130,7 @@ api = bocadillo.API(
     gzip_min_size=1024,  # the default
 )
 
-# Register the token middleware now.
+# Register the token middleware.
 api.add_middleware(TokenMiddleware)
 
 # Instanciate helper backends.
@@ -160,7 +161,9 @@ courses = bocadillo.Recipe("courses")
 
 # Class-based views!
 @courses.route("/")
-class CoursesView:
+class CoursesList:
+    """API endpoints on the list of courses."""
+
     async def get(self, req, res):
         # Media responses! (JSON by default)
         res.media = storage.list()
@@ -192,7 +195,7 @@ async def get_course(req, res, pk: int):
         await analytics.mark_seen(pk)
 
 
-# Execute `requires_token()` before the view
+# 👇 Executes `requires_token()` before the view
 @courses.before(requires_token)
 @courses.route("/top")
 async def get_top_courses(req, res):

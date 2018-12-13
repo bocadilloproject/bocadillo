@@ -1,6 +1,7 @@
 # Quickstart
 
-In order to get started quickly, this pages gives you a good overview of what Bocadillo has to offer.
+This document will show you how to get a Bocadillo application up and running,
+as well as provide you a good overview of Bocadillo's features.
 
 ::: tip
 We'll assume you have Bocadillo installed already. If not, head to the [Installation] page!
@@ -8,11 +9,13 @@ We'll assume you have Bocadillo installed already. If not, head to the [Installa
 
 ## Hello, world!
 
-Here is a simple "Hello, world!" example demonstrating a minimal Bocadillo application:
+Here is a traditional "Hello, world!" example demonstrating
+a minimal Bocadillo application:
 
 <<<@/docs/getting-started/snippets/hello.py
 
-If you've ever worked with [Flask], the API should look familiar. Still, let's break this down:
+If you've ever worked with [Flask], the API should look familiar.
+Still, let's break this code down:
 
 1. First, we import the `bocadillo` package.
 2. Then, we create an `API` instance.
@@ -20,9 +23,9 @@ If you've ever worked with [Flask], the API should look familiar. Still, let's b
 4. The `index()` function is a **view** — it takes a request and a response as arguments, and mutates the response as required (here, setting a `text` to be sent with it). This pattern is borrowed from [Falcon].
 5. The last lines run the application server when the file is run as a script.
 
-You can save this script somewhere, for example in a `hello.py` file. Another good choice would have been `api.py`.
+You can save this script somewhere, for example in a `hello.py` file.
 
-To run your application, just run the application script:
+To run your application, run the application script itself:
 
 ```bash
 python hello.py
@@ -40,11 +43,10 @@ You can now head to [http://localhost:8000](http://localhost:8000), and see "Hel
 
 ## Feature tour
 
-The following example simulates a courses management app.
-
-It showcases a lot of the highlights of Bocadillo, namely
-[routes], [views], [templates], [CORS], [GZip], [HSTS], [static files],
-[media], [error handling], [hooks], [recipes] and [middleware].
+The following example is a courses management app.
+It showcases a lot of Bocadillo's features: routing, views,
+templates, hooks, and more.
+You'll find a link to each feature's topic guide after the code.
 
 Brace yourselves — fair chunk of code ahead!
 
@@ -112,6 +114,20 @@ Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer.
 
 Of course, we haven't dived into the details just yet.
 You should now head to our [Topic guides] section to learn more.
+
+As a starting point, here are the topic guides for the features showcased in
+the courses app example:
+
+- [Routes]
+- [Views]
+- [Templates]
+- [CORS], [GZip] and [HSTS]
+- [Static files]
+- [Media]
+- [Error handling]
+- [Hooks]
+- [Recipes]
+- [Middleware]
 
 Happy coding!
 
