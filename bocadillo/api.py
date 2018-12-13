@@ -218,16 +218,16 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         return wrapper
 
     def _find_handler(
-        self, exception: Union[Exception, Type[Exception]]
+        self, exception_cls: Type[Exception]
     ) -> Optional[ErrorHandler]:
-        if not inspect.isclass(exception):
-            exception = exception.__class__
-        for exception_cls, handler in self._error_handlers:
-            if issubclass(exception, exception_cls):
+        for cls, handler in self._error_handlers:
+            if issubclass(exception_cls, cls):
                 return handler
         return None
 
-    def _handle_exception(self, request, response, exception) -> None:
+    def _handle_exception(
+        self, req: Request, res: Response, exception: Exception
+    ) -> None:
         """Handle an exception raised during dispatch.
 
         At most one handler is called for the exception: the first one
@@ -235,13 +235,13 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         If no handler was registered for the exception, it is raised.
         """
-        handler = self._find_handler(exception)
+        handler = self._find_handler(exception.__class__)
         if handler is None:
             raise exception from None
 
-        handler(request, response, exception)
-        if response.status_code is None:
-            response.status_code = 500
+        handler(req, res, exception)
+        if res.status_code is None:
+            res.status_code = 500
 
     def redirect(
         self,
