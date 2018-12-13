@@ -217,17 +217,15 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         return wrapper
 
-    def _find_handlers(self, exception: Union[Exception, Type[Exception]]):
+    def _find_handler(
+        self, exception: Union[Exception, Type[Exception]]
+    ) -> Optional[ErrorHandler]:
         if not inspect.isclass(exception):
             exception = exception.__class__
         for exception_cls, handler in self._error_handlers:
             if issubclass(exception, exception_cls):
-                yield handler
-
-    def _find_handler(
-        self, exception: Union[Exception, Type[Exception]]
-    ) -> Optional[ErrorHandler]:
-        return next(self._find_handlers(exception), None)
+                return handler
+        return None
 
     def _handle_exception(self, request, response, exception) -> None:
         """Handle an exception raised during dispatch.

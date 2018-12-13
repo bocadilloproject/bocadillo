@@ -94,7 +94,7 @@ def on_key_error(req, res, exc: HTTPError):
 
 More generally, you can customize error handling for *any exception* (even built-in ones like `ValueError` or `TypeError`, although this is probably not recommended!) by registering an error handler as above.
 
-For convenience, a non-decorator syntax is also available:
+A non-decorator syntax is also available:
 
 ```python
 def on_attribute_error(req, res, exc: AttributeError):
@@ -103,6 +103,11 @@ def on_attribute_error(req, res, exc: AttributeError):
 
 api.add_error_handler(AttributeError, on_attribute_error)
 ```
+
+For convenience, the following error handlers are provided in the `bocadillo.error_handlers` module:
+
+- `error_to_html()`: converts an exception to an HTML response.
+- `error_to_media()`: converts an exception to a media response (e.g. JSON, depending on media type).
 
 [Routes and URL design]: ./routes-url-design.md
 [Request]: requests.md
