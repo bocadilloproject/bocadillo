@@ -8,6 +8,14 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Built-in `HTTPError` handlers: `error_to_html`, `error_to_media`
+
+### Fixed
+
+- Exceptions raised in middleware callbacks were always handled by the HTML `HTTPError` handler. If configured, the one on the `API` will now be used instead.
+
 ## [v0.7.0]
 
 ### Added
