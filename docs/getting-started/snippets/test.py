@@ -1,11 +1,6 @@
 """Tests for the API snippet.
 
-Usage:
-1. Run `python api.py`.
-2. In a separate terminal, run `pytest test.py`.
-
-NOTE: the API server must be restarted after
-tests have run before running the tests again.
+Run with the `test.sh` script.
 """
 from time import sleep
 
