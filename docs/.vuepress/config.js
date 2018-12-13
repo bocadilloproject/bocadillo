@@ -38,15 +38,6 @@ module.exports = {
                 link: '/getting-started/',
             },
             {
-                text: 'Tutorials',
-                items: [
-                    {
-                        text: 'Cartero',
-                        link: '/tutorials/cartero/',
-                    }
-                ],
-            },
-            {
                 text: 'Topics',
                 link: '/topics/',
             },
@@ -78,15 +69,6 @@ module.exports = {
                         '/getting-started/quickstart',
                     ],
                 },
-            ],
-            '/tutorials/cartero/': [
-                {
-                    title: 'Cartero',
-                    collapsable: false,
-                    children: [
-                        '/tutorials/cartero/',
-                    ]
-                }
             ],
             '/topics/': [
                 '/topics/api',
