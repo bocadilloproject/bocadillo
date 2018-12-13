@@ -40,10 +40,10 @@ class Route:
 
         # Examples
 
-        >>> route = Route('/{age:d}', lambda req, res: None)
-        >>> route.parse('/42')
-        {'age': 42}
-        >>> route.parse('/john')
+        >>> route = Route("/{age:d}", lambda req, res: None)
+        >>> route.parse("/42")
+        {"age": 42}
+        >>> route.parse("/john")
         None
         """
         result = parse(self._pattern, path)

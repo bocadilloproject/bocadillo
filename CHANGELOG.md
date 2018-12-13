@@ -8,6 +8,33 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.7.0]
+
+### Added
+
+- Recipes: a way to group stuff together and allow composition of bocadillos.
+- Recipe books: a way to group multiple recipes into a single recipe.
+- Route namespaces via `namespace` argument to `@api.route()`.
+- Add GZip support through `enable_gzip`.
+- Add ASGI-compliant middleware support via `api.add_asgi_middleware()`.
+- Background tasks via `res.background`.
+
+### Changed
+
+- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now *always* lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
+- All routes now have an inferred `name` based on their function or class name. Explicit route naming is still possible.
+- Because of the above, names of routes in recipes now use the recipe's name as a namespace, i.e. `recipe_name:route_name` instead of `route_name`.
+- Unsafe HTTP verbs used to be supported by defaults on function-based routes. Only the safe ones, GET and HEAD, are supported by default now.
+
+### Deprecated
+
+- `RoutingMiddleware` has been renamed to `Middleware`. It will still be available as `RoutingMiddleware` until v0.8.
+
+### Fixed
+
+- Errors returned by custom error handlers could have 200 status in case the handler did not set any status code. It now defaults to 500.
+- If `GET` is supported, `HEAD` will automatically be implemented.
+
 ## [v0.6.1] - 2018-12-04
 
 ### Added
@@ -21,6 +48,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Restructure documentation into 4 clear sections: Getting Started, Topics, How-To and API Reference.
 - All things related to routing are now in a dedicated `bocadillo.routing` package, which provides a reusable `RoutingMixin`. This does not introduce any API changes.
 - Code refactoring for the hooks and templates features. No API changes involved.
+- Rewritten `CONTRIBUTING.md`.
 
 ## [v0.6.0] - 2018-11-26
 
@@ -141,7 +169,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...HEAD
+[v0.7.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...v0.7.0
 [v0.6.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...v0.6.0
 [v0.5.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.4.0...v0.5.0

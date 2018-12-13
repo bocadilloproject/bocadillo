@@ -10,4 +10,4 @@ def cli():
 @cli.command()
 def hello():
     """Prints a friendly message."""
-    click.echo('Hi from a custom command!')
+    click.echo("Hi from a custom command!")

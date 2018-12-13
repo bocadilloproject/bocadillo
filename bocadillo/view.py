@@ -26,6 +26,12 @@ class ClassBasedView:
     def delete(self, req: Request, res: Response, **kwargs):
         raise NotImplementedError
 
+    def head(self, req: Request, res: Response, **kwargs):
+        raise NotImplementedError
+
+    def options(self, req: Request, res: Response, **kwargs):
+        raise NotImplementedError
+
 
 # Types
 AsyncView = Callable[[Request, Response, dict], Coroutine]
@@ -49,7 +55,7 @@ def create_async_view(view: View) -> AsyncView:
 def _from_class_instance(view: ClassBasedView):
     def _find_for_method(method: str):
         try:
-            return getattr(view, 'handle')
+            return getattr(view, "handle")
         except AttributeError:
             return getattr(view, method.lower())
 
@@ -62,12 +68,12 @@ def _from_class_instance(view: ClassBasedView):
 
 def get_view_name(view: View, base: ClassBasedView = None) -> str:
     def _get_name(obj):
-        return getattr(obj, '__name__', obj.__class__.__name__)
+        return getattr(obj, "__name__", obj.__class__.__name__)
 
-    return '.'.join(_get_name(part) for part in (base, view) if part)
+    return ".".join(_get_name(part) for part in (base, view) if part)
 
 
 def get_declared_method_views(view: ClassBasedView):
-    for method in ('handle', *map(str.lower, ALL_HTTP_METHODS)):
+    for method in ("handle", *map(str.lower, ALL_HTTP_METHODS)):
         if hasattr(view, method):
             yield method, getattr(view, method)

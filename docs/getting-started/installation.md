@@ -54,13 +54,15 @@ To verify that Bocadillo can be seen by Python, type `python` from your shell, t
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.6.1'
+'0.7.0'
 ```
 
 Alternatively, you can use an inline script:
 ```bash
 python -c "import bocadillo; print(bocadillo.__version__)"
-0.6.1
+0.7.0
 ```
 
 Note that you may have another version of Bocadillo installed.
+
+Now that you're all set up, go take a look at our [quickstart](./quickstart.md) guide to see some of Bocadillo's most delicious features.

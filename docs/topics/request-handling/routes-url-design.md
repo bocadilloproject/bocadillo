@@ -70,23 +70,52 @@ See [customizing error handling](./writing-views.md#customizing-error-handling) 
 
 ## Naming routes
 
-Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes accross the whole code base.
+Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes across the whole code base.
 
-To overcome this, you can specify a `name` when defining a route:
+To overcome this, all routes are given a name based on the name of the function (for function-based views) or class (for class-based views).
+
+The inferred route name is always `snake_cased`, as shown in the table below.
+
+| View declaration | Inferred route name |
+|------------------|---------------------|
+| `async def do_stuff(req, res)` | `'do_stuff'` |
+| `class DoStuff:` | `'do_stuff'` |
+
+### Explicit route names
+
+If you wish to specify an explicit name, use the `name` parameter to `@api.route()`:
 
 ```python
-@api.route('/about/{who}', name='about')
+@api.route('/about/{who}', name='about_page')
 async def about(req, res, who):
     res.html = f'<h1>About {who}</h1>'
 ```
 
+### Namespacing routes
+
+You can specify a namespace in order to group route names together:
+
+```python
+@api.route('/blog/', namespace='blog')
+async def home(req, res):
+    pass
+```
+
+The namespace will be prepended to the route's name (either inferred or explicit) and separated by a colon, e.g. resulting in `blog:home` for the above example.
+
+::: tip
+If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](../features/recipes.md).
+:::
+
 ## Reversing named routes
 
-To get back the full URL path to a named route, use `api.url_for()`, passing required route parameters as keyword arguments:
+To get back the full URL path to a named route (including its optional namespace), use `api.url_for()`, passing required route parameters as keyword arguments:
 
 ```python
 >>> api.url_for('about', who='them')
 '/about/them'
+>>> api.url_for('blog:home')
+'/blog/'
 ```
 
 In templates, you can use the `url_for()` template global:
@@ -104,24 +133,33 @@ Referencing a non-existing named route with `url_for()` will trigger an `HTTPErr
 
 ## Specifying HTTP methods
 
-By default, a route exposes the following HTTP methods: GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH.
+By default, a route only exposes the safe HTTP methods, i.e. `GET` and `HEAD`.
 
 On function-based views,
 you can use the `methods` argument to `@api.route()` to specify the set of
 HTTP methods being exposed:
 
 ```python
-@api.route('/', methods=['get'])
-async def index(req, res):
-    res.text = "Come GET me, bro"
+@api.route('/posts/{pk}', methods=['delete'])
+async def delete_blog_post(req, res, pk):
+    res.status_code = 204
 ```
 
-When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. Callbacks such as [hooks] and [middleware] callbacks will not be called either.
+Methods passed to `@api.route()` are case-insensitive.
 
-::: tip
+::: tip NOTE
 The `methods` argument is ignored on [class-based views](../features/views.md#class-based-views). You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
 :::
+
+### How are unsupported methods handled?
+
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. [Hooks] callbacks will not be called either (but request [middleware] will).
+
+::: tip
+Bocadillo implements the `HEAD` method automatically if your route supports `GET`. It is safe and systems such as URL checkers may use it to access your application without transferring the full request body.
+:::
+
 
 [Request]: requests.md
 [Response]: responses.md

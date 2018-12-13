@@ -3,7 +3,7 @@
 Welcome to Bocadillo's documentation!
 
 We recommend you read this quick introduction before you get started with Bocadillo. It will hopefully answer some of your questions about the purpose and goals of Bocadillo.
- 
+
 That said, if you want to jump right in, feel free to skip to the [Installation guide](installation.md).
 
 ::: warning STATUS NOTE
@@ -102,7 +102,7 @@ Here's a sneak peak into what you'll find in Bocadillo:
 - Falcon-style request and response manipulation
 - Efficient, zero-config static files handling (powered by [WhiteNoise])
 - [Jinja] template rendering
-- Built-in CORS and HSTS support
+- Built-in CORS, GZip and HSTS support
 - Customizable CLI built with [Click]
 - (Soon) Third-party extensions framework
 - (Soon) WebSocket support

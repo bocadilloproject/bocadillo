@@ -25,12 +25,13 @@ def get_default_handlers() -> dict:
 class Media:
     """Registry of media handlers."""
 
-    JSON = 'application/json'
-    PLAIN_TEXT = 'text/plain'
-    HTML = 'text/html'
+    JSON = "application/json"
+    PLAIN_TEXT = "text/plain"
+    HTML = "text/html"
 
-    def __init__(self, media_type: str,
-                 handlers: Dict[str, MediaHandler] = None):
+    def __init__(
+        self, media_type: str, handlers: Dict[str, MediaHandler] = None
+    ):
         """Create a media registry.
 
         Parameters
@@ -81,6 +82,7 @@ class Media:
             If no handler exists for the given media type.
         """
         if media_type not in self.handlers:
-            raise UnsupportedMediaType(media_type,
-                                       available=list(self.handlers))
+            raise UnsupportedMediaType(
+                media_type, available=list(self.handlers)
+            )
         self._default_type = media_type
