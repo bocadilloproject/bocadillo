@@ -14,7 +14,7 @@ Here is a simple "Hello, world!" example demonstrating a minimal Bocadillo appli
 
 If you've ever worked with [Flask], the API should look familiar. Still, let's break this down:
 
-1. First, we imported the `bocadillo` package.
+1. First, we import the `bocadillo` package.
 2. Then, we create an `API` instance.
 3. Next, we use the `@api.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
 4. The `index()` function is a **view** — it takes a request and a response as arguments, and mutates the response as required (here, setting a `text` to be sent with it). This pattern is borrowed from [Falcon].
