@@ -2,7 +2,7 @@ import pytest
 
 from bocadillo import API
 from bocadillo.exceptions import HTTPError
-from bocadillo.error_handlers import error_to_media
+from bocadillo.error_handlers import error_to_media, error_to_text
 
 
 @pytest.mark.parametrize(
@@ -73,3 +73,15 @@ def test_media_handler(api: API):
     response = api.client.get("/")
     assert response.status_code == 503
     assert response.json() == {"error": "Service Unavailable", "status": 503}
+
+
+def test_text_handler(api: API):
+    api.add_error_handler(HTTPError, error_to_text)
+
+    @api.route("/")
+    async def index(req, res):
+        raise HTTPError(501)
+
+    response = api.client.get("/")
+    assert response.status_code == 501
+    assert response.text == "Not Implemented"

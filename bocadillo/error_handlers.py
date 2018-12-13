@@ -18,6 +18,11 @@ def error_to_media(req, res, exc: HTTPError):
     res.media = {"error": exc.status_phrase, "status": exc.status_code}
 
 
+def error_to_text(req, res, exc: HTTPError):
+    res.status_code = exc.status_code
+    res.text = exc.status_phrase
+
+
 ErrorHandler = Callable[[Request, Response, Exception], None]
 
 

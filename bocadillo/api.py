@@ -230,9 +230,6 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
     ) -> None:
         """Handle an exception raised during dispatch.
 
-        At most one handler is called for the exception: the first one
-        to support it.
-
         If no handler was registered for the exception, it is raised.
         """
         handler = self._find_handler(exception.__class__)

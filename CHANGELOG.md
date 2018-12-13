@@ -10,7 +10,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ### Added
 
-- Built-in `HTTPError` handlers: `error_to_html`, `error_to_media`
+- Built-in `HTTPError` handlers: `error_to_html`, `error_to_media`, `error_to_text`.
 
 ### Fixed
 
