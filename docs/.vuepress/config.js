@@ -38,6 +38,15 @@ module.exports = {
                 link: '/getting-started/',
             },
             {
+                text: 'Tutorials',
+                items: [
+                    {
+                        text: 'Cartero',
+                        link: '/tutorials/cartero/',
+                    }
+                ],
+            },
+            {
                 text: 'Topics',
                 link: '/topics/',
             },
@@ -66,10 +75,18 @@ module.exports = {
                     children: [
                         '/getting-started/',
                         '/getting-started/installation',
-                        '/getting-started/tutorial',
-                        '/getting-started/next-steps',
+                        '/getting-started/quickstart',
                     ],
                 },
+            ],
+            '/tutorials/cartero/': [
+                {
+                    title: 'Cartero',
+                    collapsable: false,
+                    children: [
+                        '/tutorials/cartero/',
+                    ]
+                }
             ],
             '/topics/': [
                 '/topics/api',
