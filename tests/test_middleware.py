@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import pytest
 
 from bocadillo import API, Middleware
+from bocadillo.exceptions import HTTPError
 
 
 @contextmanager
@@ -120,3 +121,24 @@ def test_errors_raised_in_callback_return_500_error(api: API, when):
 
     response = api.client.get("/")
     assert response.status_code == 500
+
+
+def test_middleware_uses_registered_http_error_handler(api: API):
+    @api.error_handler(HTTPError)
+    def custom(req, res, exc: HTTPError):
+        res.status_code = exc.status_code
+        res.text = "Foo"
+
+    class NopeMiddleware(Middleware):
+        async def before_dispatch(self, req):
+            raise HTTPError(401)
+
+    api.add_middleware(NopeMiddleware)
+
+    @api.route("/")
+    async def index(req, res):
+        pass
+
+    response = api.client.get("/")
+    assert response.status_code == 401
+    assert response.text == "Foo"

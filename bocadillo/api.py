@@ -1,4 +1,5 @@
 """The Bocadillo API class."""
+import inspect
 import os
 from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
@@ -216,12 +217,17 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         return wrapper
 
-    def _find_handlers(self, exception):
-        return (
-            handler
-            for err_type, handler in self._error_handlers
-            if isinstance(exception, err_type)
-        )
+    def _find_handlers(self, exception: Union[Exception, Type[Exception]]):
+        if not inspect.isclass(exception):
+            exception = exception.__class__
+        for exception_cls, handler in self._error_handlers:
+            if issubclass(exception, exception_cls):
+                yield handler
+
+    def _find_handler(
+        self, exception: Union[Exception, Type[Exception]]
+    ) -> Optional[ErrorHandler]:
+        return next(self._find_handlers(exception), None)
 
     def _handle_exception(self, request, response, exception) -> None:
         """Handle an exception raised during dispatch.
@@ -231,13 +237,13 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
 
         If no handler was registered for the exception, it is raised.
         """
-        for handler in self._find_handlers(exception):
-            handler(request, response, exception)
-            if response.status_code is None:
-                response.status_code = 500
-            break
-        else:
+        handler = self._find_handler(exception)
+        if handler is None:
             raise exception from None
+
+        handler(request, response, exception)
+        if response.status_code is None:
+            response.status_code = 500
 
     def redirect(
         self,
@@ -366,7 +372,12 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
         return app(scope)
 
     async def _get_response(self, req: Request) -> Response:
-        convert = partial(convert_exception_to_response, media=self._media)
+        error_handler = self._find_handler(HTTPError)
+        convert = partial(
+            convert_exception_to_response,
+            error_handler=error_handler,
+            media=self._media,
+        )
         dispatch = convert(self.dispatch)
         for cls, kwargs in self._middleware:
             middleware = cls(dispatch, **kwargs)
