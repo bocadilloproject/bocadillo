@@ -107,7 +107,3 @@ def create_cli() -> click.Command:
         click.echo("Open the file and start building!")
 
     return cli
-
-
-# Exposed to the setup.py entry point
-cli = create_cli()
