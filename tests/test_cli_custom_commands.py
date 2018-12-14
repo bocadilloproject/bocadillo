@@ -21,7 +21,7 @@ def test_can_provide_custom_commands(runner, tmpdir):
     boca_dot_py.write(
         cleandoc(
             """
-    from bocadillo.ext import click
+    import click
 
     @click.group()
     def cli():

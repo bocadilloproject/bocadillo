@@ -1,15 +1,22 @@
 """Bocadillo CLI factory."""
 import os
-from inspect import cleandoc
+from inspect import getsource
+
+import click
 
 from . import __version__
-from .ext import click
 
 CUSTOM_COMMANDS_FILE_ENV_VAR = "BOCA_CUSTOM_COMMANDS_FILE"
 
 
 def get_custom_commands_path() -> str:
     return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, "boca.py")
+
+
+def get_custom_commands_script_contents() -> str:
+    from .scaffold import boca
+
+    return getsource(boca)
 
 
 class BocaCLI(click.Group):
@@ -81,28 +88,10 @@ def create_cli() -> click.Command:
     )
     def init_custom(directory: str):
         """Generate files required to build custom commands."""
-        custom_commands_script_contents = (
-            cleandoc(
-                '''"""Custom Bocadillo commands.
-        
-                Use Click to build custom commands. For documentation, see:
-                https://click.palletsprojects.com
-                """
-                from bocadillo.ext import click
-        
-        
-                @click.group()
-                def cli():
-                    pass
-        
-                # Write your @cli.command() functions below.\n
-                '''
-            )
-            + "\n"
-        )
+        contents = get_custom_commands_script_contents()
         path = os.path.join(directory, get_custom_commands_path())
         with open(path, "w") as f:
-            f.write(custom_commands_script_contents)
+            f.write(contents)
         click.echo(click.style(f"Generated {path}", fg="green"))
         click.echo("Open the file and start building!")
 
