@@ -16,7 +16,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo", "bocadillo.ext", "bocadillo.routing"],
+    packages=["bocadillo", "bocadillo.routing", "bocadillo.scaffold"],
     install_requires=[
         "starlette",
         "uvicorn",
@@ -41,5 +41,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    entry_points={"console_scripts": ["boca=bocadillo.cli:cli"]},
+    entry_points={"console_scripts": ["boca=bocadillo.__main__:cli"]},
 )

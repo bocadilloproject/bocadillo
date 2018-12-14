@@ -1,15 +1,7 @@
 import os
 from inspect import cleandoc
 
-import pytest
-from click.testing import CliRunner
-
 from bocadillo.cli import create_cli
-
-
-@pytest.fixture
-def runner():
-    return CliRunner()
 
 
 def test_can_init_custom_commands(runner, tmpdir):
@@ -29,7 +21,7 @@ def test_can_provide_custom_commands(runner, tmpdir):
     boca_dot_py.write(
         cleandoc(
             """
-    from bocadillo.ext import click
+    import click
 
     @click.group()
     def cli():
