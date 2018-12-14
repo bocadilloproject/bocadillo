@@ -8,7 +8,7 @@ from .ext import click
 CUSTOM_COMMANDS_FILE_ENV_VAR = "BOCA_CUSTOM_COMMANDS_FILE"
 
 
-def get_custom_commands_file_path():
+def get_custom_commands_path() -> str:
     return os.getenv(CUSTOM_COMMANDS_FILE_ENV_VAR, "boca.py")
 
 
@@ -31,7 +31,7 @@ class BocaCLI(click.Group):
         super().__init__(*args, **kwargs)
         self._load_group(path)
 
-    def _load_group(self, path):
+    def _load_group(self, path: str):
         ns = {}
 
         try:
@@ -62,7 +62,7 @@ def create_cli() -> click.Command:
     }
     version_flags = ("-v", "-V", "--version")
 
-    @click.group(cls=BocaCLI, path=get_custom_commands_file_path())
+    @click.group(cls=BocaCLI, path=get_custom_commands_path())
     @click.version_option(__version__, *version_flags, **version_kwargs)
     def cli():
         pass
@@ -100,7 +100,7 @@ def create_cli() -> click.Command:
             )
             + "\n"
         )
-        path = os.path.join(directory, get_custom_commands_file_path())
+        path = os.path.join(directory, get_custom_commands_path())
         with open(path, "w") as f:
             f.write(custom_commands_script_contents)
         click.echo(click.style(f"Generated {path}", fg="green"))
