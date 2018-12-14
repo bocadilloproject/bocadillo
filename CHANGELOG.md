@@ -8,6 +8,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+
+- Show Bocadillo version using `boca -v/-V/--version/version`.
+
 ## [v0.7.0]
 
 ### Added
