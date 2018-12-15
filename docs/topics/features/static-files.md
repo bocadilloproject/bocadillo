@@ -47,6 +47,11 @@ To modify the root URL path, use `static_root`:
 api = bocadillo.API(static_root='assets')
 ```
 
+::: tip
+If the `static_dir` does not exist, Bocadillo won't attempt to serve assets from
+it, and no errors nor warnings will be raised.
+:::
+
 ## Extra static files directories
 
 You can serve other static directories using `app.mount()` and the
