@@ -1,3 +1,5 @@
+import pytest
+
 from bocadillo import API, static
 
 FILE_DIR = "js"
@@ -57,3 +59,9 @@ def test_mount_extra_static_files_dirs(tmpdir_factory):
     response = api.client.get(f"/assets/{FILE_DIR}/{FILE_NAME}")
     assert response.status_code == 200
     assert response.text == FILE_CONTENTS
+
+
+def test_if_static_dir_does_not_exist_then_no_files_mounted():
+    with pytest.warns(None) as record:
+        API(static_dir="foo")
+    assert len(record) == 0
