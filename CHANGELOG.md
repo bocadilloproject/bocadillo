@@ -19,6 +19,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Removed
 
 - Removed example application.
+- Removed dependency on `asgiref` for WSGI sub-apps.
 
 ## [v0.7.0]
 
