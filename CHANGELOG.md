@@ -16,6 +16,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Serving static files from a non-existing directory (including the default one) used to raise an invasive warning. It has been silenced.
 
+### Removed
+
+- Removed example application.
+
 ## [v0.7.0]
 
 ### Added
