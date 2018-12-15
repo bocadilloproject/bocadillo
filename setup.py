@@ -21,7 +21,6 @@ setuptools.setup(
         "starlette",
         "uvicorn",
         "jinja2",
-        "asgiref",
         "whitenoise",
         "requests",
         "parse",

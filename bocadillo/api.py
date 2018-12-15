@@ -3,11 +3,11 @@ import os
 from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
-from asgiref.wsgi import WsgiToAsgi
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
@@ -350,8 +350,7 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             try:
                 return app(scope)
             except TypeError:
-                app = WsgiToAsgi(app)
-                return app(scope)
+                return WSGIResponder(app, scope)
 
         def app(s: dict):
             async def asgi(receive, send):
