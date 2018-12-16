@@ -117,6 +117,18 @@ __Example__
 ...     pass
 ```
 
+## on
+```python
+API.on(self, event: str) -> Callable
+```
+Register an event handler.
+
+__Parameters__
+
+- __event (str)__:
+    Either "startup" (when the server boots) or "shutdown" (when the
+    server stops).
+
 ## url_for
 ```python
 API.url_for(self, name: str, **kwargs) -> str

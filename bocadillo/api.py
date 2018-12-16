@@ -342,7 +342,7 @@ class API(
             (either `self` or an instance of a sub-app).
         """
         if scope["type"] == "lifespan":
-            return self.lifespan_handler(scope)
+            return self._lifespan_handler(scope)
 
         path: str = scope["path"]
 

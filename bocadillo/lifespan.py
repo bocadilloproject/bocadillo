@@ -1,4 +1,4 @@
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Optional
 
 from starlette.middleware.lifespan import LifespanMiddleware
 
@@ -12,22 +12,30 @@ class LifespanMixin:
         super().__init__(**kwargs)
         self._events: List[Tuple[str, EventHandler]] = []
 
-    def on(self, event: str) -> Callable:
+    def on(self, event: str, handler: Optional[EventHandler] = None):
         """Register an event handler.
 
         # Parameters
         event (str):
             Either "startup" (when the server boots) or "shutdown" (when the
             server stops).
+        handler (callback, optional):
+            The event handler. If not given, this should be used as a
+            decorator.
         """
 
-        def decorate(f: EventHandler):
-            self.add_event_handler(event, f)
-            return f
+        if handler is not None:
+            self._add_event_handler(event, handler)
+            return
+        else:
 
-        return decorate
+            def decorate(f: EventHandler):
+                self._add_event_handler(event, f)
+                return f
 
-    def add_event_handler(self, event: str, handler: EventHandler):
+            return decorate
+
+    def _add_event_handler(self, event: str, handler: EventHandler):
         self._events.append((event, handler))
 
     def _get_lifespan_middleware(self, app: ASGIApp):
@@ -37,7 +45,7 @@ class LifespanMixin:
         return middleware
 
     @staticmethod
-    def lifespan_handler(scope: dict) -> ASGIAppInstance:
+    def _lifespan_handler(scope: dict) -> ASGIAppInstance:
         """Strict implementation of the ASGI lifespan spec.
 
         This is required because the Starlette `LifespanMiddleware`
