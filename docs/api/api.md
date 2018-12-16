@@ -119,7 +119,7 @@ __Example__
 
 ## on
 ```python
-API.on(self, event: str) -> Callable
+API.on(self, event: str, handler: Union[Callable[[], NoneType], NoneType] = None)
 ```
 Register an event handler.
 
@@ -128,6 +128,9 @@ __Parameters__
 - __event (str)__:
     Either "startup" (when the server boots) or "shutdown" (when the
     server stops).
+- __handler (callback, optional)__:
+    The event handler. If not given, this should be used as a
+    decorator.
 
 ## url_for
 ```python
