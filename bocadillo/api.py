@@ -14,6 +14,7 @@ from uvicorn.reloaders.statreload import StatReload
 
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, convert_exception_to_response
+from .lifespan import LifespanMixin
 from .exceptions import HTTPError
 from .hooks import HooksMixin
 from .media import Media
@@ -28,7 +29,9 @@ from .templates import TemplatesMixin
 from .types import ASGIApp, ASGIAppInstance, WSGIApp
 
 
-class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
+class API(
+    TemplatesMixin, RoutingMixin, HooksMixin, LifespanMixin, metaclass=APIMeta
+):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -338,6 +341,9 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             An ASGI application instance
             (either `self` or an instance of a sub-app).
         """
+        if scope["type"] == "lifespan":
+            return self.lifespan_handler(scope)
+
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
@@ -433,4 +439,5 @@ class API(TemplatesMixin, RoutingMixin, HooksMixin, metaclass=APIMeta):
             run(self, host=host, port=port)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
-        return self.find_app(scope)
+        scope["app"] = self.find_app
+        return super().__call__(scope)
