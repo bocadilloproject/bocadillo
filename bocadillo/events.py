@@ -7,7 +7,9 @@ from .types import ASGIApp, ASGIAppInstance
 EventHandler = Callable[[], None]
 
 
-class LifespanMixin:
+class EventsMixin:
+    """Provide server event handling capabilities."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._events: List[Tuple[str, EventHandler]] = []
@@ -44,19 +46,12 @@ class LifespanMixin:
             middleware.add_event_handler(event, func)
         return middleware
 
-    @staticmethod
-    def _lifespan_handler(scope: dict) -> ASGIAppInstance:
-        """Strict implementation of the ASGI lifespan spec.
+    def handle_lifespan(self, scope: dict) -> ASGIAppInstance:
+        # Strict implementation of the ASGI lifespan spec.
+        # This is required because the Starlette `LifespanMiddleware`
+        # does not send the `complete` responses.
 
-        This is required because the Starlette `LifespanMiddleware`
-        does not send the `complete` responses.
-
-        It runs before the Bocadillo app itself (which it wraps around),
-        so this handler can just send the `complete` responses without
-        doing anything special.
-        """
-
-        async def handle(receive, send):
+        async def app(receive, send):
             message = await receive()
             assert message["type"] == "lifespan.startup"
             await send({"type": "lifespan.startup.complete"})
@@ -65,8 +60,4 @@ class LifespanMixin:
             assert message["type"] == "lifespan.shutdown"
             await send({"type": "lifespan.shutdown.complete"})
 
-        return handle
-
-    def __call__(self, scope: dict):
-        app = scope.pop("app")
-        return self._get_lifespan_middleware(app)(scope)
+        return self._get_lifespan_middleware(lambda s: app)(scope)

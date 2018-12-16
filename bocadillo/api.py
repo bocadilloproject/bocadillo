@@ -14,7 +14,7 @@ from uvicorn.reloaders.statreload import StatReload
 
 from .cors import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, convert_exception_to_response
-from .lifespan import LifespanMixin
+from .events import EventsMixin
 from .exceptions import HTTPError
 from .hooks import HooksMixin
 from .media import Media
@@ -30,7 +30,7 @@ from .types import ASGIApp, ASGIAppInstance, WSGIApp
 
 
 class API(
-    TemplatesMixin, RoutingMixin, HooksMixin, LifespanMixin, metaclass=APIMeta
+    TemplatesMixin, RoutingMixin, HooksMixin, EventsMixin, metaclass=APIMeta
 ):
     """The all-mighty API class.
 
@@ -342,7 +342,7 @@ class API(
             (either `self` or an instance of a sub-app).
         """
         if scope["type"] == "lifespan":
-            return self._lifespan_handler(scope)
+            return self.handle_lifespan(scope)
 
         path: str = scope["path"]
 
@@ -439,5 +439,4 @@ class API(
             run(self, host=host, port=port)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
-        scope["app"] = self.find_app
-        return super().__call__(scope)
+        return self.find_app(scope)
