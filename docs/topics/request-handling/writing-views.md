@@ -76,7 +76,7 @@ As you can see, it returned a `403 Forbidden` response — this is `HTTPError(40
 
 ## Customizing error handling
 
-By default, Bocadillo sends HTML content in response to `HTTPError` exceptions raised in views.
+By default, Bocadillo sends plain text content in response to `HTTPError` exceptions raised in views.
 
 To customize this behavior, you can override the default handler for `HTTPError`. For example, if you want to send media instead:
 
@@ -95,9 +95,9 @@ def error_to_media(req, res, exc: HTTPError):
 ::: tip
 For convenience, the `bocadillo.error_handlers` module provides a few built-in `HTTPError` handlers, including the one above:
 
-- `error_to_html()`: converts an exception to an HTML response — this is the default.
+- `error_to_text()`: converts an exception to plain text (this is the default).
+- `error_to_html()`: converts an exception to an HTML response.
 - `error_to_media()`: converts an exception to a media response.
-- `error_to_text()`: converts an exception to plain text.
 :::
 
 More generally, you can customize error handling for *any exception* (even built-in ones like `ValueError` or `TypeError`, although this is probably not recommended) by registering an error handler as above.
