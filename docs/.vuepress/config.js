@@ -97,6 +97,7 @@ module.exports = {
                         '/topics/features/cors',
                         '/topics/features/hsts',
                         '/topics/features/gzip',
+                        '/topics/features/events',
                         '/topics/features/middleware',
                     ],
                 },
