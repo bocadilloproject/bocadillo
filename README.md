@@ -13,6 +13,7 @@
 [![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
 [![black](https://img.shields.io/badge/code_style-black-000000.svg)][black]
+[![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)][codecov]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 
 # Bocadillo
@@ -87,3 +88,4 @@ To see what has already been implemented for the next release, see the [Unreleas
 [Orator]: https://orator-orm.com
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
+[codecov]: https://codecov.io/gh/bocadilloproject/bocadillo

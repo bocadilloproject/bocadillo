@@ -90,6 +90,12 @@ Bocadillo uses [pytest] as its testing framework. The test suite can be run usin
 pytest
 ```
 
+To also generate a [coverage] report, run:
+
+```bash
+pytest --cov=./
+```
+
 ### Contributing documentation
 
 There are a few extra things you need to known in order to contribute documentation for Bocadillo.
@@ -327,3 +333,4 @@ $ git push --tags
 [Pipenv]: https://github.com/pypa/pipenv
 [pytest]: https://docs.pytest.org
 [VuePress]: https://vuepress.vuejs.org
+[coverage]: https://coverage.readthedocs.io

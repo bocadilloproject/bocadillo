@@ -14,8 +14,9 @@ async-generator = "*"
 
 [dev-packages]
 pytest = "*"
-bumpversion = "*"
+pytest-cov = "*"
 pytest-asyncio = "*"
+bumpversion = "*"
 pre-commit = "*"
 pydoc-markdown = "*"
 
