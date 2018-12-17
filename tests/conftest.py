@@ -1,6 +1,7 @@
 from typing import NamedTuple
 
 import pytest
+from click.testing import CliRunner
 
 from bocadillo import API
 from .utils import RouteBuilder
@@ -44,3 +45,8 @@ def template_file(api: API, tmpdir_factory):
 @pytest.fixture
 def template_file_elsewhere(api: API, tmpdir_factory):
     return _create_template(api, tmpdir_factory, dirname="templates_elsewhere")
+
+
+@pytest.fixture
+def runner():
+    return CliRunner()

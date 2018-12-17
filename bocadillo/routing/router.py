@@ -83,14 +83,6 @@ class Router:
         """Register a route by decorating a view."""
         return partial(self.add_route, *args, **kwargs)
 
-    def _find_matching_route(self, path: str) -> Tuple[Optional[str], dict]:
-        """Find a route matching the given path."""
-        for name, route in self._routes.items():
-            kwargs = route.parse(path)
-            if kwargs is not None:
-                return route.pattern, kwargs
-        return None, {}
-
     def match(self, path: str) -> Optional[RouteMatch]:
         for pattern, route in self._routes.items():
             params = route.parse(path)

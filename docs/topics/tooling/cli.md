@@ -8,11 +8,12 @@ Bocadillo comes with `boca`, a handy CLI built with [Click] for performing commo
 Usage: boca [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --help  Show this message and exit.
+  -v, -V, --version  Show the version and exit.
+  --help             Show this message and exit.
 
 Commands:
-  help         Show help about boca.
   init:custom  Generate files required to build custom commands.
+  version      Show the version and exit.
 ```
 
 ## Extending `boca`

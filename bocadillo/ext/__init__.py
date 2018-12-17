@@ -1,2 +1,0 @@
-# Alias
-import click

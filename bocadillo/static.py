@@ -1,3 +1,5 @@
+from os.path import exists
+
 from whitenoise import WhiteNoise
 
 from .types import WSGIApp
@@ -10,5 +12,6 @@ def static(directory: str) -> WSGIApp:
     Powered by WhiteNoise.
     """
     app = WhiteNoise(empty_wsgi_app())
-    app.add_files(directory)
+    if exists(directory):
+        app.add_files(directory)
     return app
