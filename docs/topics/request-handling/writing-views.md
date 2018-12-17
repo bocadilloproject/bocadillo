@@ -76,25 +76,33 @@ As you can see, it returned a `403 Forbidden` response — this is `HTTPError(40
 
 ## Customizing error handling
 
-By default, Bocadillo sends HTML content in response to `HTTPError` exceptions raised in views.
+By default, Bocadillo sends plain text content in response to `HTTPError` exceptions raised in views.
 
-To customize this behavior, you can override the default handler for `HTTPError`. For example, if you want to send JSON instead:
+To customize this behavior, you can override the default handler for `HTTPError`. For example, if you want to send media instead:
 
 ```python
 from bocadillo.exceptions import HTTPError
 
 @api.error_handler(HTTPError)
-def on_key_error(req, res, exc: HTTPError):
+def error_to_media(req, res, exc: HTTPError):
     res.status = exc.status_code
     res.media = {
-        'status_code': exc.status_code,
-        'detail': exc.status_phrase,
+        "error": exc.status_phrase,
+        "status": exc.status_code,
     }
 ```
 
-More generally, you can customize error handling for *any exception* (even built-in ones like `ValueError` or `TypeError`, although this is probably not recommended!) by registering an error handler as above.
+::: tip
+For convenience, the `bocadillo.error_handlers` module provides a few built-in `HTTPError` handlers, including the one above:
 
-For convenience, a non-decorator syntax is also available:
+- `error_to_text()`: converts an exception to plain text (this is the default).
+- `error_to_html()`: converts an exception to an HTML response.
+- `error_to_media()`: converts an exception to a media response.
+:::
+
+More generally, you can customize error handling for *any exception* (even built-in ones like `ValueError` or `TypeError`, although this is probably not recommended) by registering an error handler as above.
+
+A non-decorator syntax is also available:
 
 ```python
 def on_attribute_error(req, res, exc: AttributeError):

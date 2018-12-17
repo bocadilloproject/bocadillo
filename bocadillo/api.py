@@ -1,4 +1,5 @@
 """The Bocadillo API class."""
+import inspect
 import os
 from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
@@ -219,28 +220,28 @@ class API(
 
         return wrapper
 
-    def _find_handlers(self, exception):
-        return (
-            handler
-            for err_type, handler in self._error_handlers
-            if isinstance(exception, err_type)
-        )
+    def _find_handler(
+        self, exception_cls: Type[Exception]
+    ) -> Optional[ErrorHandler]:
+        for cls, handler in self._error_handlers:
+            if issubclass(exception_cls, cls):
+                return handler
+        return None
 
-    def _handle_exception(self, request, response, exception) -> None:
+    def _handle_exception(
+        self, req: Request, res: Response, exception: Exception
+    ) -> None:
         """Handle an exception raised during dispatch.
-
-        At most one handler is called for the exception: the first one
-        to support it.
 
         If no handler was registered for the exception, it is raised.
         """
-        for handler in self._find_handlers(exception):
-            handler(request, response, exception)
-            if response.status_code is None:
-                response.status_code = 500
-            break
-        else:
+        handler = self._find_handler(exception.__class__)
+        if handler is None:
             raise exception from None
+
+        handler(req, res, exception)
+        if res.status_code is None:
+            res.status_code = 500
 
     def redirect(
         self,
@@ -371,7 +372,12 @@ class API(
         return app(scope)
 
     async def _get_response(self, req: Request) -> Response:
-        convert = partial(convert_exception_to_response, media=self._media)
+        error_handler = self._find_handler(HTTPError)
+        convert = partial(
+            convert_exception_to_response,
+            error_handler=error_handler,
+            media=self._media,
+        )
         dispatch = convert(self.dispatch)
         for cls, kwargs in self._middleware:
             middleware = cls(dispatch, **kwargs)
