@@ -13,10 +13,14 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Show Bocadillo version using `boca -v/-V/--version/version`.
 - Built-in `HTTPError` handlers: `error_to_html`, `error_to_media`, `error_to_text`.
 
+### Changed
+
+- Exceptions raised in middleware callbacks were always handled by the HTML `HTTPError` handler. If configured, the one on the `API` will now be used instead.
+- The default `HTTPError` handler now returns plaintext instead of HTML.
+
 ### Fixed
 
 - Serving static files from a non-existing directory (including the default one) used to raise an invasive warning. It has been silenced.
-- Exceptions raised in middleware callbacks were always handled by the HTML `HTTPError` handler. If configured, the one on the `API` will now be used instead.
 
 ### Removed
 

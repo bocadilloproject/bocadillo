@@ -44,7 +44,7 @@ def convert_exception_to_response(
 ):
     """Wrap call to `dispatch()` to always return an HTTP response."""
     if error_handler is None:
-        error_handler = error_to_html
+        error_handler = error_to_text
 
     @wraps(dispatch)
     async def inner(req: Request) -> Response:
