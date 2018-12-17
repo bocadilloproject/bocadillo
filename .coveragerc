@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = bocadillo
+
+[report]
+exclude_lines =
+    raise NotImplementedError
+    if __name__ == .__main__.:
+ignore_errors = True
+omit =
+    setup.py
+    tests/*
