@@ -8,7 +8,7 @@ from starlette.concurrency import run_in_threadpool
 
 try:
     from contextlib import asynccontextmanager
-except ImportError:
+except ImportError:  # pragma: no cover
     assert sys.version_info[:2] == (3, 6)
     from async_generator import asynccontextmanager
 
@@ -25,12 +25,6 @@ async def call_async(func: Callable, *args, sync=False, **kwargs) -> Coroutine:
     if sync or not asyncio.iscoroutinefunction(func):
         return await run_in_threadpool(func, *args, **kwargs)
     return await func(*args, **kwargs)
-
-
-async def call_all_async(funcs: Iterable[Callable], *args, **kwargs):
-    """Call functions in an async manner (with the same arguments)."""
-    for func in funcs:
-        await call_async(func, *args, **kwargs)
 
 
 def camel_to_snake(name: str) -> str:
