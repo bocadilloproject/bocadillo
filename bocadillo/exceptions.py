@@ -24,10 +24,6 @@ class HTTPError(Exception):
         self._status = status
 
     @property
-    def http_status(self) -> HTTPStatus:
-        return self._status
-
-    @property
     def status_code(self) -> int:
         """Return the HTTP error's status code, i.e. 404."""
         return self._status.value
