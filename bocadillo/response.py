@@ -67,7 +67,7 @@ class Response:
             self.headers.setdefault("content-type", Media.PLAIN_TEXT)
 
         response = _Response(
-            content=self._content,
+            content=self.content,
             headers=self.headers,
             status_code=self.status_code,
             background=self.background_task,

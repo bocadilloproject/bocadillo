@@ -47,7 +47,7 @@ class Media:
         self.handlers = handlers
         self.type = media_type
 
-    def serialize(self, value: Any, media_type: Optional[str] = None):
+    def serialize(self, value: Any, media_type: str):
         """Serialize a value using the given media type.
 
         Parameters
@@ -56,10 +56,7 @@ class Media:
         media_type : str, optional
             The media type of the given value. Determines which media handler
             is used.
-            Defaults to the media registry's media type.
         """
-        if media_type is None:
-            media_type = self.type
         handler = self.handlers[media_type]
         return handler(value)
 

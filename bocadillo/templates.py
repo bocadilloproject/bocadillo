@@ -60,15 +60,12 @@ class TemplatesMixin:
         # renders asynchronously even under `render()`.
         # Example error:
         # `RuntimeError: There is no current event loop in thread [...]`
-        if not self._templates.is_async:
-            yield
-            return
-
+        initial = self._templates.is_async
         self._templates.is_async = False
         try:
             yield
         finally:
-            self._templates.is_async = True
+            self._templates.is_async = initial
 
     @staticmethod
     def _prepare_context(context: dict = None, **kwargs):
