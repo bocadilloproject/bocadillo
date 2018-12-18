@@ -1,8 +1,7 @@
 """The Bocadillo API class."""
-import inspect
 import os
 from functools import partial
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -395,6 +394,7 @@ class API(
         port: int = None,
         debug: bool = False,
         log_level: str = "info",
+        _run: Callable = run,
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
@@ -442,7 +442,7 @@ class API(
                 },
             )
         else:
-            run(self, host=host, port=port)
+            _run(self, host=host, port=port)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
         return self.find_app(scope)

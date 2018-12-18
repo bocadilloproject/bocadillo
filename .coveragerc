@@ -6,6 +6,7 @@ source = bocadillo
 exclude_lines =
     raise NotImplementedError
     if __name__ == .__main__.:
+    if debug:
 ignore_errors = True
 omit =
     setup.py
