@@ -2,7 +2,11 @@ import pytest
 
 from bocadillo import API
 from bocadillo.exceptions import HTTPError
-from bocadillo.error_handlers import error_to_media, error_to_text
+from bocadillo.error_handlers import (
+    error_to_media,
+    error_to_text,
+    error_to_html,
+)
 
 
 @pytest.mark.parametrize(
@@ -63,25 +67,25 @@ def test_custom_error_handler(api: API, exception_cls):
         assert not called
 
 
-def test_media_handler(api: API):
-    api.add_error_handler(HTTPError, error_to_media)
+@pytest.mark.parametrize(
+    "handler, check_response",
+    [
+        (error_to_html, lambda res: res.text == "<h1>403 Forbidden</h1>"),
+        (
+            error_to_media,
+            lambda res: res.json() == {"error": "Forbidden", "status": 403},
+        ),
+        (error_to_text, lambda res: res.text == "403 Forbidden"),
+    ],
+)
+def test_builtin_handlers(api: API, handler, check_response):
+    api.add_error_handler(HTTPError, handler)
 
     @api.route("/")
     async def index(req, res):
-        raise HTTPError(503)
+        raise HTTPError(403)
 
     response = api.client.get("/")
-    assert response.status_code == 503
-    assert response.json() == {"error": "Service Unavailable", "status": 503}
-
-
-def test_text_handler(api: API):
-    api.add_error_handler(HTTPError, error_to_text)
-
-    @api.route("/")
-    async def index(req, res):
-        raise HTTPError(501)
-
-    response = api.client.get("/")
-    assert response.status_code == 501
-    assert response.text == "Not Implemented"
+    assert response.status_code == 403
+    print(response.text)
+    assert check_response(response)
