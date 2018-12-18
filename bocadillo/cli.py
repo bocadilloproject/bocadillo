@@ -53,7 +53,7 @@ class BocaCLI(click.Group):
         groups = (val for val in ns.values() if isinstance(val, click.Group))
         group = next(groups, None)
         if group is None:
-            raise click.ClickException(
+            raise ValueError(
                 f"Expected at least one group in {path}, none found."
             )
         for name, cmd in group.commands.items():
