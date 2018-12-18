@@ -49,6 +49,16 @@ def test_if_static_dir_is_none_then_no_assets_served(tmpdir_factory):
     assert api.client.get(f"/static/{FILE_DIR}/{FILE_NAME}").status_code == 404
 
 
+def test_static_root_defaults_to_static_dir(tmpdir_factory):
+    static_dir = tmpdir_factory.mktemp("foo")
+    _create_asset(static_dir)
+
+    api = API(static_dir=str(static_dir), static_root=None)
+
+    response = api.client.get(f"{static_dir}/{FILE_DIR}/{FILE_NAME}")
+    assert response.status_code == 200
+
+
 def test_mount_extra_static_files_dirs(tmpdir_factory):
     static_dir = tmpdir_factory.mktemp("staticfiles")
     _create_asset(static_dir)
