@@ -106,8 +106,6 @@ module.exports = {
                     collapsable: false,
                     children: [
                         '/topics/tooling/cli',
-                        '/topics/tooling/testing',
-                        '/topics/tooling/deployment',
                     ],
                 },
                 {
@@ -115,6 +113,7 @@ module.exports = {
                     collapsable: false,
                     children: [
                         '/topics/discussions/async-vs-sync',
+                        '/topics/discussions/deployment',
                     ]
                 }
             ],
