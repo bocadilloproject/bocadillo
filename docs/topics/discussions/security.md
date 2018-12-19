@@ -99,7 +99,17 @@ Of course, this depends on the driver you're using; we recommend you refer to it
 
 The example above is taken from the [sqlite3](https://docs.python.org/3/library/sqlite3.html) documentation intro.
 
+## Host header validation
+
+An HTTP Host Header attack consists in a malicious user providing a fake `Host` header in a request in order to execute a potentially harmful operation. An example of this is [cache poisoning].
+
+In order to prevent this type of attack, every Bocadillo applications has a whitelist of hosts which the `Host` header is validated against. An invalid `Host` will result in Bocadillo sending a `400 Bad Request` response.
+
+By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `API` — see [allowed hosts].
+
 [Let's Encrypt]: https://letsencrypt.org
 [Certbot]: https://certbot.eff.org
 [Deployment]: ../tooling/deployment.md
 [HSTS]: ../features/hsts.md
+[cache poisoning]: https://www.owasp.org/index.php/Cache_Poisoning
+[Allowed hosts]: ../api.md#allowed-hosts
