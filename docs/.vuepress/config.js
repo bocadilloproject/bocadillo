@@ -115,6 +115,7 @@ module.exports = {
                     collapsable: false,
                     children: [
                         '/topics/discussions/async-vs-sync',
+                        '/topics/discussions/security',
                     ]
                 }
             ],
