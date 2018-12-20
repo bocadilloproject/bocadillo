@@ -114,6 +114,7 @@ module.exports = {
                     children: [
                         '/topics/discussions/async-vs-sync',
                         '/topics/discussions/deployment',
+                        '/topics/discussions/security',
                     ]
                 }
             ],

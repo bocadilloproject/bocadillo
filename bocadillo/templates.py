@@ -13,7 +13,7 @@ DEFAULT_TEMPLATES_DIR = "templates"
 def get_templates_environment(template_dirs: List[str]):
     return Environment(
         loader=FileSystemLoader(template_dirs),
-        autoescape=select_autoescape(["html", "xml"]),
+        autoescape=True,
         enable_async=True,
     )
 
