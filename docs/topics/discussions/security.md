@@ -8,7 +8,7 @@ Information Security is hard, and we're no experts. If you notice anything wrong
 
 ## HTTPS
 
-HTTPS allows the server and a client to perform an encrypted communication, which means no one will be able to sneak into it, intercept or even change packets. It typically helps in preventing Man-in-the-Middle (MITM) attacks and is a necessary condition for securing a web application. Many web browsers today even display your site as "insecure" if it does not have HTTPS.
+HTTPS allows the server and a client to perform an encrypted communication, which means no one will be able to intercept or forge packets. It typically helps in preventing Man-in-the-Middle (MITM) attacks and is a necessary condition for securing a web application. Many web browsers today even display your site as "insecure" if it does not have HTTPS.
 
 To set up HTTPS, you need to get a certificate from a Certificate Authority (CA). [Let's Encrypt] is a popular, free and open source CA. Certificates need to be regularly updated, so we recommend you use [Certbot] to automate the process.
 
@@ -20,7 +20,7 @@ gunicorn --certfile=server.crt --keyfile=server.key ...
 
 If you're hosting your app via a cloud provider, refer to their documentation as they may provide a feature to set up HTTPS for you.
 
-Be sure to also enable [HSTS] so that all HTTP traffic is redirected to HTTPS.
+It can be a good idea to enable [HSTS] so that all HTTP traffic is redirected to HTTPS.
 
 ## Cross-Site Scripting (XSS)
 
@@ -54,7 +54,7 @@ class CSPMiddleware(Middleware):
         # is served.
         res.headers["content-security-policy"] = "default-src 'self'"
 
-api = API
+api = API()
 api.add_middleware(CSPMiddleware)
 ```
 
@@ -62,19 +62,19 @@ For reference, see [Jinja2 autoescaping](http://jinja.pocoo.org/docs/2.10/api/#a
 
 ## Cross-Site Request Forgery (CSRF)
 
-CSRF is a type of attack that occurs when a malicious website or program causes a user's browser to perform an unwanted site on a trusted site when the user is authenticated.
+CSRF is a type of attack in which a malicious website or program causes an authenticated user's browser to perform an unwanted operation on a trusted site.
 
-These attacks work because web browsers automatically include any session cookies and the IP address when performing a request, hence allowing the attacker to forge a request against them.
+These attacks work because web browsers automatically provide session cookies and the IP address with the request, hence allowing the attacker to forge a request against them.
 
-Token-based mitigation is a popular way to prevent CSRF attacks.
+A Token-based method is a popular way to mitigate CSRF attacks.
 
-Bocadillo does not provide any such CSRF mitigation mechanism at the moment, but session cookies are not supported yet either.
+Bocadillo does not provide any such CSRF mitigation mechanism at the moment — but session cookies are not supported yet either.
 
 For more information on CSRF, see the OWASP [CSRF guide](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) and [Prevention Cheatsheet](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Token_Based_Mitigation).
 
 ## SQL Injection
 
-SQL injection allows a malicious user to execute arbitrary SQL code on a database, from writing unwanted rows to dropping the entire database.
+SQL injection allows a malicious user to execute arbitrary SQL code on a database — from writing unwanted rows to dropping the entire database.
 
 Bocadillo does not provide any official way of interacting with a database (yet), so if you decide to use a database library, you'll be on your own.
 
