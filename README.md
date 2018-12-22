@@ -8,6 +8,8 @@
 
 ---
 
+[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)](https://gitter.im/bocadilloproject/bocadillo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
 [![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
 [![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
