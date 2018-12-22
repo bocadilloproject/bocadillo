@@ -19,6 +19,11 @@ pytest-asyncio = "*"
 bumpversion = "*"
 pre-commit = "*"
 pydoc-markdown = "*"
+pylint = "*"
+black = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
