@@ -8,8 +8,6 @@
 
 ---
 
-[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)](https://gitter.im/bocadilloproject/bocadillo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
 [![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
 [![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
@@ -17,6 +15,7 @@
 [![black](https://img.shields.io/badge/code_style-black-000000.svg)][black]
 [![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)][codecov]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
+[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)][gitter-url]
 
 # Bocadillo
 
@@ -91,3 +90,4 @@ To see what has already been implemented for the next release, see the [Unreleas
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo
+[gitter-url]: https://gitter.im/bocadilloproject/bocadillo
