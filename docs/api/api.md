@@ -349,7 +349,7 @@ __Returns__
 
 ## run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info')
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1092a3620>)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
