@@ -6,8 +6,9 @@ from bocadillo import __version__
 from bocadillo.cli import create_cli
 
 
-def test_can_call_boca():
-    assert call(["boca"]) == 0
+@pytest.mark.parametrize("command", [["boca"], ["python", "-m", "bocadillo"]])
+def test_invoke_boca(command):
+    assert call(command) == 0
 
 
 @pytest.mark.parametrize("flag", ["-v", "-V", "--version", "version"])

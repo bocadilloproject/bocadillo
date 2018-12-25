@@ -1,4 +1,3 @@
-import os
 from inspect import cleandoc
 
 import pytest
