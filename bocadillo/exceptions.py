@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Union
+from typing import Union, Any
 
 from jinja2.exceptions import TemplateNotFound as _TemplateNotFound
 
@@ -14,7 +14,7 @@ class HTTPError(Exception):
     request processing.
     """
 
-    def __init__(self, status: Union[int, HTTPStatus], detail: str = ""):
+    def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
             status = HTTPStatus(status)
         else:
