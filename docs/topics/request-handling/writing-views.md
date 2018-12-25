@@ -74,6 +74,10 @@ Forbidden
 
 As you can see, it returned a `403 Forbidden` response — this is `HTTPError(403)` in action.
 
+::: tip
+You can provide further details about what went wrong with the `detail` argument to `HTTPError`.
+:::
+
 ## Customizing error handling
 
 By default, Bocadillo sends plain text content in response to `HTTPError` exceptions raised in views.
@@ -87,7 +91,7 @@ from bocadillo.exceptions import HTTPError
 def error_to_media(req, res, exc: HTTPError):
     res.status = exc.status_code
     res.media = {
-        "error": exc.status_phrase,
+        "error": exc.detail,
         "status": exc.status_code,
     }
 ```

@@ -43,7 +43,6 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
     "exception_cls", [KeyError, ValueError, AttributeError]
 )
 def test_custom_error_handler(api: API, exception_cls):
-
     called = False
 
     @api.error_handler(KeyError)
@@ -67,25 +66,48 @@ def test_custom_error_handler(api: API, exception_cls):
         assert not called
 
 
+# Use in a test to run against multiple error details. See:
+# https://docs.pytest.org/en/latest/fixture.html#parametrizing-fixtures
+@pytest.fixture(params=["", "Nope!"])
+def detail(request):
+    return request.param
+
+
 @pytest.mark.parametrize(
-    "handler, check_response",
+    "handler, content, expected",
     [
-        (error_to_html, lambda res: res.text == "<h1>403 Forbidden</h1>"),
+        (
+            error_to_html,
+            lambda res: res.text,
+            lambda detail: "<h1>403 Forbidden</h1>{}".format(
+                f"\n<p>{detail}</p>" if detail else ""
+            ),
+        ),
         (
             error_to_media,
-            lambda res: res.json() == {"error": "Forbidden", "status": 403},
+            lambda res: res.json(),
+            lambda detail: (
+                {"error": "403 Forbidden", "detail": detail, "status": 403}
+                if detail
+                else {"error": "403 Forbidden", "status": 403}
+            ),
         ),
-        (error_to_text, lambda res: res.text == "403 Forbidden"),
+        (
+            error_to_text,
+            lambda res: res.text,
+            lambda detail: "403 Forbidden{}".format(
+                f"\n{detail}" if detail else ""
+            ),
+        ),
     ],
 )
-def test_builtin_handlers(api: API, handler, check_response):
+def test_builtin_handlers(api: API, detail, handler, content, expected):
     api.add_error_handler(HTTPError, handler)
 
     @api.route("/")
     async def index(req, res):
-        raise HTTPError(403)
+        raise HTTPError(403, detail=detail)
 
     response = api.client.get("/")
     assert response.status_code == 403
-    print(response.text)
-    assert check_response(response)
+    assert content(response) == expected(detail)

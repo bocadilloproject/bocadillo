@@ -10,17 +10,26 @@ from .response import Response
 
 def error_to_html(req, res, exc: HTTPError):
     res.status_code = exc.status_code
-    res.html = f"<h1>{exc.status_code} {exc.status_phrase}</h1>"
+    html = f"<h1>{exc.title}</h1>"
+    if exc.detail:
+        html += f"\n<p>{exc.detail}</p>"
+    res.html = html
 
 
 def error_to_media(req, res, exc: HTTPError):
     res.status_code = exc.status_code
-    res.media = {"error": exc.status_phrase, "status": exc.status_code}
+    json = {"error": exc.title, "status": exc.status_code}
+    if exc.detail:
+        json["detail"] = exc.detail
+    res.media = json
 
 
 def error_to_text(req, res, exc: HTTPError):
     res.status_code = exc.status_code
-    res.text = f"{exc.status_code} {exc.status_phrase}"
+    text = exc.title
+    if exc.detail:
+        text += f"\n{exc.detail}"
+    res.text = text
 
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
