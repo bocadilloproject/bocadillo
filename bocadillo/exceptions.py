@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Union
+from typing import Union, Any
 
 from jinja2.exceptions import TemplateNotFound as _TemplateNotFound
 
@@ -14,7 +14,7 @@ class HTTPError(Exception):
     request processing.
     """
 
-    def __init__(self, status: Union[int, HTTPStatus]):
+    def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
             status = HTTPStatus(status)
         else:
@@ -22,6 +22,7 @@ class HTTPError(Exception):
                 status, HTTPStatus
             ), f"Expected int or HTTPStatus, got {type(status)}"
         self._status = status
+        self.detail = detail
 
     @property
     def status_code(self) -> int:
@@ -33,8 +34,12 @@ class HTTPError(Exception):
         """Return the HTTP error's status phrase, i.e. `"Not Found"`."""
         return self._status.phrase
 
-    def __str__(self):
+    @property
+    def title(self) -> str:
         return f"{self.status_code} {self.status_phrase}"
+
+    def __str__(self):
+        return self.title
 
 
 class UnsupportedMediaType(Exception):
