@@ -11,6 +11,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 ### Added
 
 - Show Bocadillo version using `boca -v/-V/--version/version`.
+- `boca` is now accessible by running Bocadillo as a module: `python -m bocadillo`.
 - Built-in `HTTPError` handlers: `error_to_html`, `error_to_media`, `error_to_text`.
 - `detail` argument to `HTTPError`.
 - Startup and shutdown events with `api.on()`.

@@ -5,6 +5,7 @@ Bocadillo comes with `boca`, a handy CLI built with [Click] for performing commo
 ## Basic usage
 
 ```
+$ boca --help
 Usage: boca [OPTIONS] COMMAND [ARGS]...
 
 Options:
@@ -15,6 +16,15 @@ Commands:
   init:custom  Generate files required to build custom commands.
   version      Show the version and exit.
 ```
+
+::: tip
+The CLI can also be invoked by running Bocadillo as a module. The following commands are thus equivalent:
+
+```bash
+boca --version
+python -m bocadillo --version
+```
+:::
 
 ## Extending `boca`
 
