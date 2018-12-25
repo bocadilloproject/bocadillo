@@ -18,10 +18,10 @@ def error_to_html(req, res, exc: HTTPError):
 
 def error_to_media(req, res, exc: HTTPError):
     res.status_code = exc.status_code
-    json = {"error": exc.title, "status": exc.status_code}
+    media = {"error": exc.title, "status": exc.status_code}
     if exc.detail:
-        json["detail"] = exc.detail
-    res.media = json
+        media["detail"] = exc.detail
+    res.media = media
 
 
 def error_to_text(req, res, exc: HTTPError):
