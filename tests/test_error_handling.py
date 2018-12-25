@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import API
-from bocadillo.exceptions import HTTPError
+from bocadillo import API, HTTPError
 from bocadillo.error_handlers import (
     error_to_media,
     error_to_text,

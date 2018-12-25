@@ -10,7 +10,7 @@ These decorators take a **hook function**, which is a synchronous or asynchronou
 
 ```python
 from asyncio import sleep
-from bocadillo.exceptions import HTTPError
+from bocadillo import HTTPError
 
 def validate_has_my_header(req, res, params):
     if 'x-my-header' not in req.headers:

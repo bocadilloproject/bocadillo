@@ -3,8 +3,7 @@ from contextlib import contextmanager
 
 import pytest
 
-from bocadillo import API, Middleware
-from bocadillo.exceptions import HTTPError
+from bocadillo import API, Middleware, HTTPError
 
 
 @contextmanager

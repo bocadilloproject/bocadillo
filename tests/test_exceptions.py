@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from bocadillo.exceptions import HTTPError
+from bocadillo import HTTPError
 
 
 def test_http_error_status_must_be_int_or_http_status():

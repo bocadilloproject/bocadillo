@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import API
-from bocadillo.exceptions import HTTPError
+from bocadillo import API, HTTPError
 
 
 def test_if_no_route_exists_for_name_then_url_for_raises_404(api: API):

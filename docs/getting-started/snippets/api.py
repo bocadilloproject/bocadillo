@@ -4,8 +4,7 @@ from asyncio import sleep
 from json import JSONDecodeError
 from typing import List, NamedTuple, Optional, Dict
 
-import bocadillo
-from bocadillo.exceptions import HTTPError
+from bocadillo import API, Middleware, Recipe, HTTPError
 
 
 # We'll start by defining a few helper classes and functions.
@@ -73,7 +72,7 @@ class Analytics:
 # Middleware!
 
 
-class TokenMiddleware(bocadillo.Middleware):
+class TokenMiddleware(Middleware):
     """Token-based authorization middleware."""
 
     _regex = re.compile("^Token: (\w+)$")
@@ -122,7 +121,7 @@ async def validate_course(req, res, params):
 
 # Now, let's assemble the actual application, shall we?
 
-api = bocadillo.API(
+api = API(
     # Built-in CORS, HSTS and GZip!
     enable_cors=True,
     enable_hsts=False,  # the default
@@ -156,7 +155,7 @@ async def index(req, res):
 # Recipes!
 # (API-like group of stuff, good for cutting
 # an app into manageable, bite-sized components.)
-courses = bocadillo.Recipe("courses")
+courses = Recipe("courses")
 
 
 # Class-based views!

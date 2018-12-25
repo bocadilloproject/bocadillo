@@ -49,7 +49,7 @@ return an appropriate response.
 As an example, consider the following route:
 
 ```python
-from bocadillo.exceptions import HTTPError
+from bocadillo import HTTPError
 
 @api.route('/fail/{status_code:d}')
 def fail(req, res, status_code: int):
@@ -85,7 +85,7 @@ By default, Bocadillo sends plain text content in response to `HTTPError` except
 To customize this behavior, you can override the default handler for `HTTPError`. For example, if you want to send media instead:
 
 ```python
-from bocadillo.exceptions import HTTPError
+from bocadillo import HTTPError
 
 @api.error_handler(HTTPError)
 def error_to_media(req, res, exc: HTTPError):
