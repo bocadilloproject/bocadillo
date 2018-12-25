@@ -109,7 +109,7 @@ By default, this whitelist is empty. You must configure it through the `allowed_
 
 [Let's Encrypt]: https://letsencrypt.org
 [Certbot]: https://certbot.eff.org
-[Deployment]: ../tooling/deployment.md
+[Deployment]: ./deployment.md
 [HSTS]: ../features/hsts.md
 [cache poisoning]: https://www.owasp.org/index.php/Cache_Poisoning
 [Allowed hosts]: ../api.md#allowed-hosts
