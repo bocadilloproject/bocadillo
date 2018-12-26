@@ -1,6 +1,6 @@
 """The Bocadillo API class."""
 import os
-from functools import partial
+from functools import partial, reduce
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware
@@ -292,6 +292,24 @@ class API(
         """
         self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
 
+    def apply_asgi_middleware(self, app: ASGIApp) -> ASGIApp:
+        """Wrap the registered ASGI middleware around an ASGI app.
+
+        # Parameters
+        app (ASGIApp): a callable complying with the ASGI specification.
+
+        # Returns
+        app_with_asgi_middleware (ASGIApp):
+            The result `app = asgi(app, *args, **kwargs)` for
+            each ASGI middleware class.
+
+        # See Also
+        - [add_asgi_middleware](#add-asgi-middleware)
+        """
+        for middleware_cls, args, kwargs in self._asgi_middleware:
+            app: ASGIApp = middleware_cls(app, *args, **kwargs)
+        return app
+
     async def dispatch(self, req: Request) -> Response:
         """Dispatch a req and return a response.
 
@@ -358,17 +376,16 @@ class API(
             except TypeError:
                 return WSGIResponder(app, scope)
 
-        def app(s: dict):
-            async def asgi(receive, send):
-                nonlocal s
-                req = Request(s, receive)
-                res = await self._get_response(req)
-                await res(receive, send)
+        return self.apply_asgi_middleware(self.app)(scope)
 
-            return asgi
+    def app(self, scope: dict) -> ASGIAppInstance:
+        async def asgi(receive, send):
+            nonlocal scope
+            req = Request(scope, receive)
+            res = await self._get_response(req)
+            await res(receive, send)
 
-        app = self._asgi_middleware_chain(app)
-        return app(scope)
+        return asgi
 
     async def _get_response(self, req: Request) -> Response:
         error_handler = self._find_handler(HTTPError)
@@ -382,11 +399,6 @@ class API(
             middleware = cls(dispatch, **kwargs)
             dispatch = convert(middleware)
         return await dispatch(req)
-
-    def _asgi_middleware_chain(self, app: ASGIApp) -> ASGIApp:
-        for middleware_cls, args, kwargs in self._asgi_middleware:
-            app: ASGIApp = middleware_cls(app, *args, **kwargs)
-        return app
 
     def run(
         self,

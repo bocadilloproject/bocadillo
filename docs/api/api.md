@@ -311,6 +311,26 @@ __Parameters__
 - __middleware_cls (Middleware class)__:
     A class that conforms to ASGI standard.
 
+## apply_asgi_middleware
+```python
+API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable, Callable], Coroutine]]) -> Callable[[dict], Callable[[Callable, Callable], Coroutine]]
+```
+Wrap the registered ASGI middleware around an ASGI app.
+
+__Parameters__
+
+- __app (ASGIApp)__: a callable complying with the ASGI specification.
+
+__Returns__
+
+`app_with_asgi_middleware (ASGIApp)`:
+    The result `app = asgi(app, *args, **kwargs)` for
+    each ASGI middleware class.
+
+__See Also__
+
+- [add_asgi_middleware](#add-asgi-middleware)
+
 ## dispatch
 ```python
 API.dispatch(self, req: starlette.requests.Request) -> bocadillo.response.Response
@@ -349,7 +369,7 @@ __Returns__
 
 ## run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1092a3620>)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x107c9a620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
