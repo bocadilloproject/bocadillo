@@ -357,6 +357,52 @@ class API(
 
         return res
 
+    async def get_response(self, req: Request) -> Response:
+        """Return a response for an incoming request.
+
+        # Parameters
+        req (Request): a Request object.
+
+        # Returns
+        res (Response):
+            a Response object, obtained by going down the middleware chain,
+            calling `dispatch()` and going up the middleware chain.
+
+        # See Also
+        - [dispatch](#dispatch)
+        - [Middleware](../topics/features/middleware.md)
+        """
+        error_handler = self._find_handler(HTTPError)
+        convert = partial(
+            convert_exception_to_response,
+            error_handler=error_handler,
+            media=self._media,
+        )
+        dispatch = convert(self.dispatch)
+        for cls, kwargs in self._middleware:
+            middleware = cls(dispatch, **kwargs)
+            dispatch = convert(middleware)
+        return await dispatch(req)
+
+    def app(self, scope: dict) -> ASGIAppInstance:
+        """Build and return an isntance of the `API`'s own ASGI application.
+
+        # Parameters
+        scope (dict): an ASGI connection scope.
+
+        # Returns
+        asgi (ASGIAppInstance):
+            creates a `Request` and awaits the result of `get_response()`.
+        """
+
+        async def asgi(receive, send):
+            nonlocal scope
+            req = Request(scope, receive)
+            res = await self.get_response(req)
+            await res(receive, send)
+
+        return asgi
+
     def find_app(self, scope: dict) -> ASGIAppInstance:
         """Return the ASGI application suited to the given ASGI scope.
 
@@ -401,28 +447,6 @@ class API(
                 return WSGIResponder(app, scope)
 
         return self.apply_asgi_middleware(self.app)(scope)
-
-    def app(self, scope: dict) -> ASGIAppInstance:
-        async def asgi(receive, send):
-            nonlocal scope
-            req = Request(scope, receive)
-            res = await self._get_response(req)
-            await res(receive, send)
-
-        return asgi
-
-    async def _get_response(self, req: Request) -> Response:
-        error_handler = self._find_handler(HTTPError)
-        convert = partial(
-            convert_exception_to_response,
-            error_handler=error_handler,
-            media=self._media,
-        )
-        dispatch = convert(self.dispatch)
-        for cls, kwargs in self._middleware:
-            middleware = cls(dispatch, **kwargs)
-            dispatch = convert(middleware)
-        return await dispatch(req)
 
     def run(
         self,

@@ -369,6 +369,42 @@ __See Also__
 
 - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
 
+## get_response
+```python
+API.get_response(self, req: starlette.requests.Request) -> bocadillo.response.Response
+```
+Return a response for an incoming request.
+
+__Parameters__
+
+- __req (Request)__: a Request object.
+
+__Returns__
+
+`res (Response)`:
+    a Response object, obtained by going down the middleware chain,
+    calling `dispatch()` and going up the middleware chain.
+
+__See Also__
+
+- [dispatch](#dispatch)
+- [Middleware](../topics/features/middleware.md)
+
+## app
+```python
+API.app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+```
+Build and return an isntance of the `API`'s own ASGI application.
+
+__Parameters__
+
+- __scope (dict)__: an ASGI connection scope.
+
+__Returns__
+
+`asgi (ASGIAppInstance)`:
+    creates a `Request` and awaits the result of `get_response()`.
+
 ## find_app
 ```python
 API.find_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
@@ -403,7 +439,7 @@ __See Also__
 
 ## run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x108c82620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x101a33620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
