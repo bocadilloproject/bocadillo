@@ -28,6 +28,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - The `static` module was renamed to `staticfiles`.
 - The `types` module was renamed to `app_types`.
 - The `view` module was renamed to `views`.
+- The `routing` package has been flatted into a single `routing` module.
 
 ### Fixed
 

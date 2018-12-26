@@ -16,7 +16,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo", "bocadillo.routing", "bocadillo.scaffold"],
+    packages=["bocadillo", "bocadillo.scaffold"],
     install_requires=[
         "starlette",
         "uvicorn",

@@ -22,7 +22,7 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin
+from bocadillo.routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
 from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope

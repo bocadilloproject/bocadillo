@@ -1,7 +1,7 @@
 import pytest
 
 from bocadillo import API
-from bocadillo.routing import RouteDeclarationError
+from bocadillo.exceptions import RouteDeclarationError
 from tests.utils import RouteBuilder
 
 

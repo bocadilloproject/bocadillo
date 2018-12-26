@@ -5,7 +5,7 @@ from typing import Callable, Union, Dict, Coroutine
 from .compat import call_async, asynccontextmanager
 from .request import Request
 from .response import Response
-from .routing import Route
+from bocadillo.routing import Route
 
 HookFunction = Callable[[Request, Response, dict], Coroutine]
 HookCollection = Dict[Route, HookFunction]

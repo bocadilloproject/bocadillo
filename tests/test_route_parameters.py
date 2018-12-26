@@ -1,7 +1,7 @@
 import pytest
 
 from bocadillo import API
-from bocadillo.routing import RouteDeclarationError
+from bocadillo.exceptions import RouteDeclarationError
 
 
 def test_parameter_is_passed_as_argument(api: API):

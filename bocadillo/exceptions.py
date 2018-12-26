@@ -64,3 +64,7 @@ class UnsupportedMediaType(Exception):
 
     def __str__(self):
         return f'{self._media_type} (available: {", ".join(self._available)})'
+
+
+class RouteDeclarationError(Exception):
+    """Raised when a route is ill-declared."""
