@@ -136,6 +136,7 @@ module.exports = {
                     children: [
                         '/api/api',
                         '/api/cli',
+                        '/api/compat',
                     ],
                 },
             ],

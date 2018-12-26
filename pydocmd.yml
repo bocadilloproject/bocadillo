@@ -6,10 +6,13 @@ generate:
       - bocadillo.api.API+
 - cli.md:
   - bocadillo.cli+
+- compat.md:
+  - bocadillo.compat+
 
 pages:
 - bocadillo.api: api.md
 - bocadillo.cli: cli.md
+- bocadillo.compat: compat.md
 
 gens_dir: ./docs/api
 
