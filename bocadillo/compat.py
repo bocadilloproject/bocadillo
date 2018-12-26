@@ -6,6 +6,8 @@ from typing import Callable, Coroutine
 
 from starlette.concurrency import run_in_threadpool
 
+from .app_types import WSGIApp
+
 try:
     from contextlib import asynccontextmanager
 except ImportError:  # pragma: no cover
@@ -41,3 +43,16 @@ def camel_to_snake(name: str) -> str:
     """Convert a `CamelCase` name to its `snake_case` version."""
     s1 = _camel_regex.sub(r"\1_\2", name)
     return _snake_regex.sub(r"\1_\2", s1).lower()
+
+
+def empty_wsgi_app() -> WSGIApp:
+    """Return a WSGI app that always returns 404 Not Found."""
+
+    def wsgi(environ, start_response):
+        status = "404 Not Found"
+        body = b"Not Found"
+        headers = [("Content-Type", "text/plain")]
+        start_response(status, headers)
+        return [body]
+
+    return wsgi

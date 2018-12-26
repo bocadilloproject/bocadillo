@@ -24,3 +24,8 @@ __See Also__
 camel_to_snake(name: str) -> str
 ```
 Convert a `CamelCase` name to its `snake_case` version.
+## empty_wsgi_app
+```python
+empty_wsgi_app() -> Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]
+```
+Return a WSGI app that always returns 404 Not Found.
