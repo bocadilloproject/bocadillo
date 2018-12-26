@@ -8,6 +8,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [v0.8.0] - 2018-12-26
+
 ### Added
 
 - Show Bocadillo version using `boca -v/-V/--version/version`.
@@ -39,7 +41,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Removed example application.
 - Removed dependency on `asgiref` for WSGI sub-apps.
 
-## [v0.7.0]
+## [v0.7.0] - 2018-12-13
 
 ### Added
 
@@ -200,7 +202,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...HEAD
+[v0.8.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...v0.7.0
 [v0.6.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...v0.6.1
 [v0.6.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.5.0...v0.6.0
