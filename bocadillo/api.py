@@ -140,11 +140,16 @@ class API(
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-    def get_template_globals(self):
-        return {"url_for": self.url_for}
-
     def _build_client(self) -> TestClient:
         return TestClient(self)
+
+    def get_template_globals(self):
+        """Return global variables available to all templates.
+
+        # Returns
+        variables (dict): a mapping of variable names to their values.
+        """
+        return {"url_for": self.url_for}
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
@@ -254,7 +259,7 @@ class API(
 
         # Parameters
         name (str): name of the route to redirect to.
-        url (str): URL of the route to redirect to, required if `name` is ommitted.
+        url (str): URL of the route to redirect to, required if `name` is omitted.
         permanent (bool):
             If `False` (the default), returns a temporary redirection (302).
             If `True`, returns a permanent redirection (301).
@@ -263,6 +268,9 @@ class API(
 
         # Raises
         Redirection: an exception that will be caught by #API.dispatch().
+
+        # See Also
+        - [Redirecting](../topics/request-handling/redirecting.md)
         """
         if name is not None:
             url = self.url_for(name=name, **kwargs)
@@ -273,12 +281,13 @@ class API(
     def add_middleware(self, middleware_cls, **kwargs):
         """Register a middleware class.
 
-        See also [Middleware](../topics/features/middleware.md).
-
         # Parameters
 
         middleware_cls (Middleware class):
-            A subclass of #~some.middleware.Middleware.
+            A subclass of `bocadillo.Middleware`.
+
+        # See Also
+        - [Middleware](../topics/features/middleware.md)
         """
         self._middleware.insert(0, (middleware_cls, kwargs))
 
@@ -286,23 +295,26 @@ class API(
         """Register an ASGI middleware class.
 
         # Parameters
-
         middleware_cls (Middleware class):
-            A class that conforms to ASGI standard.
+            A class that complies with the ASGI specification.
+
+        # See Also
+        - [Middleware](../topics/features/middleware.md)
+        - [ASGI](https://asgi.readthedocs.io)
         """
         self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
 
     async def dispatch(self, req: Request) -> Response:
-        """Dispatch a req and return a response.
-
-        For the exact algorithm, see
-        [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed).
+        """Dispatch a request and return a response.
 
         # Parameters
         req (Request): an inbound HTTP request.
 
         # Returns
         response (Response): an HTTP response.
+
+        # See Also
+        - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
         """
 
         res = Response(req, media=self._media)
@@ -330,7 +342,14 @@ class API(
     def find_app(self, scope: dict) -> ASGIAppInstance:
         """Return the ASGI application suited to the given ASGI scope.
 
-        This is also what `API.__call__(self)` returns.
+        The application is chosen according to the following algorithm:
+
+        - If `scope` has a `lifespan` type, the lifespan handler is returned.
+        This occurs on server startup and shutdown.
+        - If the scope's `path` begins with any of the prefixes of a mounted
+        sub-app, said sub-app is returned (converting from WSGI to ASGI if
+        necessary).
+        - Otherwise, the API's application is returned.
 
         # Parameters
         scope (dict):
@@ -338,8 +357,13 @@ class API(
 
         # Returns
         app:
-            An ASGI application instance
-            (either `self` or an instance of a sub-app).
+            An ASGI application instance.
+
+        # See Also
+        - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
+        - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
+        - [Events](../topics/features/events.md)
+        - [mount](#mount)
         """
         if scope["type"] == "lifespan":
             return self.handle_lifespan(scope)
@@ -398,9 +422,6 @@ class API(
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
-        For further details, refer to
-        [uvicorn settings](https://www.uvicorn.org/settings/).
-
         # Parameters
 
         host (str):
@@ -417,6 +438,14 @@ class API(
         log_level (str):
             A logging level for the debug logger. Must be a logging level
             from the `logging` module. Defaults to `"info"`.
+        kwargs (dict):
+            Extra keyword arguments that will be passed to the Uvicorn runner.
+
+        # See Also
+        - [Configuring host and port](../topics/api.md#configuring-host-and-port)
+        - [Debug mode](../topics/api.md#debug-mode)
+        - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
+        available keyword arguments.
         """
         if "PORT" in os.environ:
             port = int(os.environ["PORT"])
