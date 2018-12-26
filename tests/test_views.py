@@ -53,3 +53,20 @@ def test_sync_handler(api: API):
             pass
 
     assert api.client.get("/").status_code == 200
+
+
+def test_function_based(api: API):
+    @api.route("/")
+    @view()
+    def index(req, res):
+        pass
+
+    assert api.client.get("/").status_code == 200
+
+
+def test_view_decorator_is_optional(api: API):
+    @api.route("/")
+    def index(req, res):
+        pass
+
+    assert api.client.get("/").status_code == 200

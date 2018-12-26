@@ -9,7 +9,7 @@ from .compat import camel_to_snake
 from .exceptions import HTTPError, RouteDeclarationError
 from .request import Request
 from .response import Response
-from .views import View, ViewMeta, Handler, get_handlers
+from .views import View, ViewMeta, Handler, get_handlers, view as view_decorator
 
 
 class Route:
@@ -114,6 +114,9 @@ class Router:
             name = camel_to_snake(view_cls.__name__)
         if namespace is not None:
             name = namespace + ":" + name
+
+        if callable(view_cls) and not inspect.isclass(view_cls):
+            view_cls = view_decorator()(view_cls)
 
         if not isinstance(view_cls, ViewMeta):
             view_cls = ViewMeta.from_view_like(view_cls())
