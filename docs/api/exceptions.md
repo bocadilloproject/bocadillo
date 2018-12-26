@@ -40,3 +40,8 @@ __Parameters__
 - __available (list of str)__:
     a list of supported media types.
 
+## RouteDeclarationError
+```python
+RouteDeclarationError(self, /, *args, **kwargs)
+```
+Raised when a route is ill-declared.
