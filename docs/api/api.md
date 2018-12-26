@@ -1,4 +1,6 @@
-# API
+# bocadillo.api
+
+## API
 ```python
 API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: Union[str, NoneType] = 'application/json')
 ```
@@ -60,23 +62,23 @@ __Parameters__
     Defaults to `"application/json"`.
     See also [Media](../topics/request-handling/media.md).
 
-## media_handlers
+### media_handlers
 The dictionary of supported media handlers.
 
 You can access, edit or replace this at will.
 
-## media_type
+### media_type
 The currently configured media type.
 
 When setting it to a value outside of built-in or custom media types,
 an `UnsupportedMediaType` exception is raised.
 
-## templates_dir
+### templates_dir
 The path where templates are searched for, or `None` if not set.
 
 This is built from the `templates_dir` parameter.
 
-## route
+### route
 ```python
 API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
 ```
@@ -117,7 +119,7 @@ __Example__
 ...     pass
 ```
 
-## on
+### on
 ```python
 API.on(self, event: str, handler: Union[Callable[[], NoneType], NoneType] = None)
 ```
@@ -132,7 +134,7 @@ __Parameters__
     The event handler. If not given, this should be used as a
     decorator.
 
-## url_for
+### url_for
 ```python
 API.url_for(self, name: str, **kwargs) -> str
 ```
@@ -151,7 +153,7 @@ __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
 
-## template
+### template
 ```python
 API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
 ```
@@ -171,7 +173,7 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
-## template_sync
+### template_sync
 ```python
 API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
 ```
@@ -179,7 +181,7 @@ Render a template synchronously.
 
 See also: `API.template()`.
 
-## template_string
+### template_string
 ```python
 API.template_string(self, source: str, context: dict = None, **kwargs) -> str
 ```
@@ -191,7 +193,7 @@ __Parameters__
 
 For other parameters, see `API.template()`.
 
-## before
+### before
 ```python
 API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
@@ -207,7 +209,7 @@ __Parameters__
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
 
-## after
+### after
 ```python
 API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
@@ -223,7 +225,7 @@ __Parameters__
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
 
-## get_template_globals
+### get_template_globals
 ```python
 API.get_template_globals(self)
 ```
@@ -233,7 +235,7 @@ __Returns__
 
 `variables (dict)`: a mapping of variable names to their values.
 
-## mount
+### mount
 ```python
 API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable, Callable], Coroutine]], Callable[[dict, Callable], List[bytes]]])
 ```
@@ -244,7 +246,7 @@ __Parameters__
 - __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
 - __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
 
-## add_error_handler
+### add_error_handler
 ```python
 API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[starlette.requests.Request, bocadillo.response.Response, Exception], NoneType])
 ```
@@ -259,7 +261,7 @@ __Parameters__
     `exception_cls` is caught.
     Should accept a `req`, a `res` and an `exc`.
 
-## error_handler
+### error_handler
 ```python
 API.error_handler(self, exception_cls: Type[Exception])
 ```
@@ -275,7 +277,7 @@ __Example__
 ...     pass  # perhaps set res.content and res.status_code
 ```
 
-## redirect
+### redirect
 ```python
 API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
 ```
@@ -299,7 +301,7 @@ __See Also__
 
 - [Redirecting](../topics/request-handling/redirecting.md)
 
-## add_middleware
+### add_middleware
 ```python
 API.add_middleware(self, middleware_cls, **kwargs)
 ```
@@ -315,7 +317,7 @@ __See Also__
 
 - [Middleware](../topics/features/middleware.md)
 
-## add_asgi_middleware
+### add_asgi_middleware
 ```python
 API.add_asgi_middleware(self, middleware_cls, *args, **kwargs)
 ```
@@ -331,7 +333,7 @@ __See Also__
 - [Middleware](../topics/features/middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
 
-## apply_asgi_middleware
+### apply_asgi_middleware
 ```python
 API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable, Callable], Coroutine]]) -> Callable[[dict], Callable[[Callable, Callable], Coroutine]]
 ```
@@ -351,7 +353,7 @@ __See Also__
 
 - [add_asgi_middleware](#add-asgi-middleware)
 
-## dispatch
+### dispatch
 ```python
 API.dispatch(self, req: starlette.requests.Request) -> bocadillo.response.Response
 ```
@@ -369,7 +371,7 @@ __See Also__
 
 - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
 
-## get_response
+### get_response
 ```python
 API.get_response(self, req: starlette.requests.Request) -> bocadillo.response.Response
 ```
@@ -390,7 +392,7 @@ __See Also__
 - [dispatch](#dispatch)
 - [Middleware](../topics/features/middleware.md)
 
-## create_app
+### create_app
 ```python
 API.create_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
 ```
@@ -405,7 +407,7 @@ __Returns__
 `asgi (ASGIAppInstance)`:
     creates a `Request` and awaits the result of `get_response()`.
 
-## find_app
+### find_app
 ```python
 API.find_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
 ```
@@ -438,9 +440,9 @@ __See Also__
 - [mount](#mount)
 - [create_app](#create-app)
 
-## run
+### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10d34a620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10b780620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

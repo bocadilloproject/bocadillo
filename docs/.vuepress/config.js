@@ -135,6 +135,7 @@ module.exports = {
                     collapsable: false,
                     children: [
                         '/api/api',
+                        '/api/cli',
                     ],
                 },
             ],

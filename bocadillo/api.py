@@ -1,6 +1,5 @@
-"""The Bocadillo API class."""
 import os
-from functools import partial, reduce
+from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware

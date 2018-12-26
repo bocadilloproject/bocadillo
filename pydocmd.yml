@@ -2,10 +2,14 @@ site_name: "Bocadillo API Reference"
 
 generate:
 - api.md:
-  - bocadillo.api.API+
+  - bocadillo.api:
+      - bocadillo.api.API+
+- cli.md:
+  - bocadillo.cli+
 
 pages:
 - bocadillo.api: api.md
+- bocadillo.cli: cli.md
 
 gens_dir: ./docs/api
 

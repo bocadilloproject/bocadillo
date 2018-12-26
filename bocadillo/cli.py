@@ -1,4 +1,3 @@
-"""Bocadillo CLI factory."""
 import os
 from inspect import getsource
 
@@ -19,49 +18,16 @@ def get_custom_commands_script_contents() -> str:
     return getsource(boca)
 
 
-class BocaCLI(click.Group):
-    """Multi-command CLI that loads a group of commands from a file.
-
-    Notes
-    -----
-    - Commands are loaded from a file determined by `path`, relative to the
-    current working directory (i.e., when the CLI script is executed).
-    - The first click.Group object found in that file is used as a source of
-    commands.
-
-    Inspired By
-    -----------
-    https://click.palletsprojects.com/en/7.x/commands/#custom-multi-commands
-    """
-
-    def __init__(self, path: str, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._load_group(path)
-
-    def _load_group(self, path: str):
-        ns = {}
-
-        try:
-            with open(path, "r") as f:
-                code = compile(source=f.read(), filename=path, mode="exec")
-        except FileNotFoundError:
-            # User did not create custom commands
-            return
-        else:
-            eval(code, ns, ns)
-
-        groups = (val for val in ns.values() if isinstance(val, click.Group))
-        group = next(groups, None)
-        if group is None:
-            raise ValueError(
-                f"Expected at least one group in {path}, none found."
-            )
-        for name, cmd in group.commands.items():
-            self.add_command(cmd, name)
-
-
 def create_cli() -> click.Command:
-    """Create a Bocadillo CLI instance."""
+    """This is the Bocadillo CLI factory.
+
+    ::: tip
+    Use this function to obtain an instance of `boca` for programmatic use.
+    :::
+
+    # Returns
+    cli (click.Command): an instance of the `boca` CLI.
+    """
 
     version_kwargs = {
         "prog_name": "Bocadillo",
@@ -69,7 +35,7 @@ def create_cli() -> click.Command:
     }
     version_flags = ("-v", "-V", "--version")
 
-    @click.group(cls=BocaCLI, path=get_custom_commands_path())
+    @click.group(cls=FileGroup, path=get_custom_commands_path())
     @click.version_option(__version__, *version_flags, **version_kwargs)
     def cli():
         pass
@@ -96,3 +62,45 @@ def create_cli() -> click.Command:
         click.echo("Open the file and start building!")
 
     return cli
+
+
+class FileGroup(click.Group):
+    """A Click [MultiCommand] that loads a group of commands from a file.
+
+    ::: warning
+    You should not need to interact with this class directly.
+    :::
+
+    [MultiCommand]: http://click.palletsprojects.com/en/7.x/api/#click.MultiCommand
+
+    # Parameters
+    path (str):
+        Path to a Python module declaring at least one Click group, from which
+        extra commands will be obtained.
+
+    """
+
+    def __init__(self, path: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._load_group(path)
+
+    def _load_group(self, path: str):
+        ns = {}
+
+        try:
+            with open(path, "r") as f:
+                code = compile(source=f.read(), filename=path, mode="exec")
+        except FileNotFoundError:
+            # User did not create custom commands
+            return
+        else:
+            eval(code, ns, ns)
+
+        groups = (val for val in ns.values() if isinstance(val, click.Group))
+        group = next(groups, None)
+        if group is None:
+            raise ValueError(
+                f"Expected at least one group in {path}, none found."
+            )
+        for name, cmd in group.commands.items():
+            self.add_command(cmd, name)
