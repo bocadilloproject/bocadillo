@@ -25,7 +25,7 @@ from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
-from .types import ASGIApp, ASGIAppInstance, WSGIApp
+from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
 
 
 class API(
@@ -383,7 +383,7 @@ class API(
             dispatch = convert(middleware)
         return await dispatch(req)
 
-    def create_app(self, scope: dict) -> ASGIAppInstance:
+    def create_app(self, scope: Scope) -> ASGIAppInstance:
         """Build and return an instance of the `API`'s own ASGI application.
 
         # Parameters
@@ -402,7 +402,7 @@ class API(
 
         return asgi
 
-    def find_app(self, scope: dict) -> ASGIAppInstance:
+    def find_app(self, scope: Scope) -> ASGIAppInstance:
         """Return the ASGI application suited to the given ASGI scope.
 
         The application is chosen according to the following algorithm:
@@ -511,5 +511,5 @@ class API(
         else:
             _run(self, host=host, port=port, **kwargs)
 
-    def __call__(self, scope: dict) -> ASGIAppInstance:
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
         return self.find_app(scope)

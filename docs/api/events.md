@@ -31,7 +31,7 @@ async def init_app():
 
 ### handle_lifespan
 ```python
-EventsMixin.handle_lifespan(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+EventsMixin.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
 ```
 Create an ASGI application instance to handle `lifespan` messages.
 

@@ -24,6 +24,8 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 - Exceptions raised in middleware callbacks were always handled by the HTML `HTTPError` handler. If configured, the one on the `API` will now be used instead.
 - The default `HTTPError` handler now returns plaintext instead of HTML.
+- The `static` module was renamed to `staticfiles`.
+- The `types` module was renamed to `app_types`.
 
 ### Fixed
 

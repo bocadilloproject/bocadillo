@@ -164,7 +164,7 @@ __Raises__
 
 ### handle_lifespan
 ```python
-API.handle_lifespan(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
 ```
 Create an ASGI application instance to handle `lifespan` messages.
 
@@ -267,7 +267,7 @@ __Returns__
 
 ### mount
 ```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable, Callable], Coroutine]], Callable[[dict, Callable], List[bytes]]])
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
 ```
 Mount another WSGI or ASGI app at the given prefix.
 
@@ -365,7 +365,7 @@ __See Also__
 
 ### apply_asgi_middleware
 ```python
-API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable, Callable], Coroutine]]) -> Callable[[dict], Callable[[Callable, Callable], Coroutine]]
+API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]
 ```
 Wrap the registered ASGI middleware around an ASGI app.
 
@@ -424,7 +424,7 @@ __See Also__
 
 ### create_app
 ```python
-API.create_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+API.create_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
 ```
 Build and return an instance of the `API`'s own ASGI application.
 
@@ -439,7 +439,7 @@ __Returns__
 
 ### find_app
 ```python
-API.find_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+API.find_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
 ```
 Return the ASGI application suited to the given ASGI scope.
 
@@ -472,7 +472,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10a3c9620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1111e4620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

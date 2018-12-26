@@ -2,12 +2,12 @@ from typing import Callable, List, Tuple, Optional
 
 from starlette.middleware.lifespan import LifespanMiddleware
 
-from .types import ASGIApp, ASGIAppInstance
+from .app_types import ASGIApp, ASGIAppInstance, Scope
 
 EventHandler = Callable[[], None]
 
 
-def lifespan_app(scope: dict) -> ASGIAppInstance:
+def lifespan_app(scope: Scope) -> ASGIAppInstance:
     # Strict implementation of the ASGI lifespan spec.
     # This is required because the Starlette `LifespanMiddleware`
     # does not send the `complete` responses.
@@ -71,7 +71,7 @@ class EventsMixin:
             middleware.add_event_handler(event, func)
         return middleware
 
-    def handle_lifespan(self, scope: dict) -> ASGIAppInstance:
+    def handle_lifespan(self, scope: Scope) -> ASGIAppInstance:
         """Create an ASGI application instance to handle `lifespan` messages.
 
         Registered event handlers will be called as appropriate.

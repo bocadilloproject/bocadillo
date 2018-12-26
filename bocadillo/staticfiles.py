@@ -2,7 +2,7 @@ from os.path import exists
 
 from whitenoise import WhiteNoise
 
-from .types import WSGIApp
+from .app_types import WSGIApp
 from .wsgi import empty_wsgi_app
 
 

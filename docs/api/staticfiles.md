@@ -2,7 +2,7 @@
 
 ## static
 ```python
-static(directory: str) -> Callable[[dict, Callable], List[bytes]]
+static(directory: str) -> Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]
 ```
 Return a WSGI app that serves static files under the given directory.
 
