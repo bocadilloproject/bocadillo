@@ -1,3 +1,15 @@
+const fs = require('fs');
+
+const listDir = (dir, children) => {
+    if (children === undefined) {
+        // NOTE: children will be sorted in alphabetical order.
+        children = fs.readdirSync(`docs/${dir}`)
+            .filter(file => file.endsWith('.md'))
+            .filter(file => file !== 'README.md');
+    }
+    return children.map(file => `/${dir}/${file}`);
+};
+
 module.exports = {
     base: '/',
     title: 'Bocadillo',
@@ -63,11 +75,11 @@ module.exports = {
                 {
                     title: 'Getting Started',
                     collapsable: false,
-                    children: [
-                        '/getting-started/',
-                        '/getting-started/installation',
-                        '/getting-started/quickstart',
-                    ],
+                    children: listDir('getting-started', [
+                        '',
+                        'installation',
+                        'quickstart',
+                    ]),
                 },
             ],
             '/topics/': [
@@ -75,70 +87,65 @@ module.exports = {
                 {
                     title: 'Handling HTTP requests',
                     collapsable: false,
-                    children: [
-                        '/topics/request-handling/routes-url-design',
-                        '/topics/request-handling/writing-views',
-                        '/topics/request-handling/requests',
-                        '/topics/request-handling/responses',
-                        '/topics/request-handling/redirecting',
-                        '/topics/request-handling/media',
-                    ],
+                    children: listDir('topics/request-handling', [
+                        'routes-url-design',
+                        'writing-views',
+                        'requests',
+                        'responses',
+                        'redirecting',
+                        'media',
+                    ]),
                 },
                 {
                     title: 'Features',
                     collapsable: false,
-                    children: [
-                        '/topics/features/views',
-                        '/topics/features/templates',
-                        '/topics/features/static-files',
-                        '/topics/features/hooks',
-                        '/topics/features/recipes',
-                        '/topics/features/background-tasks',
-                        '/topics/features/cors',
-                        '/topics/features/hsts',
-                        '/topics/features/gzip',
-                        '/topics/features/events',
-                        '/topics/features/middleware',
-                    ],
+                    children: listDir('topics/features', [
+                        'views',
+                        'templates',
+                        'static-files',
+                        'hooks',
+                        'recipes',
+                        'background-tasks',
+                        'cors',
+                        'hsts',
+                        'gzip',
+                        'events',
+                        'middleware',
+                    ]),
                 },
                 {
                     title: 'Tooling',
                     collapsable: false,
-                    children: [
-                        '/topics/tooling/cli',
-                    ],
+                    children: listDir('topics/tooling', [
+                        'cli',
+                    ]),
                 },
                 {
                     title: 'Discussions',
                     collapsable: false,
-                    children: [
-                        '/topics/discussions/async-vs-sync',
-                        '/topics/discussions/deployment',
-                        '/topics/discussions/security',
-                    ]
+                    children: listDir('topics/discussions', [
+                        'async-vs-sync',
+                        'deployment',
+                        'security',
+                    ])
                 }
             ],
             '/how-to/': [
                 {
                     title: 'How-To',
                     collapsable: false,
-                    children: [
-                        '/how-to/custom-cli-commands',
-                        '/how-to/extra-media-handlers',
-                        '/how-to/middleware',
-                    ],
+                    children: listDir('how-to', [
+                        'custom-cli-commands',
+                        'extra-media-handlers',
+                        'middleware',
+                    ]),
                 },
             ],
             '/api/': [
                 {
                     title: 'API Reference',
                     collapsable: false,
-                    children: [
-                        '/api/api',
-                        '/api/cli',
-                        '/api/compat',
-                        '/api/constants',
-                    ],
+                    children: listDir('api'),
                 },
             ],
         },
