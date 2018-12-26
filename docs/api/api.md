@@ -390,11 +390,11 @@ __See Also__
 - [dispatch](#dispatch)
 - [Middleware](../topics/features/middleware.md)
 
-## app
+## create_app
 ```python
-API.app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+API.create_app(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
 ```
-Build and return an isntance of the `API`'s own ASGI application.
+Build and return an instance of the `API`'s own ASGI application.
 
 __Parameters__
 
@@ -418,7 +418,7 @@ This occurs on server startup and shutdown.
 - If the scope's `path` begins with any of the prefixes of a mounted
 sub-app, said sub-app is returned (converting from WSGI to ASGI if
 necessary).
-- Otherwise, the API's application is returned.
+- Otherwise, the `API`'s own ASGI application is returned.
 
 __Parameters__
 
@@ -436,10 +436,11 @@ __See Also__
 - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
 - [Events](../topics/features/events.md)
 - [mount](#mount)
+- [create_app](#create-app)
 
 ## run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x101a33620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10d34a620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

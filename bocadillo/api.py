@@ -384,8 +384,8 @@ class API(
             dispatch = convert(middleware)
         return await dispatch(req)
 
-    def app(self, scope: dict) -> ASGIAppInstance:
-        """Build and return an isntance of the `API`'s own ASGI application.
+    def create_app(self, scope: dict) -> ASGIAppInstance:
+        """Build and return an instance of the `API`'s own ASGI application.
 
         # Parameters
         scope (dict): an ASGI connection scope.
@@ -413,7 +413,7 @@ class API(
         - If the scope's `path` begins with any of the prefixes of a mounted
         sub-app, said sub-app is returned (converting from WSGI to ASGI if
         necessary).
-        - Otherwise, the API's application is returned.
+        - Otherwise, the `API`'s own ASGI application is returned.
 
         # Parameters
         scope (dict):
@@ -428,6 +428,7 @@ class API(
         - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
         - [Events](../topics/features/events.md)
         - [mount](#mount)
+        - [create_app](#create-app)
         """
         if scope["type"] == "lifespan":
             return self.handle_lifespan(scope)
@@ -446,7 +447,7 @@ class API(
             except TypeError:
                 return WSGIResponder(app, scope)
 
-        return self.apply_asgi_middleware(self.app)(scope)
+        return self.apply_asgi_middleware(self.create_app)(scope)
 
     def run(
         self,
