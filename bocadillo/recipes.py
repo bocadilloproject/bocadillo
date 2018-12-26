@@ -1,7 +1,36 @@
 from typing import List, Sequence
 
-from .meta import DocsMeta
+from bocadillo.meta import DocsMeta
 from .templates import TemplatesMixin
+
+
+class RecipeRoute:
+    """A specific kind of route for recipes.
+
+    The route will be registered an actual API object during `recipe.apply()`.
+
+    Mostly an implementation detail.
+    """
+
+    def __init__(self, pattern, view, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
+        self._pattern = pattern
+        self._view = view
+
+    def register(self, api, prefix: str) -> None:
+        """Register the route on the API object at the given prefix.
+
+        # Parameters
+
+        api (API):
+            A Bocadillo application.
+        prefix (str):
+            A path prefix.
+        """
+        api.route(prefix + self._pattern, *self._args, **self._kwargs)(
+            self._view
+        )
 
 
 class RecipeBase:

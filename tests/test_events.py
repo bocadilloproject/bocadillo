@@ -15,8 +15,9 @@ def test_startup_and_shutdown(api: API):
         message = None
 
     @api.route("/")
-    async def index(req, res):
-        res.text = message
+    class Index:
+        async def get(self, req, res):
+            res.text = message
 
     # The Starlette TestClient calls startup and shutdown events when
     # used as a context manager.

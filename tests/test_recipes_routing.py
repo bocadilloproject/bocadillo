@@ -7,8 +7,9 @@ def test_if_prefix_not_given_then_routes_mounted_at_slash_name(api: API):
     numbers = Recipe("numbers")
 
     @numbers.route("/real")
-    def real(req, res):
-        pass
+    class Real:
+        async def get(self, req, res):
+            pass
 
     api.recipe(numbers)
 
@@ -19,8 +20,9 @@ def test_if_prefix_then_routes_mounted_at_prefix(api: API):
     numbers = Recipe("numbers", prefix="/numbers-yo")
 
     @numbers.route("/real")
-    def real(req, res):
-        pass
+    class Real:
+        async def get(self, req, res):
+            pass
 
     api.recipe(numbers)
 

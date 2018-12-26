@@ -30,8 +30,9 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
     status_code = int(status_code)
 
     @api.route("/")
-    def index(req, res):
-        raise HTTPError(status_code)
+    class Index:
+        async def get(self, req, res):
+            raise HTTPError(status_code)
 
     response = api.client.get("/")
     assert response.status_code == status_code
@@ -51,8 +52,9 @@ def test_custom_error_handler(api: API, exception_cls):
         called = True
 
     @api.route("/")
-    def index(req, res):
-        raise exception_cls("foo")
+    class Index:
+        async def get(self, req, res):
+            raise exception_cls("foo")
 
     if exception_cls == KeyError:
         response = api.client.get("/")
@@ -104,8 +106,9 @@ def test_builtin_handlers(api: API, detail, handler, content, expected):
     api.add_error_handler(HTTPError, handler)
 
     @api.route("/")
-    async def index(req, res):
-        raise HTTPError(403, detail=detail)
+    class Index:
+        async def get(self, req, res):
+            raise HTTPError(403, detail=detail)
 
     response = api.client.get("/")
     assert response.status_code == 403

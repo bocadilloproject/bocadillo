@@ -52,8 +52,9 @@ def test_if_middleware_is_added_then_it_is_called(api: API):
         api.add_middleware(middleware)
 
         @api.route("/")
-        async def index(req, res):
-            pass
+        class Index:
+            async def get(self, req, res):
+                pass
 
         api.client.get("/")
 
@@ -64,8 +65,9 @@ def test_can_pass_extra_kwargs(api: API):
         api.add_middleware(middleware, **kwargs)
 
         @api.route("/")
-        async def index(req, res):
-            pass
+        class Index:
+            async def get(self, req, res):
+                pass
 
         api.client.get("/")
 
@@ -74,11 +76,11 @@ def test_callbacks_are_called_if_method_not_allowed(api: API):
     with build_middleware() as middleware:
         api.add_middleware(middleware)
 
-        @api.route("/", methods=["get"])
-        async def index(req, res):
+        @api.route("/")
+        class Index:
             pass
 
-        response = api.client.put("/")
+        response = api.client.get("/")
         assert response.status_code == 405
 
 
@@ -87,8 +89,9 @@ def test_callbacks_can_be_sync(api: API):
         api.add_middleware(middleware)
 
         @api.route("/")
-        async def index(req, res):
-            pass
+        class Index:
+            async def get(self, req, res):
+                pass
 
         response = api.client.get("/")
         assert response.status_code == 200
@@ -115,8 +118,9 @@ def test_errors_raised_in_callback_return_500_error(api: API, when):
     api.add_middleware(MiddlewareWithErrors)
 
     @api.route("/")
-    async def index(req, res):
-        pass
+    class Index:
+        async def get(self, req, res):
+            pass
 
     response = api.client.get("/")
     assert response.status_code == 500
@@ -135,8 +139,9 @@ def test_middleware_uses_registered_http_error_handler(api: API):
     api.add_middleware(NopeMiddleware)
 
     @api.route("/")
-    async def index(req, res):
-        pass
+    class Index:
+        async def get(self, req, res):
+            pass
 
     response = api.client.get("/")
     assert response.status_code == 401

@@ -10,8 +10,10 @@ def test_defaults_to_json(api: API):
     data = {"message": "hello"}
 
     @api.route("/")
-    async def index(req, res):
-        res.media = data
+    class Index:
+        async def get(self, req, res):
+            res.media = data
+            pass
 
     response = api.client.get("/")
     assert response.status_code == 200
@@ -36,8 +38,9 @@ def test_use_builtin_media_handlers(api: API, media_type, expected_text):
     data = {"message": "hello"}
 
     @api.route("/")
-    async def index(req, res):
-        res.media = data
+    class Index:
+        async def get(self, req, res):
+            res.media = data
 
     response = api.client.get("/")
     assert response.status_code == 200
@@ -60,8 +63,9 @@ def test_add_and_use_custom_media_handler(api: API, foo_type, handle_foo):
     api.media_type = foo_type
 
     @api.route("/")
-    async def index(req, res):
-        res.media = "bar"
+    class Index:
+        async def get(self, req, res):
+            res.media = "bar"
 
     response = api.client.get("/")
     assert response.status_code == 200
@@ -74,8 +78,9 @@ def test_replace_media_handlers(api: API, foo_type, handle_foo):
     api.media_type = foo_type
 
     @api.route("/")
-    async def index(req, res):
-        res.media = "bar"
+    class Index:
+        async def get(self, req, res):
+            res.media = "bar"
 
     response = api.client.get("/")
     assert response.status_code == 200

@@ -4,16 +4,18 @@ from bocadillo import API
 
 
 def _setup_views_with_redirect(api, permanent: bool = None, **kwargs):
-    @api.route("/home", name="home")
-    def home(req, res):
-        res.text = "You are home!"
+    @api.route("/home")
+    class Home:
+        async def get(self, req, res):
+            res.text = "You are home!"
 
     @api.route("/")
-    def index(req, res):
-        if permanent:
-            api.redirect(permanent=True, **kwargs)
-        else:
-            api.redirect(**kwargs)
+    class Index:
+        async def get(self, req, res):
+            if permanent:
+                api.redirect(permanent=True, **kwargs)
+            else:
+                api.redirect(**kwargs)
 
 
 def test_redirect_by_route_name(api: API):
@@ -49,12 +51,14 @@ def test_at_least_one_of_name_or_url_must_be_given(api: API):
 
 def test_redirect_to_internal_url(api: API):
     @api.route("/about/{who}")
-    def about(req, res, who):
-        res.text = who
+    class About:
+        async def get(self, req, res, who):
+            res.text = who
 
     @api.route("/")
-    def index(req, res):
-        api.redirect(url="/about/me")
+    class Index:
+        async def get(self, req, res):
+            api.redirect(url="/about/me")
 
     response = api.client.get("/")
     assert response.status_code == 200
@@ -63,8 +67,9 @@ def test_redirect_to_internal_url(api: API):
 
 def test_if_redirect_to_non_matching_internal_url_then_404(api: API):
     @api.route("/")
-    def index(req, res):
-        api.redirect(url="/about/me")
+    class Index:
+        async def get(self, req, res):
+            api.redirect(url="/about/me")
 
     response = api.client.get("/")
     assert response.status_code == 404
@@ -74,8 +79,9 @@ def test_redirect_to_external_url(api: API):
     external_url = "https://httpbin.org/status/202"
 
     @api.route("/")
-    def index(req, res):
-        api.redirect(url=external_url)
+    class Index:
+        async def get(self, req, res):
+            api.redirect(url=external_url)
 
     # NOTE: cannot follow redirect here, because the TestClient
     # prepends the base_url (http://testserver) to any request made, including
