@@ -134,11 +134,11 @@ module.exports = {
             ],
             '/api/': [
                 {
-                    title: 'Modules',
+                    title: 'Python modules',
                     collapsable: false,
                     children: listDir('api').map(child => {
                         const filename = child.split('/')[2];
-                        const displayName = filename.replace('.md', '');
+                        const displayName = filename.replace('.md', '.py');
                         return [child, displayName];
                     }),
                 },

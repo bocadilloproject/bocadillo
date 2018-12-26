@@ -87,7 +87,7 @@ __Raises__
 
 __See Also__
 
-- `ALL_HTTP_METHODS` in [constants](./constants.md)
+- `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
 
 ## RouteMatch
 ```python
