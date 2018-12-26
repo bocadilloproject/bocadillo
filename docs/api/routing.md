@@ -2,21 +2,17 @@
 
 ## Route
 ```python
-Route(self, pattern: str, view: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], methods: List[str], name: str)
+Route(self, pattern: str, view: bocadillo.views.View, name: str)
 ```
 Represents the binding of an URL pattern to a view.
 
-As a framework user, you will not need to create routes directly. This
-should be done via `@api.route()`.
+As a framework user, you will not need to create routes directly.
 
 __Parameters__
 
 - __pattern (str)__: an URL pattern. F-string syntax is supported for parameters.
-- __view (coroutine function)__:
-    A view given as a coroutine function. Non-async views (synchronous,
-    class-based) will have to have been converted beforehand.
-- __methods (list of str)__:
-    A list of (upper-case) HTTP methods.
+- __view (View)__:
+    A `View` object.
 - __name (str)__:
     The route's name.
 
@@ -48,47 +44,6 @@ __Returns__
     If the URL path matches the URL pattern, this is a dictionary
     containing the route parameters, otherwise None.
 
-### raise_for_method
-```python
-Route.raise_for_method(self, req: bocadillo.request.Request)
-```
-Fail if the requested method is not supported by the route.
-
-__Parameters__
-
-- __req (Request)__: a `Request` object.
-
-__Raises__
-
-- `HTTPError(405)`: if `req.method` is not one of `methods`.
-
-## check_route
-```python
-check_route(pattern: str, view: Union[Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], bocadillo.views.ClassBasedView], methods: List[str]) -> None
-```
-Check compatibility of a route pattern and a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-- __view__: a function-based or class-based view.
-- __methods__: an upper-cased list of HTTP methods.
-
-__Raises__
-
-- `RouteDeclarationError `:
-    - If one of the `methods` is not a member of `ALL_HTTP_METHODS`.
-    - If `pattern` does not have a leading slash.
-    - If the `view` does not accept at least two positional arguments
-    (for the request and the response objects).
-    - If route parameters declared in the pattern do not match those
-    used on the view, e.g. a parameter is declared in the pattern, but
-    not used in the view or vice-versa.
-
-__See Also__
-
-- `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
-
 ## RouteMatch
 ```python
 RouteMatch(self, /, *args, **kwargs)
@@ -105,7 +60,7 @@ Router(self)
 A collection of routes.
 ### add_route
 ```python
-Router.add_route(self, view: Union[Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], bocadillo.views.ClassBasedView], pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None) -> bocadillo.routing.Route
+Router.add_route(self, view_cls: bocadillo.views.ViewMeta, pattern: str, *, name: str = None, namespace: str = None) -> bocadillo.routing.Route
 ```
 Build and register a route.
 
@@ -113,10 +68,6 @@ __Parameters__
 
 - __view__: a function-based or class-based view.
 - __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
 - __name (str)__:
     An optional name for the route.
     If a route already exists for this name, it is replaced.
@@ -190,7 +141,7 @@ RoutingMixin(self)
 Provide routing capabilities to a class.
 ### route
 ```python
-RoutingMixin.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+RoutingMixin.route(self, pattern: str, *, name: str = None, namespace: str = None)
 ```
 Register a new route by decorating a view.
 
@@ -218,4 +169,27 @@ __Returns__
 __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
+
+## check_route
+```python
+check_route(pattern: str, view: bocadillo.views.View) -> None
+```
+Check compatibility of a route pattern and a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __view (View)__: a `View` object.
+
+__Raises__
+
+- `RouteDeclarationError `:
+    - If `pattern` does not have a leading slash.
+    - If route parameters declared in the pattern do not match those
+    of any view handler, e.g. a parameter is declared in the pattern, but
+    not used in the handler or vice-versa.
+
+__See Also__
+
+- `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
 

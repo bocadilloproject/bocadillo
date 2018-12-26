@@ -2,6 +2,7 @@ import pytest
 
 from bocadillo import API
 from bocadillo.constants import ALL_HTTP_METHODS
+from bocadillo.views import view
 
 
 def test_can_register_class_based_view(api: API):

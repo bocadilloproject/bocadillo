@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from typing import Callable, Dict, Coroutine, Union, Type
+from typing import Callable, Dict, Union, Awaitable
 
 from bocadillo.routing import Route
 from bocadillo.views import Handler, get_handlers, ViewMeta
@@ -8,7 +8,7 @@ from .compat import call_async
 from .request import Request
 from .response import Response
 
-HookFunction = Callable[[Request, Response, dict], Coroutine]
+HookFunction = Callable[[Request, Response, dict], Awaitable[None]]
 HookCollection = Dict[Route, HookFunction]
 
 BEFORE = "before"
@@ -64,7 +64,7 @@ def _with_hook(hook_type: str, func: HookFunction, handler: Handler):
         if len(args) == 2:
             req, res = args
         else:
-            # method with a `self` argument
+            # method that has `self` as a first parameter
             req, res = args[1:3]
         assert isinstance(req, Request)
         assert isinstance(res, Response)
@@ -73,17 +73,17 @@ def _with_hook(hook_type: str, func: HookFunction, handler: Handler):
     if hook_type == BEFORE:
 
         @wraps(handler)
-        async def with_hook(*args, **kw):
-            await call_hook(args, kw)
-            await call_async(handler, *args, **kw)
+        async def with_hook(*args, **kwargs):
+            await call_hook(args, kwargs)
+            await call_async(handler, *args, **kwargs)
 
     else:
         assert hook_type == AFTER
 
         @wraps(handler)
-        async def with_hook(*args, **kw):
-            await call_async(handler, *args, **kw)
-            await call_hook(args, kw)
+        async def with_hook(*args, **kwargs):
+            await call_async(handler, *args, **kwargs)
+            await call_hook(args, kwargs)
 
     return with_hook
 
