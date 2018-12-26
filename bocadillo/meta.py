@@ -1,8 +1,8 @@
 """Meta classes."""
 
 
-class APIMeta(type):
-    """Metaclass for API."""
+class DocsMeta(type):
+    """Metaclass that provides a few fixes related to Pydoc-Markdown."""
 
     def __new__(mcs, name, bases, namespace):
         mcs._prepare_for_docs(bases, namespace)

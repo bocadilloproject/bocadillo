@@ -1,13 +1,16 @@
 from typing import List, Sequence
 
+from bocadillo.meta import DocsMeta
 from .hooks import HooksMixin, HooksBase, HookFunction
 from .templates import TemplatesMixin
 
 
 class RecipeRoute:
-    """A mock route to be stored in a recipe.
+    """A specific kind of route for recipes.
 
-    The route can be registered later on an API object.
+    The route will be registered an actual API object during `recipe.apply()`.
+
+    Mostly an implementation detail.
     """
 
     def __init__(self, pattern, view, *args, **kwargs):
@@ -45,7 +48,10 @@ class RecipeRoute:
 
 
 class RecipeHooks(HooksBase):
-    """A hooks manager for recipes that stores hooks on the routes."""
+    """A specific hooks manager for recipes.
+
+    Mostly an implementation detail.
+    """
 
     __route_class__ = RecipeRoute
 
@@ -56,11 +62,21 @@ class RecipeHooks(HooksBase):
 
 
 class RecipeBase:
+    """Definition of the recipe interface."""
+
     def apply(self, api, root: str = ""):
+        """Apply the recipe to an API object.
+
+        Should be implemented by subclasses.
+
+        # Parameters
+        api (API): an API object.
+        root (str): a root URL path itself prefixed to the recipe's `prefix`.
+        """
         raise NotImplementedError
 
 
-class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
+class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
@@ -86,6 +102,15 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         self._routes: List[RecipeRoute] = []
 
     def route(self, *args, **kwargs):
+        """Register a route on the recipe.
+
+        Accepts the same arguments as `API.route()`, except `namespace` which
+        is given the value of the recipe's `name`.
+
+        # See Also
+        - [API.route()](./api.md#route)
+        """
+
         def register(view):
             route = RecipeRoute(
                 *args, view=view, namespace=self._name, **kwargs
@@ -96,6 +121,16 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         return register
 
     def apply(self, api, root: str = ""):
+        """Apply the recipe to an API object.
+
+        This will:
+
+        - Mount registered routes onto the `api`.
+        - Update the templates directory to that of `api`.
+
+        # See Also
+        - [RecipeBase.apply()](#apply)
+        """
         # Apply routes on the API
         for route in self._routes:
             route.register(api, root + self._prefix)
@@ -106,16 +141,34 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
-        return RecipeBook(recipes, prefix=prefix)
+        """Build a book of recipes.
+
+        Shortcut for `RecipeBook(recipes, prefix)`.
+        """
+        return RecipeBook(recipes, prefix)
 
 
 class RecipeBook(RecipeBase):
-    """A composition of multiple recipes."""
+    """A composition of multiple recipes.
+
+    # Parameters
+    recipes (list): a list of `Recipe` objects.
+    prefix (str):
+        A prefix that will be prepended to all of the recipes' own prefixes.
+    """
 
     def __init__(self, recipes: Sequence[Recipe], prefix: str):
-        self._recipes = recipes
-        self._prefix = prefix
+        self.recipes = recipes
+        self.prefix = prefix
 
     def apply(self, api, root: str = ""):
-        for recipe in self._recipes:
-            recipe.apply(api, self._prefix)
+        """Apply the recipe book to an API object.
+
+        This is equivalent to calling `recipe.apply(api, root=root + self.prefix)`
+        for each of the book's recipes.
+
+        # See Also
+        - [RecipeBase.apply()](#apply)
+        """
+        for recipe in self.recipes:
+            recipe.apply(api, root=root + self.prefix)

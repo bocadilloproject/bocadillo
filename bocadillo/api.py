@@ -17,7 +17,7 @@ from .events import EventsMixin
 from .exceptions import HTTPError
 from .hooks import HooksMixin
 from .media import Media
-from .meta import APIMeta
+from .meta import DocsMeta
 from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
@@ -29,7 +29,7 @@ from .types import ASGIApp, ASGIAppInstance, WSGIApp
 
 
 class API(
-    TemplatesMixin, RoutingMixin, HooksMixin, EventsMixin, metaclass=APIMeta
+    TemplatesMixin, RoutingMixin, HooksMixin, EventsMixin, metaclass=DocsMeta
 ):
     """The all-mighty API class.
 

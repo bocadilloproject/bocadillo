@@ -26,6 +26,11 @@ generate:
 - middleware.md:
   - bocadillo.middleware:
       - bocadillo.middleware.Middleware+
+- recipes.md:
+  - bocadillo.recipes:
+      - bocadillo.recipes.RecipeBase+
+      - bocadillo.recipes.Recipe+
+      - bocadillo.recipes.RecipeBook+
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
