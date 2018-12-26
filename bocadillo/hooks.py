@@ -1,11 +1,11 @@
-from collections import defaultdict
 from functools import wraps
-from typing import Callable, Union, Dict, Coroutine
+from typing import Callable, Dict, Coroutine
 
-from .compat import call_async, asynccontextmanager
+from bocadillo.routing import Route
+from bocadillo.views import Handler
+from .compat import call_async
 from .request import Request
 from .response import Response
-from bocadillo.routing import Route
 
 HookFunction = Callable[[Request, Response, dict], Coroutine]
 HookCollection = Dict[Route, HookFunction]
@@ -18,151 +18,57 @@ async def empty_hook(req: Request, res: Response, params: dict):
     pass
 
 
-class HooksBase:
-    """Base class for hooks managers.
+class Hooks:
+    """Hooks manager."""
 
-    When subclassing:
-
-    - `__route_class__` should be defined.
-    - `store_hook()` should be implemented.
-    """
-
-    __route_class__ = None
-
-    def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
-        """Store a hook function for a route.
-
-        The implementation must be defined by subclasses.
+    def before(self, hook: HookFunction, *args, **kwargs):
+        """Register a before hook on a handler.
 
         # Parameters
-
-        hook (str):
-            The name of the hook.
-        hook_function (HookFunction):
-            A hook function.
-        route (Route):
-            A route object.
+        hook (callable): a hook function.
         """
-        raise NotImplementedError
+        return self._hook_decorator(BEFORE, hook, *args, **kwargs)
 
-    def before(self, hook_function: HookFunction, *args, **kwargs):
-        return self._hook_decorator(BEFORE, hook_function, *args, **kwargs)
+    def after(self, hook: HookFunction, *args, **kwargs):
+        """Register an after hook on a handler.
 
-    def after(self, hook_function: HookFunction, *args, **kwargs):
-        return self._hook_decorator(AFTER, hook_function, *args, **kwargs)
+        # Parameters
+        hook (callable): a hook function.
+        """
+        return self._hook_decorator(AFTER, hook, *args, **kwargs)
 
     def _hook_decorator(
-        self, hook: str, hook_function: HookFunction, *args, **kwargs
+        self, hook_type: str, hook: HookFunction, *args, **kwargs
     ):
-        def decorator(hookable: Union[Route, Callable]):
-            """Bind the hook function to the given hookable object.
+        def decorator(handler: Handler):
+            """Bind the hook_type function to the given handler."""
 
-            Support for decorating a route or a class method enables
-            using hooks in the following contexts:
-            - On a function-based view (before @api.route()).
-            - On top of a class-based view (before @api.route()).
-            - On a class-based view method.
+            # Enclose args and kwargs
+            async def hook_func(req: Request, res: Response, params: dict):
+                await call_async(hook, req, res, params, *args, **kwargs)
 
-            Parameters
-            ----------
-            hookable : Route or (unbound) class method
-            """
-            nonlocal self, hook_function
-            hook_function = _prepare_async_hook_function(
-                hook_function, *args, **kwargs
-            )
+            if hook_type == BEFORE:
 
-            if isinstance(hookable, self.__route_class__):
-                route = hookable
-                self.store_hook(hook, hook_function, route)
-                return route
+                @wraps(handler)
+                async def with_hook(req, res, **kw):
+                    await hook_func(req, res, kw)
+                    await handler(req, res, **kw)
+
             else:
-                return _with_hook(hookable, hook, hook_function)
+                assert hook_type == AFTER
+
+                @wraps(handler)
+                async def with_hook(req, res, **kw):
+                    await handler(req, res, **kw)
+                    await hook_func(req, res, kw)
+
+            return with_hook
 
         return decorator
 
 
-class Hooks(HooksBase):
-    """A concrete hooks manager that stores hooks by route."""
+# Pre-bind to module
+hooks = Hooks()
+before = hooks.before
 
-    __route_class__ = Route
-
-    def __init__(self):
-        self._hooks: Dict[str, HookCollection] = {
-            BEFORE: defaultdict(lambda: empty_hook),
-            AFTER: defaultdict(lambda: empty_hook),
-        }
-
-    def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
-        self._hooks[hook][route] = hook_function
-
-    @asynccontextmanager
-    async def on(self, route: Route, req: Request, res: Response, params: dict):
-        """Execute `before` hooks on enter and `after` hooks on exit."""
-        await call_async(self._hooks[BEFORE][route], req, res, params)
-        yield
-        await call_async(self._hooks[AFTER][route], req, res, params)
-
-
-class HooksMixin:
-    """Mixin that provides hooks to application classes."""
-
-    __hooks_manager_class__ = Hooks
-
-    def __init__(self):
-        super().__init__()
-        self._hooks = self.__hooks_manager_class__()
-
-    def get_hooks(self):
-        return self._hooks
-
-    def before(self, hook_function: HookFunction, *args, **kwargs):
-        """Register a before hook on a route.
-
-        ::: tip NOTE
-        `@api.before()` should be placed  **above** `@api.route()`
-        when decorating a view.
-        :::
-
-        # Parameters
-        hook_function (callable):\
-            A synchronous or asynchronous function with the signature:
-            `(req, res, params) -> None`.
-        """
-        return self.get_hooks().before(hook_function, *args, **kwargs)
-
-    def after(self, hook_function: HookFunction, *args, **kwargs):
-        """Register an after hook on a route.
-
-        ::: tip NOTE
-        `@api.after()` should be placed **above** `@api.route()`
-        when decorating a view.
-        :::
-
-        # Parameters
-        hook_function (callable):\
-            A synchronous or asynchronous function with the signature:
-            `(req, res, params) -> None`.
-        """
-        return self.get_hooks().after(hook_function, *args, **kwargs)
-
-
-def _prepare_async_hook_function(
-    full_hook_function, *args, **kwargs
-) -> HookFunction:
-    async def hook_function(req: Request, res: Response, params: dict):
-        await call_async(full_hook_function, req, res, params, *args, **kwargs)
-
-    return hook_function
-
-
-def _with_hook(view: Callable, hook: str, hook_function: HookFunction):
-    @wraps(view)
-    async def with_hook(self, req, res, **kw):
-        if hook == BEFORE:
-            await hook_function(req, res, kw)
-        await call_async(view, self, req, res, **kw)
-        if hook == AFTER:
-            await hook_function(req, res, kw)
-
-    return with_hook
+after = hooks.after

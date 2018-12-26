@@ -1,48 +1,33 @@
 import inspect
 from functools import partial
-from http import HTTPStatus
 from string import Formatter
-from typing import List, Optional, NamedTuple, Dict
+from typing import Optional, NamedTuple, Dict
 
 from parse import parse
 
 from .compat import camel_to_snake
-from .constants import ALL_HTTP_METHODS
 from .exceptions import HTTPError, RouteDeclarationError
 from .request import Request
 from .response import Response
-from .views import (
-    View,
-    get_view_name,
-    get_declared_method_views,
-    AsyncView,
-    create_async_view,
-)
+from .views import View, ViewMeta, Handler, get_handlers
 
 
 class Route:
     """Represents the binding of an URL pattern to a view.
 
-    As a framework user, you will not need to create routes directly. This
-    should be done via `@api.route()`.
+    As a framework user, you will not need to create routes directly.
 
     # Parameters
     pattern (str): an URL pattern. F-string syntax is supported for parameters.
-    view (coroutine function):
-        A view given as a coroutine function. Non-async views (synchronous,
-        class-based) will have to have been converted beforehand.
-    methods (list of str):
-        A list of (upper-case) HTTP methods.
+    view (View):
+        A `View` object.
     name (str):
         The route's name.
     """
 
-    def __init__(
-        self, pattern: str, view: AsyncView, methods: List[str], name: str
-    ):
+    def __init__(self, pattern: str, view: View, name: str):
         self._pattern = pattern
         self._view = view
-        self._methods = methods
         self._name = name
 
     def url(self, **kwargs) -> str:
@@ -71,108 +56,14 @@ class Route:
             return result.named
         return None
 
-    def raise_for_method(self, req: Request):
-        """Fail if the requested method is not supported by the route.
-
-        # Parameters
-        req (Request): a `Request` object.
-
-        # Raises
-        HTTPError(405): if `req.method` is not one of `methods`.
-        """
-        if req.method not in self._methods:
-            raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
-
     async def __call__(self, req: Request, res: Response, **kwargs) -> None:
-        await self._view(req, res, **kwargs)
-
-
-def check_route(pattern: str, view: View, methods: List[str]) -> None:
-    """Check compatibility of a route pattern and a view.
-
-    # Parameters
-    pattern (str): an URL pattern.
-    view: a function-based or class-based view.
-    methods: an upper-cased list of HTTP methods.
-
-    # Raises
-    RouteDeclarationError :
-        - If one of the `methods` is not a member of `ALL_HTTP_METHODS`.
-        - If `pattern` does not have a leading slash.
-        - If the `view` does not accept at least two positional arguments
-        (for the request and the response objects).
-        - If route parameters declared in the pattern do not match those
-        used on the view, e.g. a parameter is declared in the pattern, but
-        not used in the view or vice-versa.
-
-    # See Also
-    - `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
-    """
-    view_name = get_view_name(view)
-
-    for method in methods:
-        if method not in ALL_HTTP_METHODS:
-            raise RouteDeclarationError(
-                f"Route '{view_name}' accepts method '{method}' "
-                "but it is not one of the valid HTTP methods: "
-                f"{', '.join(ALL_HTTP_METHODS)}"
-            )
-
-    if not pattern.startswith("/"):
-        raise RouteDeclarationError(
-            f"Route pattern '{pattern}' on view '{view_name}' "
-            f"must start with '/' to avoid ambiguities."
-        )
-
-    _check_route_parameters(pattern, view)
-
-
-def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
-    """Verify that a view accepts parameters defined in a route pattern.
-
-    # Raises
-    RouteDeclarationError :
-        If a route parameter is not one of the view's arguments,
-        of a view argument was not declared in the route pattern.
-    """
-
-    parsed_format = Formatter().parse(pattern)
-    route_parameters: set = {name for _, name, _, _ in parsed_format if name}
-
-    if callable(view):
-        view_name = get_view_name(view=view, base=_base)
-        view_parameters = dict(inspect.signature(view).parameters)
-
-        # Necessary if view is from a class-based view.
-        view_parameters.pop("self", None)
-
-        for route_param in route_parameters:
-            if route_param not in view_parameters:
-                raise RouteDeclarationError(
-                    f"Parameter '{route_param}' was declared on route "
-                    f"'{view_name}()' and should be one of "
-                    "its arguments."
-                )
-
-        if len(view_parameters) < 2:
-            raise RouteDeclarationError(
-                f"View '{view_name}' must have at least two "
-                "parameters (request and response)."
-            )
-
-        for i, view_param in enumerate(view_parameters):
-            is_req_or_res = i < 2
-            if is_req_or_res:
-                continue
-            if view_param not in route_parameters:
-                raise RouteDeclarationError(
-                    f"Parameter '{view_param}' is expected by route "
-                    f"'{view_name}' but was not declared in the "
-                    "route pattern."
-                )
-    else:
-        for method, method_view in get_declared_method_views(view):
-            _check_route_parameters(pattern, method_view, _base=view)
+        try:
+            handler: Handler = getattr(self._view, req.method.lower())
+        except AttributeError as e:
+            print(e)
+            raise HTTPError(405) from e
+        else:
+            await handler(req, res, **kwargs)
 
 
 class RouteMatch(NamedTuple):
@@ -190,10 +81,9 @@ class Router:
 
     def add_route(
         self,
-        view: View,
+        view_cls: ViewMeta,
         pattern: str,
         *,
-        methods: List[str] = None,
         name: str = None,
         namespace: str = None,
     ) -> Route:
@@ -202,10 +92,6 @@ class Router:
         # Parameters
         view: a function-based or class-based view.
         pattern (str): an URL pattern.
-        methods (list of str):
-            An optional list of HTTP methods.
-            Defaults to `["get", "head"]`.
-            Ignored for class-based views.
         name (str):
             An optional name for the route.
             If a route already exists for this name, it is replaced.
@@ -224,37 +110,18 @@ class Router:
         # See Also
         - [check_route](#check-route) for the route validation algorithm.
         """
-        if methods is None:
-            methods = ["get", "head"]
-
-        methods = [method.upper() for method in methods]
-
         if name is None:
-            if inspect.isclass(view):
-                name = camel_to_snake(view.__name__)
-            else:
-                name = view.__name__
-
+            name = camel_to_snake(view_cls.__name__)
         if namespace is not None:
             name = namespace + ":" + name
 
-        _ensure_head_if_get(view, methods)
+        if not isinstance(view_cls, ViewMeta):
+            view_cls = ViewMeta.from_view_like(view_cls())
+        view = view_cls()
 
-        if inspect.isclass(view):
-            view = view()
-            if hasattr(view, "handle"):
-                methods = ALL_HTTP_METHODS
-            else:
-                methods = [
-                    method
-                    for method in ALL_HTTP_METHODS
-                    if method.lower() in dir(view)
-                ]
+        check_route(pattern, view)
 
-        check_route(pattern, view, methods)
-        view = create_async_view(view)
-
-        route = Route(pattern=pattern, view=view, methods=methods, name=name)
+        route = Route(pattern=pattern, view=view, name=name)
         self._routes[name] = route
 
         return route
@@ -300,7 +167,7 @@ class Router:
         try:
             return self._routes[name]
         except KeyError as e:
-            raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
+            raise HTTPError(404) from e
 
 
 class RoutingMixin:
@@ -310,14 +177,7 @@ class RoutingMixin:
         super().__init__()
         self._router = Router()
 
-    def route(
-        self,
-        pattern: str,
-        *,
-        methods: List[str] = None,
-        name: str = None,
-        namespace: str = None,
-    ):
+    def route(self, pattern: str, *, name: str = None, namespace: str = None):
         """Register a new route by decorating a view.
 
         This is an alias to the underlying router's `route()` decorator.
@@ -326,7 +186,7 @@ class RoutingMixin:
         - [Router.route](/api/routing.md#route-3)
         """
         return self._router.route(
-            pattern=pattern, methods=methods, name=name, namespace=namespace
+            pattern=pattern, name=name, namespace=namespace
         )
 
     def url_for(self, name: str, **kwargs) -> str:
@@ -346,10 +206,51 @@ class RoutingMixin:
         return route.url(**kwargs)
 
 
-def _ensure_head_if_get(view: View, methods: List[str]) -> None:
-    if inspect.isclass(view):
-        if hasattr(view, "get") and not hasattr(view, "head"):
-            view.head = view.get
-    else:
-        if "GET" in methods and "HEAD" not in methods:
-            methods.append("HEAD")
+def check_route(pattern: str, view: View) -> None:
+    """Check compatibility of a route pattern and a view.
+
+    # Parameters
+    pattern (str): an URL pattern.
+    view (View): a `View` object.
+
+    # Raises
+    RouteDeclarationError :
+        - If `pattern` does not have a leading slash.
+        - If route parameters declared in the pattern do not match those
+        of any view handler, e.g. a parameter is declared in the pattern, but
+        not used in the handler or vice-versa.
+
+    # See Also
+    - `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
+    """
+    view_name = view.__class__.__name__
+
+    if not pattern.startswith("/"):
+        raise RouteDeclarationError(
+            f"Route pattern '{pattern}' on view '{view_name}' "
+            f"must start with '/' to avoid ambiguities."
+        )
+
+    parsed_format = Formatter().parse(pattern)
+    route_parameters: set = {name for _, name, _, _ in parsed_format if name}
+
+    for method, handler in get_handlers(view).items():
+        handler_parameters = dict(inspect.signature(handler).parameters)
+        handler_parameters.pop("self", None)  # paranoia check
+        handler_parameters = list(handler_parameters)
+
+        for route_param in route_parameters:
+            if route_param not in handler_parameters:
+                raise RouteDeclarationError(
+                    f"Route pattern '{pattern}' declares the route parameter "
+                    f"'{route_param}' and should be a parameter of "
+                    f"'{handler.__qualname__}'."
+                )
+
+        for handler_param in handler_parameters[2:]:
+            if handler_param not in route_parameters:
+                raise RouteDeclarationError(
+                    f"Handler '{handler.__qualname__}' expects parameter "
+                    f"'{handler_param}' but it was not declared in the route "
+                    f"pattern '{pattern}'"
+                )
