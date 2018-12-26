@@ -19,7 +19,7 @@ def get_templates_environment(template_dirs: List[str]):
 
 
 class TemplatesMixin:
-    """Provide templating capabilities to a class."""
+    """Provide templating capabilities to an application class."""
 
     def __init__(self, templates_dir: str = None, **kwargs):
         super().__init__(**kwargs)
