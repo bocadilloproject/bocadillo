@@ -248,7 +248,7 @@ class API(
         name: str = None,
         url: str = None,
         permanent: bool = False,
-        **kwargs
+        **kwargs,
     ):
         """Redirect to another route.
 
@@ -395,6 +395,7 @@ class API(
         debug: bool = False,
         log_level: str = "info",
         _run: Callable = run,
+        **kwargs,
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
@@ -439,10 +440,11 @@ class API(
                     "port": port,
                     "log_level": log_level,
                     "debug": debug,
+                    **kwargs,
                 },
             )
         else:
-            _run(self, host=host, port=port)
+            _run(self, host=host, port=port, **kwargs)
 
     def __call__(self, scope: dict) -> ASGIAppInstance:
         return self.find_app(scope)
