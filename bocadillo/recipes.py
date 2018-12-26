@@ -47,7 +47,7 @@ class RecipeRoute:
 class RecipeHooks(HooksBase):
     """A hooks manager for recipes that stores hooks on the routes."""
 
-    route_class = RecipeRoute
+    __route_class__ = RecipeRoute
 
     def store_hook(
         self, hook: str, hook_function: HookFunction, route: RecipeRoute
@@ -74,7 +74,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase):
         See #API.
     """
 
-    _hooks_manager_class = RecipeHooks
+    __hooks_manager_class__ = RecipeHooks
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(**kwargs)

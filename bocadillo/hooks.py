@@ -23,11 +23,11 @@ class HooksBase:
 
     When subclassing:
 
-    - `route_class` should be defined.
+    - `__route_class__` should be defined.
     - `store_hook()` should be implemented.
     """
 
-    route_class = None
+    __route_class__ = None
 
     def store_hook(self, hook: str, hook_function: HookFunction, route: Route):
         """Store a hook function for a route.
@@ -72,7 +72,7 @@ class HooksBase:
                 hook_function, *args, **kwargs
             )
 
-            if isinstance(hookable, self.route_class):
+            if isinstance(hookable, self.__route_class__):
                 route = hookable
                 self.store_hook(hook, hook_function, route)
                 return route
@@ -85,7 +85,7 @@ class HooksBase:
 class Hooks(HooksBase):
     """A concrete hooks manager that stores hooks by route."""
 
-    route_class = Route
+    __route_class__ = Route
 
     def __init__(self):
         self._hooks: Dict[str, HookCollection] = {
@@ -97,21 +97,21 @@ class Hooks(HooksBase):
         self._hooks[hook][route] = hook_function
 
     @asynccontextmanager
-    async def on(self, route, request, response, params):
+    async def on(self, route: Route, req: Request, res: Response, params: dict):
         """Execute `before` hooks on enter and `after` hooks on exit."""
-        await call_async(self._hooks[BEFORE][route], request, response, params)
+        await call_async(self._hooks[BEFORE][route], req, res, params)
         yield
-        await call_async(self._hooks[AFTER][route], request, response, params)
+        await call_async(self._hooks[AFTER][route], req, res, params)
 
 
 class HooksMixin:
     """Mixin that provides hooks to application classes."""
 
-    _hooks_manager_class = Hooks
+    __hooks_manager_class__ = Hooks
 
     def __init__(self):
         super().__init__()
-        self._hooks = self._hooks_manager_class()
+        self._hooks = self.__hooks_manager_class__()
 
     def get_hooks(self):
         return self._hooks

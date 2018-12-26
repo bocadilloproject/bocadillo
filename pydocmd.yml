@@ -14,6 +14,8 @@ generate:
   - bocadillo.events++
 - exceptions.md:
   - bocadillo.exceptions++
+- hooks.md:
+  - bocadillo.hooks++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

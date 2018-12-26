@@ -40,12 +40,3 @@ __Parameters__
 - __available (list of str)__:
     a list of supported media types.
 
-## TemplateNotFound
-```python
-TemplateNotFound(self, name, message=None)
-```
-Raised when loading a non-existing template.
-
-This is an alias to
-[jinja2.TemplateNotFound](http://jinja.pocoo.org/docs/2.10/api/#jinja2.TemplateNotFound).
-
