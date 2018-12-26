@@ -1,14 +1,4 @@
-const fs = require('fs');
-
-const listDir = (dir, children) => {
-    if (children === undefined) {
-        // NOTE: children will be sorted in alphabetical order.
-        children = fs.readdirSync(`docs/${dir}`)
-            .filter(file => file.endsWith('.md'))
-            .filter(file => file !== 'README.md');
-    }
-    return children.map(file => `/${dir}/${file}`);
-};
+const listDir = require('./utils').listDir;
 
 module.exports = {
     base: '/',
@@ -144,9 +134,13 @@ module.exports = {
             ],
             '/api/': [
                 {
-                    title: 'API Reference',
+                    title: 'Modules',
                     collapsable: false,
-                    children: listDir('api'),
+                    children: listDir('api').map(child => {
+                        const filename = child.split('/')[2];
+                        const displayName = filename.replace('.md', '');
+                        return [child, displayName];
+                    }),
                 },
             ],
         },
