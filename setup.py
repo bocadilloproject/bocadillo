@@ -7,6 +7,9 @@ description = "A modern Python web framework filled with asynchronous salsa."
 with open("README.md", "r") as readme:
     long_description = readme.read()
 
+GITHUB = "https://github.com/bocadilloproject/bocadillo"
+DOCS = "https://bocadilloproject.github.io"
+CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 setuptools.setup(
     name="bocadillo",
@@ -26,7 +29,12 @@ setuptools.setup(
         "parse",
         "async_generator",
     ],
-    url="https://github.com/bocadilloproject/bocadillo",
+    url=DOCS,
+    project_urls={
+        "Source": GITHUB,
+        "Documentation": DOCS,
+        "Changelog": CHANGELOG,
+    },
     license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
