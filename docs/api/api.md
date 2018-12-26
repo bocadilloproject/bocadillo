@@ -247,47 +247,6 @@ __Example__
 ...     pass  # perhaps set res.content and res.status_code
 ```
 
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__:
-    An URL pattern given as a format string.
-- __methods (list of str)__:
-    HTTP methods supported by this route.
-    Defaults to all HTTP methods.
-    Ignored for class-based views.
-- __name (str)__:
-    A name for this route, which must be unique. Defaults to
-    a name based on the view.
-- __namespace (str)__:
-    A namespace for this route (optional).
-    If given, will be prefixed to the `name` and separated by a colon,
-- __e.g. `"blog__:index"`.
-
-__Raises__
-
-- `RouteDeclarationError`:
-    If any method is not a valid HTTP method,
-    if `pattern` defines a parameter that the view does not accept,
-    if the view uses a parameter not defined in `pattern`,
-    if the `pattern` does not start with `/`,
-    or if the view did not accept the `req` and `res` parameters.
-
-__Example__
-
-```python
->>> import bocadillo
->>> api = bocadillo.API()
->>> @api.route("/greet/{person}")
-... def greet(req, res, person: str):
-...     pass
-```
-
 ### redirect
 ```python
 API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
@@ -311,25 +270,6 @@ __Raises__
 __See Also__
 
 - [Redirecting](../topics/request-handling/redirecting.md)
-
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### add_middleware
 ```python
@@ -383,6 +323,18 @@ __See Also__
 
 - [add_asgi_middleware](#add-asgi-middleware)
 
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+This is an alias to the underlying router's `route()` decorator.
+
+__See Also__
+
+- [Router.route](/api/routing.md#route-3)
+
 ### dispatch
 ```python
 API.dispatch(self, req: bocadillo.request.Request) -> bocadillo.response.Response
@@ -400,6 +352,25 @@ __Returns__
 __See Also__
 
 - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### get_response
 ```python
@@ -472,7 +443,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10bfb7620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10a55b620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
