@@ -1,8 +1,6 @@
 from http import HTTPStatus
 from typing import Union, Any, List
 
-from jinja2.exceptions import TemplateNotFound as _TemplateNotFound
-
 
 class HTTPError(Exception):
     """Raised when an HTTP error occurs.
@@ -66,11 +64,3 @@ class UnsupportedMediaType(Exception):
 
     def __str__(self):
         return f'{self._media_type} (available: {", ".join(self._available)})'
-
-
-class TemplateNotFound(_TemplateNotFound):
-    """Raised when loading a non-existing template.
-
-    This is an alias to
-    [jinja2.TemplateNotFound](http://jinja.pocoo.org/docs/2.10/api/#jinja2.TemplateNotFound).
-    """

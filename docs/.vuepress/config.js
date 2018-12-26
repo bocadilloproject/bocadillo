@@ -40,6 +40,7 @@ module.exports = {
         docsBranch: 'release/docs',
         editLinks: true,
         editLinkText: 'Edit this page on GitHub',
+        sidebarDepth: 2,
         nav: [
             {
                 text: 'Home',

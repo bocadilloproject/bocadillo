@@ -7,8 +7,25 @@ from .types import ASGIApp, ASGIAppInstance
 EventHandler = Callable[[], None]
 
 
+def lifespan_app(scope: dict) -> ASGIAppInstance:
+    # Strict implementation of the ASGI lifespan spec.
+    # This is required because the Starlette `LifespanMiddleware`
+    # does not send the `complete` responses.
+
+    async def asgi(receive, send):
+        message = await receive()
+        assert message["type"] == "lifespan.startup"
+        await send({"type": "lifespan.startup.complete"})
+
+        message = await receive()
+        assert message["type"] == "lifespan.shutdown"
+        await send({"type": "lifespan.shutdown.complete"})
+
+    return asgi
+
+
 class EventsMixin:
-    """Provide server event handling capabilities."""
+    """Allow to register event handlers called during the ASGI lifecycle."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -19,11 +36,19 @@ class EventsMixin:
 
         # Parameters
         event (str):
-            Either "startup" (when the server boots) or "shutdown" (when the
-            server stops).
+            Either `"startup"` (when the server boots) or `"shutdown"`
+            (when the server stops).
         handler (callback, optional):
             The event handler. If not given, this should be used as a
             decorator.
+
+        # Example
+
+        ```python
+        @api.on("startup")
+        async def init_app():
+            pass
+        ```
         """
 
         if handler is not None:
@@ -47,17 +72,18 @@ class EventsMixin:
         return middleware
 
     def handle_lifespan(self, scope: dict) -> ASGIAppInstance:
-        # Strict implementation of the ASGI lifespan spec.
-        # This is required because the Starlette `LifespanMiddleware`
-        # does not send the `complete` responses.
+        """Create an ASGI application instance to handle `lifespan` messages.
 
-        async def app(receive, send):
-            message = await receive()
-            assert message["type"] == "lifespan.startup"
-            await send({"type": "lifespan.startup.complete"})
+        Registered event handlers will be called as appropriate.
 
-            message = await receive()
-            assert message["type"] == "lifespan.shutdown"
-            await send({"type": "lifespan.shutdown.complete"})
+        # Parameters
+        scope (dict): an ASGI connection scope.
 
-        return self._get_lifespan_middleware(lambda s: app)(scope)
+        # Returns
+        app (ASGIAppInstance): an ASGI application instance.
+
+        # See Also
+        - [on](#on)
+        - [Lifespan protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
+        """
+        return self._get_lifespan_middleware(lifespan_app)(scope)

@@ -128,11 +128,20 @@ Register an event handler.
 __Parameters__
 
 - __event (str)__:
-    Either "startup" (when the server boots) or "shutdown" (when the
-    server stops).
+    Either `"startup"` (when the server boots) or `"shutdown"`
+    (when the server stops).
 - __handler (callback, optional)__:
     The event handler. If not given, this should be used as a
     decorator.
+
+__Example__
+
+
+```python
+@api.on("startup")
+async def init_app():
+    pass
+```
 
 ### url_for
 ```python
@@ -152,6 +161,27 @@ __Returns__
 __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
+
+### handle_lifespan
+```python
+API.handle_lifespan(self, scope: dict) -> Callable[[Callable, Callable], Coroutine]
+```
+Create an ASGI application instance to handle `lifespan` messages.
+
+Registered event handlers will be called as appropriate.
+
+__Parameters__
+
+- __scope (dict)__: an ASGI connection scope.
+
+__Returns__
+
+`app (ASGIAppInstance)`: an ASGI application instance.
+
+__See Also__
+
+- [on](#on)
+- [Lifespan protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
 
 ### template
 ```python
@@ -442,7 +472,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10a7b5620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x102f84620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

@@ -1,6 +1,7 @@
 import pytest
+from jinja2.exceptions import TemplateNotFound
+
 from bocadillo import API
-from bocadillo.exceptions import TemplateNotFound
 from tests.conftest import TemplateWrapper
 
 
