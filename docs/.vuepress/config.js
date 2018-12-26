@@ -137,6 +137,7 @@ module.exports = {
                         '/api/api',
                         '/api/cli',
                         '/api/compat',
+                        '/api/constants',
                     ],
                 },
             ],

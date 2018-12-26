@@ -13,7 +13,7 @@ __Parameters__
     or run in the thread pool (if a regular function).
 - __sync (bool)__:
     A hint as to whether `func` is synchronous. If not given, it is
-    inferred by calling `asyncio.iscoroutinefunction(func)`.
+    inferred as `asyncio.iscoroutinefunction(func)`.
 
 __See Also__
 

@@ -1,19 +1,18 @@
-site_name: "Bocadillo API Reference"
+site_name: ""  # Irrelevant to us.
 
 generate:
 - api.md:
   - bocadillo.api:
-      - bocadillo.api.API+
+    - bocadillo.api.API+
 - cli.md:
   - bocadillo.cli+
 - compat.md:
   - bocadillo.compat+
 
-pages:
-- bocadillo.api: api.md
-- bocadillo.cli: cli.md
-- bocadillo.compat: compat.md
+# Required by Pydoc-Markdown, but irrelevant to us.
+pages: []
 
 gens_dir: ./docs/api
 
+# Render headers are Markdown tags rather than HTML <hX>
 headers: markdown
