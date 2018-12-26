@@ -13,7 +13,7 @@ When subclassing:
 
 ### store_hook
 ```python
-HooksBase.store_hook(self, hook: str, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], route: bocadillo.routing.route.Route)
+HooksBase.store_hook(self, hook: str, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], route: bocadillo.routing.route.Route)
 ```
 Store a hook function for a route.
 
@@ -36,7 +36,7 @@ Hooks(self)
 A concrete hooks manager that stores hooks by route.
 ### on
 ```python
-Hooks.on(self, route: bocadillo.routing.route.Route, req: starlette.requests.Request, res: bocadillo.response.Response, params: dict)
+Hooks.on(self, route: bocadillo.routing.route.Route, req: bocadillo.request.Request, res: bocadillo.response.Response, params: dict)
 ```
 Execute `before` hooks on enter and `after` hooks on exit.
 ## HooksMixin
@@ -46,7 +46,7 @@ HooksMixin(self)
 Mixin that provides hooks to application classes.
 ### before
 ```python
-HooksMixin.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+HooksMixin.before(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
 Register a before hook on a route.
 
@@ -62,7 +62,7 @@ __Parameters__
 
 ### after
 ```python
-HooksMixin.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+HooksMixin.after(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
 Register an after hook on a route.
 

@@ -2,7 +2,7 @@
 Built-in error handlers.
 ## error_to_html
 ```python
-error_to_html(req: starlette.requests.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
+error_to_html(req: bocadillo.request.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
 ```
 Convert an exception to an HTML response.
 
@@ -19,7 +19,7 @@ __Example__
 
 ## error_to_media
 ```python
-error_to_media(req: starlette.requests.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
+error_to_media(req: bocadillo.request.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
 ```
 Convert an exception to a media response.
 
@@ -42,7 +42,7 @@ __Example__
 
 ## error_to_text
 ```python
-error_to_text(req: starlette.requests.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
+error_to_text(req: bocadillo.request.Request, res: bocadillo.response.Response, exc: bocadillo.exceptions.HTTPError)
 ```
 Convert an exception to a plain text response.
 

@@ -225,7 +225,7 @@ For other parameters, see `API.template()`.
 
 ### before
 ```python
-API.before(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+API.before(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
 Register a before hook on a route.
 
@@ -241,7 +241,7 @@ __Parameters__
 
 ### after
 ```python
-API.after(self, hook_function: Callable[[starlette.requests.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+API.after(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
 ```
 Register an after hook on a route.
 
@@ -278,7 +278,7 @@ __Parameters__
 
 ### add_error_handler
 ```python
-API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[starlette.requests.Request, bocadillo.response.Response, Exception], NoneType])
+API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], NoneType])
 ```
 Register a new error handler.
 
@@ -385,7 +385,7 @@ __See Also__
 
 ### dispatch
 ```python
-API.dispatch(self, req: starlette.requests.Request) -> bocadillo.response.Response
+API.dispatch(self, req: bocadillo.request.Request) -> bocadillo.response.Response
 ```
 Dispatch a request and return a response.
 
@@ -403,7 +403,7 @@ __See Also__
 
 ### get_response
 ```python
-API.get_response(self, req: starlette.requests.Request) -> bocadillo.response.Response
+API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
 ```
 Return a response for an incoming request.
 
@@ -472,7 +472,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x108333620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x105079620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

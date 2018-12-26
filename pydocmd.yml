@@ -23,7 +23,9 @@ generate:
     - bocadillo.media.Media:
       - bocadillo.media.Media.serialize
       - bocadillo.media.Media.type
-
+- middleware.md:
+  - bocadillo.middleware:
+      - bocadillo.middleware.Middleware+
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
