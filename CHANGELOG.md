@@ -19,6 +19,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - Security guide.
 - Deployment guide.
 - `api.run()` now accepts extra keyword arguments that will be passed to `uvicorn.run()`.
+- API reference for all public functionality.
 
 ### Changed
 
