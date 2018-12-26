@@ -8,6 +8,8 @@ generate:
   - bocadillo.cli+
 - compat.md:
   - bocadillo.compat+
+- exceptions.md:
+  - bocadillo.exceptions++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

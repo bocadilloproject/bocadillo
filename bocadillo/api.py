@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from .cors import DEFAULT_CORS_CONFIG
+from bocadillo.constants import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, convert_exception_to_response
 from .events import EventsMixin
 from .exceptions import HTTPError
