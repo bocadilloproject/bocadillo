@@ -9,7 +9,7 @@ from .route import Route
 from ..compat import camel_to_snake
 from ..constants import ALL_HTTP_METHODS
 from ..exceptions import HTTPError
-from ..view import create_async_view, View
+from ..views import create_async_view, View
 
 
 class RouteMatch(NamedTuple):

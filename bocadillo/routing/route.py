@@ -4,7 +4,7 @@ from typing import Optional, List
 from parse import parse
 
 from ..exceptions import HTTPError
-from ..view import AsyncView
+from ..views import AsyncView
 
 
 class Route:

@@ -5,7 +5,7 @@ from typing import List
 
 from .exceptions import RouteDeclarationError
 from ..constants import ALL_HTTP_METHODS
-from ..view import get_declared_method_views, View, get_view_name
+from ..views import get_declared_method_views, View, get_view_name
 
 
 def check_route(pattern: str, view: View, methods: List[str]) -> None:

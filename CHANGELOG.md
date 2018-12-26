@@ -26,6 +26,7 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 - The default `HTTPError` handler now returns plaintext instead of HTML.
 - The `static` module was renamed to `staticfiles`.
 - The `types` module was renamed to `app_types`.
+- The `view` module was renamed to `views`.
 
 ### Fixed
 
