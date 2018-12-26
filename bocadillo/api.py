@@ -23,7 +23,7 @@ from .redirection import Redirection
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .static import static
+from .staticfiles import static
 from .templates import TemplatesMixin
 from .types import ASGIApp, ASGIAppInstance, WSGIApp
 

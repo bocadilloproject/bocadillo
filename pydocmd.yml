@@ -31,6 +31,8 @@ generate:
       - bocadillo.recipes.RecipeBase+
       - bocadillo.recipes.Recipe+
       - bocadillo.recipes.RecipeBook+
+- staticfiles.md:
+  - bocadillo.staticfiles+
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
