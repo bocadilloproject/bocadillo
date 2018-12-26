@@ -8,6 +8,8 @@ generate:
   - bocadillo.cli+
 - compat.md:
   - bocadillo.compat+
+- error_handlers.md:
+  - bocadillo.error_handlers+
 - exceptions.md:
   - bocadillo.exceptions++
 
