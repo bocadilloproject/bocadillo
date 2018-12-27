@@ -4,5 +4,6 @@ from .middleware import Middleware
 from .media import Media
 from .recipes import Recipe
 from .exceptions import HTTPError
+from .views import view
 
 __version__ = "0.8.0"
