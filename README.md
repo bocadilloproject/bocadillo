@@ -41,16 +41,16 @@ import bocadillo
 
 api = bocadillo.API()
 
-@api.route('/')
+@api.route("/")
 async def index(req, res):
     # Use a template from the ./templates directory 
-    res.html = await api.template('index.html')
+    res.html = await api.template("index.html")
 
-@api.route('/greet/{person}')
-def greet(req, res, person):
-    res.media = {'message': f'Hi, {person}!'}
+@api.route("/greet/{person}")
+async def greet(req, res, person):
+    res.media = {"message": f"Hi, {person}!"}
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     api.run()
 ```
 
