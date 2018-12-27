@@ -32,6 +32,7 @@ module.exports = {
         editLinks: true,
         editLinkText: 'Edit this page on GitHub',
         sidebarDepth: 2,
+        lastUpdated: true,
         serviceWorker: {updatePopup: true},
         nav: [
             {
