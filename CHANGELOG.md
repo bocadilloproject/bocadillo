@@ -16,7 +16,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Changed
 
-- `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed.
+- `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed, which allows to skip handling the `JSONDecodeError` manually.
 
 ## [v0.8.0] - 2018-12-26
 
