@@ -14,7 +14,42 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
-This release has **breaking API changes.**
+This release has **breaking API changes**. This is due to an overhaul of the view system which makes Bocadillo deal internally with class-based views only.
+
+### Added
+
+- The `@view()` decorator (available as `from bocadillo import view`) converts a function-based view into a class-based one:
+  - `view` accepts a `methods` argument for specifying which HTTP methods the view should support. Passing the `all` built-in has the same effect as as defining `handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
+  - Function-based views are automatically decorated to ensure backwards compatibility:
+
+```python
+from bocadillo import API, view
+
+api = API()
+
+# This:
+@api.route("/")
+async def index(req, res):
+    pass
+
+# Is equivalent to:
+@api.route("/")
+@view()
+async def index(req, res):
+    pass
+
+# Which is equivalent to:
+@api.route("/")
+@view(methods=["get"])
+async def index(req, res):
+    pass
+
+# Which is itself *strictly* equivalent to:
+@api.route("/")
+class Index:
+    async def get(self, req, res):
+        pass
+```
 
 ### Changed
 

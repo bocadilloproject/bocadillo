@@ -13,6 +13,7 @@ Handler = Callable[[Request, Response, Any], Awaitable[None]]
 class View:
     """View type."""
 
+    __name__: str
     get: Handler
     post: Handler
     put: Handler
@@ -22,7 +23,7 @@ class View:
     options: Handler
 
     @classmethod
-    def create(cls, name: str, docstring: str, handlers: dict) -> "View":
+    def _create(cls, name: str, docstring: str, handlers: dict) -> "View":
         view = cls()
         view.__name__ = name
         view.__doc__ = docstring
@@ -48,14 +49,14 @@ class View:
         return view
 
     @classmethod
-    def from_handler(cls, handler: Handler, methods: List[str]):
+    def from_handler(cls, handler: Handler, methods: List[str]) -> "View":
         handlers = {method: handler for method in methods}
-        return cls.create(handler.__name__, handler.__doc__, handlers)
+        return cls._create(handler.__name__, handler.__doc__, handlers)
 
     @classmethod
-    def from_obj(cls, obj: Any):
+    def from_obj(cls, obj: Any) -> "View":
         handlers = get_handlers(obj)
-        return cls.create(obj.__class__.__name__, obj.__doc__, handlers)
+        return cls._create(obj.__class__.__name__, obj.__doc__, handlers)
 
 
 def get_handlers(view: View) -> Dict[str, Handler]:
@@ -87,10 +88,8 @@ def view(methods: Union[List[str], all] = None):
     if methods is None:
         methods = ["get"]
     if methods is all:
-        methods = ALL_HTTP_METHODS
-    methods = [m.lower() for m in methods]
+        methods = ["handle"]
+    else:
+        methods = [m.lower() for m in methods]
 
-    def decorate(handler: Handler) -> View:
-        return View.from_handler(handler, methods)
-
-    return decorate
+    return partial(View.from_handler, methods=methods)

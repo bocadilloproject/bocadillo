@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 from string import Formatter
-from typing import Optional, NamedTuple, Dict, Callable, Union, Type
+from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any
 
 from parse import parse
 
@@ -81,7 +81,7 @@ class Router:
 
     def add_route(
         self,
-        view: Union[View, Type[View], Callable],
+        view: Union[View, Type[Any], Callable, Any],
         pattern: str,
         *,
         name: str = None,
@@ -110,17 +110,31 @@ class Router:
         # See Also
         - [check_route](#check-route) for the route validation algorithm.
         """
+        if isinstance(view, View):
+            # View instance. No further conversion required.
+            pass
+        # Otherwise, convert the view to a View instance and recurse.
+        elif inspect.isclass(view):
+            # View-like class.
+            view = View.from_obj(view())
+            return self.add_route(view, pattern, name=name, namespace=namespace)
+        elif callable(view):
+            # Function-based view.
+            # NOTE: here, we ensure backward-compatibility with the routing of
+            # function-based views pre-0.9.
+            view = view_decorator()(view)
+            return self.add_route(view, pattern, name=name, namespace=namespace)
+        else:
+            # View-like object.
+            view = View.from_obj(view)
+            return self.add_route(view, pattern, name=name, namespace=namespace)
+
+        # `view` is now a proper `View` object.
+
         if name is None:
             name = camel_to_snake(view.__name__)
         if namespace is not None:
             name = namespace + ":" + name
-
-        if inspect.isclass(view):
-            # Class-based view.
-            view = View.from_obj(view())
-        elif callable(view):
-            # Function-based view. Automatically decorate it.
-            view = view_decorator()(view)
 
         check_route(pattern, view)
 
