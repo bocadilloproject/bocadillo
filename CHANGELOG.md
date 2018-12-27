@@ -8,9 +8,66 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+This release has **breaking API changes.**
+
 ### Changed
 
+- **BREAKING**: hooks moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()`. Same goes for recipes.
+- **BREAKING**: hooks must now be placed right above the view being decorated. This affects both function-based views and class-based views (but not method views).
+
+```python
+from bocadillo import API, hooks
+
+api = API()
+
+async def before(req, res, params):
+    print("before!")
+
+# < 0.9
+@api.before(before)
+@api.route("/")
+async def foo(req, res):
+    pass
+
+@api.before(before)
+@api.route("/")
+class Foo:
+    pass
+
+# >= 0.9:
+@api.route("/")
+@hooks.before(before)
+async def foo(req, res):
+    pass
+
+@api.route("/")
+@hooks.before(before)
+class Foo:
+    pass
+```
+
 - `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed.
+
+### Removed
+
+- **BREAKING**: the `methods` argument to `@api.route()` has been removed. To specify allowed methods on function-based views, you must now use the `@view()` decorator — see below.
+
+```python
+from bocadillo import API, view
+
+api = API()
+
+# < 0.9
+@api.route("/", methods=["post"])
+async def foo(req, res):
+    pass
+
+# >= 0.9
+@api.route("/")
+@view(methods=["post"])
+async def foo(req, res):
+    pass
+```
 
 ## [v0.8.0] - 2018-12-26
 
