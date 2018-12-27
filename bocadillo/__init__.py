@@ -5,4 +5,4 @@ from .media import Media
 from .recipes import Recipe
 from .exceptions import HTTPError
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
