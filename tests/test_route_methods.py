@@ -24,7 +24,7 @@ def test_allowed_methods(api: API, methods, method, status):
 )
 def test_unsafe_methods_not_supported_by_default(api: API, method):
     @api.route("/")
-    class Index:
+    async def index(req, res):
         pass
 
     response = getattr(api.client, method)("/")

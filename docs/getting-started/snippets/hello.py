@@ -4,9 +4,8 @@ api = bocadillo.API()
 
 
 @api.route("/")
-class Index:
-    async def get(self, req, res):
-        res.text = "Hello, world!"
+async def index(req, res):
+    res.text = "Hello, world!"
 
 
 if __name__ == "__main__":

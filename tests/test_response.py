@@ -3,9 +3,8 @@ from bocadillo import API
 
 def test_if_nothing_set_then_response_is_empty(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            pass
+    async def index(req, res):
+        pass
 
     response = api.client.get("/")
     assert not response.text
@@ -13,9 +12,9 @@ def test_if_nothing_set_then_response_is_empty(api: API):
 
 def test_if_status_code_is_no_content_then_no_content_type_set(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.status_code = 204
+    async def index(req, res):
+        res.status_code = 204
+        pass
 
     response = api.client.get("/")
     assert response.status_code == 204
@@ -25,11 +24,11 @@ def test_if_status_code_is_no_content_then_no_content_type_set(api: API):
 
 def test_content_type_defaults_to_plaintext(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.content = "Something magical"
-            # make sure no content-type is set before leaving the view
-            res.headers.pop("Content-Type", None)
+    async def index(req, res):
+        res.content = "Something magical"
+        # make sure no content-type is set before leaving the view
+        res.headers.pop("Content-Type", None)
+        pass
 
     response = api.client.get("/")
     assert response.headers["Content-Type"] == "text/plain"
@@ -37,9 +36,9 @@ def test_content_type_defaults_to_plaintext(api: API):
 
 def test_if_text_set_then_response_is_plain_text(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.text = "foo"
+    async def index(req, res):
+        res.text = "foo"
+        pass
 
     response = api.client.get("/")
     assert response.headers["Content-Type"] == "text/plain"
@@ -48,9 +47,8 @@ def test_if_text_set_then_response_is_plain_text(api: API):
 
 def test_if_media_set_then_response_is_json(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.media = {"foo": "bar"}
+    async def index(req, res):
+        res.media = {"foo": "bar"}
 
     response = api.client.get("/")
     assert response.json() == {"foo": "bar"}
@@ -58,9 +56,8 @@ def test_if_media_set_then_response_is_json(api: API):
 
 def test_if_html_set_then_response_is_html(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.html = "<h1>Foo</h1>"
+    async def index(req, res):
+        res.html = "<h1>Foo</h1>"
 
     response = api.client.get("/")
     assert response.headers["Content-Type"] == "text/html"
@@ -69,20 +66,20 @@ def test_if_html_set_then_response_is_html(api: API):
 
 def test_last_response_setter_called_has_priority(api: API):
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.media = {"foo": "bar"}
-            res.text = "foo"
+    async def index(req, res):
+        res.media = {"foo": "bar"}
+        res.text = "foo"
+        pass
 
     response = api.client.get("/")
     assert response.headers["Content-Type"] == "text/plain"
     assert response.text == "foo"
 
     @api.route("/")
-    class Index:
-        async def get(self, req, res):
-            res.text = "foo"
-            res.media = {"foo": "bar"}
+    async def index(req, res):
+        res.text = "foo"
+        res.media = {"foo": "bar"}
+        pass
 
     response = api.client.get("/")
     assert response.headers["Content-Type"] == "application/json"

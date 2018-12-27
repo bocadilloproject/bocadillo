@@ -5,7 +5,7 @@ def test_no_allowed_origins_by_default():
     api = API(enable_cors=True)
 
     @api.route("/")
-    class Index:
+    async def index(req, res):
         pass
 
     response = api.client.options(
@@ -22,7 +22,7 @@ def test_if_origin_not_in_allow_origins_then_400():
     api = API(enable_cors=True, cors_config={"allow_origins": ["foobar.com"]})
 
     @api.route("/")
-    class Index:
+    async def index(req, res):
         pass
 
     response = api.client.options(
@@ -54,7 +54,7 @@ def test_if_method_not_in_allow_methods_then_400():
     )
 
     @api.route("/")
-    class Index:
+    async def index(req, res):
         pass
 
     response = api.client.options(

@@ -27,11 +27,10 @@ def test_render_template_in_recipe_route(
     numbers = Recipe("numbers")
 
     @numbers.route("/")
-    class Numbers:
-        async def get(self, req, res):
-            res.html = await numbers.template(
-                template_file.name, **template_file.context
-            )
+    async def get_numbers(req, res):
+        res.html = await numbers.template(
+            template_file.name, **template_file.context
+        )
 
     api.recipe(numbers)
 
@@ -46,11 +45,10 @@ def test_render_sync_template_in_recipe_route(
     numbers = Recipe("numbers")
 
     @numbers.route("/sync")
-    class Numbers:
-        def get(self, req, res):
-            res.html = numbers.template_sync(
-                template_file.name, **template_file.context
-            )
+    def get_numbers_sync(req, res):
+        res.html = numbers.template_sync(
+            template_file.name, **template_file.context
+        )
 
     api.recipe(numbers)
 
