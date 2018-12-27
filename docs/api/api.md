@@ -411,7 +411,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1047f8620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x108e73620>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
