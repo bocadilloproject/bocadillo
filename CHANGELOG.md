@@ -18,7 +18,7 @@ This release has **breaking API changes.**
 
 ### Changed
 
-- **BREAKING**: hooks moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()`. Same goes for recipes.
+- **BREAKING**: hooks moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()` and `@recipe.before()` / `@recipe.after()`.
 - **BREAKING**: hooks must now be placed right above the view being decorated. This affects both function-based views and class-based views (but not method views).
 
 ```python
