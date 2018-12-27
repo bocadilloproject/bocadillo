@@ -24,6 +24,7 @@ module.exports = {
             content: 'https://bocadilloproject.github.io/social-image.png'
         }],
     ],
+    serviceWorker: true,
     themeConfig: {
         repo: 'bocadilloproject/bocadillo',
         docsDir: 'docs',
@@ -31,6 +32,7 @@ module.exports = {
         editLinks: true,
         editLinkText: 'Edit this page on GitHub',
         sidebarDepth: 2,
+        serviceWorker: {updatePopup: true},
         nav: [
             {
                 text: 'Home',
