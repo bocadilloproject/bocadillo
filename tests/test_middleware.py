@@ -78,7 +78,7 @@ def test_callbacks_are_called_if_method_not_allowed(api: API):
         async def index(req, res):
             pass
 
-        response = api.client.get("/")
+        response = api.client.put("/")
         assert response.status_code == 405
 
 
