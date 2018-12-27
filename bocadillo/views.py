@@ -2,8 +2,8 @@ import inspect
 from functools import partial, wraps
 from typing import List, Union, Any, Awaitable, Callable, Dict
 
-from bocadillo.compat import call_async
-from bocadillo.constants import ALL_HTTP_METHODS
+from .compat import call_async
+from .constants import ALL_HTTP_METHODS
 from .request import Request
 from .response import Response
 

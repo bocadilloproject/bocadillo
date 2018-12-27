@@ -1,6 +1,6 @@
 from typing import List, Sequence
 
-from bocadillo.meta import DocsMeta
+from .meta import DocsMeta
 from .templates import TemplatesMixin
 
 
