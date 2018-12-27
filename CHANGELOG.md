@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.8.1] - 2018-12-27
+
 ### Changed
 
 - `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed, which allows to skip handling the `JSONDecodeError` manually.
@@ -212,7 +214,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...HEAD
+[v0.8.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...v0.7.0
 [v0.6.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.0...v0.6.1
