@@ -82,7 +82,7 @@ Kenneth Reitz presents [Responder] as "a mix between Flask/Falcon, but with ease
 
 As a result, it borrows a lot of ideas from Flask and Falcon — and so does Bocadillo.
 
-Responder is also one of the very few Python web frameworks that support async/await while providing a familiar API. Like Bocadillo, Responder is powered by the [Starlette] ASGI toolkit. It also has some original features such as built-in GraphQL support.
+Responder is also one of the very few Python web frameworks that supports async/await while providing a familiar API. Like Bocadillo, Responder is powered by the [Starlette] ASGI toolkit. It also has some original features such as built-in GraphQL support.
 
 The key differences between Responder and Bocadillo are that a) Responder is solely targeted at web services (APIs), and b) its design is intentionally kept minimalistic, while Bocadillo takes a more progressive approach.
 
@@ -95,7 +95,7 @@ The key differences between Responder and Bocadillo are that a) Responder is sol
 Here's a sneak peak into what you'll find in Bocadillo:
 
 - Core support for [async/await](https://docs.python.org/3/library/asyncio-task.html)
-- Lightning-fast and production-ready thanks to [Uvicorn] and [Starlette]
+- Lightning-fast thanks to [Uvicorn] and [Starlette]
 - Class-based views
 - Flask-style decorator-based routing
 - Route parameters with F-strings
