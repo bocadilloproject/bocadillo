@@ -108,15 +108,13 @@ async def validate_course(req, res, params):
         data = await req.json()
     except JSONDecodeError:
         # HTTP error responses!
-        print("Invalid JSON")
-        raise HTTPError(400)
+        raise HTTPError(400, detail="Invalid JSON")
 
     # NOTE: you're free to integrate a third-party
     # validation library such as Marshmallow or jsonschema.
     for field in "name", "teacher":
         if field not in data:
-            print(field, "is a required field")
-            raise HTTPError(400)
+            raise HTTPError(400, detail=f"{field} is a required field")
 
 
 # Now, let's assemble the actual application, shall we?

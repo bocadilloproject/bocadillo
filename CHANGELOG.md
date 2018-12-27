@@ -8,6 +8,10 @@ Bocadillo adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Changed
+
+- `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed.
+
 ## [v0.8.0] - 2018-12-26
 
 ### Added
