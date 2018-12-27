@@ -4,7 +4,13 @@ All notable changes to Bocadillo are documented here.
 
 The format of this document is based on [Keep a Changelog](https://keepachangelog.com).
 
-Bocadillo adheres to [Semantic Versioning](https://semver.org).
+**Versioning policy**
+
+Bocadillo adheres to [Semantic Versioning](https://semver.org), BUT…
+
+Bocadillo is still in **Alpha** (< 1.0) version. As such, breaking API changes will only cause **minor** version bumps instead of major ones until v1.0 is reached.
+
+As a result, we strongly recommend you read this document carefully before upgrading to any new alpha version. Breaking API changes will be denoted with a **BREAKING** prefix.
 
 ## [Unreleased]
 
