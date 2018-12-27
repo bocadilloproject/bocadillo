@@ -1,9 +1,9 @@
 import inspect
 from functools import wraps
-from typing import Callable, Dict, Union, Awaitable
+from typing import Callable, Dict, Union, Awaitable, Type
 
 from bocadillo.routing import Route
-from bocadillo.views import Handler, get_handlers, ViewMeta
+from bocadillo.views import Handler, get_handlers, View
 from .compat import call_async
 from .request import Request
 from .response import Response
@@ -45,7 +45,7 @@ class Hooks:
         async def hook_func(req: Request, res: Response, params: dict):
             await call_async(hook, req, res, params, *args, **kwargs)
 
-        def decorator(handler: Union[ViewMeta, Handler]):
+        def decorator(handler: Union[Type[View], Handler]):
             """Attach the hook to the given handler."""
             if inspect.isclass(handler):
                 # Handler is a view class. Apply hook to all handlers.

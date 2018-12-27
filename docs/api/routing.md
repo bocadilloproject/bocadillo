@@ -60,7 +60,7 @@ Router(self)
 A collection of routes.
 ### add_route
 ```python
-Router.add_route(self, view_cls: bocadillo.views.ViewMeta, pattern: str, *, name: str = None, namespace: str = None) -> bocadillo.routing.Route
+Router.add_route(self, view: Union[bocadillo.views.View, Type[bocadillo.views.View], Callable], pattern: str, *, name: str = None, namespace: str = None) -> bocadillo.routing.Route
 ```
 Build and register a route.
 

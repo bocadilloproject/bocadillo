@@ -10,50 +10,8 @@ from .response import Response
 Handler = Callable[[Request, Response, Any], Awaitable[None]]
 
 
-class ViewMeta(type):
-    def __new__(mcs, name, bases, namespace):
-        # TODO check that declared HTTP methods are valid
-        # TODO check all handlers accept at least req and res parameters
-
-        cls: "ViewMeta" = super().__new__(mcs, name, bases, namespace)
-
-        # Convert handlers to async if necessary
-        for method, handler in get_handlers(cls()).items():
-            if not inspect.iscoroutinefunction(handler):
-                handler = wraps(handler)(partial(call_async, handler))
-                setattr(cls, method, handler)
-
-        # Set head handler if not implemented but get is implemented.
-        if hasattr(cls, "get") and not hasattr(cls, "head"):
-            cls.head = cls.get
-
-        # If catch-all "handle" handler is implemented, override all other
-        # handlers.
-        if hasattr(cls, "handle"):
-            for method in map(str.lower, ALL_HTTP_METHODS):
-                setattr(cls, method, cls.handle)
-        return cls
-
-    @classmethod
-    def from_handler(mcs: "ViewMeta", handler: Handler, methods: List[str]):
-        if "get" in methods and "head" not in methods:
-            methods.append("head")
-        # Wrap handler in `staticmethod()` to ignore `self` parameter.
-        namespace = {method: staticmethod(handler) for method in methods}
-        cls = mcs(handler.__name__, (), namespace)
-        cls.__doc__ = handler.__doc__
-        return cls
-
-    @classmethod
-    def from_view_like(mcs: "ViewMeta", obj: "ViewLike"):
-        namespace = get_handlers(obj)
-        cls = mcs(obj.__class__.__name__, (), namespace)
-        cls.__doc__ = obj.__doc__
-        return cls
-
-
-class ViewLike:
-    """What a view looks like."""
+class View:
+    """View type."""
 
     get: Handler
     post: Handler
@@ -63,32 +21,58 @@ class ViewLike:
     head: Handler
     options: Handler
 
+    @classmethod
+    def create(cls, name: str, docstring: str, handlers: dict) -> "View":
+        view = cls()
+        view.__name__ = name
+        view.__doc__ = docstring
 
-def get_handlers(view: Union[ViewLike, dict]) -> Dict[str, Handler]:
+        # Convert handlers to async if necessary
+        for method, handler in handlers.items():
+            if not inspect.iscoroutinefunction(handler):
+                handler = wraps(handler)(partial(call_async, handler))
+                handlers[method] = handler
+
+        # Set head handler if not given but get is given.
+        if "get" in handlers and "head" not in handlers:
+            handlers["head"] = handlers["get"]
+
+        # If catch-all "handle" handler is given, override all other handlers.
+        if "handle" in handlers:
+            for method in map(str.lower, ALL_HTTP_METHODS):
+                handlers[method] = handlers["handle"]
+
+        for method, handler in handlers.items():
+            setattr(view, method, handler)
+
+        return view
+
+    @classmethod
+    def from_handler(cls, handler: Handler, methods: List[str]):
+        handlers = {method: handler for method in methods}
+        return cls.create(handler.__name__, handler.__doc__, handlers)
+
+    @classmethod
+    def from_obj(cls, obj: Any):
+        handlers = get_handlers(obj)
+        return cls.create(obj.__class__.__name__, obj.__doc__, handlers)
+
+
+def get_handlers(view: View) -> Dict[str, Handler]:
     """Get handlers declared on a view or a view-like dictionary.
 
     # Parameters
-    view (View or dict): a view-like object.
+    view (View): a view-like object.
 
     # Returns
     handlers (dict):
         A dict mapping an HTTP method to a handler.
     """
-    methods = ("handle", *map(str.lower, ALL_HTTP_METHODS))
-    if isinstance(view, dict):
-        return {
-            method: view.get(method) for method in methods if method in view
-        }
-    else:
-        return {
-            method: getattr(view, method)
-            for method in methods
-            if hasattr(view, method)
-        }
-
-
-class View(ViewLike, metaclass=ViewMeta):
-    """Base view class."""
+    return {
+        method: getattr(view, method)
+        for method in ("handle", *map(str.lower, ALL_HTTP_METHODS))
+        if hasattr(view, method)
+    }
 
 
 def view(methods: Union[List[str], all] = None):
@@ -106,7 +90,7 @@ def view(methods: Union[List[str], all] = None):
         methods = ALL_HTTP_METHODS
     methods = [m.lower() for m in methods]
 
-    def decorate(handler: Handler) -> ViewMeta:
+    def decorate(handler: Handler) -> View:
         return View.from_handler(handler, methods)
 
     return decorate

@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 from string import Formatter
-from typing import Optional, NamedTuple, Dict
+from typing import Optional, NamedTuple, Dict, Callable, Union, Type
 
 from parse import parse
 
@@ -9,7 +9,7 @@ from .compat import camel_to_snake
 from .exceptions import HTTPError, RouteDeclarationError
 from .request import Request
 from .response import Response
-from .views import View, ViewMeta, Handler, get_handlers, view as view_decorator
+from .views import View, Handler, get_handlers, view as view_decorator
 
 
 class Route:
@@ -81,7 +81,7 @@ class Router:
 
     def add_route(
         self,
-        view_cls: ViewMeta,
+        view: Union[View, Type[View], Callable],
         pattern: str,
         *,
         name: str = None,
@@ -111,16 +111,16 @@ class Router:
         - [check_route](#check-route) for the route validation algorithm.
         """
         if name is None:
-            name = camel_to_snake(view_cls.__name__)
+            name = camel_to_snake(view.__name__)
         if namespace is not None:
             name = namespace + ":" + name
 
-        if callable(view_cls) and not inspect.isclass(view_cls):
-            view_cls = view_decorator()(view_cls)
-
-        if not isinstance(view_cls, ViewMeta):
-            view_cls = ViewMeta.from_view_like(view_cls())
-        view = view_cls()
+        if inspect.isclass(view):
+            # Class-based view.
+            view = View.from_obj(view())
+        elif callable(view):
+            # Function-based view. Automatically decorate it.
+            view = view_decorator()(view)
 
         check_route(pattern, view)
 
