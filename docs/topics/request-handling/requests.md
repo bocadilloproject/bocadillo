@@ -79,3 +79,7 @@ You can retrieve it in several ways, depending on the expected encoding:
 - Form data: `await req.form()`
 - JSON: `await req.json()`
 - Stream (advanced usage): `async for chunk in req.stream(): ...`
+
+::: tip How is malformed JSON handled?
+If the request body is not proper JSON, a `400 Bad Request` error response is returned.
+:::
