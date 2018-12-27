@@ -6,7 +6,7 @@ from bocadillo.exceptions import RouteDeclarationError
 
 def test_parameter_is_passed_as_argument(api: API):
     @api.route("/greet/{person}")
-    async def get(req, res, person: str):
+    async def greet(req, res, person: str):
         res.text = person
 
     response = api.client.get("/greet/John")

@@ -53,7 +53,6 @@ def test_custom_error_handler(api: API, exception_cls):
     @api.route("/")
     async def index(req, res):
         raise exception_cls("foo")
-        pass
 
     if exception_cls == KeyError:
         response = api.client.get("/")

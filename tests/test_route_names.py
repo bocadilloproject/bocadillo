@@ -44,7 +44,7 @@ def test_url_for_can_be_used_in_templates(api: API):
     assert response.text == "/about/me"
 
 
-def test_on_name_is_inferred_from_view_name(api: API):
+def test_name_is_inferred_from_view_name(api: API):
     @api.route("/about/{who}")
     class AboutPerson:
         async def get(self, req, res, who):

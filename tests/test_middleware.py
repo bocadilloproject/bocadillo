@@ -75,7 +75,7 @@ def test_callbacks_are_called_if_method_not_allowed(api: API):
         api.add_middleware(middleware)
 
         @api.route("/")
-        class Index:
+        async def index(req, res):
             pass
 
         response = api.client.get("/")
