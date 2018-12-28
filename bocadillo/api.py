@@ -112,8 +112,6 @@ class API(
 
         self._extra_apps: Dict[str, Any] = {}
 
-        self.client = self._build_client()
-
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
@@ -142,7 +140,12 @@ class API(
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-    def _build_client(self) -> TestClient:
+    @property
+    def client(self) -> TestClient:
+        """A Starlette [TestClient] that can be used for testing the app.
+
+        [TestClient]: https://www.starlette.io/testclient/
+        """
         return TestClient(self)
 
     def get_template_globals(self):
@@ -237,10 +240,8 @@ class API(
     async def _handle_exception(
         self, req: Request, res: Response, exception: Exception
     ) -> None:
-        """Handle an exception raised during dispatch.
-
-        If no handler was registered for the exception, it is raised.
-        """
+        # Handle an exception raised during dispatch.
+        # If no handler was registered for the exception, it is raised.
         handler = self._find_handler(exception.__class__)
         if handler is None:
             return await self._handle_exception(req, res, HTTPError(500))
@@ -468,7 +469,7 @@ class API(
         port: int = None,
         debug: bool = False,
         log_level: str = "info",
-        _run: Callable = run,
+        _run: Callable = None,
         **kwargs,
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
@@ -498,6 +499,9 @@ class API(
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """
+        if _run is None:  # pragma: no cover
+            _run = run
+
         if "PORT" in os.environ:
             port = int(os.environ["PORT"])
             if host is None:
