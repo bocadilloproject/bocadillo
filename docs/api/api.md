@@ -453,7 +453,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10f693d90>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1107d7d90>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

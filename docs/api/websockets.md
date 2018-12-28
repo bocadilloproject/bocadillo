@@ -33,84 +33,78 @@ __Parameters__
 WebSocket.accept(self, subprotocol: List[str] = None) -> None
 ```
 
+
+Alias of `accept` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### close
 ```python
 WebSocket.close(self, code: int = 1000) -> None
 ```
 
+
+Alias of `close` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive_bytes
 ```python
 WebSocket.receive_bytes(self) -> bytes
 ```
 
+
+Alias of `receive_bytes` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive_json
 ```python
 WebSocket.receive_json(self) -> Any
 ```
 
+
+Alias of `receive_json` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive_text
 ```python
 WebSocket.receive_text(self) -> str
 ```
 
+
+Alias of `receive_text` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### send_bytes
 ```python
 WebSocket.send_bytes(self, data: bytes) -> None
 ```
 
+
+Alias of `send_bytes` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### send_json
 ```python
 WebSocket.send_json(self, data: Any) -> None
 ```
 
+
+Alias of `send_json` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### send_text
 ```python
 WebSocket.send_text(self, data: str) -> None
 ```
 
+
+Alias of `send_text` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive_event
 ```python
 WebSocket.receive_event(self) -> MutableMapping[str, Any]
 ```
-Receive an ASGI event.
 
-This is a low-level method for advanced usages.
 
-__Returns__
-
-`event (dict)`: an ASGI event.
-
-__See Also__
-
-- [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
-
+Alias of `receive` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### send_event
 ```python
 WebSocket.send_event(self, event: MutableMapping[str, Any])
 ```
-Send an ASGI event.
 
-This is a low-level method for advanced usages.
 
-::: tip
-This is a low-level interface.
-:::
-
-__Parameters__
-
-- __event (dict)__: an ASGI event.
-
-__See Also__
-
-- [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
-
+Alias of `send` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive
 ```python
 WebSocket.receive(self) -> Union[str, bytes, list, dict]
 ```
 Receive a message from the WebSocket.
 
-Shortcut for `receive_{receive_type}`.
+Shortcut for `receive_<self.receive_type>`.
 
 ### send
 ```python
@@ -118,5 +112,5 @@ WebSocket.send(self, message: Any)
 ```
 Send a message over the WebSocket.
 
-Shortcut for `send_{send_type}`.
+Shortcut for `send_<self.send_type>`.
 

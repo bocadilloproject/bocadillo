@@ -5,6 +5,14 @@ from starlette.websockets import WebSocket as StarletteWebSocket
 from .app_types import Event
 from .exceptions import WebSocketDisconnect
 
+_STARLETTE_WEBSOCKET_DOCS = (
+    "[Starlette.websockets.WebSocket](https://www.starlette.io/websockets/)"
+)
+
+
+def _get_alias_docs(name: str) -> str:
+    return f"\n\nAlias of `{name}` on {_STARLETTE_WEBSOCKET_DOCS}."
+
 
 class _Delegated:
     """Descriptor to delegate a method to the underlying Starlette WebSocket.
@@ -15,6 +23,7 @@ class _Delegated:
 
     def __init__(self, websocket_attr: str = "_websocket"):
         self.websocket_attr = websocket_attr
+        self._docs_imported = False
 
     def __set_name__(self, owner, name: str):
         # Use the declared attribute's name as source attribute name.
@@ -24,11 +33,14 @@ class _Delegated:
         if instance is None:  # pragma: no cover
             # Class attribute access.
             # NOTE: used by Pydoc-Markdown when generating docs.
-            obj = StarletteWebSocket
+            obj = getattr(StarletteWebSocket, self.source)
+            if not self._docs_imported:
+                obj.__doc__ = (obj.__doc__ or "") + _get_alias_docs(self.source)
+                self._docs_imported = True
+            return obj
         else:
             # Instance attribute access.
-            obj = getattr(instance, self.websocket_attr)
-        return getattr(obj, self.source)
+            return getattr(getattr(instance, self.websocket_attr), self.source)
 
 
 class WebSocket:
@@ -96,39 +108,19 @@ class WebSocket:
     send_json = _Delegated()
 
     async def receive_event(self) -> Event:
-        """Receive an ASGI event.
-
-        This is a low-level method for advanced usages.
-
-        # Returns
-        event (dict): an ASGI event.
-
-        # See Also
-        - [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
-        """
         return await self._websocket.receive()
 
+    receive_event.__doc__ = _get_alias_docs("receive")
+
     async def send_event(self, event: Event):
-        """Send an ASGI event.
-
-        This is a low-level method for advanced usages.
-
-        ::: tip
-        This is a low-level interface.
-        :::
-
-        # Parameters
-        event (dict): an ASGI event.
-
-        # See Also
-        - [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
-        """
         return await self._websocket.send(event)
+
+    send_event.__doc__ = _get_alias_docs("send")
 
     async def receive(self) -> Union[str, bytes, list, dict]:
         """Receive a message from the WebSocket.
 
-        Shortcut for `receive_{receive_type}`.
+        Shortcut for `receive_<self.receive_type>`.
         """
         receiver = getattr(self, f"receive_{self.receive_type}")
         return await receiver()
@@ -136,7 +128,7 @@ class WebSocket:
     async def send(self, message: Any):
         """Send a message over the WebSocket.
 
-        Shortcut for `send_{send_type}`.
+        Shortcut for `send_<self.send_type>`.
         """
         sender = getattr(self, f"send_{self.send_type}")
         return await sender(message)
