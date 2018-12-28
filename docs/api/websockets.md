@@ -6,8 +6,6 @@ WebSocket(self, *args, value_type: Union[str, NoneType] = None, receive_type: Un
 ```
 Represents a WebSocket connection.
 
-Available message types: `["text", "bytes", "json"]`.
-
 __Parameters__
 
 - __value_type (str)__:

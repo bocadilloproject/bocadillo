@@ -47,8 +47,6 @@ class _Delegated:
 class WebSocket:
     """Represents a WebSocket connection.
 
-    Available message types: `["text", "bytes", "json"]`.
-
     # Parameters
     value_type (str):
         The type of messages received or sent over the WebSocket.
