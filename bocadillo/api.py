@@ -1,5 +1,5 @@
 import os
-from functools import partial
+from functools import wraps
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware
@@ -11,8 +11,12 @@ from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
+from bocadillo.compat import call_async
 from bocadillo.constants import DEFAULT_CORS_CONFIG
-from .error_handlers import ErrorHandler, convert_exception_to_response
+from bocadillo.middleware import Dispatcher
+from bocadillo.routing import RoutingMixin
+from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
+from .error_handlers import ErrorHandler, error_to_text
 from .events import EventsMixin
 from .exceptions import HTTPError
 from .hooks import HooksMixin
@@ -22,10 +26,8 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from bocadillo.routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
-from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
 
 
 class API(
@@ -106,6 +108,7 @@ class API(
         super().__init__(templates_dir=templates_dir)
 
         self._error_handlers = []
+        self.add_error_handler(HTTPError, error_to_text)
 
         self._extra_apps: Dict[str, Any] = {}
 
@@ -231,7 +234,7 @@ class API(
                 return handler
         return None
 
-    def _handle_exception(
+    async def _handle_exception(
         self, req: Request, res: Response, exception: Exception
     ) -> None:
         """Handle an exception raised during dispatch.
@@ -240,9 +243,9 @@ class API(
         """
         handler = self._find_handler(exception.__class__)
         if handler is None:
-            raise exception from None
+            return await self._handle_exception(req, res, HTTPError(500))
 
-        handler(req, res, exception)
+        await call_async(handler, req, res, exception)
         if res.status_code is None:
             res.status_code = 500
 
@@ -352,9 +355,25 @@ class API(
                 res = redirection.response
 
         except Exception as e:
-            self._handle_exception(req, res, e)
+            await self._handle_exception(req, res, e)
 
         return res
+
+    def _convert_exception_to_response(
+        self, dispatch: Dispatcher
+    ) -> Dispatcher:
+        # Wrap call to `dispatch()` to always return an HTTP response.
+
+        @wraps(dispatch)
+        async def inner(req: Request) -> Response:
+            try:
+                res = await dispatch(req)
+            except Exception as exc:
+                res = Response(req, media=self._media)
+                await self._handle_exception(req, res, exc)
+            return res
+
+        return inner
 
     async def get_response(self, req: Request) -> Response:
         """Return a response for an incoming request.
@@ -371,12 +390,7 @@ class API(
         - [dispatch](#dispatch)
         - [Middleware](../topics/features/middleware.md)
         """
-        error_handler = self._find_handler(HTTPError)
-        convert = partial(
-            convert_exception_to_response,
-            error_handler=error_handler,
-            media=self._media,
-        )
+        convert = self._convert_exception_to_response
         dispatch = convert(self.dispatch)
         for cls, kwargs in self._middleware:
             middleware = cls(dispatch, **kwargs)
