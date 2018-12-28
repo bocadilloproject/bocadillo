@@ -11,6 +11,7 @@ parse = "*"
 whitenoise = "*"
 requests = "*"
 async-generator = "*"
+websockets = "*"
 
 [dev-packages]
 pytest = "*"

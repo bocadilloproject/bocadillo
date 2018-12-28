@@ -11,7 +11,8 @@ from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from bocadillo.constants import DEFAULT_CORS_CONFIG
+from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
+from .constants import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, convert_exception_to_response
 from .events import EventsMixin
 from .exceptions import HTTPError
@@ -22,10 +23,10 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from bocadillo.routing import RoutingMixin
+from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
-from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
+from .websockets import WebSocket
 
 
 class API(
@@ -383,6 +384,15 @@ class API(
             dispatch = convert(middleware)
         return await dispatch(req)
 
+    async def dispatch_websocket(self, ws: WebSocket):
+        match = self._router.match(ws.url.path, websocket=True)
+        if match is None:
+            # Close with a 403 error code before accepting, as specified
+            # on the ASGI spec:
+            # https://asgi.readthedocs.io/en/latest/specs/www.html#close
+            await ws.close(403)
+        await match.route(ws, **match.params)
+
     def create_app(self, scope: Scope) -> ASGIAppInstance:
         """Build and return an instance of the `API`'s own ASGI application.
 
@@ -396,9 +406,14 @@ class API(
 
         async def asgi(receive, send):
             nonlocal scope
-            req = Request(scope, receive)
-            res = await self.get_response(req)
-            await res(receive, send)
+            if scope["type"] == "websocket":
+                ws = WebSocket(scope, receive=receive, send=send)
+                await self.dispatch_websocket(ws)
+            else:
+                assert scope["type"] == "http"
+                req = Request(scope, receive)
+                res = await self.get_response(req)
+                await res(receive, send)
 
         return asgi
 

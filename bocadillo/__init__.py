@@ -1,8 +1,9 @@
 from .api import API
-from .staticfiles import static
-from .middleware import Middleware
-from .media import Media
-from .recipes import Recipe
 from .exceptions import HTTPError
+from .media import Media
+from .middleware import Middleware
+from .recipes import Recipe
+from .staticfiles import static
+from .websockets import WebSocket
 
 __version__ = "0.8.1"

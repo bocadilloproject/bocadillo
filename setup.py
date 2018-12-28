@@ -29,6 +29,7 @@ setuptools.setup(
         "parse",
         "async_generator",
     ],
+    extras_require={"websockets": ["websockets>=6.0"]},
     url=DOCS,
     project_urls={
         "Source": GITHUB,

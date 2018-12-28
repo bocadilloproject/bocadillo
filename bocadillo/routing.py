@@ -18,32 +18,12 @@ from .views import (
     AsyncView,
     create_async_view,
 )
+from .websockets import WebSocket, WebSocketView
 
 
-class Route:
-    """Represents the binding of an URL pattern to a view.
-
-    As a framework user, you will not need to create routes directly. This
-    should be done via `@api.route()`.
-
-    # Parameters
-    pattern (str): an URL pattern. F-string syntax is supported for parameters.
-    view (coroutine function):
-        A view given as a coroutine function. Non-async views (synchronous,
-        class-based) will have to have been converted beforehand.
-    methods (list of str):
-        A list of (upper-case) HTTP methods.
-    name (str):
-        The route's name.
-    """
-
-    def __init__(
-        self, pattern: str, view: AsyncView, methods: List[str], name: str
-    ):
+class BaseRoute:
+    def __init__(self, pattern: str):
         self._pattern = pattern
-        self._view = view
-        self._methods = methods
-        self._name = name
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters.
@@ -71,6 +51,32 @@ class Route:
             return result.named
         return None
 
+
+class Route(BaseRoute):
+    """Represents the binding of an URL pattern to a view.
+
+    As a framework user, you will not need to create routes directly. This
+    should be done via `@api.route()`.
+
+    # Parameters
+    pattern (str): an URL pattern. F-string syntax is supported for parameters.
+    view (coroutine function):
+        A view given as a coroutine function. Non-async views (synchronous,
+        class-based) will have to have been converted beforehand.
+    methods (list of str):
+        A list of (upper-case) HTTP methods.
+    name (str):
+        The route's name.
+    """
+
+    def __init__(
+        self, pattern: str, view: AsyncView, methods: List[str], name: str
+    ):
+        self._pattern = pattern
+        self._view = view
+        self._methods = methods
+        self._name = name
+
     def raise_for_method(self, req: Request):
         """Fail if the requested method is not supported by the route.
 
@@ -85,6 +91,24 @@ class Route:
 
     async def __call__(self, req: Request, res: Response, **kwargs) -> None:
         await self._view(req, res, **kwargs)
+
+
+class WebSocketRoute(BaseRoute):
+    """Represents the binding of an URL path to a WebSocket view.
+
+    # Parameters
+    pattern (str): an URL pattern.
+    view (coroutine function):
+        Should take as parameter a `WebSocket` object and
+        any extracted route parameters.
+    """
+
+    def __init__(self, pattern: str, view: WebSocketView):
+        super().__init__(pattern)
+        self._view = view
+
+    async def __call__(self, ws: WebSocket, **kwargs):
+        await self._view(ws, **kwargs)
 
 
 def check_route(pattern: str, view: View, methods: List[str]) -> None:
@@ -182,11 +206,19 @@ class RouteMatch(NamedTuple):
     params: dict
 
 
+class WebSocketRouteMatch(NamedTuple):
+    """Represents the result of a successulf websocket route match."""
+
+    route: WebSocketRoute
+    params: dict
+
+
 class Router:
     """A collection of routes."""
 
     def __init__(self):
         self._routes: Dict[str, Route] = {}
+        self._websocket_routes: Dict[str, WebSocketRoute] = {}
 
     def add_route(
         self,
@@ -267,11 +299,13 @@ class Router:
         """
         return partial(self.add_route, *args, **kwargs)
 
-    def match(self, path: str) -> Optional[RouteMatch]:
+    def match(self, path: str, websocket: bool = False) -> Optional[RouteMatch]:
         """Attempt to match an URL path against one of the registered routes.
 
         # Parameters
         path (str): an URL path.
+        websocket (bool):
+            whether to look for an HTTP (`False`) or WebSocket (`True`) route.
 
         # Returns
         match (RouteMatch or None):
@@ -279,10 +313,18 @@ class Router:
             `path` and the extracted route parameters, or `None` if none
             matched.
         """
-        for pattern, route in self._routes.items():
+        if websocket:
+            source = self._websocket_routes
+            match_cls = WebSocketRouteMatch
+        else:
+            source = self._routes
+            match_cls = RouteMatch
+
+        for pattern, route in source.items():
             params = route.parse(path)
             if params is not None:
-                return RouteMatch(route=route, params=params)
+                return match_cls(route=route, params=params)
+
         return None
 
     def get_route_or_404(self, name: str) -> Route:
@@ -301,6 +343,17 @@ class Router:
             return self._routes[name]
         except KeyError as e:
             raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
+
+    def websocket_route(self, pattern: str):
+        """Register a WebSocket route by decorating a view."""
+
+        def decorate(view):
+            nonlocal self
+            route = WebSocketRoute(pattern=pattern, view=view)
+            self._websocket_routes[pattern] = route
+            return route
+
+        return decorate
 
 
 class RoutingMixin:
@@ -328,6 +381,10 @@ class RoutingMixin:
         return self._router.route(
             pattern=pattern, methods=methods, name=name, namespace=namespace
         )
+
+    def websocket_route(self, pattern: str):
+        """Register a WebSocket route by decorating a view."""
+        return self._router.websocket_route(pattern)
 
     def url_for(self, name: str, **kwargs) -> str:
         """Build the URL path for a named route.
