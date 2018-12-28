@@ -384,14 +384,15 @@ class API(
             dispatch = convert(middleware)
         return await dispatch(req)
 
-    async def dispatch_websocket(self, ws: WebSocket):
-        match = self._router.match(ws.url.path, websocket=True)
+    async def dispatch_websocket(self, scope: Scope, receive, send):
+        match = self._router.match(scope["path"], websocket=True)
         if match is None:
-            # Close with a 403 error code before accepting, as specified
-            # on the ASGI spec:
+            # Close with a 403 error code, as specified in the ASGI spec:
             # https://asgi.readthedocs.io/en/latest/specs/www.html#close
-            await ws.close(403)
-        await match.route(ws, **match.params)
+            await send({"type": "websocket.close", "code": 403})
+        else:
+            ws = WebSocket(scope, receive, send, **match.route.ws_kwargs)
+            await match.route(ws, **match.params)
 
     def create_app(self, scope: Scope) -> ASGIAppInstance:
         """Build and return an instance of the `API`'s own ASGI application.
@@ -407,8 +408,7 @@ class API(
         async def asgi(receive, send):
             nonlocal scope
             if scope["type"] == "websocket":
-                ws = WebSocket(scope, receive=receive, send=send)
-                await self.dispatch_websocket(ws)
+                await self.dispatch_websocket(scope, receive, send)
             else:
                 assert scope["type"] == "http"
                 req = Request(scope, receive)

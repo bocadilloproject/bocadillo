@@ -1,7 +1,8 @@
-from typing import List, Callable, Awaitable
+from typing import List, Callable, Awaitable, MutableMapping, Any
 
 # ASGI
-Scope = Message = dict
+Scope = dict
+Message = MutableMapping[str, Any]
 Receive = Callable[[], Message]
 Send = Callable[[Message], None]
 ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]

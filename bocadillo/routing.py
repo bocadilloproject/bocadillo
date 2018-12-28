@@ -103,12 +103,13 @@ class WebSocketRoute(BaseRoute):
         any extracted route parameters.
     """
 
-    def __init__(self, pattern: str, view: WebSocketView):
+    def __init__(self, pattern: str, view: WebSocketView, **kwargs):
         super().__init__(pattern)
         self._view = view
+        self.ws_kwargs = kwargs
 
-    async def __call__(self, ws: WebSocket, **kwargs):
-        await self._view(ws, **kwargs)
+    async def __call__(self, ws: WebSocket, **params):
+        await self._view(ws, **params)
 
 
 def check_route(pattern: str, view: View, methods: List[str]) -> None:
@@ -207,7 +208,7 @@ class RouteMatch(NamedTuple):
 
 
 class WebSocketRouteMatch(NamedTuple):
-    """Represents the result of a successulf websocket route match."""
+    """Represents the result of a successful websocket route match."""
 
     route: WebSocketRoute
     params: dict
@@ -344,12 +345,18 @@ class Router:
         except KeyError as e:
             raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
 
-    def websocket_route(self, pattern: str):
-        """Register a WebSocket route by decorating a view."""
+    def websocket_route(self, pattern: str, **kwargs):
+        """Register a WebSocket route by decorating a view.
+
+        # Parameters
+        pattern (str): an URL pattern.
+        kwargs (dict):
+            Extra keyword arguments that will be passed to the WebSocket.
+        """
 
         def decorate(view):
             nonlocal self
-            route = WebSocketRoute(pattern=pattern, view=view)
+            route = WebSocketRoute(pattern=pattern, view=view, **kwargs)
             self._websocket_routes[pattern] = route
             return route
 
@@ -382,9 +389,9 @@ class RoutingMixin:
             pattern=pattern, methods=methods, name=name, namespace=namespace
         )
 
-    def websocket_route(self, pattern: str):
+    def websocket_route(self, pattern: str, **kwargs):
         """Register a WebSocket route by decorating a view."""
-        return self._router.websocket_route(pattern)
+        return self._router.websocket_route(pattern, **kwargs)
 
     def url_for(self, name: str, **kwargs) -> str:
         """Build the URL path for a named route.
