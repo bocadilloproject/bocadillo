@@ -71,7 +71,9 @@ def test_send_type(api: API, send_type, example_message, expected_type):
             await ws.send(example_message)
 
     with api.client.websocket_connect("/chat") as client:
-        assert type(getattr(client, f"receive_{send_type}")()) == expected_type
+        message = getattr(client, f"receive_{send_type}")()
+        assert type(message) == expected_type
+        assert message == example_message
 
 
 @pytest.mark.parametrize(
@@ -93,6 +95,19 @@ def test_value_type(api: API, value_type, example_message, expected_type):
     with api.client.websocket_connect("/chat") as client:
         getattr(client, f"send_{value_type}")(example_message)
         assert type(getattr(client, f"receive_{value_type}")()) == expected_type
+
+
+def test_receive_and_send_event(api: API):
+    @api.websocket_route("/chat")
+    async def chat(ws: WebSocket):
+        async with ws:
+            message = await ws.receive_event()
+            assert message == {"type": "websocket.receive", "text": "ping"}
+            await ws.send_event({"type": "websocket.send", "text": "pong"})
+
+    with api.client.websocket_connect("/chat") as client:
+        client.send_text("ping")
+        assert client.receive_text() == "pong"
 
 
 @pytest.mark.parametrize(
@@ -131,16 +146,3 @@ def test_catch_disconnect(api: API, close_codes, code, expected_caught):
         client.close(code)
 
     assert caught is expected_caught
-
-
-def test_receive_and_send_event(api: API):
-    @api.websocket_route("/chat")
-    async def chat(ws: WebSocket):
-        async with ws:
-            message = await ws.receive_event()
-            assert message == {"type": "websocket.receive", "text": "ping"}
-            await ws.send_event({"type": "websocket.send", "text": "pong"})
-
-    with api.client.websocket_connect("/chat") as client:
-        client.send_text("ping")
-        assert client.receive_text() == "pong"
