@@ -37,6 +37,8 @@ generate:
   - bocadillo.staticfiles+
 - templates.md:
   - bocadillo.templates++
+- websockets.md:
+  - bocadillo.websockets++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

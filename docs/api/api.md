@@ -104,7 +104,7 @@ async def init_app():
 
 ### handle_lifespan
 ```python
-API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Create an ASGI application instance to handle `lifespan` messages.
 
@@ -207,7 +207,7 @@ __Returns__
 
 ### mount
 ```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
 ```
 Mount another WSGI or ASGI app at the given prefix.
 
@@ -305,7 +305,7 @@ __See Also__
 
 ### apply_asgi_middleware
 ```python
-API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]
+API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]
 ```
 Wrap the registered ASGI middleware around an ASGI app.
 
@@ -322,18 +322,6 @@ __Returns__
 __See Also__
 
 - [add_asgi_middleware](#add-asgi-middleware)
-
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-This is an alias to the underlying router's `route()` decorator.
-
-__See Also__
-
-- [Router.route](/api/routing.md#route-3)
 
 ### dispatch
 ```python
@@ -352,25 +340,6 @@ __Returns__
 __See Also__
 
 - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
-
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### get_response
 ```python
@@ -393,9 +362,21 @@ __See Also__
 - [dispatch](#dispatch)
 - [Middleware](../topics/features/middleware.md)
 
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+This is an alias to the underlying router's `route()` decorator.
+
+__See Also__
+
+- [Router.route](/api/routing.md#route-3)
+
 ### create_app
 ```python
-API.create_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Build and return an instance of the `API`'s own ASGI application.
 
@@ -408,9 +389,38 @@ __Returns__
 `asgi (ASGIAppInstance)`:
     creates a `Request` and awaits the result of `get_response()`.
 
+### websocket_route
+```python
+API.websocket_route(self, pattern: str, **kwargs)
+```
+Register a WebSocket route by decorating a view.
+
+__See Also__
+
+- [Router.websocket_route](/api/routing.md#websocket-route)
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
+
 ### find_app
 ```python
-API.find_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.find_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Return the ASGI application suited to the given ASGI scope.
 
@@ -443,7 +453,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x109673620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x103a1fd90>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

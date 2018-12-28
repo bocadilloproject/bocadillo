@@ -351,7 +351,12 @@ class Router:
         # Parameters
         pattern (str): an URL pattern.
         kwargs (dict):
-            Extra keyword arguments that will be passed to the WebSocket.
+            Extra keyword arguments that will be passed to the
+            `WebSocket` object.
+
+        # See Also
+        - [WebSocket](./websockets.md#websocket) for the list of available
+        keyword arguments.
         """
 
         def decorate(view):
@@ -390,7 +395,11 @@ class RoutingMixin:
         )
 
     def websocket_route(self, pattern: str, **kwargs):
-        """Register a WebSocket route by decorating a view."""
+        """Register a WebSocket route by decorating a view.
+
+        # See Also
+        - [Router.websocket_route](/api/routing.md#websocket-route)
+        """
         return self._router.websocket_route(pattern, **kwargs)
 
     def url_for(self, name: str, **kwargs) -> str:

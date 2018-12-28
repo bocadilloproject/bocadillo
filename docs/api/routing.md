@@ -1,5 +1,38 @@
 # bocadillo.routing
 
+## BaseRoute
+```python
+BaseRoute(self, pattern: str)
+```
+
+### url
+```python
+BaseRoute.url(self, **kwargs) -> str
+```
+Return full path for the given route parameters.
+
+__Parameters__
+
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`:
+    A full URL path obtained by formatting the route pattern with
+    the provided route parameters.
+
+### parse
+```python
+BaseRoute.parse(self, path: str) -> Union[dict, NoneType]
+```
+Parse an URL path against the route's URL pattern.
+
+__Returns__
+
+`result (dict or None)`:
+    If the URL path matches the URL pattern, this is a dictionary
+    containing the route parameters, otherwise None.
+
 ## Route
 ```python
 Route(self, pattern: str, view: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], methods: List[str], name: str)
@@ -20,34 +53,6 @@ __Parameters__
 - __name (str)__:
     The route's name.
 
-### url
-```python
-Route.url(self, **kwargs) -> str
-```
-Return full path for the given route parameters.
-
-__Parameters__
-
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`:
-    A full URL path obtained by formatting the route pattern with
-    the provided route parameters.
-
-### parse
-```python
-Route.parse(self, path: str) -> Union[dict, NoneType]
-```
-Parse an URL path against the route's URL pattern.
-
-__Returns__
-
-`result (dict or None)`:
-    If the URL path matches the URL pattern, this is a dictionary
-    containing the route parameters, otherwise None.
-
 ### raise_for_method
 ```python
 Route.raise_for_method(self, req: bocadillo.request.Request)
@@ -61,6 +66,19 @@ __Parameters__
 __Raises__
 
 - `HTTPError(405)`: if `req.method` is not one of `methods`.
+
+## WebSocketRoute
+```python
+WebSocketRoute(self, pattern: str, view: Callable[[bocadillo.websockets.WebSocket], Awaitable[NoneType]], **kwargs)
+```
+Represents the binding of an URL path to a WebSocket view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __view (coroutine function)__:
+    Should take as parameter a `WebSocket` object and
+    any extracted route parameters.
 
 ## check_route
 ```python
@@ -94,6 +112,15 @@ __See Also__
 RouteMatch(self, /, *args, **kwargs)
 ```
 Represents the result of a successful route match.
+### params
+Alias for field number 1
+### route
+Alias for field number 0
+## WebSocketRouteMatch
+```python
+WebSocketRouteMatch(self, /, *args, **kwargs)
+```
+Represents the result of a successful websocket route match.
 ### params
 Alias for field number 1
 ### route
@@ -150,13 +177,15 @@ __See Also__
 
 ### match
 ```python
-Router.match(self, path: str) -> Union[bocadillo.routing.RouteMatch, NoneType]
+Router.match(self, path: str, websocket: bool = False) -> Union[bocadillo.routing.RouteMatch, NoneType]
 ```
 Attempt to match an URL path against one of the registered routes.
 
 __Parameters__
 
 - __path (str)__: an URL path.
+- __websocket (bool)__:
+    whether to look for an HTTP (`False`) or WebSocket (`True`) route.
 
 __Returns__
 
@@ -183,6 +212,24 @@ __Raises__
 
 - `HTTPError(404)`: if no route exists for the given `name`.
 
+### websocket_route
+```python
+Router.websocket_route(self, pattern: str, **kwargs)
+```
+Register a WebSocket route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __kwargs (dict)__:
+    Extra keyword arguments that will be passed to the
+    `WebSocket` object.
+
+__See Also__
+
+- [WebSocket](./websockets.md#websocket) for the list of available
+keyword arguments.
+
 ## RoutingMixin
 ```python
 RoutingMixin(self)
@@ -199,6 +246,16 @@ This is an alias to the underlying router's `route()` decorator.
 __See Also__
 
 - [Router.route](/api/routing.md#route-3)
+
+### websocket_route
+```python
+RoutingMixin.websocket_route(self, pattern: str, **kwargs)
+```
+Register a WebSocket route by decorating a view.
+
+__See Also__
+
+- [Router.websocket_route](/api/routing.md#websocket-route)
 
 ### url_for
 ```python
