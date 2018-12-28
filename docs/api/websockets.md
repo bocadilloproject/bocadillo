@@ -68,25 +68,41 @@ WebSocket.send_json(self, data: Any) -> None
 WebSocket.send_text(self, data: str) -> None
 ```
 
-### receive_raw
+### receive_event
 ```python
-WebSocket.receive_raw(self) -> MutableMapping[str, Any]
+WebSocket.receive_event(self) -> MutableMapping[str, Any]
 ```
-Receive a raw ASGI message.
+Receive an ASGI event.
+
+This is a low-level method for advanced usages.
 
 __Returns__
 
-`message (dict)`: an ASGI message.
+`event (dict)`: an ASGI event.
 
-### send_raw
+__See Also__
+
+- [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
+
+### send_event
 ```python
-WebSocket.send_raw(self, message: MutableMapping[str, Any])
+WebSocket.send_event(self, event: MutableMapping[str, Any])
 ```
-Send a raw ASGI message.
+Send an ASGI event.
+
+This is a low-level method for advanced usages.
+
+::: tip
+This is a low-level interface.
+:::
 
 __Parameters__
 
-- __message (dict)__: an ASGI message.
+- __event (dict)__: an ASGI event.
+
+__See Also__
+
+- [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
 
 ### receive
 ```python

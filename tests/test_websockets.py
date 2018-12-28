@@ -119,13 +119,13 @@ def test_catch_disconnect(api: API, catch_disconnect):
     assert caught == catch_disconnect
 
 
-def test_raw_receive_and_send(api: API):
+def test_receive_and_send_event(api: API):
     @api.websocket_route("/chat")
     async def chat(ws: WebSocket):
         async with ws:
-            message = await ws.receive_raw()
+            message = await ws.receive_event()
             assert message == {"type": "websocket.receive", "text": "ping"}
-            await ws.send_raw({"type": "websocket.send", "text": "pong"})
+            await ws.send_event({"type": "websocket.send", "text": "pong"})
 
     with api.client.websocket_connect("/chat") as client:
         client.send_text("ping")

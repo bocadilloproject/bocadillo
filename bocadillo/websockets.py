@@ -2,7 +2,7 @@ from typing import Awaitable, Callable, Optional, Any, Union
 
 from starlette.websockets import WebSocket as StarletteWebSocket
 
-from .app_types import Message
+from .app_types import Event
 from .exceptions import WebSocketDisconnect
 
 
@@ -95,21 +95,35 @@ class WebSocket:
     receive_json = _Delegated()
     send_json = _Delegated()
 
-    async def receive_raw(self) -> Message:
-        """Receive a raw ASGI message.
+    async def receive_event(self) -> Event:
+        """Receive an ASGI event.
+
+        This is a low-level method for advanced usages.
 
         # Returns
-        message (dict): an ASGI message.
+        event (dict): an ASGI event.
+
+        # See Also
+        - [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
         """
         return await self._websocket.receive()
 
-    async def send_raw(self, message: Message):
-        """Send a raw ASGI message.
+    async def send_event(self, event: Event):
+        """Send an ASGI event.
+
+        This is a low-level method for advanced usages.
+
+        ::: tip
+        This is a low-level interface.
+        :::
 
         # Parameters
-        message (dict): an ASGI message.
+        event (dict): an ASGI event.
+
+        # See Also
+        - [ASGI Events](https://asgi.readthedocs.io/en/latest/specs/main.html#events)
         """
-        return await self._websocket.send(message)
+        return await self._websocket.send(event)
 
     async def receive(self) -> Union[str, bytes, list, dict]:
         """Receive a message from the WebSocket.
