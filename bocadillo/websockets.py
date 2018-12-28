@@ -1,9 +1,7 @@
 from typing import Awaitable, Callable, Optional, Any, Union
 
-from starlette.websockets import (
-    WebSocket as StarletteWebSocket,
-    WebSocketDisconnect,
-)
+from starlette.websockets import WebSocket as StarletteWebSocket
+from .exceptions import WebSocketDisconnect
 
 
 class _Delegated:
@@ -42,6 +40,9 @@ class WebSocket:
     send_type (str):
         The type of messages send over the WebSocket.
         Defaults to `default_send_type`.
+    catch_disconnect (bool):
+        Whether `WebSocketDisconnect` exceptions should be caught and silenced.
+        Defaults to `True`.
     args (any):
         Passed to the underlying Starlette `WebSocket` object.
     kwargs (any):
@@ -63,6 +64,7 @@ class WebSocket:
         value_type: Optional[str] = None,
         receive_type: Optional[str] = None,
         send_type: Optional[str] = None,
+        catch_disconnect: bool = True,
         **kwargs,
     ):
         # NOTE: we use composition over inheritance here, because
@@ -71,6 +73,7 @@ class WebSocket:
         # do not need / want to re-implement.
         # The compromise is the definition of delegated methods below.
         self._websocket = StarletteWebSocket(*args, **kwargs)
+        self.catch_disconnect = catch_disconnect
 
         if value_type is not None:
             receive_type = send_type = value_type
@@ -119,8 +122,10 @@ class WebSocket:
     async def __aexit__(self, exc_type, *args, **kwargs):
         await self.close()
         if exc_type == WebSocketDisconnect:
-            # Client disconnected, do not propagate exception.
-            return True
+            # Client disconnected. Returning `True` here will silence
+            # the exception. See:
+            # https://docs.python.org/3/reference/datamodel.html#object.__exit__
+            return self.catch_disconnect
 
     # Asynchronous iterator.
 

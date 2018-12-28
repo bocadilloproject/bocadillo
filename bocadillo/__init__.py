@@ -1,5 +1,5 @@
 from .api import API
-from .exceptions import HTTPError
+from .exceptions import HTTPError, WebSocketDisconnect
 from .media import Media
 from .middleware import Middleware
 from .recipes import Recipe

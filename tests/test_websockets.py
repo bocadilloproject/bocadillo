@@ -1,7 +1,6 @@
 import pytest
-from starlette.websockets import WebSocketDisconnect
 
-from bocadillo import WebSocket, API
+from bocadillo import WebSocket, API, WebSocketDisconnect
 
 
 def test_websocket_route(api: API):
@@ -93,3 +92,28 @@ def test_value_type(api: API, value_type, example_message, expected_type):
     with api.client.websocket_connect("/chat") as client:
         getattr(client, f"send_{value_type}")(example_message)
         assert type(getattr(client, f"receive_{value_type}")()) == expected_type
+
+
+@pytest.mark.parametrize("catch_disconnect", [True, False])
+def test_catch_disconnect(api: API, catch_disconnect):
+    caught = False
+
+    @api.websocket_route("/chat", catch_disconnect=catch_disconnect)
+    async def chat(ws: WebSocket):
+        nonlocal caught
+        try:
+            async with ws:
+                await ws.receive()  # will never receive
+            caught = True
+        except WebSocketDisconnect:
+            # The exception should be raised only if we told the WebSocket
+            # not to catch it.
+            assert not catch_disconnect
+
+    with api.client.websocket_connect("/chat"):
+        # Don't send anything, which causes the server to disconnect the client.
+        pass
+
+    # The block after the `async with` block must have been called
+    # only if it caught the disconnect exception.
+    assert caught == catch_disconnect

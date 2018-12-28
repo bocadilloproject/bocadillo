@@ -1,5 +1,9 @@
 from http import HTTPStatus
 from typing import Union, Any, List
+from starlette.websockets import WebSocketDisconnect as _WebSocketDisconnect
+
+
+WebSocketDisconnect = _WebSocketDisconnect
 
 
 class HTTPError(Exception):
