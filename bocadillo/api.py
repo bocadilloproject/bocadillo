@@ -146,7 +146,10 @@ class API(
 
         [TestClient]: https://www.starlette.io/testclient/
         """
-        return TestClient(self)
+        return self.get_client()
+
+    def get_client(self, **kwargs) -> TestClient:
+        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         """Return global variables available to all templates.
