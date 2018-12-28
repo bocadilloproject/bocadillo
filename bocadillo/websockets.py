@@ -137,6 +137,18 @@ class WebSocket:
         sender = getattr(self, f"send_{self.send_type}")
         return await sender(message)
 
+    async def ensure_closed(self, code: int = 1000):
+        """Close the connection if it has not been closed already.
+
+        # Parameters
+        code (int): a close code, defaults to `1000`.
+        """
+        try:
+            await self.close(code)
+        except RuntimeError:
+            # Already closed.
+            pass
+
     # Asynchronous context manager.
 
     async def __aenter__(self, *args, **kwargs):
@@ -144,14 +156,16 @@ class WebSocket:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        code = 1000 if exc_type is None else 1011
-        await self.close(code)
         if exc_type == WebSocketDisconnect:
-            if exc_val.code in self.caught_close_codes:
-                # Client has closed with an expected close code.
-                # Returning `True` here silences the exception. See:
-                # https://docs.python.org/3/reference/datamodel.html#object.__exit__
-                return True
+            # Client has closed the connection.
+            # Returning `True` here silences the exception. See:
+            # https://docs.python.org/3/reference/datamodel.html#object.__exit__
+            return exc_val.code in self.caught_close_codes
+        else:
+            # NOTE: view may have closed the WebSocket already, so we
+            # must use ensure_closed().
+            code = 1000 if exc_type is None else 1011
+            await self.ensure_closed(code)
 
     # Asynchronous iterator.
 

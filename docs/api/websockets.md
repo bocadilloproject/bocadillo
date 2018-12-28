@@ -113,3 +113,13 @@ Send a message over the WebSocket.
 
 Shortcut for `send_<self.send_type>`.
 
+### ensure_closed
+```python
+WebSocket.ensure_closed(self, code: int = 1000)
+```
+Close the connection if it has not been closed already.
+
+__Parameters__
+
+- __code (int)__: a close code, defaults to `1000`.
+

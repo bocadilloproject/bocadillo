@@ -59,6 +59,14 @@ It is possible to **reject** a WebSocket connection request by calling `close()`
 When doing so, you should provide a **close code** describing why the connection request was rejected, e.g. `await ws.close(1002)` for a protocol error. See the [CloseEvent] reference for the available close codes.
 :::
 
+## Error handling
+
+WebSocket routes do not have advanced error handling mechanisms similar to those available for HTTP routes.
+
+The only thing that Bocadillo does is ensuring that the client receives a 1011 (Unexpected Error) close event if an exception is raised on the server. This is done by catching exceptions raised in the view, closing the WebSocket and re-raising the exception. This applies whether you are using the [async context manager syntax](#async-context-manager-syntax) or not.
+
+The only exception to this is [client-side connection closures](#handling-client-side-connection-closures).
+
 ## Async context manager syntax
 
 ### Usage
@@ -66,8 +74,6 @@ When doing so, you should provide a **close code** describing why the connection
 Having to manually `accept` and `close` the connection can be cumbersome and error-prone.
 
 To address this issue, the `ws` object can be used as an [asynchronous context manager] to `accept()` the connection on enter and `close()` it on exit.
-
-If an exception was raised, the close code will be 1011 (Unexpected Error).
 
 ```python
 async def hello(ws):
@@ -77,6 +83,12 @@ async def hello(ws):
         pass
     # Connection closed.
 ```
+
+::: tip
+It is safe to call `close()` within the WebSocket context, but calling it multiple times will raise a `RuntimeError`.
+
+If you're not sure whether the connection has already been closed, use `ensure_closed()` instead.
+:::
 
 ### Handling client-side connection closures
 
@@ -94,9 +106,9 @@ You can customize this behavior by passing a tuple of integers to the `caught_cl
 The [constants](../../api/constants.md) module defines a dictionary of close codes which you can use for convenience.
 :::
 
-### Example and comparison
+### Example
 
-Here's an example usage of `async with` syntax for WebSockets:
+Here's an example usage of the `async with` syntax for WebSockets:
 
 ```python
 from bocadillo import API, WebSocket
@@ -110,7 +122,7 @@ async def hello(ws: WebSocket):
     print("Connection closed as expected")
 ```
 
-A rough equivalent to the above code snippet without using the `async with` syntax would be:
+A rough equivalent to the above code snippet without using the `async with` syntax, including error handling code, would be:
 
 ```python
 from bocadillo import API, WebSocket
@@ -128,7 +140,10 @@ async def hello(ws: WebSocket):
             print("Connection closed as expected")
         else:
             raise
-    finally:
+    except:
+        await ws.close(1011)
+        raise
+    else:
         await ws.close()
 ```
 

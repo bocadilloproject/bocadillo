@@ -1,7 +1,12 @@
+from contextlib import suppress
+
 import pytest
 
 from bocadillo import WebSocket, API, WebSocketDisconnect
 from bocadillo.constants import WEBSOCKET_CLOSE_CODES
+
+
+# Basic usage
 
 
 def test_websocket_route(api: API):
@@ -35,6 +40,21 @@ def test_iter_websocket(api: API):
         assert ws_client.receive_text() == "You said: ping"
         ws_client.send_text("pong")
         assert ws_client.receive_text() == "You said: pong"
+
+
+def test_can_close_within_context(api: API):
+    @api.websocket_route("/test")
+    async def test(ws: WebSocket):
+        async with ws:
+            await ws.close(1002)  # simulates a protocol error
+
+    with api.client.websocket_connect("/test") as client:
+        message = client.receive()
+
+    assert message == {"type": "websocket.close", "code": 1002}
+
+
+# Encoding / decoding of messages
 
 
 @pytest.mark.parametrize(
@@ -110,6 +130,9 @@ def test_receive_and_send_event(api: API):
         assert client.receive_text() == "pong"
 
 
+# Disconnect errors
+
+
 @pytest.mark.parametrize(
     "close_codes, code, expected_caught",
     [
@@ -148,17 +171,46 @@ def test_catch_disconnect(api: API, close_codes, code, expected_caught):
     assert caught is expected_caught
 
 
-def test_if_exception_raised_in_context_then_close_code_is_1011(api: API):
-    class Oops(Exception):
-        pass
+# Server error handling
 
+
+class Oops(Exception):
+    pass
+
+
+def test_if_exception_raised_in_context_then_closed_with_1011(api: API):
     @api.websocket_route("/fail")
     async def fail(ws: WebSocket):
         async with ws:
             raise Oops
 
-    # TODO: disable raising of server errors on test client
-    with api.client.websocket_connect("/fail") as client:
-        message = client.receive()
-        assert message["type"] == "websocket.close"
-        assert message["code"] == 1011
+    with suppress(Oops):
+        with api.client.websocket_connect("/fail") as client:
+            message = client.receive()
+
+    assert message == {"type": "websocket.close", "code": 1011}
+
+
+def test_accepted_and_exception_raised_then_closed_with_1011(api: API):
+    @api.websocket_route("/fail")
+    async def fail(ws: WebSocket):
+        await ws.accept()
+        raise Oops
+
+    with suppress(Oops):
+        with api.client.websocket_connect("/fail") as client:
+            message = client.receive()
+
+    assert message == {"type": "websocket.close", "code": 1011}
+
+
+def test_if_not_accepted_and_exception_raised_then_closed_with_1011(api: API):
+    @api.websocket_route("/fail")
+    async def fail(_):
+        raise Oops
+
+    with pytest.raises(WebSocketDisconnect) as ctx:
+        with api.client.websocket_connect("/fail"):
+            pass
+
+    assert ctx.value.code == 1011

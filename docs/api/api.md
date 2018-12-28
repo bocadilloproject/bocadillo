@@ -346,6 +346,18 @@ __See Also__
 
 - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
 
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+This is an alias to the underlying router's `route()` decorator.
+
+__See Also__
+
+- [Router.route](/api/routing.md#route-3)
+
 ### get_response
 ```python
 API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
@@ -367,18 +379,6 @@ __See Also__
 - [dispatch](#dispatch)
 - [Middleware](../topics/features/middleware.md)
 
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-This is an alias to the underlying router's `route()` decorator.
-
-__See Also__
-
-- [Router.route](/api/routing.md#route-3)
-
 ### websocket_route
 ```python
 API.websocket_route(self, pattern: str, **kwargs)
@@ -388,21 +388,6 @@ Register a WebSocket route by decorating a view.
 __See Also__
 
 - [Router.websocket_route](/api/routing.md#websocket-route)
-
-### create_app
-```python
-API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
-```
-Build and return an instance of the `API`'s own ASGI application.
-
-__Parameters__
-
-- __scope (dict)__: an ASGI connection scope.
-
-__Returns__
-
-`asgi (ASGIAppInstance)`:
-    creates a `Request` and awaits the result of `get_response()`.
 
 ### url_for
 ```python
@@ -422,6 +407,21 @@ __Returns__
 __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
+
+### create_app
+```python
+API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
+```
+Build and return an instance of the `API`'s own ASGI application.
+
+__Parameters__
+
+- __scope (dict)__: an ASGI connection scope.
+
+__Returns__
+
+`asgi (ASGIAppInstance)`:
+    creates a `Request` and awaits the result of `get_response()`.
 
 ### find_app
 ```python

@@ -413,7 +413,11 @@ class API(
             await WebSocketClose(code=403)(receive, send)
         else:
             ws = WebSocket(scope, receive, send, **match.route.ws_kwargs)
-            await match.route(ws, **match.params)
+            try:
+                await match.route(ws, **match.params)
+            except BaseException as exc:
+                await ws.ensure_closed(1011)
+                raise exc from None
 
     def create_app(self, scope: Scope) -> ASGIAppInstance:
         """Build and return an instance of the `API`'s own ASGI application.
