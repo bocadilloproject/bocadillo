@@ -72,7 +72,7 @@ class Route(BaseRoute):
     def __init__(
         self, pattern: str, view: AsyncView, methods: List[str], name: str
     ):
-        self._pattern = pattern
+        super().__init__(pattern)
         self._view = view
         self._methods = methods
         self._name = name
