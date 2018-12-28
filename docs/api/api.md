@@ -62,6 +62,11 @@ __Parameters__
     Defaults to `"application/json"`.
     See also [Media](../topics/request-handling/media.md).
 
+### client
+A Starlette [TestClient] that can be used for testing the app.
+
+[TestClient]: https://www.starlette.io/testclient/
+
 ### media_handlers
 The dictionary of supported media handlers.
 
@@ -411,7 +416,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x102eac620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

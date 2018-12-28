@@ -6,4 +6,4 @@ from .recipes import Recipe
 from .exceptions import HTTPError
 from .views import view
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"

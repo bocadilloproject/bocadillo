@@ -1,5 +1,5 @@
 import os
-from functools import partial
+from functools import wraps
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware
@@ -12,12 +12,14 @@ from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
 from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
+from .compat import call_async
 from .constants import DEFAULT_CORS_CONFIG
-from .error_handlers import ErrorHandler, convert_exception_to_response
+from .error_handlers import ErrorHandler, error_to_text
 from .events import EventsMixin
 from .exceptions import HTTPError
 from .media import Media
 from .meta import DocsMeta
+from .middleware import Dispatcher
 from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
@@ -103,10 +105,9 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         super().__init__(templates_dir=templates_dir)
 
         self._error_handlers = []
+        self.add_error_handler(HTTPError, error_to_text)
 
         self._extra_apps: Dict[str, Any] = {}
-
-        self.client = self._build_client()
 
         if static_dir is not None:
             if static_root is None:
@@ -136,8 +137,16 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-    def _build_client(self) -> TestClient:
-        return TestClient(self)
+    @property
+    def client(self) -> TestClient:
+        """A Starlette [TestClient] that can be used for testing the app.
+
+        [TestClient]: https://www.starlette.io/testclient/
+        """
+        return self.get_client()
+
+    def get_client(self, **kwargs) -> TestClient:
+        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         """Return global variables available to all templates.
@@ -228,18 +237,16 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
                 return handler
         return None
 
-    def _handle_exception(
+    async def _handle_exception(
         self, req: Request, res: Response, exception: Exception
     ) -> None:
-        """Handle an exception raised during dispatch.
-
-        If no handler was registered for the exception, it is raised.
-        """
+        # Handle an exception raised during dispatch.
+        # If no handler was registered for the exception, it is raised.
         handler = self._find_handler(exception.__class__)
         if handler is None:
-            raise exception from None
+            return await self._handle_exception(req, res, HTTPError(500))
 
-        handler(req, res, exception)
+        await call_async(handler, req, res, exception)
         if res.status_code is None:
             res.status_code = 500
 
@@ -343,9 +350,25 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
                 res = redirection.response
 
         except Exception as e:
-            self._handle_exception(req, res, e)
+            await self._handle_exception(req, res, e)
 
         return res
+
+    def _convert_exception_to_response(
+        self, dispatch: Dispatcher
+    ) -> Dispatcher:
+        # Wrap call to `dispatch()` to always return an HTTP response.
+
+        @wraps(dispatch)
+        async def inner(req: Request) -> Response:
+            try:
+                res = await dispatch(req)
+            except Exception as exc:
+                res = Response(req, media=self._media)
+                await self._handle_exception(req, res, exc)
+            return res
+
+        return inner
 
     async def get_response(self, req: Request) -> Response:
         """Return a response for an incoming request.
@@ -362,12 +385,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         - [dispatch](#dispatch)
         - [Middleware](../topics/features/middleware.md)
         """
-        error_handler = self._find_handler(HTTPError)
-        convert = partial(
-            convert_exception_to_response,
-            error_handler=error_handler,
-            media=self._media,
-        )
+        convert = self._convert_exception_to_response
         dispatch = convert(self.dispatch)
         for cls, kwargs in self._middleware:
             middleware = cls(dispatch, **kwargs)
@@ -445,7 +463,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         port: int = None,
         debug: bool = False,
         log_level: str = "info",
-        _run: Callable = run,
+        _run: Callable = None,
         **kwargs,
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
@@ -475,6 +493,9 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """
+        if _run is None:  # pragma: no cover
+            _run = run
+
         if "PORT" in os.environ:
             port = int(os.environ["PORT"])
             if host is None:
