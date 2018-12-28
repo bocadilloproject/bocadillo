@@ -127,6 +127,7 @@ the courses app example:
 - [Error handling]
 - [Hooks]
 - [Recipes]
+- [WebSockets]
 - [Middleware]
 
 Happy coding!
@@ -147,6 +148,7 @@ Happy coding!
 [Media]: ../topics/request-handling/media.md
 [Error handling]: ../topics/request-handling/writing-views.md#returning-errors
 [Hooks]: ../topics/features/hooks.md
+[WebSockets]: ../topics/features/websockets.md
 [Middleware]: ../topics/features/middleware.md
 [Recipes]: ../topics/features/recipes.md
 [The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b

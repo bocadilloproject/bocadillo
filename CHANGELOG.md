@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Support for WebSockets, including routing with `@api.websocket_route()`.
+
 ## [v0.8.1] - 2018-12-27
 
 ### Changed
