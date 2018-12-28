@@ -374,6 +374,16 @@ __See Also__
 
 - [Router.route](/api/routing.md#route-3)
 
+### websocket_route
+```python
+API.websocket_route(self, pattern: str, **kwargs)
+```
+Register a WebSocket route by decorating a view.
+
+__See Also__
+
+- [Router.websocket_route](/api/routing.md#websocket-route)
+
 ### create_app
 ```python
 API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
@@ -388,16 +398,6 @@ __Returns__
 
 `asgi (ASGIAppInstance)`:
     creates a `Request` and awaits the result of `get_response()`.
-
-### websocket_route
-```python
-API.websocket_route(self, pattern: str, **kwargs)
-```
-Register a WebSocket route by decorating a view.
-
-__See Also__
-
-- [Router.websocket_route](/api/routing.md#websocket-route)
 
 ### url_for
 ```python
@@ -453,7 +453,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1107d7d90>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1080f6d90>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

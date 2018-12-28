@@ -8,6 +8,7 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
+from starlette.websockets import WebSocketClose
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
@@ -23,7 +24,7 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin
+from .routing import RoutingMixin, WebSocketRouteMatch, RouteMatch
 from .staticfiles import static
 from .templates import TemplatesMixin
 from .websockets import WebSocket
@@ -338,7 +339,7 @@ class API(
         res = Response(req, media=self._media)
 
         try:
-            match = self._router.match(req.url.path)
+            match: RouteMatch = self._router.match(req.url.path)
             if match is None:
                 raise HTTPError(status=404)
 
@@ -385,11 +386,13 @@ class API(
         return await dispatch(req)
 
     async def dispatch_websocket(self, scope: Scope, receive, send):
-        match = self._router.match(scope["path"], websocket=True)
+        match: WebSocketRouteMatch = self._router.match(
+            scope["path"], websocket=True
+        )
         if match is None:
             # Close with a 403 error code, as specified in the ASGI spec:
             # https://asgi.readthedocs.io/en/latest/specs/www.html#close
-            await send({"type": "websocket.close", "code": 403})
+            await WebSocketClose(code=403)(receive, send)
         else:
             ws = WebSocket(scope, receive, send, **match.route.ws_kwargs)
             await match.route(ws, **match.params)

@@ -2,7 +2,7 @@
 
 ## WebSocket
 ```python
-WebSocket(self, *args, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, catch_disconnect: bool = True, **kwargs)
+WebSocket(self, *args, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
 ```
 Represents a WebSocket connection.
 
@@ -20,13 +20,12 @@ __Parameters__
 - __send_type (str)__:
     The type of messages send over the WebSocket.
     Defaults to `"text"`.
-- __catch_disconnect (bool)__:
-    Whether `WebSocketDisconnect` exceptions should be caught and silenced.
-    Defaults to `True`.
+- __caught_close_codes (tuple of int)__:
+    Close codes of `WebSocketDisconnect` exceptions that should be
+    caught and silenced. Defaults to `(1000, 1001)`.
 - __args (any)__:
-    Passed to the underlying Starlette `WebSocket` object.
-- __kwargs (any)__:
-    Passed to the underlying Starlette `WebSocket` object.
+    Passed to the underlying Starlette `WebSocket` object. This is
+    typically the ASGI `scope`, `receive` and `send` objects.
 
 ### accept
 ```python

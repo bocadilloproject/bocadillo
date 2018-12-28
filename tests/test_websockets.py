@@ -1,6 +1,7 @@
 import pytest
 
 from bocadillo import WebSocket, API, WebSocketDisconnect
+from bocadillo.constants import WEBSOCKET_CLOSE_CODES
 
 
 def test_websocket_route(api: API):
@@ -94,29 +95,42 @@ def test_value_type(api: API, value_type, example_message, expected_type):
         assert type(getattr(client, f"receive_{value_type}")()) == expected_type
 
 
-@pytest.mark.parametrize("catch_disconnect", [True, False])
-def test_catch_disconnect(api: API, catch_disconnect):
+@pytest.mark.parametrize(
+    "close_codes, code, expected_caught",
+    [
+        (None, 1000, True),
+        (None, 1001, True),
+        *(
+            (None, code, False)
+            for code in WEBSOCKET_CLOSE_CODES
+            if code not in (1000, 1001)
+        ),
+        ((1000,), 1001, False),
+        ((1000,), 1000, True),
+        *(((), code, False) for code in WEBSOCKET_CLOSE_CODES),
+        *((all, code, True) for code in WEBSOCKET_CLOSE_CODES),
+    ],
+)
+def test_catch_disconnect(api: API, close_codes, code, expected_caught):
     caught = False
 
-    @api.websocket_route("/chat", catch_disconnect=catch_disconnect)
+    @api.websocket_route("/chat", caught_close_codes=close_codes)
     async def chat(ws: WebSocket):
         nonlocal caught
         try:
             async with ws:
                 await ws.receive()  # will never receive
             caught = True
-        except WebSocketDisconnect:
-            # The exception should be raised only if we told the WebSocket
-            # not to catch it.
-            assert not catch_disconnect
+        except WebSocketDisconnect as exc:
+            # The exception should have been raised only if we told the
+            # WebSocket route not to catch it.
+            assert exc.code not in ws.caught_close_codes
 
-    with api.client.websocket_connect("/chat"):
-        # Don't send anything, which causes the server to disconnect the client.
-        pass
+    with api.client.websocket_connect("/chat") as client:
+        # Close immediately.
+        client.close(code)
 
-    # The block after the `async with` block must have been called
-    # only if it caught the disconnect exception.
-    assert caught == catch_disconnect
+    assert caught is expected_caught
 
 
 def test_receive_and_send_event(api: API):

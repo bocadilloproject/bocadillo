@@ -1,8 +1,9 @@
-from typing import Awaitable, Callable, Optional, Any, Union
+from typing import Awaitable, Callable, Optional, Any, Union, Tuple
 
 from starlette.websockets import WebSocket as StarletteWebSocket
 
 from .app_types import Event
+from .constants import WEBSOCKET_CLOSE_CODES
 from .exceptions import WebSocketDisconnect
 
 _STARLETTE_WEBSOCKET_DOCS = (
@@ -59,13 +60,12 @@ class WebSocket:
     send_type (str):
         The type of messages send over the WebSocket.
         Defaults to `"text"`.
-    catch_disconnect (bool):
-        Whether `WebSocketDisconnect` exceptions should be caught and silenced.
-        Defaults to `True`.
+    caught_close_codes (tuple of int):
+        Close codes of `WebSocketDisconnect` exceptions that should be
+        caught and silenced. Defaults to `(1000, 1001)`.
     args (any):
-        Passed to the underlying Starlette `WebSocket` object.
-    kwargs (any):
-        Passed to the underlying Starlette `WebSocket` object.
+        Passed to the underlying Starlette `WebSocket` object. This is
+        typically the ASGI `scope`, `receive` and `send` objects.
     """
 
     __default_receive_type__ = "text"
@@ -77,16 +77,20 @@ class WebSocket:
         value_type: Optional[str] = None,
         receive_type: Optional[str] = None,
         send_type: Optional[str] = None,
-        catch_disconnect: bool = True,
-        **kwargs,
+        caught_close_codes: Optional[Tuple[int]] = None,
     ):
         # NOTE: we use composition over inheritance here, because
         # we want to redefine `receive()` and `send()` but Starlette's
         # WebSocket class uses those in many other functions, which we
         # do not need / want to re-implement.
         # The compromise is the definition of delegated methods below.
-        self._websocket = StarletteWebSocket(*args, **kwargs)
-        self.catch_disconnect = catch_disconnect
+        self._websocket = StarletteWebSocket(*args)
+
+        if caught_close_codes is None:
+            caught_close_codes = (1000, 1001)
+        if caught_close_codes is all:
+            caught_close_codes = list(WEBSOCKET_CLOSE_CODES)
+        self.caught_close_codes = caught_close_codes
 
         if value_type is not None:
             receive_type = send_type = value_type
@@ -139,13 +143,14 @@ class WebSocket:
         await self.accept()
         return self
 
-    async def __aexit__(self, exc_type, *args, **kwargs):
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
         if exc_type == WebSocketDisconnect:
-            # Client disconnected. Returning `True` here will silence
-            # the exception. See:
-            # https://docs.python.org/3/reference/datamodel.html#object.__exit__
-            return self.catch_disconnect
+            if exc_val.code in self.caught_close_codes:
+                # Client has closed with an expected close code.
+                # Returning `True` here silences the exception. See:
+                # https://docs.python.org/3/reference/datamodel.html#object.__exit__
+                return True
 
     # Asynchronous iterator.
 

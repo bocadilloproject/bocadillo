@@ -54,27 +54,49 @@ Let's break this code down:
 These four operations (accept, receive, send and close) are the basic building blocks of WebSocket views.
 
 ::: tip
-It is possible to reject a WebSocket connection request by calling `close()` without calling `accept()`.
+It is possible to **reject** a WebSocket connection request by calling `close()` without calling `accept()`.
 
-It is then recommended to provide an error code describing why the connection request was rejected. See the [CloseEvent] reference.
+When doing so, you should provide a **close code** describing why the connection request was rejected, e.g. `await ws.close(1002)` for a protocol error. See the [CloseEvent] reference for the available close codes.
 :::
 
-## Automatically accepting and closing connections
+## WebSocket as an async context manager
+
+### Usage
 
 Having to manually `accept` and `close` the connection can be cumbersome and error-prone.
 
-To address this issue, the `ws` object can be used as an [asynchronous context manager]:
+To address this issue, the `ws` object can be used as an [asynchronous context manager]. This will `accept()` the connection on enter and `close()` it on exit.
 
-- The WebSocket connection is accepted on enter.
-- It is closed on exit — even if an exception occurred.
+If an exception was raised, the close code will be 1011 (Unexpected Error).
 
-This has the benefit of closing the WebSocket connection 
+```python
+async def hello(ws):
+    async with ws:
+        # Connection accepted.
+        # Receive or send messages…
+        pass
+    # Connection closed.
+```
 
-Still, what happens if the client disconnects before sending us a message? A `WebSocketDisconnect` exception will be raised, which means we'd have to catch it if we don't want our code to crash.
+### Handling client-side connection closures
 
-Luckily, the `ws` async context manager catches the exception for us.
+When the client disconnects while we are trying to `receive()` a message, a `WebSocketDisconnect` exception is raised.
 
-As a result, the following code snippets are equivalent:
+If you are using the `async with` syntax, this exception is automatically caught if the close code is either 1000 (Normal Closure) or 1001 (Going Away), both being considered successful closure codes.
+
+For other close codes, the exception will propagate beyond the WebSocket's context. It is your responsibility to catch and handle it, if necessary.
+
+::: tip
+You can customize this behavior by passing a tuple of integers to the `caught_close_codes` parameter of `@api.websocket_route()`. The `all` Python built-in can be passed to catch all close codes. To not catch any close code, pass the empty tuple `()`.
+:::
+
+::: tip
+The [constants](../../api/constants.md) module defines a dictionary of close codes which you can use for convenience.
+:::
+
+### Example and comparison
+
+Here's an example usage of `async with` syntax for WebSockets:
 
 ```python
 from bocadillo import API, WebSocket
@@ -85,8 +107,10 @@ api = API()
 async def hello(ws: WebSocket):
     async with ws:
         await ws.send("Hello, world!")
-    print("Connection closed")
+    print("Connection closed as expected")
 ```
+
+A rough equivalent to the above code snippet without using the `async with` syntax would be:
 
 ```python
 from bocadillo import API, WebSocket
@@ -99,19 +123,22 @@ async def hello(ws: WebSocket):
     await ws.accept()
     try:
         await ws.send("Hello, world!")
-    except WebSocketDisconnect:
-        print("Connection closed")
+    except WebSocketDisconnect as exc:
+        if exc.code in ws.caught_close_codes:
+            print("Connection closed as expected")
+        else:
+            raise
     finally:
         await ws.close()
 ```
 
 ## Iterating over received messages
 
-In our basic example, only one message was received and sent over the WebSocket; after that, we closed the connection.
+In the [basic example](#a-basic-example), only one message was received and sent over the WebSocket, then we closed the connection.
 
-What if we wanted to do this repeatedly, i.e. echo all messages that the client will send us through the WebSocket?
+What if we wanted to do this repeatedly, i.e. echo all messages that the client sends us through the WebSocket?
 
-It turns out that `ws` is also an [asynchronous iterator], so we can iterate over the received messages like so:
+It turns out that `ws` is also an [asynchronous iterator], so we can iterate over each received messages like so:
 
 ```python
 async def echo(ws: WebSocket):
@@ -132,25 +159,26 @@ async def echo(ws: WebSocket):
 
 ## Decoding and encoding messages
 
-By default, calling `await ws.receive()` and `ws.send()` will return and send text messages, i.e. Python `str` objects.
+Messages are decoded or encoded as text messages by default: calling `receive()` and `send()` will return or expect `str` objects.
 
 It is possible to specify how messages should be decoded (resp. encoded) by passing the `receive_type` (resp. `send_type`) argument to the `@api.websocket_route()` decorator.
  
+ ::: tip
  For convenience, `value_type` can be used to set `receive_type` and `send_type` to the same value.
+:::
 
-The possible values for `receive_type`, `send_type` and `value_type` are listed below:
+The possible values for `receive_type`, `send_type` and `value_type` are:
 
 - `"text"`: decodes/encodes messages as `str`.
 - `"bytes"`: decodes/encodes data as `bytes`.
 - `"json"`: decodes with `json.loads()` and encodes with `json.dumps()`.
 
-For example, here's an example of a WebSocket server that exchanges JSON messages with clients:
+For example, here's a WebSocket server that exchanges JSON messages with its clients:
 
-```python
+```python{4}
 from bocadillo import API, WebSocket
 
 api = API()
-
 @api.websocket_route("/ping-pong", value_type="json")
 async def ping_pong(ws: WebSocket):
     async with ws:
@@ -160,9 +188,9 @@ async def ping_pong(ws: WebSocket):
 ```
 
 ::: tip
-In fact, `receive()` and `send()` are shortcuts that call the corresponding receive and send methods for the configured `receive_type` and `send_type`.
+In fact, `receive()` and `send()` are shortcuts that call the corresponding receive and send methods for the WebSocket's `receive_type` and `send_type`.
 
-For example, if `receive_type="json"` then `await ws.receive()` is equivalent to `await ws.receive_json()`.
+For example, if `receive_type="json"` was given then `await ws.receive()` is equivalent to `await ws.receive_json()`.
 
 See also the [WebSocket API reference].
 :::
@@ -186,15 +214,6 @@ async def echo(ws: WebSocket):
     await ws.send_event({{"type": "websocket.send", "text": f"You said: {message}"}})
     await ws.send_event({"type": "websocket.close"})
 ```
-
-### Disabling automatic catching of `WebSocketDisconnect`
-
-By default, the `ws` async context manager automatically catches and silences `WebSocketDisconnect` exceptions which are raised when the client closes the WebSocket.
-
-To disable this behavior, pass `catch_disconnect=False` to `@api.websocket_route()`.
-
-
-`catch_disconnect = False`
 
 [The API object]: ../api.md
 [Routes and URL design]: http://localhost:8080/topics/request-handling/routes-url-design.html#routes-and-url-design
