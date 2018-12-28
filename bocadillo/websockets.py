@@ -144,7 +144,8 @@ class WebSocket:
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
+        code = 1000 if exc_type is None else 1011
+        await self.close(code)
         if exc_type == WebSocketDisconnect:
             if exc_val.code in self.caught_close_codes:
                 # Client has closed with an expected close code.

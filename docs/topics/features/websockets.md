@@ -59,13 +59,13 @@ It is possible to **reject** a WebSocket connection request by calling `close()`
 When doing so, you should provide a **close code** describing why the connection request was rejected, e.g. `await ws.close(1002)` for a protocol error. See the [CloseEvent] reference for the available close codes.
 :::
 
-## WebSocket as an async context manager
+## Async context manager syntax
 
 ### Usage
 
 Having to manually `accept` and `close` the connection can be cumbersome and error-prone.
 
-To address this issue, the `ws` object can be used as an [asynchronous context manager]. This will `accept()` the connection on enter and `close()` it on exit.
+To address this issue, the `ws` object can be used as an [asynchronous context manager] to `accept()` the connection on enter and `close()` it on exit.
 
 If an exception was raised, the close code will be 1011 (Unexpected Error).
 
@@ -132,13 +132,13 @@ async def hello(ws: WebSocket):
         await ws.close()
 ```
 
-## Iterating over received messages
+## Iterating over messages
 
 In the [basic example](#a-basic-example), only one message was received and sent over the WebSocket, then we closed the connection.
 
 What if we wanted to do this repeatedly, i.e. echo all messages that the client sends us through the WebSocket?
 
-It turns out that `ws` is also an [asynchronous iterator], so we can iterate over each received messages like so:
+It turns out that `ws` is also an [asynchronous iterator], so we can iterate over each received message like so:
 
 ```python
 async def echo(ws: WebSocket):
@@ -169,9 +169,10 @@ It is possible to specify how messages should be decoded (resp. encoded) by pass
 
 The possible values for `receive_type`, `send_type` and `value_type` are:
 
-- `"text"`: decodes/encodes messages as `str`.
-- `"bytes"`: decodes/encodes data as `bytes`.
+- `"text"`: plain text as `str`.
+- `"bytes"`: plain bytes as `bytes`.
 - `"json"`: decodes with `json.loads()` and encodes with `json.dumps()`.
+- `"event"`: raw ASGI events as `dict` (see [Using ASGI events](#using-asgi-events)).
 
 For example, here's a WebSocket server that exchanges JSON messages with its clients:
 

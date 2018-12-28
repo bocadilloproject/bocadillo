@@ -98,12 +98,12 @@ def test_value_type(api: API, value_type, example_message, expected_type):
 
 
 def test_receive_and_send_event(api: API):
-    @api.websocket_route("/chat")
+    @api.websocket_route("/chat", value_type="event")
     async def chat(ws: WebSocket):
         async with ws:
-            message = await ws.receive_event()
+            message = await ws.receive()
             assert message == {"type": "websocket.receive", "text": "ping"}
-            await ws.send_event({"type": "websocket.send", "text": "pong"})
+            await ws.send({"type": "websocket.send", "text": "pong"})
 
     with api.client.websocket_connect("/chat") as client:
         client.send_text("ping")
@@ -146,3 +146,19 @@ def test_catch_disconnect(api: API, close_codes, code, expected_caught):
         client.close(code)
 
     assert caught is expected_caught
+
+
+def test_if_exception_raised_in_context_then_close_code_is_1011(api: API):
+    class Oops(Exception):
+        pass
+
+    @api.websocket_route("/fail")
+    async def fail(ws: WebSocket):
+        async with ws:
+            raise Oops
+
+    # TODO: disable raising of server errors on test client
+    with api.client.websocket_connect("/fail") as client:
+        message = client.receive()
+        assert message["type"] == "websocket.close"
+        assert message["code"] == 1011
