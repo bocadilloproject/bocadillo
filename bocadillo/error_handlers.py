@@ -8,7 +8,7 @@ from .request import Request
 from .response import Response
 
 
-def error_to_html(req: Request, res: Response, exc: HTTPError):
+async def error_to_html(req: Request, res: Response, exc: HTTPError):
     """Convert an exception to an HTML response.
 
     The response contains a `<h1>` tag with the error's `title` and,
@@ -28,7 +28,7 @@ def error_to_html(req: Request, res: Response, exc: HTTPError):
     res.html = html
 
 
-def error_to_media(req: Request, res: Response, exc: HTTPError):
+async def error_to_media(req: Request, res: Response, exc: HTTPError):
     """Convert an exception to a media response.
 
     The response contains the following items:
@@ -54,7 +54,7 @@ def error_to_media(req: Request, res: Response, exc: HTTPError):
     res.media = media
 
 
-def error_to_text(req: Request, res: Response, exc: HTTPError):
+async def error_to_text(req: Request, res: Response, exc: HTTPError):
     """Convert an exception to a plain text response.
 
     The response contains a line with the error's `title` and, if provided,
@@ -74,34 +74,3 @@ def error_to_text(req: Request, res: Response, exc: HTTPError):
 
 
 ErrorHandler = Callable[[Request, Response, Exception], None]
-
-
-async def _to_res(
-    req: Request, exc: Exception, error_handler: ErrorHandler, **kwargs
-) -> Response:
-    if isinstance(exc, HTTPError):
-        res = Response(req, **kwargs)
-        error_handler(req, res, exc)
-        if exc.status_code == 500:
-            traceback.print_exc()
-    else:
-        res = await _to_res(req, HTTPError(500), error_handler, **kwargs)
-    return res
-
-
-def convert_exception_to_response(
-    dispatch, error_handler: Optional[ErrorHandler] = None, **kwargs
-):
-    # Wrap call to `dispatch()` to always return an HTTP response.
-    if error_handler is None:
-        error_handler = error_to_text
-
-    @wraps(dispatch)
-    async def inner(req: Request) -> Response:
-        try:
-            res = await dispatch(req)
-        except Exception as exc:
-            res = await _to_res(req, exc, error_handler, **kwargs)
-        return res
-
-    return inner
