@@ -100,6 +100,7 @@ module.exports = {
                         'hooks',
                         'recipes',
                         'background-tasks',
+                        'websockets',
                         'cors',
                         'hsts',
                         'gzip',
