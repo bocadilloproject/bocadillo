@@ -21,11 +21,12 @@ class _Delegated:
         self.source = name
 
     def __get__(self, instance: Optional["WebSocket"], owner):
-        if instance is None:
-            # Class attribute access
+        if instance is None:  # pragma: no cover
+            # Class attribute access.
+            # NOTE: used by Pydoc-Markdown when generating docs.
             obj = StarletteWebSocket
         else:
-            # Instance attribute access
+            # Instance attribute access.
             obj = getattr(instance, self.websocket_attr)
         return getattr(obj, self.source)
 

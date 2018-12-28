@@ -117,3 +117,16 @@ def test_catch_disconnect(api: API, catch_disconnect):
     # The block after the `async with` block must have been called
     # only if it caught the disconnect exception.
     assert caught == catch_disconnect
+
+
+def test_raw_receive_and_send(api: API):
+    @api.websocket_route("/chat")
+    async def chat(ws: WebSocket):
+        async with ws:
+            message = await ws.receive_raw()
+            assert message == {"type": "websocket.receive", "text": "ping"}
+            await ws.send_raw({"type": "websocket.send", "text": "pong"})
+
+    with api.client.websocket_connect("/chat") as client:
+        client.send_text("ping")
+        assert client.receive_text() == "pong"
