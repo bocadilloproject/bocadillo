@@ -95,15 +95,6 @@ module.exports = {
                     ]),
                 },
                 {
-                    title: 'Protocol-agnostic',
-                    collapsable: false,
-                    children: listDir('topics/agnostic', [
-                        'templates',
-                        'recipes',
-                        'events',
-                    ]),
-                },
-                {
                     title: 'WebSockets',
                     collapsable: false,
                     children: listDir('topics/websockets', [
@@ -112,6 +103,15 @@ module.exports = {
                         'connections',
                         'error-handling',
                         'messages',
+                    ]),
+                },
+                {
+                    title: 'Protocol-agnostic',
+                    collapsable: false,
+                    children: listDir('topics/agnostic', [
+                        'templates',
+                        'recipes',
+                        'events',
                     ]),
                 },
                 {
