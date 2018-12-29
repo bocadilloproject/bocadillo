@@ -46,13 +46,6 @@ WebSocket.receive_bytes(self) -> bytes
 
 
 Alias of `receive_bytes` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
-### receive_json
-```python
-WebSocket.receive_json(self) -> Any
-```
-
-
-Alias of `receive_json` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### receive_text
 ```python
 WebSocket.receive_text(self) -> str
@@ -67,13 +60,6 @@ WebSocket.send_bytes(self, data: bytes) -> None
 
 
 Alias of `send_bytes` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
-### send_json
-```python
-WebSocket.send_json(self, data: Any) -> None
-```
-
-
-Alias of `send_json` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
 ### send_text
 ```python
 WebSocket.send_text(self, data: str) -> None
@@ -81,6 +67,26 @@ WebSocket.send_text(self, data: str) -> None
 
 
 Alias of `send_text` on [Starlette.websockets.WebSocket](https://www.starlette.io/websockets/).
+### receive_json
+```python
+WebSocket.receive_json(self) -> Union[dict, list]
+```
+Return `json.loads(await self.receive_text())`.
+
+__Returns__
+
+`json (dict or list)`: a JSON message.
+
+### send_json
+```python
+WebSocket.send_json(self, message: Union[dict, list])
+```
+Execute `await self.send_text(json.dumps(message))`.
+
+__Parameters__
+
+- __message (list or dict)__: a JSON message.
+
 ### receive_event
 ```python
 WebSocket.receive_event(self) -> MutableMapping[str, Any]

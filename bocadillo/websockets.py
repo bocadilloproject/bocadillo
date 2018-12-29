@@ -1,3 +1,4 @@
+import json
 from typing import Awaitable, Callable, Optional, Any, Union, Tuple
 
 from starlette.websockets import WebSocket as StarletteWebSocket
@@ -106,8 +107,26 @@ class WebSocket:
     send_text = _Delegated()
     receive_bytes = _Delegated()
     send_bytes = _Delegated()
-    receive_json = _Delegated()
-    send_json = _Delegated()
+
+    async def receive_json(self) -> Union[dict, list]:
+        """Return `json.loads(await self.receive_text())`.
+
+        # Returns
+        json (dict or list): a JSON message.
+        """
+        # Starlette decodes from bytes by default,
+        # but most WebSocket clients generally send text.
+        return json.loads(await self.receive_text())
+
+    async def send_json(self, message: Union[dict, list]):
+        """Execute `await self.send_text(json.dumps(message))`.
+
+        # Parameters
+        message (list or dict): a JSON message.
+        """
+        # Encodes as bytes by default,
+        # but most WebSocket clients don't expect to receive plain bytes.
+        await self.send_text(json.dumps(message))
 
     async def receive_event(self) -> Event:
         return await self._websocket.receive()

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello, WebSockets!</title>
+</head>
+<body>
+<h1>Hello, WebSockets!</h1>
+
+<p>Open this page in other tabs to chat with another you!</p>
+
+<ul id="messages"></ul>
+
+<form>
+    <label for="text">Enter a message</label>
+    <input type="text" id="text" placeholder="Type something…">
+    <button id="submit" type="submit">Send</button>
+</form>
+
+<script>
+    const ws = new WebSocket("ws://localhost:8000/chat");
+
+    ws.onopen = (event) => {
+        console.log("Connected", event);
+    };
+
+    const textEl = document.getElementById("text");
+    const messagesEl = document.getElementById("messages");
+
+    document.getElementById("submit").onclick = (e) => {
+        e.preventDefault();
+        const msg = {
+            type: "message",
+            text: textEl.value,
+        };
+        ws.send(JSON.stringify(msg));
+        textEl.value = "";
+    };
+
+    ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+            case "message":
+                const li = document.createElement("li");
+                li.innerHTML = message.text;
+                messagesEl.appendChild(li);
+                break;
+            default:
+                throw new Error("Unknown message type: " + message.type);
+        }
+    };
+
+    ws.onclose = (event) => {
+        console.log("Closed", event);
+    }
+</script>
+</body>
+</html>

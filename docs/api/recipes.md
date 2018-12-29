@@ -109,20 +109,17 @@ __Parameters__
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
 
-### apply
+### websocket_route
 ```python
-Recipe.apply(self, api, root: str = '')
+Recipe.websocket_route(self, pattern: str, **kwargs)
 ```
-Apply the recipe to an API object.
+Register a WebSocket route on the recipe.
 
-This will:
-
-- Mount registered routes onto the `api`.
-- Update the templates directory to that of `api`.
+Accepts the same arguments as `API.websocket_route()`.
 
 __See Also__
 
-- [RecipeBase.apply()](#apply)
+- [API.websocket_route()](./api.md#websocket-route)
 
 ### after
 ```python
@@ -139,6 +136,21 @@ __Parameters__
 
 - __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
     `(req, res, params) -> None`.
+
+### apply
+```python
+Recipe.apply(self, api, root: str = '')
+```
+Apply the recipe to an API object.
+
+This will:
+
+- Mount registered routes onto the `api`.
+- Update the templates directory to that of `api`.
+
+__See Also__
+
+- [RecipeBase.apply()](#apply)
 
 ### book
 ```python

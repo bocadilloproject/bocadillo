@@ -44,7 +44,7 @@ The possible values for `receive_type`, `send_type` and `value_type` are:
 
 - `"text"`: plain text as `str`.
 - `"bytes"`: plain bytes as `bytes`.
-- `"json"`: decodes with `json.loads()` and encodes with `json.dumps()`.
+- `"json"`: receives text before decoding it with `json.loads()`, sends message after encoding it with `json.dumps()`.
 - `"event"`: raw ASGI events as `dict` (see [Using ASGI events](#using-asgi-events)).
 
 For example, here's a WebSocket server that exchanges JSON messages with its clients:
@@ -53,12 +53,42 @@ For example, here's a WebSocket server that exchanges JSON messages with its cli
 from bocadillo import API, WebSocket
 
 api = API()
+
 @api.websocket_route("/ping-pong", value_type="json")
 async def ping_pong(ws: WebSocket):
     async with ws:
         async for message in ws:
-            resp = "pong" if message["type"] == "ping" else "ping"
-            await ws.send({"type": resp})
+            resp = "pong" if message["text"] == "ping" else "ping"
+            await ws.send({"text": resp})
+
+if __name__ == '__main__':
+    api.run()
+```
+
+A JavaScript client for this would be:
+
+```javascript
+const ws = new WebSocket('ws://localhost:8000/ping-pong');
+
+ws.onopen = (event) => {
+    console.log("Connected:", event);
+}
+
+ws.onclose = (event) => {
+    console.log("Connection lost:", event);
+}
+
+ws.onmessage = (event) => {
+    console.log("Received:", JSON.parse(event.data));
+}
+
+setInterval(() => {
+    const message = {
+        text: (Math.random() > 0.5) ? "ping" : "pong"
+    };
+    ws.send(JSON.stringify(message));
+    console.log("Sent: ", message);
+}, 1000);
 ```
 
 ::: tip

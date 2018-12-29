@@ -1,3 +1,4 @@
+import json
 from typing import NamedTuple
 
 import pytest
@@ -9,7 +10,19 @@ from .utils import RouteBuilder
 
 @pytest.fixture
 def api():
-    return API()
+    _api = API()
+    _websocket_connect = _api.client.websocket_connect
+
+    def websocket_connect(url, *args, **kwargs):
+        session = _websocket_connect(url, *args, **kwargs)
+        # Receives bytes by default
+        session.receive_json = lambda: json.loads(session.receive_text())
+        # Sends bytes by default
+        session.send_json = lambda value: session.send_text(json.dumps(value))
+        return session
+
+    _api.client.websocket_connect = websocket_connect
+    return _api
 
 
 @pytest.fixture

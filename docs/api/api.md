@@ -62,11 +62,6 @@ __Parameters__
     Defaults to `"application/json"`.
     See also [Media](../topics/http/media.md).
 
-### client
-A Starlette [TestClient] that can be used for testing the app.
-
-[TestClient]: https://www.starlette.io/testclient/
-
 ### media_handlers
 The dictionary of supported media handlers.
 
@@ -346,18 +341,6 @@ __See Also__
 
 - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
 
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-This is an alias to the underlying router's `route()` decorator.
-
-__See Also__
-
-- [Router.route](/api/routing.md#route-3)
-
 ### get_response
 ```python
 API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
@@ -378,6 +361,18 @@ __See Also__
 
 - [dispatch](#dispatch)
 - [Middleware](../topics/http/middleware.md)
+
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+This is an alias to the underlying router's `route()` decorator.
+
+__See Also__
+
+- [Router.route](/api/routing.md#route-3)
 
 ### websocket_route
 ```python
