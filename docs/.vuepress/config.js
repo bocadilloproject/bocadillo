@@ -112,6 +112,7 @@ module.exports = {
                     collapsable: false,
                     children: listDir('topics/websockets', [
                         '',
+                        'routing',
                         'connections',
                         'error-handling',
                         'messages',

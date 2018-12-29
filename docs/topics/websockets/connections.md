@@ -2,8 +2,18 @@
 
 ## Basic usage
 
+Suppose your WebSocket view uses `ws` for the WebSocket object parameter. You can:
+
 - Accept a connection with `await ws.accept()`.
 - Close a connection with `await ws.close()`, passing an optional close `code`.
+
+```python
+from bocadillo import WebSocket
+
+async def accept_close(ws: WebSocket):
+    await ws.accept()
+    await ws.close()
+```
 
 ## Async context manager syntax
 

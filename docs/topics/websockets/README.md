@@ -53,18 +53,6 @@ Let's break this code down:
 
 These four operations (accept, receive, send and close) are the basic building blocks of WebSocket views.
 
-## How WebSocket requests are processed
-
-When a client makes a request to your server with the `ws://` or `wss://` scheme, the following happens:
-
-1. The client and the frontend web server (Uvicorn in development and most likely [Gunicorn in production](../discussions/deployment.md)) perform a handshake to agree to [upgrade the protocol](https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism) to WebSocket. This is not handled by Bocadillo directly.
-2. The upgraded request is routed to Bocadillo and a `WebSocket` object is created out of it.
-3. Bocadillo tries to match the WebSocket's URL path against a registered WebSocket route. If none is found, the connection is closed with a 403 close code [as defined in the ASGI specification](https://asgi.readthedocs.io/en/latest/specs/www.html#close).
-4. Bocadillo calls the view attached to the route that matched. It must be an asynchronous function accepting the following parameters:
-    - An instance of `WebSocket`.
-    - Keyword arguments representing the extracted keyword arguments.
-5. If an exception is raised in the process, the connection is closed by following the procedure described in [Error handling](#error-handling).
-
 Continue to learn more about to use WebSockets in Bocadillo.
 
 [The API object]: ../api.md
