@@ -1,6 +1,7 @@
-from typing import List, Sequence
+from typing import List, Sequence, Tuple
 
-from bocadillo.meta import DocsMeta
+from .meta import DocsMeta
+from .websockets import WebSocketView
 from .hooks import HooksMixin, HooksBase, HookFunction
 from .templates import TemplatesMixin
 
@@ -100,6 +101,7 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
         self._name = name
         self._prefix = prefix
         self._routes: List[RecipeRoute] = []
+        self._ws_routes: List[Tuple[str, dict, WebSocketView]] = []
 
     def route(self, *args, **kwargs):
         """Register a route on the recipe.
@@ -120,6 +122,21 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
 
         return register
 
+    def websocket_route(self, pattern: str, **kwargs):
+        """Register a WebSocket route on the recipe.
+
+        Accepts the same arguments as `API.websocket_route()`.
+
+        # See Also
+        - [API.websocket_route()](./api.md#websocket-route)
+        """
+
+        def register(view):
+            self._ws_routes.append((pattern, kwargs, view))
+            return view
+
+        return register
+
     def apply(self, api, root: str = ""):
         """Apply the recipe to an API object.
 
@@ -134,6 +151,9 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
         # Apply routes on the API
         for route in self._routes:
             route.register(api, root + self._prefix)
+
+        for pattern, kwargs, view in self._ws_routes:
+            api.websocket_route(root + self._prefix + pattern, **kwargs)(view)
 
         # Look for templates where the API does, if not specified
         if self.templates_dir is None:

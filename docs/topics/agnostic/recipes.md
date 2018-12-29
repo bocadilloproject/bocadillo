@@ -53,6 +53,7 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 Recipes expose the following features, which can be used just as you would on the `API` object:
 
 - [Routes](../http/routes-url-design.md), e.g. `@recipe.route()`.
+- [WebSocket routes](../websockets/routing.md), .e.g `@recipe.websocket_route()`.
 - [Templates](./templates.md), e.g. `await recipe.template()`.
 - [Hooks](../http/hooks.md), e.g. `@recipe.before()`.
 
