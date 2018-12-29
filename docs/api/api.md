@@ -38,7 +38,7 @@ __Parameters__
 - __enable_cors (bool)__:
     If `True`, Cross Origin Resource Sharing will be configured according
     to `cors_config`. Defaults to `False`.
-    See also [CORS](../topics/features/cors.md).
+    See also [CORS](../topics/http/cors.md).
 - __cors_config (dict)__:
     A dictionary of CORS configuration parameters.
     Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
@@ -46,12 +46,12 @@ __Parameters__
     If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
     redirect HTTP traffic to HTTPS.
     Defaults to `False`.
-    See also [HSTS](../topics/features/hsts.md).
+    See also [HSTS](../topics/http/hsts.md).
 - __enable_gzip (bool)__:
     If `True`, enable GZip compression and automatically
     compress responses for clients that support it.
     Defaults to `False`.
-    See also [GZip](../topics/features/gzip.md).
+    See also [GZip](../topics/http/gzip.md).
 - __gzip_min_size (int)__:
     If specified, compress only responses that
     have more bytes than the specified value.
@@ -60,7 +60,7 @@ __Parameters__
     Determines how values given to `res.media` are serialized.
     Can be one of the supported media types.
     Defaults to `"application/json"`.
-    See also [Media](../topics/request-handling/media.md).
+    See also [Media](../topics/http/media.md).
 
 ### media_handlers
 The dictionary of supported media handlers.
@@ -269,7 +269,7 @@ __Raises__
 
 __See Also__
 
-- [Redirecting](../topics/request-handling/redirecting.md)
+- [Redirecting](../topics/http/redirecting.md)
 
 ### add_middleware
 ```python
@@ -285,7 +285,7 @@ __Parameters__
 
 __See Also__
 
-- [Middleware](../topics/features/middleware.md)
+- [Middleware](../topics/http/middleware.md)
 
 ### add_asgi_middleware
 ```python
@@ -300,7 +300,7 @@ __Parameters__
 
 __See Also__
 
-- [Middleware](../topics/features/middleware.md)
+- [Middleware](../topics/http/middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
 
 ### apply_asgi_middleware
@@ -351,7 +351,7 @@ __Returns__
 
 __See Also__
 
-- [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
+- [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
 
 ### url_for
 ```python
@@ -391,7 +391,7 @@ __Returns__
 __See Also__
 
 - [dispatch](#dispatch)
-- [Middleware](../topics/features/middleware.md)
+- [Middleware](../topics/http/middleware.md)
 
 ### create_app
 ```python
@@ -437,13 +437,13 @@ __See Also__
 
 - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
 - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-- [Events](../topics/features/events.md)
+- [Events](../topics/common/events.md)
 - [mount](#mount)
 - [create_app](#create-app)
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x109673620>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10eeb4bf8>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

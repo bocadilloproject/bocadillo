@@ -79,32 +79,31 @@ module.exports = {
             '/topics/': [
                 '/topics/api',
                 {
-                    title: 'Handling HTTP requests',
+                    title: 'HTTP',
                     collapsable: false,
-                    children: listDir('topics/request-handling', [
+                    children: listDir('topics/http', [
                         'routes-url-design',
-                        'writing-views',
+                        'views',
                         'requests',
                         'responses',
                         'redirecting',
                         'media',
-                    ]),
-                },
-                {
-                    title: 'Features',
-                    collapsable: false,
-                    children: listDir('topics/features', [
-                        'views',
-                        'templates',
                         'static-files',
                         'hooks',
-                        'recipes',
                         'background-tasks',
                         'cors',
                         'hsts',
                         'gzip',
-                        'events',
                         'middleware',
+                    ]),
+                },
+                {
+                    title: 'Protocol-agnostic',
+                    collapsable: false,
+                    children: listDir('topics/common', [
+                        'templates',
+                        'recipes',
+                        'events',
                     ]),
                 },
                 {

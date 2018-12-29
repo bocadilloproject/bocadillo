@@ -69,4 +69,4 @@ Only the latest task registered via `@res.background` will execute — previous 
 
 If you need to perform multiple things concurrently (e.g. send multiple emails), you should resort to [`asyncio.gather()`](https://docs.python.org/3/library/asyncio-task.html#asyncio.gather) instead.
 
-[Response]: ../request-handling/responses.md
+[Response]: ../http/responses.md
