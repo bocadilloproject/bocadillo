@@ -140,9 +140,9 @@ Happy coding!
 [Routes]: ../topics/http/routes-url-design.md
 [Views]: ../topics/http/views.md
 [Templates]: ../topics/agnostic/templates.md
-[CORS]: ../topics/http/cors.md
-[HSTS]: ../topics/http/hsts.md
-[GZip]: ../topics/http/gzip.md
+[CORS]: ../topics/http/middleware.md#cors
+[HSTS]: ../topics/http/middleware.md#hsts
+[GZip]: ../topics/http/middleware.md#gzip
 [Static files]: ../topics/http/static-files.md
 [Media]: ../topics/http/media.md
 [Error handling]: ../topics/http/views.md#returning-errors

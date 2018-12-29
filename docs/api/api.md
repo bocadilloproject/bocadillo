@@ -38,7 +38,7 @@ __Parameters__
 - __enable_cors (bool)__:
     If `True`, Cross Origin Resource Sharing will be configured according
     to `cors_config`. Defaults to `False`.
-    See also [CORS](../topics/http/cors.md).
+    See also [CORS](../topics/http/middleware.md#cors).
 - __cors_config (dict)__:
     A dictionary of CORS configuration parameters.
     Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
@@ -46,12 +46,12 @@ __Parameters__
     If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
     redirect HTTP traffic to HTTPS.
     Defaults to `False`.
-    See also [HSTS](../topics/http/hsts.md).
+    See also [HSTS](../topics/http/middleware.md#hsts).
 - __enable_gzip (bool)__:
     If `True`, enable GZip compression and automatically
     compress responses for clients that support it.
     Defaults to `False`.
-    See also [GZip](../topics/http/gzip.md).
+    See also [GZip](../topics/http/middleware.md#gzip).
 - __gzip_min_size (int)__:
     If specified, compress only responses that
     have more bytes than the specified value.
@@ -443,7 +443,7 @@ __See Also__
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x10eeb4bf8>, **kwargs)
+API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = <function run at 0x1102e5bf8>, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 

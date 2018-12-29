@@ -63,7 +63,7 @@ class API(
     enable_cors (bool):
         If `True`, Cross Origin Resource Sharing will be configured according
         to `cors_config`. Defaults to `False`.
-        See also [CORS](../topics/http/cors.md).
+        See also [CORS](../topics/http/middleware.md#cors).
     cors_config (dict):
         A dictionary of CORS configuration parameters.
         Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
@@ -71,12 +71,12 @@ class API(
         If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
         Defaults to `False`.
-        See also [HSTS](../topics/http/hsts.md).
+        See also [HSTS](../topics/http/middleware.md#hsts).
     enable_gzip (bool):
         If `True`, enable GZip compression and automatically
         compress responses for clients that support it.
         Defaults to `False`.
-        See also [GZip](../topics/http/gzip.md).
+        See also [GZip](../topics/http/middleware.md#gzip).
     gzip_min_size (int):
         If specified, compress only responses that
         have more bytes than the specified value.

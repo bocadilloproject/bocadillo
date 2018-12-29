@@ -110,6 +110,6 @@ By default, this whitelist is empty. You must configure it through the `allowed_
 [Let's Encrypt]: https://letsencrypt.org
 [Certbot]: https://certbot.eff.org
 [Deployment]: ./deployment.md
-[HSTS]: ../http/hsts.md
+[HSTS]: ../http/middleware.md#hsts
 [cache poisoning]: https://www.owasp.org/index.php/Cache_Poisoning
 [Allowed hosts]: ../api.md#allowed-hosts
