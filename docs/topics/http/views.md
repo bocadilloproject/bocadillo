@@ -25,7 +25,7 @@ Let's break this code down:
 - Then, we define an `async` function called `current_datetime` — this is the view function. A view function takes a [`Request`][Request] and a [`Response`][Response] (in this order) as its first two arguments, which are typically called `req` and `res` respectively.
 
 ::: tip
-The view function's name does not matter to Bocadillo, although it is a good practice to give it a descriptive name that starts with a verb (as for any Python function).
+The view function's name is used by Bocadillo when the view is associated to the route. See [naming routes].
 :::
 
 - Next, we grab the current date and time and build a dictionary out of it.
@@ -182,7 +182,7 @@ class Index:
         res.text = 'Post it, get it, put it, delete it.'
 ```
 
-
 [Routes and URL design]: ./routes-url-design.md
+[naming routes]: ./routes-url-design.md#naming-routes
 [Request]: requests.md
 [Response]: responses.md
