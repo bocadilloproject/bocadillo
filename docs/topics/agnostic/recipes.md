@@ -66,7 +66,7 @@ Note that recipes apply the exact same [routing algorithm](../http/routes-url-de
 
 ## Recipe books
 
-Sometimes, you may want to group many recipes together so they can be apply all at once to the `API` object. To achieve this, you can write a **recipe book**.
+Sometimes, you may want to group many recipes together so they can be applied all at once to the `API` object. To achieve this, you can write a **recipe book**.
 
 Consider this example project structure, where functionality related people and companies has been grouped together in an `entities` package:
 
