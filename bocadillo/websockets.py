@@ -147,6 +147,14 @@ class WebSocket:
             # Already closed.
             pass
 
+    async def reject(self):
+        """Reject the connection request.
+
+        This is equivalent to `await close(403)`.
+        Calling this before `accept()` has undefined behavior.
+        """
+        return await self.close(code=403)
+
     # Asynchronous context manager.
 
     async def __aenter__(self, *args, **kwargs):

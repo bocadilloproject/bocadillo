@@ -15,6 +15,6 @@ WEBSOCKET_CLOSE_CODES = {
     1008: "Policy Violation",
     1009: "Message Too Big",
     1010: "Extension Required",
-    1011: "Unexpected Error",
+    1011: "Internal Error",
     1015: "TLS Failure [Internal]",
 }

@@ -44,71 +44,39 @@ Let's break this code down:
 
 1. We create an `API` instance as usual. (If this is not familiar to you, see [The API object].)
 2. We register a new **WebSocket route** using the `@api.websocket_route()` decorator. It works in a way similar to `@api.route()` for regular HTTP routes: we give it an URL pattern that will be matched against when an incoming WebSocket connection request is received.
-3. We define a **WebSocket view**, i.e. an asynchronous function that takes a `WebSocket` object as its first parameter. [Route parameters are passed as extra arguments (see also [Routes and URL design]).
+3. We define a **WebSocket view**, i.e. an asynchronous function that takes a `WebSocket` object as its first parameter. Route parameters are passed as extra arguments just like for HTTP routes (see also [Routes and URL design]).
 4. Inside the view:
     - We **accept** the connection request in order to complete the handshake with the client. The WebSocket connection is then established.
-    - Then, we **receive** a text message from the WebSocket. If no message is available yet, the application will not block and will still be available for processing other requests. 
-    - Next, we **send** a message ourselves to the client.
+    - Then, we **receive** a text message from the WebSocket. If no message is available yet, the view will suspend, allowing the server to process other requests until a message is received.
+    - Next, we **send** a message to the client.
     - Lastly, we **close** the connection.
 
 These four operations (accept, receive, send and close) are the basic building blocks of WebSocket views.
 
-::: tip
-It is possible to **reject** a WebSocket connection request by calling `close()` without calling `accept()`.
+## How WebSocket requests are processed
 
-When doing so, you should provide a **close code** describing why the connection request was rejected, e.g. `await ws.close(1002)` for a protocol error. See the [CloseEvent] reference for the available close codes.
-:::
+When a client makes a request to your server with the `ws://` or `wss://` scheme, the following happens:
 
-## Error handling
+- The client and the frontend web server (Uvicorn in development and most likely [Gunicorn in production](../discussions/deployment.md)) perform a handshake to agree to [upgrade the protocol](https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism) to WebSocket. This is not handled by Bocadillo directly.
+- The upgraded request is routed to Bocadillo and a `WebSocket` object is created out of it.
+- Bocadillo tries to match the WebSocket's URL path against a registered WebSocket route. If none is found, the connection is closed with a 403 close code [as defined in the ASGI specification](https://asgi.readthedocs.io/en/latest/specs/www.html#close).
+- Bocadillo calls the view attached to the route that matched. It must be an asynchronous function accepting the following parameters:
+  - An instance of `WebSocket`.
+  - Keyword arguments representing the extracted keyword arguments.
+- If an exception is raised in the process, the connection is closed by following the procedure described in [Error handling](#error-handling).
 
-WebSocket routes do not have advanced error handling mechanisms similar to those available for HTTP routes.
+## Accepting and closing connections
 
-The only thing that Bocadillo does is ensuring that the client receives a 1011 (Unexpected Error) close event if an exception is raised on the server. This is done by catching exceptions raised in the view, closing the WebSocket and re-raising the exception. This applies whether you are using the [async context manager syntax](#async-context-manager-syntax) or not.
+### Basic usage
 
-The only exception to this is [client-side connection closures](#handling-client-side-connection-closures).
+- Accept a connection with `await ws.accept()`.
+- Close a connection with `await ws.close()`, passing an optional close `code`.
 
-## Async context manager syntax
-
-### Usage
+### Async context manager syntax
 
 Having to manually `accept` and `close` the connection can be cumbersome and error-prone.
 
 To address this issue, the `ws` object can be used as an [asynchronous context manager] to `accept()` the connection on enter and `close()` it on exit.
-
-```python
-async def hello(ws):
-    async with ws:
-        # Connection accepted.
-        # Receive or send messages…
-        pass
-    # Connection closed.
-```
-
-::: tip
-It is safe to call `close()` within the WebSocket context, but calling it multiple times will raise a `RuntimeError`.
-
-If you're not sure whether the connection has already been closed, use `ensure_closed()` instead.
-:::
-
-### Handling client-side connection closures
-
-When the client disconnects while we are trying to `receive()` a message, a `WebSocketDisconnect` exception is raised.
-
-If you are using the `async with` syntax, this exception is automatically caught if the close code is either 1000 (Normal Closure) or 1001 (Going Away), both being considered successful closure codes.
-
-For other close codes, the exception will propagate beyond the WebSocket's context. It is your responsibility to catch and handle it, if necessary.
-
-::: tip
-You can customize this behavior by passing a tuple of integers to the `caught_close_codes` parameter of `@api.websocket_route()`. The `all` Python built-in can be passed to catch all close codes. To not catch any close code, pass the empty tuple `()`.
-:::
-
-::: tip
-The [constants](../../api/constants.md) module defines a dictionary of close codes which you can use for convenience.
-:::
-
-### Example
-
-Here's an example usage of the `async with` syntax for WebSockets:
 
 ```python
 from bocadillo import API, WebSocket
@@ -118,11 +86,20 @@ api = API()
 @api.websocket_route("/hello")
 async def hello(ws: WebSocket):
     async with ws:
+        # Connection accepted.
+        # Receive or send messages…
         await ws.send("Hello, world!")
+    # Connection closed.
     print("Connection closed as expected")
 ```
 
-A rough equivalent to the above code snippet without using the `async with` syntax, including error handling code, would be:
+::: tip
+It is safe to call `close()` within the WebSocket context, but calling it multiple times will raise a `RuntimeError`.
+
+If you're not sure whether the connection has already been closed, use `await ws.ensure_closed()` instead.
+:::
+
+A rough equivalent to the above code snippet without using the `async with` syntax, including [error handling](#how-exceptions-are-handled) code, would be:
 
 ```python
 from bocadillo import API, WebSocket
@@ -147,7 +124,65 @@ async def hello(ws: WebSocket):
         await ws.close()
 ```
 
-## Iterating over messages
+### Rejecting connection requests
+
+It is possible to **reject** a WebSocket connection request by calling `await ws.reject()` before calling `await ws.accept()`. This has the same effect than closing the connection with a 403 close code, and complies with the ASGI specification.
+
+You can use this to perform extra checks on the WebSocket request, such as access control checks:
+
+```python
+@api.websocket_route("/secret")
+async def secret(ws: WebSocket):
+    if ws.query_params.get("api_key") != "SECRET":
+        await ws.reject()
+    async with ws:
+        # Proceed with an authorized client…
+        pass
+```
+
+## Error handling
+
+### How exceptions are handled
+
+WebSocket routes do not have advanced error handling mechanisms similar to those available for HTTP routes.
+
+The only thing that Bocadillo does is ensuring that the client receives a 1011 (Internal Error) close event if an exception is raised on the server. This is done by catching exceptions raised in the view and closing the WebSocket before re-raising the exception for further server-side processing. This applies whether you are using the [async context manager syntax](#async-context-manager-syntax) or not.
+
+The only exception to this is [client-side connection closures](#handling-client-side-connection-closures).
+
+### Returning errors
+
+In the world of WebSockets, servers and clients notify one another of errors by closing the connection with an appropriate **close code**. This means that the canonical way of returning an error "response" (if there is such a thing) is to `close()` with an appropriate `code` as argument.
+
+Which `code` should you use, then?
+
+We recommend you use the **4000-4999 range** for custom close codes and provide the appropriate documentation for your clients. This range is indeed reserved to application use by the WebSocket standard. See also the [CloseEvent] reference page which notably lists all available close codes.
+
+However, standard close codes in the 1000-1015 range may sometimes fit your use case. For these situations, you can refer to the dictionary of close codes available in the [constants](../../api/constants.md) module.
+
+### Handling client-side connection closures
+
+When the client disconnects while we are trying to `receive()` a message, a `WebSocketDisconnect` exception is raised.
+
+This exception will be automatically caught (and silenced) if all the following conditions are met:
+
+- The exception is raised within a WebSocket context (i.e. when using the `async with` syntax).
+- The close code is 1000 (Normal Closure) or 1001 (Going Away), both being considered successful closure codes.
+
+::: tip
+You can customize which close codes are caught within the WebSocket context by passing a tuple of integers to the `caught_close_codes` parameter of `@api.websocket_route()`. The `all` Python built-in can be passed to catch all close codes. To not catch any close code, pass the empty tuple `()`.
+:::
+
+In other cases, you need to handle the exception yourself.
+
+## Receiving and sending messages
+
+### Basic usage
+
+- Receive a message with `await ws.receive()`.
+- Send a message with `await ws.send(message)`.
+
+### Iterating over messages
 
 In the [basic example](#a-basic-example), only one message was received and sent over the WebSocket, then we closed the connection.
 
@@ -172,7 +207,7 @@ async def echo(ws: WebSocket):
             await ws.send(f"You said: {message}")
 ```
 
-## Decoding and encoding messages
+### Decoding and encoding messages
 
 Messages are decoded or encoded as text messages by default: calling `receive()` and `send()` will return or expect `str` objects.
 
@@ -211,8 +246,6 @@ For example, if `receive_type="json"` was given then `await ws.receive()` is equ
 See also the [WebSocket API reference].
 :::
 
-## Advanced usage
-
 ### Using ASGI events
 
 It is possible to receive or send raw [ASGI events][ASGI Event] using the low-level `receive_event()` and `send_event()` methods.
@@ -232,7 +265,7 @@ async def echo(ws: WebSocket):
 ```
 
 [The API object]: ../api.md
-[Routes and URL design]: http://localhost:8080/topics/request-handling/routes-url-design.html#routes-and-url-design
+[Routes and URL design]: ../../topics/request-handling/routes-url-design.html#routes-and-url-design
 [asynchronous context manager]: https://www.python.org/dev/peps/pep-0492/#asynchronous-context-managers-and-async-with
 [asynchronous iterator]: https://www.python.org/dev/peps/pep-0492/#asynchronous-iterators-and-async-for
 [WebSocket API reference]: ../../api/websockets.md

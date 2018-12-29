@@ -121,3 +121,12 @@ __Parameters__
 
 - __code (int)__: a close code, defaults to `1000`.
 
+### reject
+```python
+WebSocket.reject(self)
+```
+Reject the connection request.
+
+This is equivalent to `await close(403)`.
+Calling this before `accept()` has undefined behavior.
+

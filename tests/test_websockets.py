@@ -16,15 +16,27 @@ def test_websocket_route(api: API):
             assert await ws.receive_text() == "ping"
             await ws.send_text("pong")
 
-    with api.client.websocket_connect("/chat") as ws_client:
-        ws_client.send_text("ping")
-        assert ws_client.receive_text() == "pong"
+    with api.client.websocket_connect("/chat") as client:
+        client.send_text("ping")
+        assert client.receive_text() == "pong"
 
 
 def test_non_existing_endpoint_returns_403_as_per_the_asgi_spec(api: API):
     with pytest.raises(WebSocketDisconnect) as ctx:
         with api.client.websocket_connect("/foo"):
             pass
+    assert ctx.value.code == 403
+
+
+def test_reject_closes_with_403(api: API):
+    @api.websocket_route("/foo")
+    async def foo(ws: WebSocket):
+        await ws.reject()
+
+    with pytest.raises(WebSocketDisconnect) as ctx:
+        with api.client.websocket_connect("/foo"):
+            pass
+
     assert ctx.value.code == 403
 
 
@@ -46,12 +58,12 @@ def test_can_close_within_context(api: API):
     @api.websocket_route("/test")
     async def test(ws: WebSocket):
         async with ws:
-            await ws.close(1002)  # simulates a protocol error
+            await ws.close(4242)
 
     with api.client.websocket_connect("/test") as client:
         message = client.receive()
 
-    assert message == {"type": "websocket.close", "code": 1002}
+    assert message == {"type": "websocket.close", "code": 4242}
 
 
 # Encoding / decoding of messages
