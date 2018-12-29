@@ -112,6 +112,8 @@ class API(
 
         self._extra_apps: Dict[str, Any] = {}
 
+        self.client = self.build_client()
+
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
@@ -140,15 +142,7 @@ class API(
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-    @property
-    def client(self) -> TestClient:
-        """A Starlette [TestClient] that can be used for testing the app.
-
-        [TestClient]: https://www.starlette.io/testclient/
-        """
-        return self.get_client()
-
-    def get_client(self, **kwargs) -> TestClient:
+    def build_client(self, **kwargs) -> TestClient:
         return TestClient(self, **kwargs)
 
     def get_template_globals(self):
