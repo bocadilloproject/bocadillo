@@ -52,21 +52,21 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 Recipes expose the following features, which can be used just as you would on the `API` object:
 
-- [Routes](../request-handling/routes-url-design.md), e.g. `@recipe.route()`.
+- [Routes](../http/routes-url-design.md), e.g. `@recipe.route()`.
 - [Templates](./templates.md), e.g. `await recipe.template()`.
-- [Hooks](./hooks.md), e.g. `@recipe.before()`.
+- [Hooks](../http/hooks.md), e.g. `@recipe.before()`.
 
 ::: tip
 If your recipe needs to use its own templates, you should pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.
 :::
 
 ::: warning CAVEAT
-Note that recipes apply the exact same [routing algorithm](../request-handling/routes-url-design.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
+Note that recipes apply the exact same [routing algorithm](../http/routes-url-design.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
 :::
 
 ## Recipe books
 
-Sometimes, you may want to group many recipes together so they can be apply all at once to the `API` object. To achieve this, you can write a **recipe book**.
+Sometimes, you may want to group many recipes together so they can be applied all at once to the `API` object. To achieve this, you can write a **recipe book**.
 
 Consider this example project structure, where functionality related people and companies has been grouped together in an `entities` package:
 

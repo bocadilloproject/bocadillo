@@ -72,4 +72,4 @@ Because ASGI middleware wrap the API object itself, no error handling can be per
 
 Most likely, you won't need to write ASGI middleware yourself. The possibility is only documented to justify the existence of `api.add_asgi_middleware()`, which is generally used for third-party middleware provided as an ASGI application.
 
-[Middleware]: ../topics/features/middleware.md
+[Middleware]: ../topics/http/middleware.md
