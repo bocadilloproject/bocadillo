@@ -100,12 +100,21 @@ module.exports = {
                         'hooks',
                         'recipes',
                         'background-tasks',
-                        'websockets',
                         'cors',
                         'hsts',
                         'gzip',
                         'events',
                         'middleware',
+                    ]),
+                },
+                {
+                    title: 'WebSockets',
+                    collapsable: false,
+                    children: listDir('topics/websockets', [
+                        '',
+                        'connections',
+                        'error-handling',
+                        'messages',
                     ]),
                 },
                 {
