@@ -21,7 +21,6 @@ bumpversion = "*"
 pre-commit = "*"
 pydoc-markdown = "*"
 pylint = "*"
-black = "*"
 
 [requires]
 python_version = "3.7"
