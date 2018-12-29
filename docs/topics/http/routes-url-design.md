@@ -71,14 +71,18 @@ See [customizing error handling](views.md#customizing-error-handling) for how to
 
 Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes across the whole code base.
 
-To overcome this, all routes are given a name based on the name of the function (for function-based views) or class (for class-based views).
+To overcome this, all routes are given a name which can be referenced later.
+
+### Inferred route names (default behavior)
+
+Bocadillo will assign a name to routes based on the name of their view function or class.
 
 The inferred route name is always `snake_cased`, as shown in the table below.
 
 | View declaration | Inferred route name |
 |------------------|---------------------|
-| `async def do_stuff(req, res)` | `'do_stuff'` |
-| `class DoStuff:` | `'do_stuff'` |
+| `async def do_stuff(req, res):` (or `def do_stuff(req, res):`) | `"do_stuff"` |
+| `class DoStuff:` | `"do_stuff"` |
 
 ### Explicit route names
 
