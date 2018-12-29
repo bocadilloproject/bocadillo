@@ -17,6 +17,8 @@ async def accept_close(ws: WebSocket):
 
 ## Async context manager syntax
 
+### Basic usage
+
 Having to manually `accept` and `close` the connection can be cumbersome and error-prone.
 
 To address this issue, the `ws` object can be used as an [asynchronous context manager] to `accept()` the connection on enter and `close()` it on exit.
@@ -29,55 +31,80 @@ api = API()
 @api.websocket_route("/hello")
 async def hello(ws: WebSocket):
     async with ws:
-        # Connection accepted.
-        # Receive or send messages…
-        await ws.send("Hello, world!")
-    # Connection closed.
-    print("Connection closed as expected")
+        print("Connected:", ws)
+        person = await ws.receive()
+        await ws.send(f"Hello, {person}!")
+    print("Connection closed normally.")
 ```
 
 ::: tip
 It is safe to call `close()` within the WebSocket context, but calling it multiple times will raise a `RuntimeError`.
 
-If you're not sure whether the connection has already been closed, use `await ws.ensure_closed()` instead.
+When you're not sure whether the connection has already been closed, use `await ws.ensure_closed()` instead.
 :::
 
-A rough equivalent to the above code snippet without using the `async with` syntax, including [error handling](./error-handling.md#how-exceptions-are-handled) code, would be:
+### Try/except blocks considered useful
+
+The previous code may raise an exception if the client closes the connection while we are running `await ws.receive()`.
+
+We will see how this is handled in the next section. That said, note that **the async context manager syntax is *not* a replacement for error handling**.
+
+In particular, code placed after an `async with ws` block will only execute if the connection was closed normally.
+
+If something goes wrong either on any peer's side, it is *your* responsibility to handle the exception. In that case, wrapping the `async with` block around a `try/except/else/finally` block may be useful.
+
+For example:
 
 ```python
 from bocadillo import API, WebSocket
-from bocadillo.exceptions import WebSocketDisconnect
+
+class Oops(Exception):
+    pass
 
 api = API()
+connected = set()
 
 @api.websocket_route("/hello")
 async def hello(ws: WebSocket):
-    await ws.accept()
     try:
-        await ws.send("Hello, world!")
-    except WebSocketDisconnect as exc:
-        if exc.code in ws.caught_close_codes:
-            print("Connection closed as expected")
-        else:
-            raise
-    except:
-        await ws.close(1011)
-        raise
-    else:
-        await ws.close()
+        async with ws:
+            connected.add(ws)
+            if await ws.receive() == "oops":
+                raise Oops
+            await ws.send("OK")
+        # Only executed if `Oops` is not raised.
+        print("OK")
+    except Oops:
+        # Exception error handling
+        print("Oops!")
+    finally:
+        # Perform cleanup
+        connected.remove(ws)
 ```
 
 ## Rejecting connection requests
 
 It is possible to **reject** a WebSocket connection request by calling `await ws.reject()` before calling `await ws.accept()`. This has the same effect than closing the connection with a 403 close code, and complies with the ASGI specification.
 
-You can use this to perform extra checks on the WebSocket request, such as access control checks:
+You can use this to perform extra checks on the WebSocket request.
+ 
+The following example demonstrates implementing a decorator that rejects the connection request if a (very) naive API key check fails:
 
 ```python
+from bocadillo import API
+
+api = API()
+
+def authenticated(view):
+    async def with_very_bad_auth_check(ws):
+        if ws.query_params.get("api_key") != "SECRET":
+            await ws.reject()
+        await view(ws)
+    return with_very_bad_auth_check
+
 @api.websocket_route("/secret")
-async def secret(ws: WebSocket):
-    if ws.query_params.get("api_key") != "SECRET":
-        await ws.reject()
+@authenticated
+async def secret(ws):
     async with ws:
         # Proceed with an authorized client…
         pass

@@ -169,8 +169,7 @@ def test_receive_and_send_event(api: API):
 @pytest.mark.parametrize(
     "close_codes, code, expected_caught",
     [
-        (None, 1000, True),
-        (None, 1001, True),
+        *((None, code, True) for code in (1000, 1001)),
         *(
             (None, code, False)
             for code in WEBSOCKET_CLOSE_CODES
@@ -247,3 +246,20 @@ def test_if_not_accepted_and_exception_raised_then_closed_with_1011(api: API):
             pass
 
     assert ctx.value.code == 1011
+
+
+def test_context_does_not_silence_exceptions(api: API):
+    cleaned_up = False
+
+    @api.websocket_route("/fail")
+    async def fail(ws):
+        nonlocal cleaned_up
+        async with ws:
+            raise Oops
+        cleaned_up = True
+
+    with suppress(Oops):
+        with api.client.websocket_connect("/fail"):
+            pass
+
+    assert not cleaned_up

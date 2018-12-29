@@ -1,4 +1,4 @@
-# Introduction
+# Introduction to WebSockets
 
 **WebSockets** allow a web browser and a web server to communicate in a bi-directional way via a long-held, low-latency TCP socket connection. They are typically used to build **event-driven** and **real-time** web applications that involve things like notifications, instant messaging or other real-time features.
 
