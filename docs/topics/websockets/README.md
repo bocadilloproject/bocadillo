@@ -56,4 +56,4 @@ These four operations (accept, receive, send and close) are the basic building b
 Continue to learn more about to use WebSockets in Bocadillo.
 
 [The API object]: ../api.md
-[Routes and URL design]: ../request-handling/routes-url-design.md#routes-and-url-design
+[Routes and URL design]: ../http/routes-url-design.md

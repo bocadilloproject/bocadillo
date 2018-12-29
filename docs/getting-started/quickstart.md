@@ -138,17 +138,18 @@ Happy coding!
 [Flask]: http://flask.pocoo.org
 [Falcon]: https://falconframework.org
 [Requests]: http://docs.python-requests.org
-[Routes]: ../topics/request-handling/routes-url-design.md
-[Views]: ../topics/request-handling/writing-views.md
-[Templates]: ../topics/features/templates.md
-[CORS]: ../topics/features/cors.md
-[HSTS]: ../topics/features/hsts.md
-[GZip]: ../topics/features/gzip.md
-[Static files]: ../topics/features/static-files.md
-[Media]: ../topics/request-handling/media.md
-[Error handling]: ../topics/request-handling/writing-views.md#returning-errors
-[Hooks]: ../topics/features/hooks.md
+[Routes]: ../topics/http/routes-url-design.md
+[Views]: ../topics/http/views.md
+[Templates]: ../topics/agnostic/templates.md
+[CORS]: ../topics/http/middleware.md#cors
+[HSTS]: ../topics/http/middleware.md#hsts
+[GZip]: ../topics/http/middleware.md#gzip
+[Static files]: ../topics/http/static-files.md
+[Media]: ../topics/http/media.md
+[Error handling]: ../topics/http/views.md#returning-errors
+[Hooks]: ../topics/http/hooks.md
 [WebSockets]: ../topics/websockets
-[Middleware]: ../topics/features/middleware.md
-[Recipes]: ../topics/features/recipes.md
+[Middleware]: ../topics/http/middleware.md
+[Recipes]: ../topics/agnostic/recipes.md
+
 [The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
