@@ -12,13 +12,7 @@ As such, Bocadillo provides an easy-to-use and friendly API for building WebSock
 
 ## Prerequisites
 
-Before you can use WebSockets, you need to install some extra dependencies. To do so, use the `websockets` pip extra when installing Bocadillo:
-
-```bash
-pip install bocadillo[websockets]
-```
-
-Once that's done, you're ready to go!
+Bocadillo comes with the [websockets] package installed, so you do not need to install extra dependencies. You're ready to go!
 
 ## A basic example
 
@@ -55,5 +49,6 @@ These four operations (accept, receive, send and close) are the basic building b
 
 Continue to learn more about to use WebSockets in Bocadillo.
 
+[websockets]: https://websockets.readthedocs.io
 [The API object]: ../api.md
 [Routes and URL design]: ../http/routes-url-design.md
