@@ -100,7 +100,7 @@ module.exports = {
                 {
                     title: 'Protocol-agnostic',
                     collapsable: false,
-                    children: listDir('topics/common', [
+                    children: listDir('topics/agnostic', [
                         'templates',
                         'recipes',
                         'events',

@@ -425,7 +425,7 @@ class API(
         # See Also
         - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
         - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-        - [Events](../topics/common/events.md)
+        - [Events](../topics/agnostic/events.md)
         - [mount](#mount)
         - [create_app](#create-app)
         """

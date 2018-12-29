@@ -139,7 +139,7 @@ Happy coding!
 [Requests]: http://docs.python-requests.org
 [Routes]: ../topics/http/routes-url-design.md
 [Views]: ../topics/http/views.md
-[Templates]: ../topics/common/templates.md
+[Templates]: ../topics/agnostic/templates.md
 [CORS]: ../topics/http/cors.md
 [HSTS]: ../topics/http/hsts.md
 [GZip]: ../topics/http/gzip.md
@@ -148,5 +148,5 @@ Happy coding!
 [Error handling]: ../topics/http/views.md#returning-errors
 [Hooks]: ../topics/http/hooks.md
 [Middleware]: ../topics/http/middleware.md
-[Recipes]: ../topics/common/recipes.md
+[Recipes]: ../topics/agnostic/recipes.md
 [The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
