@@ -21,6 +21,27 @@ def test_websocket_route(api: API):
         assert client.receive_text() == "pong"
 
 
+def test_websocket_route_parameters(api: API):
+    @api.websocket_route("/chat/{room}")
+    async def chat_room(ws: WebSocket, room: str):
+        async with ws:
+            await ws.send(room)
+
+    with api.client.websocket_connect("/chat/foo") as client:
+        assert client.receive_text() == "foo"
+
+
+def test_if_route_parameter_fails_validation_then_403(api: API):
+    @api.websocket_route("/chat/{id:d}")
+    async def chat_room(ws: WebSocket, id: int):
+        pass
+
+    with pytest.raises(WebSocketDisconnect) as ctx:
+        with api.client.websocket_connect("/chat/foo"):
+            pass
+    assert ctx.value.code == 403
+
+
 def test_non_existing_endpoint_returns_403_as_per_the_asgi_spec(api: API):
     with pytest.raises(WebSocketDisconnect) as ctx:
         with api.client.websocket_connect("/foo"):
