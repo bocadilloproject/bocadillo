@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/bocadilloproject/bocadillo#readme",
   "devDependencies": {
+    "dotenv": "^6.2.0",
     "vuepress": "^0.14.5"
   }
 }
