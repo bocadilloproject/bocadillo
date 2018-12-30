@@ -9,6 +9,7 @@ from parse import parse
 from .compat import camel_to_snake
 from .constants import ALL_HTTP_METHODS
 from .exceptions import HTTPError, RouteDeclarationError
+from .meta import DocsMeta
 from .request import Request
 from .response import Response
 from .views import (
@@ -22,6 +23,8 @@ from .websockets import WebSocket, WebSocketView
 
 
 class BaseRoute:
+    # Base route class.
+
     def __init__(self, pattern: str):
         self._pattern = pattern
 
@@ -52,11 +55,10 @@ class BaseRoute:
         return None
 
 
-class Route(BaseRoute):
+class Route(BaseRoute, metaclass=DocsMeta):
     """Represents the binding of an URL pattern to a view.
 
-    As a framework user, you will not need to create routes directly. This
-    should be done via `@api.route()`.
+    Note: as a framework user, you will not need to create routes directly.
 
     # Parameters
     pattern (str): an URL pattern. F-string syntax is supported for parameters.
@@ -80,11 +82,8 @@ class Route(BaseRoute):
     def raise_for_method(self, req: Request):
         """Fail if the requested method is not supported by the route.
 
-        # Parameters
-        req (Request): a `Request` object.
-
         # Raises
-        HTTPError(405): if `req.method` is not one of `methods`.
+        HTTPError(405): if `req.method` is not supported by the route.
         """
         if req.method not in self._methods:
             raise HTTPError(status=HTTPStatus.METHOD_NOT_ALLOWED)
@@ -93,7 +92,7 @@ class Route(BaseRoute):
         await self._view(req, res, **kwargs)
 
 
-class WebSocketRoute(BaseRoute):
+class WebSocketRoute(BaseRoute, metaclass=DocsMeta):
     """Represents the binding of an URL path to a WebSocket view.
 
     # Parameters
@@ -153,14 +152,7 @@ def check_route(pattern: str, view: View, methods: List[str]) -> None:
 
 
 def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
-    """Verify that a view accepts parameters defined in a route pattern.
-
-    # Raises
-    RouteDeclarationError :
-        If a route parameter is not one of the view's arguments,
-        of a view argument was not declared in the route pattern.
-    """
-
+    # Verify that a view accepts parameters defined in a route pattern.
     parsed_format = Formatter().parse(pattern)
     route_parameters: set = {name for _, name, _, _ in parsed_format if name}
 
@@ -201,7 +193,7 @@ def _check_route_parameters(pattern: str, view: View, _base=None) -> None:
 
 
 class RouteMatch(NamedTuple):
-    """Represents the result of a successful route match."""
+    # Represents the result of a successful route match.
 
     route: Route
     params: dict
@@ -215,7 +207,7 @@ class WebSocketRouteMatch(NamedTuple):
 
 
 class Router:
-    """A collection of routes."""
+    # A collection of routes.
 
     def __init__(self):
         self._routes: Dict[str, Route] = {}
@@ -230,33 +222,7 @@ class Router:
         name: str = None,
         namespace: str = None,
     ) -> Route:
-        """Build and register a route.
-
-        # Parameters
-        view: a function-based or class-based view.
-        pattern (str): an URL pattern.
-        methods (list of str):
-            An optional list of HTTP methods.
-            Defaults to `["get", "head"]`.
-            Ignored for class-based views.
-        name (str):
-            An optional name for the route.
-            If a route already exists for this name, it is replaced.
-            Defaults to a snake-cased version of the view's `__name__`.
-        namespace (str):
-            An optional namespace for the route. If given, it is prefixed
-            to the name and separated by a colon, i.e. `{namespace}:{name}`.
-
-        # Returns
-        route (Route): the newly registered `Route` object.
-
-        # Raises
-        RouteDeclarationError:
-            If route validation has failed.
-
-        # See Also
-        - [check_route](#check-route) for the route validation algorithm.
-        """
+        # Build and register a route.
         if methods is None:
             methods = ["get", "head"]
 
@@ -293,27 +259,13 @@ class Router:
         return route
 
     def route(self, *args, **kwargs):
-        """Register a route by decorating a view.
-
-        # See Also
-        - [add_route](#add-route)
-        """
+        # Register a route by decorating a view.
         return partial(self.add_route, *args, **kwargs)
 
     def match(self, path: str, websocket: bool = False) -> Optional[RouteMatch]:
-        """Attempt to match an URL path against one of the registered routes.
-
-        # Parameters
-        path (str): an URL path.
-        websocket (bool):
-            whether to look for an HTTP (`False`) or WebSocket (`True`) route.
-
-        # Returns
-        match (RouteMatch or None):
-            A `RouteMatch` object built from a route that matched against
-            `path` and the extracted route parameters, or `None` if none
-            matched.
-        """
+        # Attempt to match an URL path against one of the registered routes.
+        # NOTE: websocket (bool) = whether to look for an HTTP (`False`)
+        # or WebSocket (`True`) route.
         if websocket:
             source = self._websocket_routes
             match_cls = WebSocketRouteMatch
@@ -329,17 +281,7 @@ class Router:
         return None
 
     def get_route_or_404(self, name: str) -> Route:
-        """Return a route or raise a 404 error.
-
-        # Parameters
-        name (str): a route name.
-
-        # Returns
-        route (Route): the `Route` object registered under `name`.
-
-        # Raises
-        HTTPError(404): if no route exists for the given `name`.
-        """
+        # Return a route or raise a 404 error.
         try:
             return self._routes[name]
         except KeyError as e:
@@ -385,10 +327,26 @@ class RoutingMixin:
     ):
         """Register a new route by decorating a view.
 
-        This is an alias to the underlying router's `route()` decorator.
+        # Parameters
+        pattern (str): an URL pattern.
+        methods (list of str):
+            An optional list of HTTP methods.
+            Defaults to `["get", "head"]`.
+            Ignored for class-based views.
+        name (str):
+            An optional name for the route.
+            If a route already exists for this name, it is replaced.
+            Defaults to a snake-cased version of the view's name.
+        namespace (str):
+            An optional namespace for the route. If given, it is prefixed to
+            the name and separated by a colon.
+
+        # Raises
+        RouteDeclarationError:
+            If route validation has failed.
 
         # See Also
-        - [Router.route](/api/routing.md#route-3)
+        - [check_route](#check-route) for the route validation algorithm.
         """
         return self._router.route(
             pattern=pattern, methods=methods, name=name, namespace=namespace

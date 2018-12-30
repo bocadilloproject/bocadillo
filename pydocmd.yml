@@ -32,7 +32,10 @@ generate:
       - bocadillo.recipes.Recipe+
       - bocadillo.recipes.RecipeBook+
 - routing.md:
-  - bocadillo.routing++
+  - bocadillo.routing:
+      - bocadillo.routing.RoutingMixin+
+      - bocadillo.routing.Route+
+      - bocadillo.routing.check_route
 - staticfiles.md:
   - bocadillo.staticfiles+
 - templates.md:

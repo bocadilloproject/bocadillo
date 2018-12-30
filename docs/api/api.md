@@ -323,6 +323,36 @@ __See Also__
 
 - [add_asgi_middleware](#add-asgi-middleware)
 
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
+__Raises__
+
+- `RouteDeclarationError`:
+    If route validation has failed.
+
+__See Also__
+
+- [check_route](#check-route) for the route validation algorithm.
+
 ### dispatch
 ```python
 API.dispatch(self, req: bocadillo.request.Request) -> bocadillo.response.Response
@@ -340,39 +370,6 @@ __Returns__
 __See Also__
 
 - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
-
-### get_response
-```python
-API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
-```
-Return a response for an incoming request.
-
-__Parameters__
-
-- __req (Request)__: a Request object.
-
-__Returns__
-
-`res (Response)`:
-    a Response object, obtained by going down the middleware chain,
-    calling `dispatch()` and going up the middleware chain.
-
-__See Also__
-
-- [dispatch](#dispatch)
-- [Middleware](../topics/http/middleware.md)
-
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-This is an alias to the underlying router's `route()` decorator.
-
-__See Also__
-
-- [Router.route](/api/routing.md#route-3)
 
 ### websocket_route
 ```python
@@ -402,6 +399,27 @@ __Returns__
 __Raises__
 
 - `HTTPError(404) `: if no route exists for the given `name`.
+
+### get_response
+```python
+API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
+```
+Return a response for an incoming request.
+
+__Parameters__
+
+- __req (Request)__: a Request object.
+
+__Returns__
+
+`res (Response)`:
+    a Response object, obtained by going down the middleware chain,
+    calling `dispatch()` and going up the middleware chain.
+
+__See Also__
+
+- [dispatch](#dispatch)
+- [Middleware](../topics/http/middleware.md)
 
 ### create_app
 ```python
