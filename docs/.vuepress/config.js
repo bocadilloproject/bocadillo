@@ -103,6 +103,7 @@ module.exports = {
                         'connections',
                         'error-handling',
                         'messages',
+                        'example',
                     ]),
                 },
                 {

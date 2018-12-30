@@ -1,19 +1,19 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello, WebSockets!</title>
+    <title>Chat room</title>
 </head>
 <body>
-<h1>Hello, WebSockets!</h1>
+<h1>Chat room</h1>
 
-<p>Open this page in other tabs to chat with another you!</p>
-
+<!-- Messages are injected in here -->
 <ul id="messages"></ul>
 
 <form>
-    <label for="text">Enter a message</label>
-    <input type="text" id="text" placeholder="Type something…">
+    <input type="text" id="user" placeholder="Username">
+    <input type="text" id="text" placeholder="Enter a message…">
     <button id="submit" type="submit">Send</button>
 </form>
 
@@ -25,15 +25,27 @@
     };
 
     const textEl = document.getElementById("text");
+    const userEl = document.getElementById("user");
     const messagesEl = document.getElementById("messages");
 
     document.getElementById("submit").onclick = (e) => {
+        // Prevent page reload as form is submitted.
         e.preventDefault();
+
+        // Do not send blank messages.
+        if (!textEl.value) {
+            return;
+        }
+
+        // Create and send the JSON message.
         const msg = {
             type: "message",
+            user: userEl.value,
             text: textEl.value,
         };
         ws.send(JSON.stringify(msg));
+
+        // Reset text input.
         textEl.value = "";
     };
 
@@ -41,8 +53,9 @@
         const message = JSON.parse(event.data);
         switch (message.type) {
             case "message":
+                // Append a new element to the list of messages.
                 const li = document.createElement("li");
-                li.innerHTML = message.text;
+                li.innerHTML = `${message.user}: ${message.text}`;
                 messagesEl.appendChild(li);
                 break;
             default:
@@ -52,7 +65,7 @@
 
     ws.onclose = (event) => {
         console.log("Closed", event);
-    }
+    };
 </script>
 </body>
 </html>
