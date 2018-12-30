@@ -27,7 +27,6 @@ setuptools.setup(
         "whitenoise",
         "requests",
         "parse",
-        "async_generator",
         "websockets>=6.0",
     ],
     url=DOCS,

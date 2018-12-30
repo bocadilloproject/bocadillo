@@ -10,7 +10,6 @@ parse = "*"
 "jinja2" = "*"
 whitenoise = "*"
 requests = "*"
-async-generator = "*"
 websockets = "*"
 
 [dev-packages]

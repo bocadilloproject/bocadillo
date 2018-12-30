@@ -12,29 +12,26 @@ from starlette.websockets import WebSocketClose
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from bocadillo.compat import call_async
-from bocadillo.constants import DEFAULT_CORS_CONFIG
-from bocadillo.middleware import Dispatcher
 from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
+from .compat import call_async
+from .constants import DEFAULT_CORS_CONFIG
 from .error_handlers import ErrorHandler, error_to_text
 from .events import EventsMixin
 from .exceptions import HTTPError
-from .hooks import HooksMixin
 from .media import Media
 from .meta import DocsMeta
+from .middleware import Dispatcher
 from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin, WebSocketRouteMatch, RouteMatch
+from .routing import RoutingMixin, RouteMatch, WebSocketRouteMatch
 from .staticfiles import static
 from .templates import TemplatesMixin
 from .websockets import WebSocket
 
 
-class API(
-    TemplatesMixin, RoutingMixin, HooksMixin, EventsMixin, metaclass=DocsMeta
-):
+class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -336,7 +333,6 @@ class API(
         # See Also
         - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
         """
-
         res = Response(req, media=self._media)
 
         try:
@@ -344,13 +340,8 @@ class API(
             if match is None:
                 raise HTTPError(status=404)
 
-            route, params = match.route, match.params
-            route.raise_for_method(req)
-
             try:
-                hooks = self.get_hooks().on(route, req, res, params)
-                async with hooks:
-                    await route(req, res, **params)
+                await match.route(req, res, **match.params)
             except Redirection as redirection:
                 res = redirection.response
 

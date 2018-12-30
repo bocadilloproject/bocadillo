@@ -1,18 +1,11 @@
 """Various compatibility utilities."""
 import asyncio
 import re
-import sys
 from typing import Callable, Coroutine
 
 from starlette.concurrency import run_in_threadpool
 
 from .app_types import WSGIApp
-
-try:
-    from contextlib import asynccontextmanager
-except ImportError:  # pragma: no cover
-    assert sys.version_info[:2] == (3, 6)
-    from async_generator import asynccontextmanager
 
 _camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
 _snake_regex = re.compile(r"([a-z0-9])([A-Z])")
@@ -32,9 +25,7 @@ async def call_async(func: Callable, *args, sync=None, **kwargs) -> Coroutine:
     # See Also
     - [Executing code in thread or process pools](https://docs.python.org/3/library/asyncio-eventloop.html#executing-code-in-thread-or-process-pools)
     """
-    if sync is None:
-        sync = not asyncio.iscoroutinefunction(func)
-    if sync:
+    if sync or (sync is None and not asyncio.iscoroutinefunction(func)):
         return await run_in_threadpool(func, *args, **kwargs)
     return await func(*args, **kwargs)
 

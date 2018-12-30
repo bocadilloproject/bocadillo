@@ -40,6 +40,19 @@ The path where templates are searched for, or `None` if not set.
 
 This is built from the `templates_dir` parameter.
 
+### route
+```python
+Recipe.route(self, *args, **kwargs)
+```
+Register a route on the recipe.
+
+Accepts the same arguments as `API.route()`, except `namespace` which
+is given the value of the recipe's `name`.
+
+__See Also__
+
+- [API.route()](./api.md#route)
+
 ### template
 ```python
 Recipe.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
@@ -60,55 +73,6 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
-### template_sync
-```python
-Recipe.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
-```
-Render a template synchronously.
-
-See also: `API.template()`.
-
-### route
-```python
-Recipe.route(self, *args, **kwargs)
-```
-Register a route on the recipe.
-
-Accepts the same arguments as `API.route()`, except `namespace` which
-is given the value of the recipe's `name`.
-
-__See Also__
-
-- [API.route()](./api.md#route)
-
-### template_string
-```python
-Recipe.template_string(self, source: str, context: dict = None, **kwargs) -> str
-```
-Render a template from a string (synchronous).
-
-__Parameters__
-
-- __source (str)__: a template given as a string.
-
-For other parameters, see `API.template()`.
-
-### before
-```python
-Recipe.before(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
-```
-Register a before hook on a route.
-
-::: tip NOTE
-`@api.before()` should be placed  **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
-    `(req, res, params) -> None`.
-
 ### websocket_route
 ```python
 Recipe.websocket_route(self, pattern: str, **kwargs)
@@ -121,21 +85,25 @@ __See Also__
 
 - [API.websocket_route()](./api.md#websocket-route)
 
-### after
+### template_sync
 ```python
-Recipe.after(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
+Recipe.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
 ```
-Register an after hook on a route.
+Render a template synchronously.
 
-::: tip NOTE
-`@api.after()` should be placed **above** `@api.route()`
-when decorating a view.
-:::
+See also: `API.template()`.
+
+### template_string
+```python
+Recipe.template_string(self, source: str, context: dict = None, **kwargs) -> str
+```
+Render a template from a string (synchronous).
 
 __Parameters__
 
-- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
-    `(req, res, params) -> None`.
+- __source (str)__: a template given as a string.
+
+For other parameters, see `API.template()`.
 
 ### apply
 ```python

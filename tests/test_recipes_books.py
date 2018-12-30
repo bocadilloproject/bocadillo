@@ -5,7 +5,6 @@ from bocadillo import API, Recipe
 
 @pytest.fixture
 def numbers():
-
     integers = Recipe("integers")
 
     @integers.route("/{x}")
