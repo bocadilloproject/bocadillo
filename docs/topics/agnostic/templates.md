@@ -6,15 +6,15 @@ a familiar templating language, automatic escaping, template inheritance, etc.
 
 ## How templates work
 
-To begin with, templates are HTML files. You use the `.html` extension as for any other HTML file.
+To begin with, templates (when loaded from the file system) are just regular files. For example, when writing HTML templates, the regular `.html` extension is used as for any other HTML file.
 
-The only difference with regular HTML files is that templates provide a **templating language** with a set of specific tags and keywords that allow to perform **programmatic manipulations**. These are performed on **context variables** that are passed to the template when it is rendered.
+The only difference with regular text-based formats is that templates use a **templating language** with a set of specific tags and keywords that allow to perform **programmatic manipulations**. These are performed on **context variables** that are passed to the template when it is rendered.
 
 ## Writing templates
 
 Bocadillo templates are powered by Jinja2 and, as such, you can use the full power of Jinja2 to write beautiful templates.
 
-Here's an example template:
+Here's an example HTML template:
 
 ```html
 <!-- index.html -->
@@ -66,6 +66,8 @@ await api.template('index.html', {'title': 'Hello, Bocadillo!'})
 
 ## How templates are discovered
 
+### Default location
+
 By default, Bocadillo looks for templates in the `templates/` folder relative
 to where the application is run. For example:
 
@@ -78,7 +80,7 @@ to where the application is run. For example:
 
 Here, using `api.template('index.html')` would load and use the template defined in the `./templates/index.html` file.
 
-## Changing the templates location
+### Changing the templates location
 
 You can change the templates directory using the `templates_dir` option to `API()`:
 

@@ -58,11 +58,59 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 api.add_asgi_middleware(HTTPSRedirectMiddleware)
 ```
 
+## Built-in middleware
+
+### CORS
+
+Bocadillo has built-in support for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) (CORS). Adding CORS headers to responses is typically required when your API is to be accessed by web browsers.
+
+To enable CORS, simply use:
+
+```python
+api = bocadillo.API(enable_cors=True)
+```
+
+Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET` for `Allow-Methods`. To customize the CORS configuration, use `cors_config`, e.g.:
+
+```python
+api = bocadillo.API(
+    enable_cors=True,
+    cors_config={
+        'allow_origins': ['*'],
+        'allow_methods': ['*'],
+    }
+)
+```
+
+Please refer to Starlette's [CORSMiddleware](https://www.starlette.io/middleware/#corsmiddleware) documentation for the full list of options and defaults.
+
+### HSTS
+
+If you want enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS, simply use:
+
+```python
+api = bocadillo.API(enable_hsts=True)
+```
+
+### GZip
+
+If you want to enable [GZip compression](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding#Directives) to compress responses when possible, simply use:
+
+```python
+api = bocadillo.API(enable_gzip=True)
+```
+
+You can also specify the minimum bytes the response should have before compressing:
+
+```python
+api = bocadillo.API(enable_gzip=True, gzip_min_size=2048)
+```
+
 ## Writing middleware
 
 If you're interested in writing your own middleware, see our [Writing middleware] how-to guide.
 
-[CORS]: ./cors.md
+[CORS]: ./middleware.md#cors
 [Writing middleware]: ../../how-to/middleware.md
 [ASGI]: https://asgi.readthedocs.io
-[HSTS]: ./hsts.md
+[HSTS]: ./middleware.md#hsts

@@ -62,7 +62,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
     enable_cors (bool):
         If `True`, Cross Origin Resource Sharing will be configured according
         to `cors_config`. Defaults to `False`.
-        See also [CORS](../topics/features/cors.md).
+        See also [CORS](../topics/http/middleware.md#cors).
     cors_config (dict):
         A dictionary of CORS configuration parameters.
         Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
@@ -70,12 +70,12 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
         Defaults to `False`.
-        See also [HSTS](../topics/features/hsts.md).
+        See also [HSTS](../topics/http/middleware.md#hsts).
     enable_gzip (bool):
         If `True`, enable GZip compression and automatically
         compress responses for clients that support it.
         Defaults to `False`.
-        See also [GZip](../topics/features/gzip.md).
+        See also [GZip](../topics/http/middleware.md#gzip).
     gzip_min_size (int):
         If specified, compress only responses that
         have more bytes than the specified value.
@@ -84,7 +84,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
         Defaults to `"application/json"`.
-        See also [Media](../topics/request-handling/media.md).
+        See also [Media](../topics/http/media.md).
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -108,6 +108,8 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         self.add_error_handler(HTTPError, error_to_text)
 
         self._extra_apps: Dict[str, Any] = {}
+
+        self.client = self.build_client()
 
         if static_dir is not None:
             if static_root is None:
@@ -137,15 +139,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-    @property
-    def client(self) -> TestClient:
-        """A Starlette [TestClient] that can be used for testing the app.
-
-        [TestClient]: https://www.starlette.io/testclient/
-        """
-        return self.get_client()
-
-    def get_client(self, **kwargs) -> TestClient:
+    def build_client(self, **kwargs) -> TestClient:
         return TestClient(self, **kwargs)
 
     def get_template_globals(self):
@@ -273,7 +267,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         Redirection: an exception that will be caught by #API.dispatch().
 
         # See Also
-        - [Redirecting](../topics/request-handling/redirecting.md)
+        - [Redirecting](../topics/http/redirecting.md)
         """
         if name is not None:
             url = self.url_for(name=name, **kwargs)
@@ -290,7 +284,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             A subclass of `bocadillo.Middleware`.
 
         # See Also
-        - [Middleware](../topics/features/middleware.md)
+        - [Middleware](../topics/http/middleware.md)
         """
         self._middleware.insert(0, (middleware_cls, kwargs))
 
@@ -302,7 +296,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             A class that complies with the ASGI specification.
 
         # See Also
-        - [Middleware](../topics/features/middleware.md)
+        - [Middleware](../topics/http/middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
         self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
@@ -335,7 +329,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         response (Response): an HTTP response.
 
         # See Also
-        - [How are requests processed?](../topics/request-handling/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
+        - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
         """
         res = Response(req, media=self._media)
 
@@ -383,7 +377,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
         # See Also
         - [dispatch](#dispatch)
-        - [Middleware](../topics/features/middleware.md)
+        - [Middleware](../topics/http/middleware.md)
         """
         convert = self._convert_exception_to_response
         dispatch = convert(self.dispatch)
@@ -434,7 +428,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         # See Also
         - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
         - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-        - [Events](../topics/features/events.md)
+        - [Events](../topics/agnostic/events.md)
         - [mount](#mount)
         - [create_app](#create-app)
         """

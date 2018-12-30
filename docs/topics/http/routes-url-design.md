@@ -1,4 +1,3 @@
-
 # Routes and URL design
 
 The point of a web framework is to make it easy to work with HTTP requests, which means managing routes and designing URLs. This topic guide shows you how to do this in Bocadillo.
@@ -66,20 +65,24 @@ When Bocadillo cannot find a matching route for the requested URL, a `404 Not Fo
 
 If a route was found but it did not supported the requested HTTP method (e.g. `POST` or `DELETE`), a `405 Method Not Allowed` error response is returned.
 
-See [customizing error handling](./writing-views.md#customizing-error-handling) for how to customize this behavior.
+See [customizing error handling](views.md#customizing-error-handling) for how to customize this behavior.
 
 ## Naming routes
 
 Working with absolute URLs can quickly become impractical, as changes to a route's URL pattern may require changes across the whole code base.
 
-To overcome this, all routes are given a name based on the name of the function (for function-based views) or class (for class-based views).
+To overcome this, all routes are given a name which can be referenced later.
+
+### Inferred route names (default behavior)
+
+Bocadillo will assign a name to routes based on the name of their view function or class.
 
 The inferred route name is always `snake_cased`, as shown in the table below.
 
 | View declaration | Inferred route name |
 |------------------|---------------------|
-| `async def do_stuff(req, res)` | `'do_stuff'` |
-| `class DoStuff:` | `'do_stuff'` |
+| `async def do_stuff(req, res):` (or `def do_stuff(req, res):`) | `"do_stuff"` |
+| `class DoStuff:` | `"do_stuff"` |
 
 ### Explicit route names
 
@@ -104,7 +107,7 @@ async def home(req, res):
 The namespace will be prepended to the route's name (either inferred or explicit) and separated by a colon, e.g. resulting in `blog:home` for the above example.
 
 ::: tip
-If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](../features/recipes.md).
+If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](../agnostic/recipes.md).
 :::
 
 ## Reversing named routes
@@ -148,7 +151,7 @@ async def delete_blog_post(req, res, pk):
 Methods passed to `@api.route()` are case-insensitive.
 
 ::: tip NOTE
-The `methods` argument is ignored on [class-based views](../features/views.md#class-based-views). You should instead decide which methods are implemented on the class to control
+The `methods` argument is ignored on [class-based views](./views.md#class-based-views). You should instead decide which methods are implemented on the class to control
 the exposition of HTTP methods.
 :::
 
@@ -166,5 +169,5 @@ Bocadillo implements the `HEAD` method automatically if your route supports `GET
 [F-string notation]: https://www.python.org/dev/peps/pep-0498/
 [format specifiers]: https://www.python.org/dev/peps/pep-0498/#format-specifiers
 [parse]: https://pypi.org/project/parse/
-[hooks]: ../features/hooks.md
-[middleware]: ../features/middleware.md
+[hooks]: ./hooks.md
+[middleware]: ./middleware.md

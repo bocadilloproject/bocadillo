@@ -28,7 +28,7 @@ An XSS attack consists in injecting malicious JavaScript code into HTML, such as
 
 One way to prevent XSS attacks is by escaping all quotes, replacing them with their HTML equivalent.
 
-If you're using the [templating utilities](../features/templates.md) provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
+If you're using the [templating utilities](../agnostic/templates.md) provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
 
 However, you should always quote attributes in order for this to work, e.g.
 
@@ -110,6 +110,6 @@ By default, this whitelist is empty. You must configure it through the `allowed_
 [Let's Encrypt]: https://letsencrypt.org
 [Certbot]: https://certbot.eff.org
 [Deployment]: ./deployment.md
-[HSTS]: ../features/hsts.md
+[HSTS]: ../http/middleware.md#hsts
 [cache poisoning]: https://www.owasp.org/index.php/Cache_Poisoning
 [Allowed hosts]: ../api.md#allowed-hosts

@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/docs/.vuepress/public/banner.png?raw=true">
+    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
 </p>
 
 <p align="center">
@@ -8,10 +8,10 @@
 
 ---
 
-[![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
-[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg)][pypi-url]
-[![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
+[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=)][python-url]
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
+[![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
+[![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
 [![black](https://img.shields.io/badge/code_style-black-000000.svg)][black]
 [![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)][codecov]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
@@ -83,6 +83,7 @@ To see what has already been implemented for the next release, see the [Unreleas
 
 <!-- URLs -->
 
+[python-url]: https://www.python.org
 [travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
