@@ -14,6 +14,109 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+This release has **breaking API changes**. This is due to an overhaul of the view system.
+
+If your application uses any of the features below, you are affected and should review these changes thoroughly before upgrading:
+
+- Use hooks via `@api.before()` or `@api.after()`.
+- Restriction of HTTP methods via the `methods` parameter to `@api.route()`.
+
+### Added
+
+- View definition utilities: `from_handler()`, `from_obj()`, `@view()`.
+- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus,  passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
+- Function-based views are automatically decorated with `@view()` to ensure backwards compatibility.
+
+```python
+from bocadillo import API, view
+
+api = API()
+
+# This:
+@api.route("/")
+async def index(req, res):
+    pass
+
+# Is equivalent to:
+@api.route("/")
+@view()
+async def index(req, res):
+    pass
+
+# Which is equivalent to:
+@api.route("/")
+@view(methods=["get"])
+async def index(req, res):
+    pass
+
+# Which is itself *strictly* equivalent to:
+@api.route("/")
+class Index:
+    async def get(self, req, res):
+        pass
+```
+
+- API reference for the `views` module.
+
+### Changed
+
+- **BREAKING**: hooks were moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()` and `@recipe.before()` / `@recipe.after()`.
+- **BREAKING**: hooks must now be placed right above the view being decorated. This affects both function-based views and class-based views (but not method views).
+
+```python
+from bocadillo import API, hooks
+
+api = API()
+
+async def before(req, res, params):
+    print("before!")
+
+# < 0.9
+@api.before(before)
+@api.route("/")
+async def foo(req, res):
+    pass
+
+@api.before(before)
+@api.route("/")
+class Foo:
+    pass
+
+# >= 0.9:
+@api.route("/")
+@hooks.before(before)
+async def foo(req, res):
+    pass
+
+@api.route("/")
+@hooks.before(before)
+class Foo:
+    pass
+```
+
+### Removed
+
+- **BREAKING**: the `methods` argument to `@api.route()` has been removed. To specify allowed methods on function-based views, you must now use the `@view()` decorator — see below.
+
+```python
+from bocadillo import API, view
+
+api = API()
+
+# < 0.9
+@api.route("/", methods=["post"])
+async def foo(req, res):
+    pass
+
+# >= 0.9
+@api.route("/")
+@view(methods=["post"])
+async def foo(req, res):
+    pass
+```
+
+- Removed dependency on `async_generator`.
+
 ## [v0.8.1] - 2018-12-27
 
 ### Changed

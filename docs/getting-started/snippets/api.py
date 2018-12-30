@@ -4,7 +4,7 @@ from asyncio import sleep
 from json import JSONDecodeError
 from typing import List, NamedTuple, Optional, Dict
 
-from bocadillo import API, Middleware, Recipe, HTTPError
+from bocadillo import API, Middleware, Recipe, HTTPError, hooks
 
 
 # We'll start by defining a few helper classes and functions.
@@ -165,7 +165,7 @@ class CoursesList:
         # Media responses! (JSON by default)
         res.media = storage.list()
 
-    @courses.before(validate_course)  # Hooks again!
+    @hooks.before(validate_course)  # Hooks again!
     async def post(self, req, res):
         payload = await req.json()
         course = storage.create(**payload)
@@ -193,8 +193,8 @@ async def get_course(req, res, pk: int):
 
 
 # 👇 Executes `requires_token()` before the view
-@courses.before(requires_token)
 @courses.route("/top")
+@hooks.before(requires_token)
 async def get_top_courses(req, res):
     try:
         # Query parameters!

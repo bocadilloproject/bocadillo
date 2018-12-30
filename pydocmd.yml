@@ -15,7 +15,9 @@ generate:
 - exceptions.md:
   - bocadillo.exceptions++
 - hooks.md:
-  - bocadillo.hooks++
+  - bocadillo.hooks:
+      - bocadillo.hooks.before
+      - bocadillo.hooks.after
 - media.md:
   - bocadillo.media:
     - bocadillo.media.handle_json
@@ -40,6 +42,8 @@ generate:
   - bocadillo.staticfiles+
 - templates.md:
   - bocadillo.templates++
+- views.md:
+  - bocadillo.views++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

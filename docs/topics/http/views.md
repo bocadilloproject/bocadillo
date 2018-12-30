@@ -122,25 +122,38 @@ Views can be asynchronous or synchronous, function-based or class-based.
 
 ### Asynchronous views
 
-The recommended way to define views in Bocadillo is using the async/await syntax (as in the previous example). This allows you to call arbitrary async/await
-Python code:
+The recommended way to define views in Bocadillo is using the async/await syntax. This allows you to call arbitrary asynchronous Python code:
 
 ```python
 from asyncio import sleep
+from bocadillo import view
 
 async def find_post_content(slug: str):
     await sleep(1)  # perhaps query a database here?
     return 'My awesome post'
 
+@view()
 async def retrieve_post(req, res, slug: str):
     res.text = await find_post_content(slug)
 ```
+
+::: tip
+
+> Is `view()` necessary here?
+
+TL;DR: **no**.
+
+The role of the `view()` decorator is to build a class-based view out of a function-based view. This is because internally, Bocadillo only deals with class-based views.
+
+Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@api.route()`.
+:::
 
 ### Synchronous views
 
 While Bocadillo is asynchronous at its core, you can also use plain Python functions to define synchronous views:
 
 ```python
+@view()
 def index(req, res):
     res.html = '<h1>My website</h1>'
 ```

@@ -44,12 +44,20 @@ def test_url_for_can_be_used_in_templates(api: API):
     assert response.text == "/about/me"
 
 
-def test_on_class_based_views(api: API):
+def test_name_is_inferred_from_view_name(api: API):
     @api.route("/about/{who}")
     class AboutPerson:
-        pass
+        async def get(self, req, res, who):
+            pass
 
     url = api.url_for("about_person", who="Godzilla")
+    assert url == "/about/Godzilla"
+
+    @api.route("/about/{who}")
+    async def about_who(req, res, who):
+        pass
+
+    url = api.url_for("about_who", who="Godzilla")
     assert url == "/about/Godzilla"
 
 

@@ -163,38 +163,6 @@ __Parameters__
 
 For other parameters, see `API.template()`.
 
-### before
-```python
-API.before(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
-```
-Register a before hook on a route.
-
-::: tip NOTE
-`@api.before()` should be placed  **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
-    `(req, res, params) -> None`.
-
-### after
-```python
-API.after(self, hook_function: Callable[[bocadillo.request.Request, bocadillo.response.Response, dict], Coroutine], *args, **kwargs)
-```
-Register an after hook on a route.
-
-::: tip NOTE
-`@api.after()` should be placed **above** `@api.route()`
-when decorating a view.
-:::
-
-__Parameters__
-
-- __hook_function (callable)__:            A synchronous or asynchronous function with the signature:
-    `(req, res, params) -> None`.
-
 ### get_template_globals
 ```python
 API.get_template_globals(self)
@@ -215,6 +183,55 @@ __Parameters__
 
 - __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
 - __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+
+### route
+```python
+API.route(self, pattern: str, *, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
+__Raises__
+
+- `RouteDeclarationError`:
+    If route validation has failed.
+
+__See Also__
+
+- [check_route](#check-route) for the route validation algorithm.
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### add_error_handler
 ```python
@@ -271,36 +288,6 @@ __See Also__
 
 - [Redirecting](../topics/http/redirecting.md)
 
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
-- __name (str)__:
-    An optional name for the route.
-    If a route already exists for this name, it is replaced.
-    Defaults to a snake-cased version of the view's name.
-- __namespace (str)__:
-    An optional namespace for the route. If given, it is prefixed to
-    the name and separated by a colon.
-
-__Raises__
-
-- `RouteDeclarationError`:
-    If route validation has failed.
-
-__See Also__
-
-- [check_route](#check-route) for the route validation algorithm.
-
 ### add_middleware
 ```python
 API.add_middleware(self, middleware_cls, **kwargs)
@@ -332,25 +319,6 @@ __See Also__
 
 - [Middleware](../topics/http/middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
-
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### apply_asgi_middleware
 ```python

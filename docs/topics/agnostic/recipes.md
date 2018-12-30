@@ -60,6 +60,10 @@ Recipes expose the following features, which can be used just as you would on th
 If your recipe needs to use its own templates, you should pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.
 :::
 
+::: tip
+You can decorate your recipe views with [hooks](./hooks.md) as usual.
+:::
+
 ::: warning CAVEAT
 Note that recipes apply the exact same [routing algorithm](../http/routes-url-design.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
 :::

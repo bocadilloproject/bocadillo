@@ -4,12 +4,12 @@ from bocadillo import API
 
 
 def _setup_views_with_redirect(api, permanent: bool = None, **kwargs):
-    @api.route("/home", name="home")
-    def home(req, res):
+    @api.route("/home")
+    async def home(req, res):
         res.text = "You are home!"
 
     @api.route("/")
-    def index(req, res):
+    async def index(req, res):
         if permanent:
             api.redirect(permanent=True, **kwargs)
         else:
@@ -49,11 +49,11 @@ def test_at_least_one_of_name_or_url_must_be_given(api: API):
 
 def test_redirect_to_internal_url(api: API):
     @api.route("/about/{who}")
-    def about(req, res, who):
+    async def about(req, res, who):
         res.text = who
 
     @api.route("/")
-    def index(req, res):
+    async def index(req, res):
         api.redirect(url="/about/me")
 
     response = api.client.get("/")
@@ -63,7 +63,7 @@ def test_redirect_to_internal_url(api: API):
 
 def test_if_redirect_to_non_matching_internal_url_then_404(api: API):
     @api.route("/")
-    def index(req, res):
+    async def index(req, res):
         api.redirect(url="/about/me")
 
     response = api.client.get("/")
@@ -74,7 +74,7 @@ def test_redirect_to_external_url(api: API):
     external_url = "https://httpbin.org/status/202"
 
     @api.route("/")
-    def index(req, res):
+    async def index(req, res):
         api.redirect(url=external_url)
 
     # NOTE: cannot follow redirect here, because the TestClient

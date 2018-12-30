@@ -1,7 +1,6 @@
 from typing import List, Sequence
 
-from bocadillo.meta import DocsMeta
-from .hooks import HooksMixin, HooksBase, HookFunction
+from .meta import DocsMeta
 from .templates import TemplatesMixin
 
 
@@ -18,7 +17,6 @@ class RecipeRoute:
         self._kwargs = kwargs
         self._pattern = pattern
         self._view = view
-        self.hooks = {}
 
     def register(self, api, prefix: str) -> None:
         """Register the route on the API object at the given prefix.
@@ -30,35 +28,9 @@ class RecipeRoute:
         prefix (str):
             A path prefix.
         """
-        route = api.route(prefix + self._pattern, *self._args, **self._kwargs)(
+        api.route(prefix + self._pattern, *self._args, **self._kwargs)(
             self._view
         )
-
-        # Hooks registered via @before and/or @after on top of the @route
-        # decorator need to be manually registered with @api.before, @api.after.
-        def _register_hook(hook, hook_decorator):
-            nonlocal self, route
-            if self.hooks.get(hook) is None:
-                return
-            hook_function = self.hooks[hook]
-            route = hook_decorator(hook_function)(route)
-
-        _register_hook("before", api.before)
-        _register_hook("after", api.after)
-
-
-class RecipeHooks(HooksBase):
-    """A specific hooks manager for recipes.
-
-    Mostly an implementation detail.
-    """
-
-    __route_class__ = RecipeRoute
-
-    def store_hook(
-        self, hook: str, hook_function: HookFunction, route: RecipeRoute
-    ):
-        route.hooks[hook] = hook_function
 
 
 class RecipeBase:
@@ -76,7 +48,7 @@ class RecipeBase:
         raise NotImplementedError
 
 
-class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
+class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
@@ -89,8 +61,6 @@ class Recipe(TemplatesMixin, HooksMixin, RecipeBase, metaclass=DocsMeta):
     templates_dir (str):
         See #API.
     """
-
-    __hooks_manager_class__ = RecipeHooks
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(**kwargs)
