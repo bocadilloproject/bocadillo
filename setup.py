@@ -27,7 +27,6 @@ setuptools.setup(
         "whitenoise",
         "requests",
         "parse",
-        "async_generator",
     ],
     url=DOCS,
     project_urls={

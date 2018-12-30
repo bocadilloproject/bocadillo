@@ -56,7 +56,7 @@ class Index:
         pass
 ```
 
-- API reference for the new `views` module.
+- API reference for the `views` module.
 
 ### Changed
 
@@ -114,6 +114,8 @@ async def foo(req, res):
 async def foo(req, res):
     pass
 ```
+
+- Removed dependency on `async_generator`.
 
 ## [v0.8.1] - 2018-12-27
 

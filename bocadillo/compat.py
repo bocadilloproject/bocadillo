@@ -1,18 +1,11 @@
 """Various compatibility utilities."""
 import asyncio
 import re
-import sys
 from typing import Callable, Coroutine
 
 from starlette.concurrency import run_in_threadpool
 
 from .app_types import WSGIApp
-
-try:
-    from contextlib import asynccontextmanager
-except ImportError:  # pragma: no cover
-    assert sys.version_info[:2] == (3, 6)
-    from async_generator import asynccontextmanager
 
 _camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
 _snake_regex = re.compile(r"([a-z0-9])([A-Z])")
