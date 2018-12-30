@@ -373,13 +373,18 @@ __See Also__
 
 ### websocket_route
 ```python
-API.websocket_route(self, pattern: str, **kwargs)
+API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
 ```
 Register a WebSocket route by decorating a view.
 
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+
 __See Also__
 
-- [Router.websocket_route](/api/routing.md#websocket-route)
+- [WebSocket](./websockets.md#websocket) for a description of keyword
+arguments.
 
 ### url_for
 ```python

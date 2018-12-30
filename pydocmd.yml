@@ -35,6 +35,7 @@ generate:
   - bocadillo.routing:
       - bocadillo.routing.RoutingMixin+
       - bocadillo.routing.Route+
+      - bocadillo.routing.WebSocketRoute+
       - bocadillo.routing.check_route
 - staticfiles.md:
   - bocadillo.staticfiles+

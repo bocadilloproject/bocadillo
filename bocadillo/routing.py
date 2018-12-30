@@ -2,7 +2,7 @@ import inspect
 from functools import partial
 from http import HTTPStatus
 from string import Formatter
-from typing import List, Optional, NamedTuple, Dict
+from typing import List, Optional, NamedTuple, Dict, Tuple
 
 from parse import parse
 
@@ -288,18 +288,7 @@ class Router:
             raise HTTPError(HTTPStatus.NOT_FOUND.value) from e
 
     def websocket_route(self, pattern: str, **kwargs):
-        """Register a WebSocket route by decorating a view.
-
-        # Parameters
-        pattern (str): an URL pattern.
-        kwargs (dict):
-            Extra keyword arguments that will be passed to the
-            `WebSocket` object.
-
-        # See Also
-        - [WebSocket](./websockets.md#websocket) for the list of available
-        keyword arguments.
-        """
+        # Register a WebSocket route by decorating a view.
 
         def decorate(view):
             nonlocal self
@@ -352,13 +341,33 @@ class RoutingMixin:
             pattern=pattern, methods=methods, name=name, namespace=namespace
         )
 
-    def websocket_route(self, pattern: str, **kwargs):
+    def websocket_route(
+        self,
+        pattern: str,
+        *,
+        value_type: Optional[str] = None,
+        receive_type: Optional[str] = None,
+        send_type: Optional[str] = None,
+        caught_close_codes: Optional[Tuple[int]] = None,
+    ):
         """Register a WebSocket route by decorating a view.
 
+        # Parameters
+        pattern (str): an URL pattern.
+
         # See Also
-        - [Router.websocket_route](/api/routing.md#websocket-route)
+        - [WebSocket](./websockets.md#websocket) for a description of keyword
+        arguments.
         """
-        return self._router.websocket_route(pattern, **kwargs)
+        # NOTE: use named keyword arguments instead of `**kwargs` to improve
+        # their accessibility (e.g. for IDE discovery).
+        return self._router.websocket_route(
+            pattern,
+            value_type=value_type,
+            receive_type=receive_type,
+            send_type=send_type,
+            caught_close_codes=caught_close_codes,
+        )
 
     def url_for(self, name: str, **kwargs) -> str:
         """Build the URL path for a named route.
