@@ -13,7 +13,9 @@ Handler = Callable[[Request, Response, Any], Awaitable[None]]
 class View:
     """View type."""
 
-    __name__: str
+    def __init__(self, name: str):
+        self.name = name
+
     get: Handler
     post: Handler
     put: Handler
@@ -24,8 +26,7 @@ class View:
 
     @classmethod
     def _create(cls, name: str, docstring: str, handlers: dict) -> "View":
-        view = cls()
-        view.__name__ = name
+        view = cls(name)
         view.__doc__ = docstring
 
         # Convert handlers to async if necessary

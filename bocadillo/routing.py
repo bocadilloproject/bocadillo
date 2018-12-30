@@ -118,7 +118,7 @@ class Router:
         # `view` is now a proper `View` object.
 
         if name is None:
-            name = camel_to_snake(view.__name__)
+            name = camel_to_snake(view.name)
         if namespace is not None:
             name = namespace + ":" + name
 
