@@ -17,6 +17,8 @@
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 [![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)][gitter-url]
 
+**NOTE**: the upcoming v0.9 release contains breaking API changes. Review the [changelog][changelog-unreleased] to know if you will be affected.
+
 # Bocadillo
 
 Bocadillo is a Python web framework that provides a sane toolkit for quickly building performant web applications and services, while encouraging best practices and keeping developer experience in mind.
@@ -79,7 +81,7 @@ See [CHANGELOG](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGE
 
 ## Roadmap
 
-To see what has already been implemented for the next release, see the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section of our changelog.
+To see what has already been implemented for the next release, see the [Unreleased][changelog-unreleased] section of our changelog.
 
 <!-- URLs -->
 
@@ -92,3 +94,4 @@ To see what has already been implemented for the next release, see the [Unreleas
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo
 [gitter-url]: https://gitter.im/bocadilloproject/bocadillo
+[changelog-unreleased]: https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased
