@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/docs/.vuepress/public/banner.png?raw=true">
+    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
 </p>
 
 <p align="center">
