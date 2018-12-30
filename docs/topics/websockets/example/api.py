@@ -1,5 +1,5 @@
 # api.py
-from bocadillo import API, WebSocketDisconnect
+from bocadillo import API
 
 api = API()
 
