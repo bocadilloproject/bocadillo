@@ -5,12 +5,12 @@ from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any
 
 from parse import parse
 
-from .compat import camel_to_snake
+from . import views
 from .exceptions import HTTPError, RouteDeclarationError
 from .meta import DocsMeta
 from .request import Request
 from .response import Response
-from .views import View, Handler, get_handlers, view as view_decorator
+from .views import View, HandlerDoesNotExist
 
 
 class BaseRoute:
@@ -66,12 +66,9 @@ class Route(BaseRoute, metaclass=DocsMeta):
 
     async def __call__(self, req: Request, res: Response, **kwargs) -> None:
         try:
-            handler: Handler = getattr(self._view, req.method.lower())
-        except AttributeError as e:
-            print(e)
+            await self._view(req, res, **kwargs)
+        except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
-        else:
-            await handler(req, res, **kwargs)
 
 
 class RouteMatch(NamedTuple):
@@ -102,23 +99,23 @@ class Router:
         # Otherwise, convert the view to a View instance and recurse.
         elif inspect.isclass(view):
             # View-like class.
-            view = View.from_obj(view())
+            view = views.from_obj(view())
             return self.add_route(view, pattern, name=name, namespace=namespace)
         elif callable(view):
             # Function-based view.
             # NOTE: here, we ensure backward-compatibility with the routing of
             # function-based views pre-0.9.
-            view = view_decorator()(view)
+            view = views.from_handler(view)
             return self.add_route(view, pattern, name=name, namespace=namespace)
         else:
             # View-like object.
-            view = View.from_obj(view)
+            view = views.from_obj(view)
             return self.add_route(view, pattern, name=name, namespace=namespace)
 
         # `view` is now a proper `View` object.
 
         if name is None:
-            name = camel_to_snake(view.name)
+            name = view.name
         if namespace is not None:
             name = namespace + ":" + name
 
@@ -231,7 +228,7 @@ def check_route(pattern: str, view: View) -> None:
     parsed_format = Formatter().parse(pattern)
     route_parameters: set = {name for _, name, _, _ in parsed_format if name}
 
-    for method, handler in get_handlers(view).items():
+    for method, handler in views.get_handlers(view).items():
         handler_parameters = dict(inspect.signature(handler).parameters)
         handler_parameters.pop("self", None)  # paranoia check
         handler_parameters = list(handler_parameters)

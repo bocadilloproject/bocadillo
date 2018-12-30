@@ -42,6 +42,8 @@ generate:
   - bocadillo.staticfiles+
 - templates.md:
   - bocadillo.templates++
+- views.md:
+  - bocadillo.views++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
