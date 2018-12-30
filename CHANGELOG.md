@@ -16,6 +16,13 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 This release has **breaking API changes**. This is due to an overhaul of the view system which makes Bocadillo deal internally with class-based views only.
 
+You are affected if your application:
+
+- Uses hooks via `@api.before()` or `@api.after()`.
+- Specifies HTTP methods via the `methods` parameter to `@api.route()`.
+
+If so, please review the changes listed below thoroughly before upgrading.
+
 ### Added
 
 - The `@view()` decorator (available as `from bocadillo import view`) converts a function-based view into a class-based one:
