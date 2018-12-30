@@ -23,9 +23,9 @@ If your application uses any of the features below, you are affected and should 
 
 ### Added
 
-- The `@view()` decorator (available as `from bocadillo import view`) converts a function-based view into a class-based one:
-  - `view` accepts a `methods` argument for specifying which HTTP methods the view should support. Passing the `all` built-in has the same effect as as defining `handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
-  - Function-based views are automatically decorated to ensure backwards compatibility:
+- View definition utilities: `from_handler()`, `from_obj()`, `@view()`.
+- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus,  passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
+- Function-based views are automatically decorated with `@view()` to ensure backwards compatibility.
 
 ```python
 from bocadillo import API, view
@@ -56,9 +56,11 @@ class Index:
         pass
 ```
 
+- API reference for the new `views` module.
+
 ### Changed
 
-- **BREAKING**: hooks moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()` and `@recipe.before()` / `@recipe.after()`.
+- **BREAKING**: hooks were moved to a separate module: `bocadillo.hooks`. You must now use `@hooks.before()` / `@hooks.after()` instead of `@api.before()` / `@api.after()` and `@recipe.before()` / `@recipe.after()`.
 - **BREAKING**: hooks must now be placed right above the view being decorated. This affects both function-based views and class-based views (but not method views).
 
 ```python
@@ -91,8 +93,6 @@ async def foo(req, res):
 class Foo:
     pass
 ```
-
-- `await req.json()` now returns a `400 Bad Request` error response if the input JSON is malformed.
 
 ### Removed
 
