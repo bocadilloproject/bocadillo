@@ -14,14 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
-This release has **breaking API changes**. This is due to an overhaul of the view system which makes Bocadillo deal internally with class-based views only.
+This release has **breaking API changes**. This is due to an overhaul of the view system.
 
-You are affected if your application:
+If your application uses any of the features below, you are affected and should review these changes thoroughly before upgrading:
 
-- Uses hooks via `@api.before()` or `@api.after()`.
-- Specifies HTTP methods via the `methods` parameter to `@api.route()`.
-
-If so, please review the changes listed below thoroughly before upgrading.
+- Use hooks via `@api.before()` or `@api.after()`.
+- Restriction of HTTP methods via the `methods` parameter to `@api.route()`.
 
 ### Added
 
