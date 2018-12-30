@@ -62,11 +62,6 @@ __Parameters__
     Defaults to `"application/json"`.
     See also [Media](../topics/http/media.md).
 
-### client
-A Starlette [TestClient] that can be used for testing the app.
-
-[TestClient]: https://www.starlette.io/testclient/
-
 ### media_handlers
 The dictionary of supported media handlers.
 
@@ -276,6 +271,36 @@ __See Also__
 
 - [Redirecting](../topics/http/redirecting.md)
 
+### route
+```python
+API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
+__Raises__
+
+- `RouteDeclarationError`:
+    If route validation has failed.
+
+__See Also__
+
+- [check_route](#check-route) for the route validation algorithm.
+
 ### add_middleware
 ```python
 API.add_middleware(self, middleware_cls, **kwargs)
@@ -308,6 +333,25 @@ __See Also__
 - [Middleware](../topics/http/middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
 
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
+
 ### apply_asgi_middleware
 ```python
 API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]
@@ -328,18 +372,6 @@ __See Also__
 
 - [add_asgi_middleware](#add-asgi-middleware)
 
-### route
-```python
-API.route(self, pattern: str, *, methods: List[str] = None, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-This is an alias to the underlying router's `route()` decorator.
-
-__See Also__
-
-- [Router.route](/api/routing.md#route-3)
-
 ### dispatch
 ```python
 API.dispatch(self, req: bocadillo.request.Request) -> bocadillo.response.Response
@@ -357,25 +389,6 @@ __Returns__
 __See Also__
 
 - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
-
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### get_response
 ```python
