@@ -69,3 +69,12 @@ def test_view_decorator_is_optional(api: API):
         pass
 
     assert api.client.get("/").status_code == 200
+
+
+def test_from_obj(api: API):
+    class MyView:
+        async def get(self, req, res):
+            pass
+
+    api.route("/")(MyView())
+    assert api.client.get("/").status_code == 200

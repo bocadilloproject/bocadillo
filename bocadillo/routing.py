@@ -93,26 +93,23 @@ class Router:
         namespace: str = None,
     ) -> Route:
         # Build and register a route.
+
         if isinstance(view, View):
             # View instance. No further conversion required.
             pass
-        # Otherwise, convert the view to a View instance and recurse.
         elif inspect.isclass(view):
             # View-like class.
             view = views.from_obj(view())
-            return self.add_route(view, pattern, name=name, namespace=namespace)
         elif callable(view):
             # Function-based view.
             # NOTE: here, we ensure backward-compatibility with the routing of
             # function-based views pre-0.9.
             view = views.from_handler(view)
-            return self.add_route(view, pattern, name=name, namespace=namespace)
         else:
             # View-like object.
             view = views.from_obj(view)
-            return self.add_route(view, pattern, name=name, namespace=namespace)
 
-        # `view` is now a proper `View` object.
+        assert isinstance(view, View)
 
         if name is None:
             name = view.name
@@ -217,11 +214,9 @@ def check_route(pattern: str, view: View) -> None:
     # See Also
     - `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
     """
-    view_name = view.__class__.__name__
-
     if not pattern.startswith("/"):
         raise RouteDeclarationError(
-            f"Route pattern '{pattern}' on view '{view_name}' "
+            f"Route pattern '{pattern}' on view '{view.name}' "
             f"must start with '/' to avoid ambiguities."
         )
 

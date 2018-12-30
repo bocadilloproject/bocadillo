@@ -32,9 +32,7 @@ async def call_async(func: Callable, *args, sync=None, **kwargs) -> Coroutine:
     # See Also
     - [Executing code in thread or process pools](https://docs.python.org/3/library/asyncio-eventloop.html#executing-code-in-thread-or-process-pools)
     """
-    if sync is None:
-        sync = not asyncio.iscoroutinefunction(func)
-    if sync:
+    if sync or (sync is None and not asyncio.iscoroutinefunction(func)):
         return await run_in_threadpool(func, *args, **kwargs)
     return await func(*args, **kwargs)
 
