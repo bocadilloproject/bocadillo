@@ -63,10 +63,22 @@ curl "http://localhost:8000?add=1&sub=2&sub=3"
 ```
 
 ```python
-req.query_params['add']  # '1'
-req.query_params['sub']  # '2'  (first item)
-req.query_params.getlist('sub')  # ['2', '3']
+>>> req.query_params["add"]
+"1"
+>>> req.query_params.get("mul")
+None  # not present
+>>>
+req.query_params["sub"]
+"2"  # first item
+>>> req.query_params.getlist("sub")
+["2", "3"]
 ```
+
+::: tip
+For **optional** query parameters, use `.get()` instead of direct item access. Otherwise, a `KeyError` is raised if the parameter is not present.
+
+See also: [Why dict.get(key) instead of dict[key]?](https://stackoverflow.com/questions/11041405/why-dict-getkey-instead-of-dictkey).
+:::
 
 ## Body
 
