@@ -1,8 +1,6 @@
 const listDir = require('./utils').listDir;
 
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').load();
-}
+require('dotenv').load();
 
 module.exports = {
     base: '/',
@@ -38,10 +36,10 @@ module.exports = {
         sidebarDepth: 2,
         lastUpdated: true,
         serviceWorker: {updatePopup: true},
-        algolia: {
+        algolia: process.env.NODE_ENV === "production" ? {
             apiKey: process.env.ALGOLIA_API_KEY,
             indexName: "bocadilloproject",
-        },
+        } : {},
         nav: [
             {
                 text: 'Home',
