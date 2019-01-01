@@ -47,7 +47,7 @@ Let's break this code down:
 
 These four operations (accept, receive, send and close) are the basic building blocks of WebSocket views.
 
-Continue to learn more about to use WebSockets in Bocadillo.
+Continue to learn more about how to use WebSockets in Bocadillo.
 
 [websockets]: https://websockets.readthedocs.io
 [The API object]: ../api.md
