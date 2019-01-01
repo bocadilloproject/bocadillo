@@ -23,6 +23,7 @@ If your application uses any of the features below, you are affected and should 
 
 ### Added
 
+- Support for WebSockets, including routing with `@api.websocket_route()`.
 - View definition utilities: `from_handler()`, `from_obj()`, `@view()`.
 - In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus,  passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
 - Function-based views are automatically decorated with `@view()` to ensure backwards compatibility.

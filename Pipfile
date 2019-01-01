@@ -10,6 +10,7 @@ parse = "*"
 "jinja2" = "*"
 whitenoise = "*"
 requests = "*"
+websockets = "*"
 
 [dev-packages]
 pytest = "*"

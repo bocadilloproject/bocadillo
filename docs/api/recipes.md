@@ -73,20 +73,17 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
-### apply
+### websocket_route
 ```python
-Recipe.apply(self, api, root: str = '')
+Recipe.websocket_route(self, pattern: str, **kwargs)
 ```
-Apply the recipe to an API object.
+Register a WebSocket route on the recipe.
 
-This will:
-
-- Mount registered routes onto the `api`.
-- Update the templates directory to that of `api`.
+Accepts the same arguments as `API.websocket_route()`.
 
 __See Also__
 
-- [RecipeBase.apply()](#apply)
+- [API.websocket_route()](./api.md#websocket-route)
 
 ### template_sync
 ```python
@@ -107,6 +104,21 @@ __Parameters__
 - __source (str)__: a template given as a string.
 
 For other parameters, see `API.template()`.
+
+### apply
+```python
+Recipe.apply(self, api, root: str = '')
+```
+Apply the recipe to an API object.
+
+This will:
+
+- Mount registered routes onto the `api`.
+- Update the templates directory to that of `api`.
+
+__See Also__
+
+- [RecipeBase.apply()](#apply)
 
 ### book
 ```python

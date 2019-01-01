@@ -101,6 +101,18 @@ module.exports = {
                     ]),
                 },
                 {
+                    title: 'WebSockets',
+                    collapsable: false,
+                    children: listDir('topics/websockets', [
+                        '',
+                        'routing',
+                        'connections',
+                        'error-handling',
+                        'messages',
+                        'example',
+                    ]),
+                },
+                {
                     title: 'Protocol-agnostic',
                     collapsable: false,
                     children: listDir('topics/agnostic', [

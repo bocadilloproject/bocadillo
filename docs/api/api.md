@@ -104,7 +104,7 @@ async def init_app():
 
 ### handle_lifespan
 ```python
-API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Create an ASGI application instance to handle `lifespan` messages.
 
@@ -175,7 +175,7 @@ __Returns__
 
 ### mount
 ```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
 ```
 Mount another WSGI or ASGI app at the given prefix.
 
@@ -183,6 +183,21 @@ __Parameters__
 
 - __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
 - __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+
+### add_error_handler
+```python
+API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], NoneType])
+```
+Register a new error handler.
+
+__Parameters__
+
+- __exception_cls (Exception class)__:
+    The type of exception that should be handled.
+- __handler (callable)__:
+    The actual error handler, which is called when an instance of
+    `exception_cls` is caught.
+    Should accept a `req`, a `res` and an `exc`.
 
 ### route
 ```python
@@ -214,40 +229,6 @@ __See Also__
 
 - [check_route](#check-route) for the route validation algorithm.
 
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
-
-### add_error_handler
-```python
-API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], NoneType])
-```
-Register a new error handler.
-
-__Parameters__
-
-- __exception_cls (Exception class)__:
-    The type of exception that should be handled.
-- __handler (callable)__:
-    The actual error handler, which is called when an instance of
-    `exception_cls` is caught.
-    Should accept a `req`, a `res` and an `exc`.
-
 ### error_handler
 ```python
 API.error_handler(self, exception_cls: Type[Exception])
@@ -263,6 +244,21 @@ __Example__
 ... def on_key_error(req, res, exc):
 ...     pass  # perhaps set res.content and res.status_code
 ```
+
+### websocket_route
+```python
+API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+```
+Register a WebSocket route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+
+__See Also__
+
+- [WebSocket](./websockets.md#websocket) for a description of keyword
+arguments.
 
 ### redirect
 ```python
@@ -287,6 +283,25 @@ __Raises__
 __See Also__
 
 - [Redirecting](../topics/http/redirecting.md)
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### add_middleware
 ```python
@@ -322,7 +337,7 @@ __See Also__
 
 ### apply_asgi_middleware
 ```python
-API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]]
+API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]
 ```
 Wrap the registered ASGI middleware around an ASGI app.
 
@@ -381,7 +396,7 @@ __See Also__
 
 ### create_app
 ```python
-API.create_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Build and return an instance of the `API`'s own ASGI application.
 
@@ -396,7 +411,7 @@ __Returns__
 
 ### find_app
 ```python
-API.find_app(self, scope: dict) -> Callable[[Callable[[], dict], Callable[[dict], NoneType]], Awaitable[NoneType]]
+API.find_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
 ```
 Return the ASGI application suited to the given ASGI scope.
 

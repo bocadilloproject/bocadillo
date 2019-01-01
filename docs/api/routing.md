@@ -35,6 +35,21 @@ __See Also__
 
 - [check_route](#check-route) for the route validation algorithm.
 
+### websocket_route
+```python
+RoutingMixin.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+```
+Register a WebSocket route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+
+__See Also__
+
+- [WebSocket](./websockets.md#websocket) for a description of keyword
+arguments.
+
 ### url_for
 ```python
 RoutingMixin.url_for(self, name: str, **kwargs) -> str
@@ -89,6 +104,47 @@ __Returns__
 ### parse
 ```python
 Route.parse(self, path: str) -> Union[dict, NoneType]
+```
+Parse an URL path against the route's URL pattern.
+
+__Returns__
+
+`result (dict or None)`:
+    If the URL path matches the URL pattern, this is a dictionary
+    containing the route parameters, otherwise None.
+
+## WebSocketRoute
+```python
+WebSocketRoute(self, pattern: str, view: Callable[[bocadillo.websockets.WebSocket], Awaitable[NoneType]], **kwargs)
+```
+Represents the binding of an URL path to a WebSocket view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __view (coroutine function)__:
+    Should take as parameter a `WebSocket` object and
+    any extracted route parameters.
+
+### url
+```python
+WebSocketRoute.url(self, **kwargs) -> str
+```
+Return full path for the given route parameters.
+
+__Parameters__
+
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`:
+    A full URL path obtained by formatting the route pattern with
+    the provided route parameters.
+
+### parse
+```python
+WebSocketRoute.parse(self, path: str) -> Union[dict, NoneType]
 ```
 Parse an URL path against the route's URL pattern.
 

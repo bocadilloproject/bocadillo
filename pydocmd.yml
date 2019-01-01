@@ -37,6 +37,7 @@ generate:
   - bocadillo.routing:
       - bocadillo.routing.RoutingMixin+
       - bocadillo.routing.Route+
+      - bocadillo.routing.WebSocketRoute+
       - bocadillo.routing.check_route
 - staticfiles.md:
   - bocadillo.staticfiles+
@@ -44,6 +45,8 @@ generate:
   - bocadillo.templates++
 - views.md:
   - bocadillo.views++
+- websockets.md:
+  - bocadillo.websockets++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

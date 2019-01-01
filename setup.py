@@ -27,6 +27,7 @@ setuptools.setup(
         "whitenoise",
         "requests",
         "parse",
+        "websockets>=6.0",
     ],
     url=DOCS,
     project_urls={

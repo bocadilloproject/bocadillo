@@ -8,6 +8,7 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
+from starlette.websockets import WebSocketClose
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
@@ -24,9 +25,10 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin, RouteMatch
+from .routing import RoutingMixin, RouteMatch, WebSocketRouteMatch
 from .staticfiles import static
 from .templates import TemplatesMixin
+from .websockets import WebSocket
 
 
 class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
@@ -386,6 +388,22 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             dispatch = convert(middleware)
         return await dispatch(req)
 
+    async def dispatch_websocket(self, scope: Scope, receive, send):
+        match: WebSocketRouteMatch = self._router.match(
+            scope["path"], websocket=True
+        )
+        if match is None:
+            # Close with a 403 error code, as specified in the ASGI spec:
+            # https://asgi.readthedocs.io/en/latest/specs/www.html#close
+            await WebSocketClose(code=403)(receive, send)
+        else:
+            ws = WebSocket(scope, receive, send, **match.route.ws_kwargs)
+            try:
+                await match.route(ws, **match.params)
+            except BaseException:
+                await ws.ensure_closed(1011)
+                raise
+
     def create_app(self, scope: Scope) -> ASGIAppInstance:
         """Build and return an instance of the `API`'s own ASGI application.
 
@@ -399,9 +417,13 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
         async def asgi(receive, send):
             nonlocal scope
-            req = Request(scope, receive)
-            res = await self.get_response(req)
-            await res(receive, send)
+            if scope["type"] == "websocket":
+                await self.dispatch_websocket(scope, receive, send)
+            else:
+                assert scope["type"] == "http"
+                req = Request(scope, receive)
+                res = await self.get_response(req)
+                await res(receive, send)
 
         return asgi
 

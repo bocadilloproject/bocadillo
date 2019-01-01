@@ -66,7 +66,7 @@ Flask provides a simple core and lets the developer fully in control of the rest
 
 On the other hand, Bocadillo keeps developer experience in mind and provides simple yet powerful tools to help you solve common (and more advanced) problems when building modern web applications and services.
 
-Side note: as per Flask's [design decisions](http://flask.pocoo.org/docs/1.0/design/#design-decisions-in-flask), Flask "is just not designed for asynchronous servers" and "will never have a database layer". The latter is scheduled to be provided by Bocadillo.
+Plus, as per Flask's [design decisions](http://flask.pocoo.org/docs/1.0/design/#design-decisions-in-flask), Flask "is just not designed for asynchronous servers" and "will never have a database layer". The latter is scheduled to be provided by Bocadillo.
 
 ### Falcon
 
@@ -84,7 +84,7 @@ As a result, it borrows a lot of ideas from Flask and Falcon — and so does Boc
 
 Responder is also one of the very few Python web frameworks that supports async/await while providing a familiar API. Like Bocadillo, Responder is powered by the [Starlette] ASGI toolkit. It also has some original features such as built-in GraphQL support.
 
-The key differences between Responder and Bocadillo are that a) Responder is solely targeted at web services (APIs), and b) its design is intentionally kept minimalistic, while Bocadillo takes a more progressive approach.
+The key differences between Responder and Bocadillo are that a) Responder is solely targeted at web services (APIs), b) it does not provide support for WebSockets while Bocadillo does, and c) its design is intentionally kept minimalistic, while Bocadillo takes a more progressive approach.
 
 ### Tornado
 
@@ -103,9 +103,9 @@ Here's a sneak peak into what you'll find in Bocadillo:
 - Efficient, zero-config static files handling (powered by [WhiteNoise])
 - [Jinja] template rendering
 - Built-in CORS, GZip and HSTS support
+- Full WebSocket support
 - Customizable CLI built with [Click]
 - (Soon) Third-party extensions framework
-- (Soon) WebSocket support
 - (Soon) Databases and async ORM
 
 [ASGI]: https://asgi.readthedocs.io

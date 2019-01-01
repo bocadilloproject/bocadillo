@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 from string import Formatter
-from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any
+from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any, Tuple
 
 from parse import parse
 
@@ -11,6 +11,7 @@ from .meta import DocsMeta
 from .request import Request
 from .response import Response
 from .views import View, HandlerDoesNotExist
+from .websockets import WebSocket, WebSocketView
 
 
 class BaseRoute:
@@ -71,10 +72,36 @@ class Route(BaseRoute, metaclass=DocsMeta):
             raise HTTPError(405) from e
 
 
+class WebSocketRoute(BaseRoute, metaclass=DocsMeta):
+    """Represents the binding of an URL path to a WebSocket view.
+
+    # Parameters
+    pattern (str): an URL pattern.
+    view (coroutine function):
+        Should take as parameter a `WebSocket` object and
+        any extracted route parameters.
+    """
+
+    def __init__(self, pattern: str, view: WebSocketView, **kwargs):
+        super().__init__(pattern)
+        self._view = view
+        self.ws_kwargs = kwargs
+
+    async def __call__(self, ws: WebSocket, **params):
+        await self._view(ws, **params)
+
+
 class RouteMatch(NamedTuple):
     # Represents the result of a successful route match.
 
     route: Route
+    params: dict
+
+
+class WebSocketRouteMatch(NamedTuple):
+    """Represents the result of a successful websocket route match."""
+
+    route: WebSocketRoute
     params: dict
 
 
@@ -83,6 +110,7 @@ class Router:
 
     def __init__(self):
         self._routes: Dict[str, Route] = {}
+        self._websocket_routes: Dict[str, WebSocketRoute] = {}
 
     def add_route(
         self,
@@ -127,14 +155,22 @@ class Router:
         # Register a route by decorating a view.
         return partial(self.add_route, *args, **kwargs)
 
-    def match(self, path: str) -> Optional[RouteMatch]:
+    def match(self, path: str, websocket: bool = False) -> Optional[RouteMatch]:
         # Attempt to match an URL path against one of the registered routes.
         # NOTE: websocket (bool) = whether to look for an HTTP (`False`)
         # or WebSocket (`True`) route.
-        for pattern, route in self._routes.items():
+        if websocket:
+            source = self._websocket_routes
+            match_cls = WebSocketRouteMatch
+        else:
+            source = self._routes
+            match_cls = RouteMatch
+
+        for pattern, route in source.items():
             params = route.parse(path)
             if params is not None:
-                return RouteMatch(route=route, params=params)
+                return match_cls(route=route, params=params)
+
         return None
 
     def get_route_or_404(self, name: str) -> Route:
@@ -143,6 +179,17 @@ class Router:
             return self._routes[name]
         except KeyError as e:
             raise HTTPError(404) from e
+
+    def websocket_route(self, pattern: str, **kwargs):
+        # Register a WebSocket route by decorating a view.
+
+        def decorate(view):
+            nonlocal self
+            route = WebSocketRoute(pattern=pattern, view=view, **kwargs)
+            self._websocket_routes[pattern] = route
+            return route
+
+        return decorate
 
 
 class RoutingMixin:
@@ -178,6 +225,34 @@ class RoutingMixin:
         """
         return self._router.route(
             pattern=pattern, name=name, namespace=namespace
+        )
+
+    def websocket_route(
+        self,
+        pattern: str,
+        *,
+        value_type: Optional[str] = None,
+        receive_type: Optional[str] = None,
+        send_type: Optional[str] = None,
+        caught_close_codes: Optional[Tuple[int]] = None,
+    ):
+        """Register a WebSocket route by decorating a view.
+
+        # Parameters
+        pattern (str): an URL pattern.
+
+        # See Also
+        - [WebSocket](./websockets.md#websocket) for a description of keyword
+        arguments.
+        """
+        # NOTE: use named keyword arguments instead of `**kwargs` to improve
+        # their accessibility (e.g. for IDE discovery).
+        return self._router.websocket_route(
+            pattern,
+            value_type=value_type,
+            receive_type=receive_type,
+            send_type=send_type,
+            caught_close_codes=caught_close_codes,
         )
 
     def url_for(self, name: str, **kwargs) -> str:
