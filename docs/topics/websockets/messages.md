@@ -42,10 +42,12 @@ It is possible to specify how messages should be decoded (resp. encoded) by pass
 
 The possible values for `receive_type`, `send_type` and `value_type` are:
 
-- `"text"`: plain text as `str`.
-- `"bytes"`: plain bytes as `bytes`.
-- `"json"`: receives text before decoding it with `json.loads()`, sends message after encoding it with `json.dumps()`.
-- `"event"`: raw ASGI events as `dict` (see [Using ASGI events](#using-asgi-events)).
+| Type | Description | Returned by `receive()` | Expected by `send()` |
+|--------------|-------------|-------------------------|----------------------|
+| `"text"` | Plain text | `str` | `str` |
+| `"bytes"` | Plain bytes | `bytes` | `bytes` |
+| `"json"` | JSON, encoded to / decoded from text | `dict` or `list` | `dict` or `list` |
+| `"event"` | [ASGI event](#using-asgi-events) | `dict` | `dict` 
 
 For example, here's a WebSocket server that exchanges JSON messages with its clients:
 
@@ -92,11 +94,11 @@ setInterval(() => {
 ```
 
 ::: tip
-In fact, `receive()` and `send()` are shortcuts that call the corresponding receive and send methods for the WebSocket's `receive_type` and `send_type`.
+In fact, `receive()` and `send()` are shortcuts that call the corresponding receive and send methods for the WebSocket's configured `receive_type` and `send_type`.
 
-For example, if `receive_type="json"` was given then `await ws.receive()` is equivalent to `await ws.receive_json()`.
+For example, if `receive_type` is set to `"json"`, then `await ws.receive()` is equivalent to `await ws.receive_json()`.
 
-See also the [WebSocket API reference].
+See also the API reference for the [WebSocket] class.
 :::
 
 ## Using ASGI events
@@ -118,5 +120,5 @@ async def echo(ws: WebSocket):
 ```
 
 [asynchronous iterator]: https://www.python.org/dev/peps/pep-0492/#asynchronous-iterators-and-async-for
-[WebSocket API reference]: ../../api/websockets.md
+[WebSocket]: ../../api/websockets.md#websocket
 [ASGI Event]: https://asgi.readthedocs.io/en/latest/specs/main.html#events

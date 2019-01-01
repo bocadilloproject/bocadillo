@@ -62,7 +62,7 @@ If your recipe needs to use its own templates, you should pass an adequate `temp
 :::
 
 ::: tip
-You can decorate your recipe views with [hooks](./hooks.md) as usual.
+You can decorate your recipe views with [hooks](../http/hooks.md) as usual.
 :::
 
 ::: warning CAVEAT
