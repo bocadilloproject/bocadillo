@@ -86,7 +86,7 @@ async def hello(ws: WebSocket):
 
 It is possible to **reject** a WebSocket connection request by calling `await ws.reject()` before calling `await ws.accept()`. This has the same effect than closing the connection with a 403 close code, and complies with the ASGI specification.
 
-You can use this to perform extra checks on the WebSocket request.
+A typical usage may be to perform extra checks on the connection request and reject it on failure.
  
 The following example demonstrates implementing a decorator that rejects the connection request if a (very) naive API key check fails:
 
@@ -95,15 +95,16 @@ from bocadillo import API
 
 api = API()
 
-def authenticated(view):
-    async def with_very_bad_auth_check(ws):
+def has_valid_api_key(view):
+    async def with_permission_check(ws, **kwargs):
         if ws.query_params.get("api_key") != "SECRET":
             await ws.reject()
-        await view(ws)
-    return with_very_bad_auth_check
+        else:
+            await view(ws, **kwargs)
+    return with_permission_check
 
 @api.websocket_route("/secret")
-@authenticated
+@has_valid_api_key
 async def secret(ws):
     async with ws:
         # Proceed with an authorized client…
