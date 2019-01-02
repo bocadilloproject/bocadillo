@@ -58,3 +58,17 @@ a standard Python dictionary object:
 ```python
 res.headers['Cache-Control'] = 'no-cache'
 ```
+
+## Chunked responses
+
+The HTTP/1.1 [Transfer-Encoding] header allows to send an HTTP response in chunks.
+
+This is useful to send large responses in pieces, or when the response's total size cannot be known until processing is finished. It allows the client to process the results as soon as possible.
+
+To send a chunk response, set the `Transfer-Encoding` header to `chunked`.
+
+```python
+res.headers["Transfer-Encoding"] = "chunked"
+```
+
+[Transfer-Encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
