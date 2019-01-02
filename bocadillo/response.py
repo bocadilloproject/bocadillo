@@ -68,18 +68,25 @@ class Response:
             return BackgroundTask(self._background)
         return None
 
-    def stream(self, func: StreamFunc):
-        """Stream chunks of the response.
+    def stream(self, chunked: bool = True):
+        """Stream the response.
 
-        # Parameters
-        func (callable):
-            a no-argument asynchronous generator function. The async generator
-            it returns can yield `str` or `bytes` that will be sent by
-            chunks in the response.
+        Should be used to decorate a no-argument asynchronous generator
+        function.
         """
-        assert inspect.isasyncgenfunction(func)
-        self._generator = func()
-        return func
+        if not isinstance(chunked, bool):
+            # No-argument decorator
+            return self.stream()(chunked)
+
+        def decorate(func: StreamFunc):
+            assert inspect.isasyncgenfunction(func)
+            self._generator = func()
+            return func
+
+        if chunked:
+            self.chunked = True
+
+        return decorate
 
     async def __call__(self, receive, send):
         """Build and send the response."""
@@ -88,6 +95,9 @@ class Response:
 
         if self.status_code != 204:
             self.headers.setdefault("content-type", Media.PLAIN_TEXT)
+
+        if self.chunked:
+            self.headers["transfer-encoding"] = "chunked"
 
         if self._generator is not None:
             response_cls = _StreamingResponse

@@ -90,12 +90,21 @@ def test_last_response_setter_called_has_priority(api: API):
     assert response.json() == {"foo": "bar"}
 
 
+def test_chunked_response(api: API):
+    @api.route("/")
+    async def index(req, res):
+        res.chunked = True
+
+    r = api.client.get("/")
+    assert r.headers["transfer-encoding"] == "chunked"
+
+
 def test_stream_response(api: API):
     background_called = False
 
     @api.route("/{word}")
     async def index(req, res, word: str):
-        @res.stream
+        @res.stream()
         async def stream_word():
             for character in word:
                 yield character
@@ -115,10 +124,8 @@ def test_stream_response(api: API):
     assert r.text == "hello"
     assert r.headers["x-foo"] == "foo"
     assert r.status_code == 202
+    assert r.headers["transfer-encoding"] == "chunked"
     assert background_called
-    # Should not have set the transfer-encoding header, because this is
-    # not a chunked response.
-    assert "transfer-encoding" not in r.headers
 
 
 def test_stream_func_must_be_async_generator_function(api: API):
@@ -141,3 +148,14 @@ def test_stream_func_must_be_async_generator_function(api: API):
             @res.stream
             def foo():
                 yield "nope"
+
+
+def test_disable_stream_chunked(api: API):
+    @api.route("/")
+    async def stream_not_chunked(req, res):
+        @res.stream(chunked=False)
+        async def send_stream():
+            yield "foo"
+
+    r = api.client.get("/")
+    assert "transfer-encoding" not in r.headers
