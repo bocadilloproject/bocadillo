@@ -68,25 +68,15 @@ class Response:
             return BackgroundTask(self._background)
         return None
 
-    def stream(self, chunked: bool = True):
+    def stream(self, func: StreamFunc):
         """Stream the response.
 
         Should be used to decorate a no-argument asynchronous generator
         function.
         """
-        if not isinstance(chunked, bool):
-            # No-argument decorator
-            return self.stream()(chunked)
-
-        def decorate(func: StreamFunc):
-            assert inspect.isasyncgenfunction(func)
-            self._generator = func()
-            return func
-
-        if chunked:
-            self.chunked = True
-
-        return decorate
+        assert inspect.isasyncgenfunction(func)
+        self._generator = func()
+        return func
 
     async def __call__(self, receive, send):
         """Build and send the response."""

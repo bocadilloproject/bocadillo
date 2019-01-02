@@ -78,8 +78,8 @@ async def number_range(req, res, n):
             yield str(num)
 ```
 
-::: tip
-By default, a stream response is also sent [in chunks](#chunked-responses) to allow clients to consume it as a stream too. You can disable this behavior with `@res.stream(chunked=False)`.
+::: warning
+A stream response is not chunk-encoded by default, which means that clients will still receive the response in one piece. To send the response in chunks, follow the instructions described in [Chunked responses](#chunked-responses).
 :::
 
 ::: tip
@@ -90,7 +90,7 @@ All attributes of the `Response` object — including [res.background](./backgro
 
 The HTTP/1.1 [Transfer-Encoding] header allows to send an HTTP response in chunks.
 
-This is useful to send large responses in pieces, or when the response's total size cannot be known until processing is finished. Plus, it allows the client to process the results as soon as possible.
+This is useful to send large responses, or when the response's total size cannot be known until processing is finished. Plus, it allows the client to process the results as soon as possible.
 
 This is typically combined with [response streaming](#streaming).
 
