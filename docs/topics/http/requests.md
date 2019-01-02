@@ -99,8 +99,6 @@ If the request body is not proper JSON, a `400 Bad Request` error response is re
 
 It is possible to process the request as a stream of **bytes chunks**.
 
-This is useful when the request body may be too large to be fully loaded in memory.
-
 To do so, iterate (asynchronously) over the request object itself:
 
 ```python
@@ -109,6 +107,8 @@ async for chunk in req:
     text_chunk: str = chunk.decode()
     # ...
 ```
+
+This is useful when the request body may be too large to be fully loaded in memory, or to implement HTTP streaming, e.g. receiving and processing an unbounded stream of data during a single HTTP session.
 
 ::: warning
 The request's stream cannot be consumed more than once. If you try to do so, a `RunetimeError` will be raised.
