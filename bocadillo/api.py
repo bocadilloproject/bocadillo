@@ -240,6 +240,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         # If no handler was registered for the exception, it is raised.
         handler = self._find_handler(exception.__class__)
         if handler is None:
+            # raise exception
             return await self._handle_exception(req, res, HTTPError(500))
 
         await call_async(handler, req, res, exception)

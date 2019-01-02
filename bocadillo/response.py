@@ -77,7 +77,7 @@ class Response:
             it returns can yield `str` or `bytes` that will be sent by
             chunks in the response.
         """
-        assert inspect.isgeneratorfunction(func)
+        assert inspect.isasyncgenfunction(func)
         self._generator = func()
         return func
 
