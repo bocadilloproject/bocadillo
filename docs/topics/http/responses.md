@@ -18,7 +18,7 @@ Setting a response type attribute automatically sets the
 appropriate `Content-Type`, as depicted above.
 
 ::: tip
-The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media](media.md) for more information.
+The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media] for more information.
 :::
 
 If you need to send another content type, use `.content` and set
@@ -58,3 +58,49 @@ a standard Python dictionary object:
 ```python
 res.headers['Cache-Control'] = 'no-cache'
 ```
+
+## Streaming
+
+Similar to [request streaming](./requests.md#streaming), response content can be streamed to prevent loading a full (potentially large) response body in memory. An example use case may be sending results of a massive database query.
+
+A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][Media] streaming is not supported).
+
+```python{7,8,9,10}
+from bocadillo import API
+
+api = API()
+
+@api.route("/range/{n}")
+async def number_range(req, res, n):
+    @res.stream
+    async def large_response():
+        for num in range(n):
+            yield str(num)
+```
+
+::: warning
+A stream response is not chunk-encoded by default, which means that clients will still receive the response in one piece. To send the response in chunks, follow the instructions described in [Chunked responses](#chunked-responses).
+:::
+
+::: tip
+All attributes of the `Response` object — including [res.background](./background-tasks.md) but excluding [content attributes](#sending-content) — can be used along with a stream response.
+:::
+
+## Chunked responses
+
+The HTTP/1.1 [Transfer-Encoding] header allows to send an HTTP response in chunks.
+
+This is useful to send large responses, or when the response's total size cannot be known until processing is finished. Plus, it allows the client to process the results as soon as possible.
+
+This is typically combined with [response streaming](#streaming).
+
+```python
+res.chunked = True
+# equivalent to:
+res.headers["transfer-encoding"] = "chunked"
+```
+
+[Transfer-Encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+
+[async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
+[Media]: media.md

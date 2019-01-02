@@ -21,3 +21,7 @@ class Request(_Request):
             return await super().json()
         except JSONDecodeError:
             raise HTTPError(400, detail="JSON is malformed.")
+
+    async def __aiter__(self):
+        async for chunk in self.stream():
+            yield chunk
