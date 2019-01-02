@@ -15,11 +15,16 @@ def test_parse_json(api: API, data: str, status: int):
     assert api.client.post("/", data=data).status_code == status
 
 
-def test_stream_request(api: API):
+@pytest.mark.parametrize(
+    "get_stream", [lambda req: req, lambda req: req.stream()]
+)
+def test_stream_request(api: API, get_stream):
     @api.route("/")
     class Index:
         async def get(self, req, res):
-            chunks = [chunk.decode() async for chunk in req.stream() if chunk]
+            chunks = [
+                chunk.decode() async for chunk in get_stream(req) if chunk
+            ]
             res.media = chunks
 
     # For testing, we use a chunk-encoded request. See:
