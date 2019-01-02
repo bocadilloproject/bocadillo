@@ -99,3 +99,7 @@ def env(var: str, value: str):
         os.environ.pop(var)
         if initial is not None:
             os.environ[var] = initial
+
+
+class Oops(Exception):
+    pass

@@ -9,6 +9,7 @@ from starlette.responses import (
 )
 
 from .media import Media
+from .server_sent_events import add_sse_headers, EventStream
 
 BackgroundFunc = Callable[..., Coroutine]
 StreamFunc = Callable[[], AsyncIterable[AnyStr]]
@@ -78,6 +79,13 @@ class Response:
         self._generator = func()
         return func
 
+    def event_stream(self, func: StreamFunc):
+        """Send server-sent events."""
+        self.headers = add_sse_headers(self.headers)
+        stream = EventStream(func)
+        self._generator = stream
+        return stream
+
     async def __call__(self, receive, send):
         """Build and send the response."""
         if self.status_code is None:
@@ -102,4 +110,5 @@ class Response:
             status_code=self.status_code,
             background=self.background_task,
         )
+
         await response(receive, send)
