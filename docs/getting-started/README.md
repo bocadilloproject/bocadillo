@@ -95,15 +95,17 @@ The key differences between Responder and Bocadillo are that a) Responder is sol
 Here's a sneak peak into what you'll find in Bocadillo:
 
 - Core support for [async/await](https://docs.python.org/3/library/asyncio-task.html)
-- Lightning-fast thanks to [Uvicorn] and [Starlette]
-- Class-based views
-- Flask-style decorator-based routing
-- Route parameters with F-strings
-- Falcon-style request and response manipulation
-- Efficient, zero-config static files handling (powered by [WhiteNoise])
+- Built upon the lightning-fast [Uvicorn] and [Starlette]
+- WebSocket support
+- Full HTTP support
+- Decorator-based routing w/ parameter validation
+- Falcon-style request/response manipulation and hooks
+- Function-based and class-based views
+- In-app background tasks
+- Efficient, zero-config static files handling powered by [WhiteNoise]
 - [Jinja] template rendering
 - Built-in CORS, GZip and HSTS support
-- Full WebSocket support
+- Streaming requests and responses
 - Customizable CLI built with [Click]
 - (Soon) Third-party extensions framework
 - (Soon) Databases and async ORM
@@ -119,4 +121,3 @@ Here's a sneak peak into what you'll find in Bocadillo:
 [WhiteNoise]: http://whitenoise.evans.io
 [Jinja]: http://jinja.pocoo.org
 [Click]: https://click.palletsprojects.com
-[Orator]: https://orator-orm.com
