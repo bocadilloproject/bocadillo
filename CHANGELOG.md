@@ -14,9 +14,11 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
-This release has **breaking API changes**. This is due to an overhaul of the view system.
+## [v0.9.0] - 2018-01-03
 
-If your application uses any of the features below, you are affected and should review these changes thoroughly before upgrading:
+This release has **breaking API changes** due to an overhaul of the view system.
+
+If your application uses the features below, you are most likely affected and should review these changes thoroughly before upgrading:
 
 - Use hooks via `@api.before()` or `@api.after()`.
 - Restriction of HTTP methods via the `methods` parameter to `@api.route()`.
@@ -60,6 +62,7 @@ class Index:
 ```
 
 - API reference for the `views` module.
+- Various documentation additions and improvements.
 
 ### Changed
 
@@ -320,7 +323,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...HEAD
+[v0.9.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...v0.9.0
 [v0.8.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...v0.7.0
