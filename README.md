@@ -17,7 +17,7 @@
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 [![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)][gitter-url]
 
-**NOTE**: the upcoming v0.9 release contains breaking API changes. Review the [changelog][changelog-unreleased] to know if you will be affected.
+**NOTE**: v0.9 contains breaking API changes compared to 0.8.x and below. Review the [changelog][changelog-unreleased] to know if you are affected and read about migration tips.
 
 # Bocadillo
 
