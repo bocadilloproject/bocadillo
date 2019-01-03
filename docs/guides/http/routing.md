@@ -136,26 +136,26 @@ Referencing a non-existing named route with `url_for()` will trigger an `HTTPErr
 
 ## Specifying HTTP methods
 
-By default, a route only exposes the safe HTTP methods, i.e. `GET` and `HEAD`.
+Which HTTP methods are exposed on a route is managed at the [view](./views.md) level.
 
-On function-based views,
-you can use the `methods` argument to `@api.route()` to specify the set of
-HTTP methods being exposed:
+On class-based views, HTTP methods are exposed according to the declared handlers. For example, the POST method is accepted if and only if the view defines `.post()`.
+
+On function-based views, you can use the `@view()` decorator and its case-insensitive `methods` argument. If `methods` is not given or the decorator is omitted altogether, only safe HTTP methods are exposed, i.e. `GET` and `HEAD`.
 
 ```python
-@api.route('/posts/{pk}', methods=['delete'])
+from bocadillo import view
+
+@api.route("/posts/{pk}")
+@view(methods=["delete"])
 async def delete_blog_post(req, res, pk):
     res.status_code = 204
 ```
 
-Methods passed to `@api.route()` are case-insensitive.
-
-::: tip NOTE
-The `methods` argument is ignored on [class-based views](./views.md#class-based-views). You should instead decide which methods are implemented on the class to control
-the exposition of HTTP methods.
+::: warning CHANGED IN v0.9.0
+The `methods` argument is no longer located on `api.route()`.
 :::
 
-### How are unsupported methods handled?
+#### How are unsupported methods handled?
 
 When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. [Hooks] callbacks will not be called either (but request [middleware] will).
 

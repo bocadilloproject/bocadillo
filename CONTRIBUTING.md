@@ -109,7 +109,7 @@ This section supposes that you have already installed Bocadillo's [documentation
 All documentation lives in the `docs/` directory. It is structured as follows:
 
 - `getting-started`: resources for users getting started with Bocadillo.
-- `topics`: discussions about key topics and concepts, including background, information and usage hints.
+- `guides`: discussions about key topics and concepts, including background, information and usage hints.
 - `how-to`: recipes for solving key problems or addressing specific use cases.
 - `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
 
