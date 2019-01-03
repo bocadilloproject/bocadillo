@@ -14,8 +14,8 @@ Usage:
 
 ## Application script
 
-<<<@/docs/topics/websockets/example/api.py
+<<<@/docs/guides/websockets/example/api.py
 
 ## HTML template
 
-<<<@/docs/topics/websockets/example/templates/index.html
+<<<@/docs/guides/websockets/example/templates/index.html

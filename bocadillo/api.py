@@ -64,7 +64,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
     enable_cors (bool):
         If `True`, Cross Origin Resource Sharing will be configured according
         to `cors_config`. Defaults to `False`.
-        See also [CORS](../topics/http/middleware.md#cors).
+        See also [CORS](../guides/http/middleware.md#cors).
     cors_config (dict):
         A dictionary of CORS configuration parameters.
         Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
@@ -72,12 +72,12 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
         Defaults to `False`.
-        See also [HSTS](../topics/http/middleware.md#hsts).
+        See also [HSTS](../guides/http/middleware.md#hsts).
     enable_gzip (bool):
         If `True`, enable GZip compression and automatically
         compress responses for clients that support it.
         Defaults to `False`.
-        See also [GZip](../topics/http/middleware.md#gzip).
+        See also [GZip](../guides/http/middleware.md#gzip).
     gzip_min_size (int):
         If specified, compress only responses that
         have more bytes than the specified value.
@@ -86,7 +86,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
         Defaults to `"application/json"`.
-        See also [Media](../topics/http/media.md).
+        See also [Media](../guides/http/media.md).
     """
 
     _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
@@ -269,7 +269,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         Redirection: an exception that will be caught by #API.dispatch().
 
         # See Also
-        - [Redirecting](../topics/http/redirecting.md)
+        - [Redirecting](../guides/http/redirecting.md)
         """
         if name is not None:
             url = self.url_for(name=name, **kwargs)
@@ -286,7 +286,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             A subclass of `bocadillo.Middleware`.
 
         # See Also
-        - [Middleware](../topics/http/middleware.md)
+        - [Middleware](../guides/http/middleware.md)
         """
         self._middleware.insert(0, (middleware_cls, kwargs))
 
@@ -298,7 +298,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             A class that complies with the ASGI specification.
 
         # See Also
-        - [Middleware](../topics/http/middleware.md)
+        - [Middleware](../guides/http/middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
         self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
@@ -331,7 +331,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         response (Response): an HTTP response.
 
         # See Also
-        - [How are requests processed?](../topics/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
+        - [How are requests processed?](../guides/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
         """
         res = Response(req, media=self._media)
 
@@ -379,7 +379,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
         # See Also
         - [dispatch](#dispatch)
-        - [Middleware](../topics/http/middleware.md)
+        - [Middleware](../guides/http/middleware.md)
         """
         convert = self._convert_exception_to_response
         dispatch = convert(self.dispatch)
@@ -450,7 +450,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         # See Also
         - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
         - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-        - [Events](../topics/agnostic/events.md)
+        - [Events](../guides/agnostic/events.md)
         - [mount](#mount)
         - [create_app](#create-app)
         """
@@ -504,8 +504,8 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             Extra keyword arguments that will be passed to the Uvicorn runner.
 
         # See Also
-        - [Configuring host and port](../topics/api.md#configuring-host-and-port)
-        - [Debug mode](../topics/api.md#debug-mode)
+        - [Configuring host and port](../guides/api.md#configuring-host-and-port)
+        - [Debug mode](../guides/api.md#debug-mode)
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """

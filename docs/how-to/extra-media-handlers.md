@@ -23,7 +23,7 @@ To use the YAML media handler, configure `media.type` on the `API` object:
 api.media_type = 'application/x-yaml'
 ```
 
-For more information on media handlers, please refer to the [Media](../topics/http/media.md) API guide.
+For more information on media handlers, please refer to the [Media](../guides/http/media.md) API guide.
 
 [YAML]: http://yaml.org
 [MessagePack]: https://msgpack.org

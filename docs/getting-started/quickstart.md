@@ -133,23 +133,23 @@ the courses app example:
 Happy coding!
 
 [Installation]: ./installation.md
-[Topic guides]: ../topics/
+[Topic guides]: ../guides/
 [Uvicorn]: https://www.uvicorn.org
 [Flask]: http://flask.pocoo.org
 [Falcon]: https://falconframework.org
 [Requests]: http://docs.python-requests.org
-[Routes]: ../topics/http/routing.md
-[Views]: ../topics/http/views.md
-[Templates]: ../topics/agnostic/templates.md
-[CORS]: ../topics/http/middleware.md#cors
-[HSTS]: ../topics/http/middleware.md#hsts
-[GZip]: ../topics/http/middleware.md#gzip
-[Static files]: ../topics/http/static-files.md
-[Media]: ../topics/http/media.md
-[Error handling]: ../topics/http/views.md#returning-errors
-[Hooks]: ../topics/http/hooks.md
-[WebSockets]: ../topics/websockets
-[Middleware]: ../topics/http/middleware.md
-[Recipes]: ../topics/agnostic/recipes.md
+[Routes]: ../guides/http/routing.md
+[Views]: ../guides/http/views.md
+[Templates]: ../guides/agnostic/templates.md
+[CORS]: ../guides/http/middleware.md#cors
+[HSTS]: ../guides/http/middleware.md#hsts
+[GZip]: ../guides/http/middleware.md#gzip
+[Static files]: ../guides/http/static-files.md
+[Media]: ../guides/http/media.md
+[Error handling]: ../guides/http/views.md#returning-errors
+[Hooks]: ../guides/http/hooks.md
+[WebSockets]: ../guides/websockets
+[Middleware]: ../guides/http/middleware.md
+[Recipes]: ../guides/agnostic/recipes.md
 
 [The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b

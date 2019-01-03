@@ -50,8 +50,8 @@ module.exports = {
                 link: '/getting-started/',
             },
             {
-                text: 'Topics',
-                link: '/topics/',
+                text: 'Guides',
+                link: '/guides/',
             },
             {
                 text: 'How-To',
@@ -82,12 +82,12 @@ module.exports = {
                     ]),
                 },
             ],
-            '/topics/': [
-                '/topics/api',
+            '/guides/': [
+                '/guides/api',
                 {
                     title: 'HTTP',
                     collapsable: false,
-                    children: listDir('topics/http', [
+                    children: listDir('guides/http', [
                         'routing',
                         'views',
                         'requests',
@@ -103,7 +103,7 @@ module.exports = {
                 {
                     title: 'WebSockets',
                     collapsable: false,
-                    children: listDir('topics/websockets', [
+                    children: listDir('guides/websockets', [
                         '',
                         'routing',
                         'connections',
@@ -115,7 +115,7 @@ module.exports = {
                 {
                     title: 'Protocol-agnostic',
                     collapsable: false,
-                    children: listDir('topics/agnostic', [
+                    children: listDir('guides/agnostic', [
                         'templates',
                         'recipes',
                         'events',
@@ -124,14 +124,14 @@ module.exports = {
                 {
                     title: 'Tooling',
                     collapsable: false,
-                    children: listDir('topics/tooling', [
+                    children: listDir('guides/tooling', [
                         'cli',
                     ]),
                 },
                 {
                     title: 'Discussions',
                     collapsable: false,
-                    children: listDir('topics/discussions', [
+                    children: listDir('guides/discussions', [
                         'async-vs-sync',
                         'deployment',
                         'security',
