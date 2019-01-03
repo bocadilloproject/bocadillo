@@ -163,7 +163,6 @@ When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error re
 Bocadillo implements the `HEAD` method automatically if your route supports `GET`. It is safe and systems such as URL checkers may use it to access your application without transferring the full request body.
 :::
 
-
 [Request]: requests.md
 [Response]: responses.md
 [F-string notation]: https://www.python.org/dev/peps/pep-0498/

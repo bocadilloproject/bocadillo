@@ -138,7 +138,7 @@ Happy coding!
 [Flask]: http://flask.pocoo.org
 [Falcon]: https://falconframework.org
 [Requests]: http://docs.python-requests.org
-[Routes]: ../topics/http/routes-url-design.md
+[Routes]: ../topics/http/routing.md
 [Views]: ../topics/http/views.md
 [Templates]: ../topics/agnostic/templates.md
 [CORS]: ../topics/http/middleware.md#cors

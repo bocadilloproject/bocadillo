@@ -195,7 +195,7 @@ class Index:
         res.text = 'Post it, get it, put it, delete it.'
 ```
 
-[Routes and URL design]: ./routes-url-design.md
-[naming routes]: ./routes-url-design.md#naming-routes
+[Routes and URL design]: routing.md
+[naming routes]: routing.md#naming-routes
 [Request]: requests.md
 [Response]: responses.md

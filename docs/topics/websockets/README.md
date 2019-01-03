@@ -51,4 +51,4 @@ Continue to learn more about how to use WebSockets in Bocadillo.
 
 [websockets]: https://websockets.readthedocs.io
 [The API object]: ../api.md
-[Routes and URL design]: ../http/routes-url-design.md
+[Routes and URL design]: ../http/routing.md

@@ -88,7 +88,7 @@ module.exports = {
                     title: 'HTTP',
                     collapsable: false,
                     children: listDir('topics/http', [
-                        'routes-url-design',
+                        'routing',
                         'views',
                         'requests',
                         'responses',

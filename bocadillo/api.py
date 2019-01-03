@@ -331,7 +331,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         response (Response): an HTTP response.
 
         # See Also
-        - [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
+        - [How are requests processed?](../topics/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
         """
         res = Response(req, media=self._media)
 

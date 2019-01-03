@@ -371,7 +371,7 @@ __Returns__
 
 __See Also__
 
-- [How are requests processed?](../topics/http/routes-url-design.md#how-are-requests-processed) for the dispatch algorithm.
+- [How are requests processed?](../topics/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
 
 ### get_response
 ```python

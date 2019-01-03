@@ -52,7 +52,7 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 Recipes expose the following features, which can be used just as you would on the `API` object:
 
-- [Routes](../http/routes-url-design.md), e.g. `@recipe.route()`.
+- [Routes](../http/routing.md), e.g. `@recipe.route()`.
 - [WebSocket routes](../websockets/routing.md), .e.g `@recipe.websocket_route()`.
 - [Templates](./templates.md), e.g. `await recipe.template()`.
 - [Hooks](../http/hooks.md), e.g. `@recipe.before()`.
@@ -66,7 +66,7 @@ You can decorate your recipe views with [hooks](../http/hooks.md) as usual.
 :::
 
 ::: warning CAVEAT
-Note that recipes apply the exact same [routing algorithm](../http/routes-url-design.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
+Note that recipes apply the exact same [routing algorithm](../http/routing.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
 :::
 
 ## Recipe books
