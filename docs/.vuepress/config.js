@@ -116,6 +116,7 @@ module.exports = {
                     title: 'Protocol-agnostic',
                     collapsable: false,
                     children: listDir('guides/agnostic', [
+                        'asgi-middleware',
                         'templates',
                         'recipes',
                         'events',

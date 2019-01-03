@@ -1,16 +1,14 @@
 # Writing middleware
 
-::: warning
-This feature is **experimental**; the middleware API may be subject to changes.
-:::
+Middleware classes act as wrappers around your Bocadillo application in order to extend its behavior globally.
 
-[Middleware] act as wrapper around your Bocadillo application in order to extend its behavior globally. They come in 2 flavors: regular middleware and ASGI middleware.
+They come in 2 flavors: [HTTP middleware](../guides/http/middleware.md) and [ASGI middleware](../guides/agnostic/asgi-middleware.md).
 
-## Regular middleware
+## HTTP middleware
 
-Regular middleware (or just *middleware*) is the standard, higher-level API for middleware in Bocadillo. They provide two hooks, namely `before_dispatch()` and `after_dispatch()`, that are called respectively before and after a request is dispatched and a response is obtained.
+The HTTP middleware framework provides two hooks, namely `before_dispatch()` and `after_dispatch()`, which are called respectively before and after an HTTP request is dispatched and an HTTP response is obtained.
 
-To write a middleware, create a subclass of `bocadillo.Middleware` and implement `.before_dispatch()` and `.after_dispatch()` as seems fit.
+To write an HTTP middleware, create a subclass of `bocadillo.Middleware` and implement `.before_dispatch()` and `.after_dispatch()` as seems fit.
 
 The following is a (contrived) example that prints the URL of the request and the response to the console:
 
@@ -72,4 +70,4 @@ Because ASGI middleware wrap the API object itself, no error handling can be per
 
 Most likely, you won't need to write ASGI middleware yourself. The possibility is only documented to justify the existence of `api.add_asgi_middleware()`, which is generally used for third-party middleware provided as an ASGI application.
 
-[Middleware]: ../guides/http/middleware.md
+[ASGI]: https://asgi.readthedocs.io
