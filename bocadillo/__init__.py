@@ -7,4 +7,4 @@ from .staticfiles import static
 from .views import view
 from .websockets import WebSocket
 
-__version__ = "0.8.1"
+__version__ = "0.9.0"
