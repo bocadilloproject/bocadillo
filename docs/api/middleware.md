@@ -8,10 +8,9 @@ Base class for middleware classes.
 
 __Parameters__
 
-- __dispatch (coroutine function)__:
-    a function whose return value can be awaited to obtain a response.
-- __kwargs (dict)__:
-    Keyword arguments passed when registering the middleware.
+- __app__: a function that may as well be another `Middleware` instance.
+- __kwargs (any)__:
+    Keyword arguments passed when registering the middleware on the API.
 
 ### before_dispatch
 ```python
@@ -27,40 +26,45 @@ __Parameters__
 - __req (Request)__: a Request object.
 - __res (Response)__: a Response object.
 
+__Returns__
+
+`res (Response or None)`: an optional response object.
+
 ### after_dispatch
 ```python
 Middleware.after_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> Union[bocadillo.response.Response, NoneType]
 ```
 Perform processing after a request has been dispatched.
 
-If the `Response` object is returned, it is used instead of the response
-obtained by awaiting `dispatch()`.
-
 __Parameters__
 
 - __req (Request)__: a Request object.
 - __res (Response)__: a Response object.
 
+__Returns__
+
+`res (Response or None)`: an optional response object.
+
 ### process
 ```python
-Middleware.process(self, req: bocadillo.request.Request, res: bocadillo.response.Response)
+Middleware.process(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> bocadillo.response.Response
 ```
 Process an incoming request.
 
-Roughly equivalent to:
+- Call `before_dispatch()`.
+- Call the underlying HTTP `app`.
+- Call `after_dispatch()`.
 
-```python
-res = await self.before_dispatch(req) or None
-res = res or await self.dispatch(req)
-res = await self.after_dispatch(req, res) or res
-return res
-```
+If a hook returns a `Response`, it is returned without further
+processing.
 
-Aliased by `__call__()`.
+Note: this is aliased to `__call__()`, which means middleware
+instances are callable.
 
 __Parameters__
 
-- __req (Request)__: a request object.
+- __req (Request)__: a Request object.
+- __res (Response)__: a Response object.
 
 __Returns__
 

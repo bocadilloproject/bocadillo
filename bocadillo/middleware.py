@@ -10,10 +10,9 @@ class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    dispatch (coroutine function):
-        a function whose return value can be awaited to obtain a response.
-    kwargs (dict):
-        Keyword arguments passed when registering the middleware.
+    app: a function that may as well be another `Middleware` instance.
+    kwargs (any):
+        Keyword arguments passed when registering the middleware on the API.
     """
 
     def __init__(self, app: HTTPApp, **kwargs):
@@ -31,6 +30,9 @@ class Middleware(HTTPApp):
         # Parameters
         req (Request): a Request object.
         res (Response): a Response object.
+
+        # Returns
+        res (Response or None): an optional response object.
         """
 
     async def after_dispatch(
@@ -38,30 +40,30 @@ class Middleware(HTTPApp):
     ) -> Optional[Response]:
         """Perform processing after a request has been dispatched.
 
-        If the `Response` object is returned, it is used instead of the response
-        obtained by awaiting `dispatch()`.
+        # Parameters
+        req (Request): a Request object.
+        res (Response): a Response object.
+
+        # Returns
+        res (Response or None): an optional response object.
+        """
+
+    async def process(self, req: Request, res: Response) -> Response:
+        """Process an incoming request.
+
+        - Call `before_dispatch()`.
+        - Call the underlying HTTP `app`.
+        - Call `after_dispatch()`.
+
+        If a hook returns a `Response`, it is returned without further
+        processing.
+
+        Note: this is aliased to `__call__()`, which means middleware
+        instances are callable.
 
         # Parameters
         req (Request): a Request object.
         res (Response): a Response object.
-        """
-
-    async def process(self, req: Request, res: Response):
-        """Process an incoming request.
-
-        Roughly equivalent to:
-
-        ```python
-        res = await self.before_dispatch(req) or None
-        res = res or await self.dispatch(req)
-        res = await self.after_dispatch(req, res) or res
-        return res
-        ```
-
-        Aliased by `__call__()`.
-
-        # Parameters
-        req (Request): a request object.
 
         # Returns
         res (Response): a Response object.
@@ -78,5 +80,4 @@ class Middleware(HTTPApp):
 
         return res
 
-    async def __call__(self, req: Request, res: Response) -> Response:
-        return await self.process(req, res)
+    __call__ = process
