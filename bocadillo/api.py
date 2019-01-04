@@ -8,7 +8,6 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
-from starlette.websockets import WebSocketClose
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
@@ -30,10 +29,9 @@ from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin, WebSocketRouteMatch
+from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
-from .websockets import WebSocket
 
 
 class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
@@ -127,7 +125,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             allowed_hosts = ["*"]
 
         self.app = self.dispatch
-        self.exception_middleware = HTTPErrorMiddleware(self._router)
+        self.exception_middleware = HTTPErrorMiddleware(self.http_router)
         self.server_error_middleware = ServerErrorMiddleware(
             self.exception_middleware
         )
@@ -298,21 +296,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
     async def dispatch_websocket(
         self, receive: Receive, send: Send, scope: Scope
     ):
-        # Dispatch a WebSocket connection request.
-        match: WebSocketRouteMatch = self._router.match(
-            scope["path"], websocket=True
-        )
-        if match is None:
-            # Close with a 403 error code, as specified in the ASGI spec:
-            # https://asgi.readthedocs.io/en/latest/specs/www.html#close
-            await WebSocketClose(code=403)(receive, send)
-        else:
-            ws = WebSocket(scope, receive, send, **match.route.ws_kwargs)
-            try:
-                await match.route(ws, **match.params)
-            except BaseException:
-                await ws.ensure_closed(1011)
-                raise
+        await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
         # Dispatch an ASGI scope to the suitable application:

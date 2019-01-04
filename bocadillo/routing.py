@@ -1,11 +1,22 @@
 import inspect
 from functools import partial
 from string import Formatter
-from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any, Tuple
+from typing import (
+    Optional,
+    Dict,
+    Callable,
+    Union,
+    Type,
+    Any,
+    Tuple,
+    Generic,
+    TypeVar,
+)
 
 from parse import parse
+from starlette.websockets import WebSocketClose
 
-from bocadillo.app_types import HTTPApp
+from bocadillo.app_types import HTTPApp, Receive, Send, Scope
 from bocadillo.redirection import Redirection
 from . import views
 from .http import HTTPError
@@ -14,6 +25,9 @@ from .request import Request
 from .response import Response
 from .views import View, HandlerDoesNotExist
 from .websockets import WebSocket, WebSocketView
+
+
+# Routes
 
 
 class BaseRoute:
@@ -48,11 +62,12 @@ class BaseRoute:
             return result.named
         return None
 
+    async def __call__(self, *args, **kwargs):
+        raise NotImplementedError
 
-class Route(BaseRoute, metaclass=DocsMeta):
-    """Represents the binding of an URL pattern to a view.
 
-    Note: as a framework user, you will not need to create routes directly.
+class HTTPRoute(BaseRoute, metaclass=DocsMeta):
+    """Represents the binding of an URL pattern to an HTTP view.
 
     # Parameters
     pattern (str): an URL pattern. F-string syntax is supported for parameters.
@@ -67,9 +82,9 @@ class Route(BaseRoute, metaclass=DocsMeta):
         self._view = view
         self._name = name
 
-    async def __call__(self, req: Request, res: Response, **kwargs) -> None:
+    async def __call__(self, req: Request, res: Response, **params) -> None:
         try:
-            await self._view(req, res, **kwargs)
+            await self._view(req, res, **params)
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 
@@ -87,32 +102,57 @@ class WebSocketRoute(BaseRoute, metaclass=DocsMeta):
     def __init__(self, pattern: str, view: WebSocketView, **kwargs):
         super().__init__(pattern)
         self._view = view
-        self.ws_kwargs = kwargs
+        self._ws_kwargs = kwargs
 
-    async def __call__(self, ws: WebSocket, **params):
-        await self._view(ws, **params)
-
-
-class RouteMatch(NamedTuple):
-    # Represents the result of a successful route match.
-
-    route: Route
-    params: dict
-
-
-class WebSocketRouteMatch(NamedTuple):
-    """Represents the result of a successful websocket route match."""
-
-    route: WebSocketRoute
-    params: dict
+    async def __call__(
+        self, scope: Scope, receive: Receive, send: Send, **params
+    ):
+        ws = WebSocket(scope, receive, send, **self._ws_kwargs)
+        try:
+            await self._view(ws, **params)
+        except BaseException:
+            await ws.ensure_closed(1011)
+            raise
 
 
-class Router(HTTPApp):
+R = TypeVar("R", HTTPRoute, WebSocketRoute)
+
+
+# Routers
+
+
+class RouteMatch(Generic[R]):
+    # Represents a match between an URL path and a route.
+
+    def __init__(self, route: R, params: dict):
+        self.route = route
+        self.params = params
+
+
+class BaseRouter(Generic[R]):
     # A collection of routes.
 
     def __init__(self):
-        self._routes: Dict[str, Route] = {}
-        self._websocket_routes: Dict[str, WebSocketRoute] = {}
+        self.routes: Dict[str, R] = {}
+
+    def add_route(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def route(self, *args, **kwargs):
+        # Register a route by decorating a view.
+        return partial(self.add_route, *args, **kwargs)
+
+    def match(self, path: str) -> Optional[RouteMatch[R]]:
+        # Attempt to match an URL path against one of the registered routes.
+        for route in self.routes.values():
+            params = route.parse(path)
+            if params is not None:
+                return RouteMatch(route=route, params=params)
+        return None
+
+
+class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
+    # A collection of HTTP routes.
 
     def add_route(
         self,
@@ -121,7 +161,7 @@ class Router(HTTPApp):
         *,
         name: str = None,
         namespace: str = None,
-    ) -> Route:
+    ) -> HTTPRoute:
         # Build and register a route.
 
         if isinstance(view, View):
@@ -148,53 +188,20 @@ class Router(HTTPApp):
 
         check_route(pattern, view)
 
-        route = Route(pattern=pattern, view=view, name=name)
-        self._routes[name] = route
+        route = HTTPRoute(pattern=pattern, view=view, name=name)
+        self.routes[name] = route
 
         return route
 
-    def route(self, *args, **kwargs):
-        # Register a route by decorating a view.
-        return partial(self.add_route, *args, **kwargs)
-
-    def match(self, path: str, websocket: bool = False) -> Optional[RouteMatch]:
-        # Attempt to match an URL path against one of the registered routes.
-        # NOTE: websocket (bool) = whether to look for an HTTP (`False`)
-        # or WebSocket (`True`) route.
-        if websocket:
-            source = self._websocket_routes
-            match_cls = WebSocketRouteMatch
-        else:
-            source = self._routes
-            match_cls = RouteMatch
-
-        for pattern, route in source.items():
-            params = route.parse(path)
-            if params is not None:
-                return match_cls(route=route, params=params)
-
-        return None
-
-    def get_route_or_404(self, name: str) -> Route:
+    def get_route_or_404(self, name: str) -> HTTPRoute:
         # Return a route or raise a 404 error.
         try:
-            return self._routes[name]
+            return self.routes[name]
         except KeyError as e:
             raise HTTPError(404) from e
 
-    def websocket_route(self, pattern: str, **kwargs):
-        # Register a WebSocket route by decorating a view.
-
-        def decorate(view):
-            nonlocal self
-            route = WebSocketRoute(pattern=pattern, view=view, **kwargs)
-            self._websocket_routes[pattern] = route
-            return route
-
-        return decorate
-
     async def __call__(self, req: Request, res: Response) -> Response:
-        match: RouteMatch = self.match(req.url.path)
+        match = self.match(req.url.path)
         if match is None:
             raise HTTPError(status=404)
         try:
@@ -204,12 +211,36 @@ class Router(HTTPApp):
         return res
 
 
+class WebSocketRouter(BaseRouter[WebSocketRoute]):
+    # A collection of WebSocket routes.
+
+    def add_route(self, pattern: str, view, **kwargs):
+        # Register a WebSocket route.
+        route = WebSocketRoute(pattern=pattern, view=view, **kwargs)
+        self.routes[pattern] = route
+        return route
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        # Dispatch a WebSocket connection request.
+        match = self.match(scope["path"])
+        if match is None:
+            # Close with a 403 error code, as specified in the ASGI spec:
+            # https://asgi.readthedocs.io/en/latest/specs/www.html#close
+            await WebSocketClose(code=403)(receive, send)
+        else:
+            await match.route(scope, receive, send, **match.params)
+
+
+# Mixins
+
+
 class RoutingMixin:
     """Provide routing capabilities to a class."""
 
     def __init__(self):
         super().__init__()
-        self._router = Router()
+        self.http_router = HTTPRouter()
+        self.websocket_router = WebSocketRouter()
 
     def route(self, pattern: str, *, name: str = None, namespace: str = None):
         """Register a new route by decorating a view.
@@ -235,7 +266,7 @@ class RoutingMixin:
         # See Also
         - [check_route](#check-route) for the route validation algorithm.
         """
-        return self._router.route(
+        return self.http_router.route(
             pattern=pattern, name=name, namespace=namespace
         )
 
@@ -259,7 +290,7 @@ class RoutingMixin:
         """
         # NOTE: use named keyword arguments instead of `**kwargs` to improve
         # their accessibility (e.g. for IDE discovery).
-        return self._router.websocket_route(
+        return self.websocket_router.route(
             pattern,
             value_type=value_type,
             receive_type=receive_type,
@@ -280,7 +311,7 @@ class RoutingMixin:
         # Raises
         HTTPError(404) : if no route exists for the given `name`.
         """
-        route = self._router.get_route_or_404(name)
+        route = self.http_router.get_route_or_404(name)
         return route.url(**kwargs)
 
 
