@@ -2,7 +2,7 @@
 
 ## Middleware
 ```python
-Middleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[NoneType]], **kwargs)
+Middleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[bocadillo.response.Response]], **kwargs)
 ```
 Base class for middleware classes.
 

@@ -152,7 +152,7 @@ __Parameters__
 - __handler (callable)__:
     The actual error handler, which is called when an instance of
     `exception_cls` is caught.
-    Should accept a `req`, a `res` and an `exc`.
+    Should accept a request, response and exception parameters.
 
 ### error_handler
 ```python
@@ -227,12 +227,13 @@ __Raises__
 ```python
 API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
 ```
-Redirect to another route.
+Redirect to another HTTP route.
 
 __Parameters__
 
 - __name (str)__: name of the route to redirect to.
-- __url (str)__: URL of the route to redirect to, required if `name` is omitted.
+- __url (str)__:
+    URL of the route to redirect to (required if `name` is omitted).
 - __permanent (bool)__:
     If `False` (the default), returns a temporary redirection (302).
     If `True`, returns a permanent redirection (301).
@@ -241,7 +242,8 @@ __Parameters__
 
 __Raises__
 
-- `Redirection`: an exception that will be caught by `API.dispatch()`.
+- `Redirection`:
+    an exception that will be caught to trigger a redirection.
 
 __See Also__
 
@@ -276,12 +278,12 @@ __Parameters__
 
 __See Also__
 
-- [Middleware](../guides/http/middleware.md)
+- [ASGI middleware](../guides/agnostic/asgi-middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
 
 ### on
 ```python
-API.on(self, event: str, handler: Union[Callable[[], NoneType], NoneType] = None)
+API.on(self, event: str, handler: Union[Callable[[], Awaitable[NoneType]], NoneType] = None)
 ```
 Register an event handler.
 

@@ -92,7 +92,10 @@ class ServerErrorMiddleware(HTTPApp):
 
 
 class HTTPErrorMiddleware(HTTPApp):
-    """Handler exceptions that occur while handling HTTP requests."""
+    """Handle exceptions that occur while handling HTTP requests.
+
+    Adaptation of Starlette's ExceptionMiddleware.
+    """
 
     def __init__(self, app: HTTPApp, debug: bool = False) -> None:
         self.app = app
@@ -105,9 +108,7 @@ class HTTPErrorMiddleware(HTTPApp):
         assert issubclass(exception_class, Exception)
         self._exception_handlers[exception_class] = handler
 
-    def _lookup_exception_handler(
-        self, exc: Exception
-    ) -> Optional[ErrorHandler]:
+    def _get_exception_handler(self, exc: Exception) -> Optional[ErrorHandler]:
         for cls, handler in self._exception_handlers.items():
             if issubclass(type(exc), cls):
                 return handler
@@ -117,13 +118,10 @@ class HTTPErrorMiddleware(HTTPApp):
         try:
             res = await self.app(req, res)
         except Exception as exc:
-            # Try to find a handler for the exception, and handle it…
-            handler = self._lookup_exception_handler(exc)
-            if handler is not None:
-                await call_async(handler, req, res, exc)
-                return res
-            # … or re-raise it.
-            else:
+            handler = self._get_exception_handler(exc)
+            if handler is None:
                 raise exc from None
+            await call_async(handler, req, res, exc)
+            return res
         else:
             return res

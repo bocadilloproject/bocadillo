@@ -231,7 +231,7 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         handler (callable):
             The actual error handler, which is called when an instance of
             `exception_cls` is caught.
-            Should accept a `req`, a `res` and an `exc`.
+            Should accept a request, response and exception parameters.
         """
         self.exception_middleware.add_exception_handler(exception_cls, handler)
 
@@ -326,11 +326,12 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         permanent: bool = False,
         **kwargs,
     ):
-        """Redirect to another route.
+        """Redirect to another HTTP route.
 
         # Parameters
         name (str): name of the route to redirect to.
-        url (str): URL of the route to redirect to, required if `name` is omitted.
+        url (str):
+            URL of the route to redirect to (required if `name` is omitted).
         permanent (bool):
             If `False` (the default), returns a temporary redirection (302).
             If `True`, returns a permanent redirection (301).
@@ -338,7 +339,8 @@ class API(TemplatesMixin, metaclass=DocsMeta):
             Route parameters.
 
         # Raises
-        Redirection: an exception that will be caught by #API.dispatch().
+        Redirection:
+            an exception that will be caught to trigger a redirection.
 
         # See Also
         - [Redirecting](../guides/http/redirecting.md)
@@ -372,7 +374,7 @@ class API(TemplatesMixin, metaclass=DocsMeta):
             A class that complies with the ASGI specification.
 
         # See Also
-        - [Middleware](../guides/http/middleware.md)
+        - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
@@ -444,8 +446,6 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        # Dispatch an ASGI scope to the suitable application:
-        # HTTP or WebSocket.
         if scope["type"] == "websocket":
             return partial(self.dispatch_websocket, scope=scope)
         else:
