@@ -107,44 +107,58 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
     ):
         super().__init__(templates_dir=templates_dir)
 
-        self._extra_apps: Dict[str, Any] = {}
+        # Debug mode defaults to `False` but it can be set in `.run()`.
+        self._debug = False
 
+        # Base ASGI app
+        self.asgi = self.dispatch
+
+        # Mounted apps
+        self.apps: Dict[str, Any] = {}
+
+        # Test client
         self.client = self.build_client()
 
+        # Static files
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
             self.mount(static_root, static(static_dir))
 
+        # Media handlers
         self._media = Media(media_type=media_type)
 
-        self._middleware = []
-        self._asgi_middleware = []
-
-        if allowed_hosts is None:
-            allowed_hosts = ["*"]
-
-        self.app = self.dispatch
-        self.exception_middleware = HTTPErrorMiddleware(self.http_router)
+        # HTTP middleware
+        self.exception_middleware = HTTPErrorMiddleware(
+            self.http_router, debug=self._debug
+        )
         self.server_error_middleware = ServerErrorMiddleware(
-            self.exception_middleware
+            self.exception_middleware, debug=self._debug
         )
 
+        # ASGI middleware
+        if allowed_hosts is None:
+            allowed_hosts = ["*"]
         self.add_asgi_middleware(
             TrustedHostMiddleware, allowed_hosts=allowed_hosts
         )
-
         if enable_cors:
-            if cors_config is None:
-                cors_config = {}
-            cors_config = {**DEFAULT_CORS_CONFIG, **cors_config}
+            cors_config = {**DEFAULT_CORS_CONFIG, **(cors_config or {})}
             self.add_asgi_middleware(CORSMiddleware, **cors_config)
-
         if enable_hsts:
             self.add_asgi_middleware(HTTPSRedirectMiddleware)
-
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
+
+    @property
+    def debug(self) -> bool:
+        return self._debug
+
+    @debug.setter
+    def debug(self, debug: bool):
+        self._debug = debug
+        self.exception_middleware.debug = debug
+        self.server_error_middleware.debug = debug
 
     def build_client(self, **kwargs) -> TestClient:
         return TestClient(self, **kwargs)
@@ -166,7 +180,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         """
         if not prefix.startswith("/"):
             prefix = "/" + prefix
-        self._extra_apps[prefix] = app
+        self.apps[prefix] = app
 
     def recipe(self, recipe: RecipeBase):
         recipe.apply(self)
@@ -281,7 +295,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
-        self.app = middleware_cls(self.app, *args, **kwargs)
+        self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         assert scope["type"] == "http"
@@ -314,7 +328,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
-        for prefix, app in self._extra_apps.items():
+        for prefix, app in self.apps.items():
             if not path.startswith(prefix):
                 continue
             # Remove prefix from path so that the request is made according
@@ -325,7 +339,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             except TypeError:
                 return WSGIResponder(app, scope)
 
-        return self.app(scope)
+        return self.asgi(scope)
 
     def run(
         self,
@@ -378,6 +392,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             port = 8000
 
         if debug:
+            self.debug = True
             reloader = StatReload(get_logger(log_level))
             reloader.run(
                 run,
@@ -386,7 +401,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
                     "host": host,
                     "port": port,
                     "log_level": log_level,
-                    "debug": debug,
+                    "debug": self.debug,
                     **kwargs,
                 },
             )
