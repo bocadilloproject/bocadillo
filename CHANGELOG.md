@@ -14,6 +14,24 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- In-browser traceback of unhandled exceptions when running with `debug=True`.
+
+### Changed
+
+- The `before_dispatch` hook on HTTP middleware classes now takes a `Response` as second argument.
+- The `after_dispatch` hook on HTTP middleware classes is not called anymore if the inbound HTTP method is not supported by the view.
+- The `bocadillo.exceptions` module has been removed:
+  - `WebSocketDisconnect` has moved to `bocadillo.exceptions`.
+  - `UnsupportedMediaType` has moved to `bocadillo.media`.
+  - `HTTPError` has moved to `bocadillo.errors` (but is still available at the top level: `from bocadillo import HTTPError`).
+- Other internal refactoring that should not affect framework users.
+
+### Fixed
+
+- Even if an error handler was registered for a given exception class, Bocadillo used to return a 500 error response. It will now honor what the error handler does to the `res` object.
+
 ## [v0.9.1] - 2018-01-04
 
 ### Fixed

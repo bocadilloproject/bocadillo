@@ -70,7 +70,7 @@ def test_can_pass_extra_kwargs(api: API):
         api.client.get("/")
 
 
-def test_callbacks_are_called_if_method_not_allowed(api: API):
+def test_only_before_dispatch_is_called_if_method_not_allowed(api: API):
     with build_middleware(expect_call_after=False) as middleware:
         api.add_middleware(middleware)
 
