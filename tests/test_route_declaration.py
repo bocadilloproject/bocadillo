@@ -1,7 +1,7 @@
 import pytest
 
 from bocadillo import API
-from bocadillo.exceptions import RouteDeclarationError
+from bocadillo.routing import RouteDeclarationError
 
 
 def test_index_returns_404_by_default(api: API):

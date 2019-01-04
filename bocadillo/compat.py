@@ -1,11 +1,14 @@
 """Various compatibility utilities."""
 import asyncio
 import re
-from typing import Callable, Coroutine
+from typing import Callable, Coroutine, List
 
 from starlette.concurrency import run_in_threadpool
 
-from .app_types import WSGIApp
+# WSGI
+Environ = dict
+StartResponse = Callable[[str, List[str]], None]
+WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
 
 _camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
 _snake_regex = re.compile(r"([a-z0-9])([A-Z])")

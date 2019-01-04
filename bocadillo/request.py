@@ -1,8 +1,7 @@
 from json import JSONDecodeError
 
 from starlette.requests import Request as _Request
-
-from .exceptions import HTTPError
+from .http import HTTPError
 
 
 class Request(_Request):

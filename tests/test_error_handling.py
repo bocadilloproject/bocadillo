@@ -1,11 +1,7 @@
 import pytest
 
 from bocadillo import API, HTTPError
-from bocadillo.error_handlers import (
-    error_to_media,
-    error_to_text,
-    error_to_html,
-)
+from bocadillo.errors import error_to_html, error_to_media, error_to_text
 
 
 @pytest.mark.parametrize(
@@ -54,13 +50,15 @@ def test_custom_error_handler(api: API, exception_cls):
     async def index(req, res):
         raise exception_cls("foo")
 
+    client = api.build_client(raise_server_exceptions=False)
+
     if exception_cls == KeyError:
-        response = api.client.get("/")
+        response = client.get("/")
         assert called
-        assert response.status_code == 500
+        assert response.status_code == 200
         assert response.text == "Oops!"
     else:
-        response = api.client.get("/")
+        response = client.get("/")
         assert response.status_code == 500
         assert not called
 

@@ -1,9 +1,5 @@
 from http import HTTPStatus
-from typing import Union, Any, List
-from starlette.websockets import WebSocketDisconnect as _WebSocketDisconnect
-
-
-WebSocketDisconnect = _WebSocketDisconnect
+from typing import Union, Any
 
 
 class HTTPError(Exception):
@@ -50,25 +46,3 @@ class HTTPError(Exception):
 
     def __str__(self):
         return self.title
-
-
-class UnsupportedMediaType(Exception):
-    """Raised when trying to use an unsupported media type.
-
-    # Parameters
-    media_type (str):
-        the unsupported media type.
-    available (list of str):
-        a list of supported media types.
-    """
-
-    def __init__(self, media_type: str, available: List[str]):
-        self._media_type = media_type
-        self._available = available
-
-    def __str__(self):
-        return f'{self._media_type} (available: {", ".join(self._available)})'
-
-
-class RouteDeclarationError(Exception):
-    """Raised when a route is ill-declared."""

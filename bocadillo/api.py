@@ -1,6 +1,6 @@
 import os
-from functools import wraps
-from typing import Any, Dict, List, Optional, Tuple, Type, Union, Callable
+from functools import partial
+from typing import Any, Dict, List, Optional, Type, Union, Callable
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -12,20 +12,25 @@ from starlette.websockets import WebSocketClose
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from .app_types import ASGIApp, ASGIAppInstance, WSGIApp, Scope
-from .compat import call_async
+from bocadillo.errors import ServerErrorMiddleware, HTTPErrorMiddleware
+from .app_types import (
+    ASGIApp,
+    ASGIAppInstance,
+    Scope,
+    ErrorHandler,
+    Receive,
+    Send,
+)
+from .compat import WSGIApp
 from .constants import DEFAULT_CORS_CONFIG
-from .error_handlers import ErrorHandler, error_to_text
 from .events import EventsMixin
-from .exceptions import HTTPError
 from .media import Media
 from .meta import DocsMeta
-from .middleware import Dispatcher
 from .recipes import RecipeBase
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import RoutingMixin, RouteMatch, WebSocketRouteMatch
+from .routing import RoutingMixin, WebSocketRouteMatch
 from .staticfiles import static
 from .templates import TemplatesMixin
 from .websockets import WebSocket
@@ -89,8 +94,6 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         See also [Media](../guides/http/media.md).
     """
 
-    _error_handlers: List[Tuple[Type[Exception], ErrorHandler]]
-
     def __init__(
         self,
         templates_dir: str = "templates",
@@ -105,9 +108,6 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         media_type: Optional[str] = Media.JSON,
     ):
         super().__init__(templates_dir=templates_dir)
-
-        self._error_handlers = []
-        self.add_error_handler(HTTPError, error_to_text)
 
         self._extra_apps: Dict[str, Any] = {}
 
@@ -125,6 +125,13 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
         if allowed_hosts is None:
             allowed_hosts = ["*"]
+
+        self.app = self.dispatch
+        self.exception_middleware = HTTPErrorMiddleware(self._router)
+        self.server_error_middleware = ServerErrorMiddleware(
+            self.exception_middleware
+        )
+
         self.add_asgi_middleware(
             TrustedHostMiddleware, allowed_hosts=allowed_hosts
         )
@@ -204,19 +211,13 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             `exception_cls` is caught.
             Should accept a `req`, a `res` and an `exc`.
         """
-        self._error_handlers.insert(0, (exception_cls, handler))
+        self.exception_middleware.add_exception_handler(exception_cls, handler)
 
     def error_handler(self, exception_cls: Type[Exception]):
         """Register a new error handler (decorator syntax).
 
-        # Example
-        ```python
-        >>> import bocadillo
-        >>> api = bocadillo.API()
-        >>> @api.error_handler(KeyError)
-        ... def on_key_error(req, res, exc):
-        ...     pass  # perhaps set res.content and res.status_code
-        ```
+        # See Also
+        - [add_error_handler](#add-error-handler)
         """
 
         def wrapper(handler):
@@ -224,27 +225,6 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             return handler
 
         return wrapper
-
-    def _find_handler(
-        self, exception_cls: Type[Exception]
-    ) -> Optional[ErrorHandler]:
-        for cls, handler in self._error_handlers:
-            if issubclass(exception_cls, cls):
-                return handler
-        return None
-
-    async def _handle_exception(
-        self, req: Request, res: Response, exception: Exception
-    ) -> None:
-        # Handle an exception raised during dispatch.
-        # If no handler was registered for the exception, it is raised.
-        handler = self._find_handler(exception.__class__)
-        if handler is None:
-            return await self._handle_exception(req, res, HTTPError(500))
-
-        await call_async(handler, req, res, exception)
-        if res.status_code is None:
-            res.status_code = 500
 
     def redirect(
         self,
@@ -288,7 +268,9 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         # See Also
         - [Middleware](../guides/http/middleware.md)
         """
-        self._middleware.insert(0, (middleware_cls, kwargs))
+        self.exception_middleware.app = middleware_cls(
+            self.exception_middleware.app, **kwargs
+        )
 
     def add_asgi_middleware(self, middleware_cls, *args, **kwargs):
         """Register an ASGI middleware class.
@@ -301,94 +283,22 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
-        self._asgi_middleware.insert(0, (middleware_cls, args, kwargs))
+        self.app = middleware_cls(self.app, *args, **kwargs)
 
-    def apply_asgi_middleware(self, app: ASGIApp) -> ASGIApp:
-        """Wrap the registered ASGI middleware around an ASGI app.
-
-        # Parameters
-        app (ASGIApp): a callable complying with the ASGI specification.
-
-        # Returns
-        app_with_asgi_middleware (ASGIApp):
-            The result `app = asgi(app, *args, **kwargs)` for
-            each ASGI middleware class.
-
-        # See Also
-        - [add_asgi_middleware](#add-asgi-middleware)
-        """
-        for middleware_cls, args, kwargs in self._asgi_middleware:
-            app: ASGIApp = middleware_cls(app, *args, **kwargs)
-        return app
-
-    async def dispatch(self, req: Request) -> Response:
-        """Dispatch a request and return a response.
-
-        # Parameters
-        req (Request): an inbound HTTP request.
-
-        # Returns
-        response (Response): an HTTP response.
-
-        # See Also
-        - [How are requests processed?](../guides/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
-        """
+    async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
+        assert scope["type"] == "http"
+        req = Request(scope, receive)
         res = Response(req, media=self._media)
+        res = await self.server_error_middleware(req, res)
+        await res(receive, send)
+        # Re-raise the exception to allow the server to log the error
+        # and for the test client to optionally re-raise it too.
+        self.server_error_middleware.raise_if_exception()
 
-        try:
-            match: RouteMatch = self._router.match(req.url.path)
-            if match is None:
-                raise HTTPError(status=404)
-
-            try:
-                await match.route(req, res, **match.params)
-            except Redirection as redirection:
-                res = redirection.response
-
-        except Exception as e:
-            await self._handle_exception(req, res, e)
-
-        return res
-
-    def _convert_exception_to_response(
-        self, dispatch: Dispatcher
-    ) -> Dispatcher:
-        # Wrap call to `dispatch()` to always return an HTTP response.
-
-        @wraps(dispatch)
-        async def inner(req: Request) -> Response:
-            try:
-                res = await dispatch(req)
-            except Exception as exc:
-                res = Response(req, media=self._media)
-                await self._handle_exception(req, res, exc)
-            return res
-
-        return inner
-
-    async def get_response(self, req: Request) -> Response:
-        """Return a response for an incoming request.
-
-        # Parameters
-        req (Request): a Request object.
-
-        # Returns
-        res (Response):
-            a Response object, obtained by going down the middleware chain,
-            calling `dispatch()` and going up the middleware chain.
-
-        # See Also
-        - [dispatch](#dispatch)
-        - [Middleware](../guides/http/middleware.md)
-        """
-        convert = self._convert_exception_to_response
-        dispatch = convert(self.dispatch)
-        for cls, kwargs in self._middleware:
-            middleware = cls(dispatch, **kwargs)
-            dispatch = convert(middleware)
-        return await dispatch(req)
-
-    async def dispatch_websocket(self, scope: Scope, receive, send):
+    async def dispatch_websocket(
+        self, receive: Receive, send: Send, scope: Scope
+    ):
+        # Dispatch a WebSocket connection request.
         match: WebSocketRouteMatch = self._router.match(
             scope["path"], websocket=True
         )
@@ -404,56 +314,16 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
                 await ws.ensure_closed(1011)
                 raise
 
-    def create_app(self, scope: Scope) -> ASGIAppInstance:
-        """Build and return an instance of the `API`'s own ASGI application.
+    def dispatch(self, scope: Scope) -> ASGIAppInstance:
+        # Dispatch an ASGI scope to the suitable application:
+        # HTTP or WebSocket.
+        if scope["type"] == "websocket":
+            return partial(self.dispatch_websocket, scope=scope)
+        else:
+            assert scope["type"] == "http"
+            return partial(self.dispatch_http, scope=scope)
 
-        # Parameters
-        scope (dict): an ASGI connection scope.
-
-        # Returns
-        asgi (ASGIAppInstance):
-            creates a `Request` and awaits the result of `get_response()`.
-        """
-
-        async def asgi(receive, send):
-            nonlocal scope
-            if scope["type"] == "websocket":
-                await self.dispatch_websocket(scope, receive, send)
-            else:
-                assert scope["type"] == "http"
-                req = Request(scope, receive)
-                res = await self.get_response(req)
-                await res(receive, send)
-
-        return asgi
-
-    def find_app(self, scope: Scope) -> ASGIAppInstance:
-        """Return the ASGI application suited to the given ASGI scope.
-
-        The application is chosen according to the following algorithm:
-
-        - If `scope` has a `lifespan` type, the lifespan handler is returned.
-        This occurs on server startup and shutdown.
-        - If the scope's `path` begins with any of the prefixes of a mounted
-        sub-app, said sub-app is returned (converting from WSGI to ASGI if
-        necessary).
-        - Otherwise, the `API`'s own ASGI application is returned.
-
-        # Parameters
-        scope (dict):
-            An ASGI scope.
-
-        # Returns
-        app:
-            An ASGI application instance.
-
-        # See Also
-        - [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
-        - [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-        - [Events](../guides/agnostic/events.md)
-        - [mount](#mount)
-        - [create_app](#create-app)
-        """
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
             return self.handle_lifespan(scope)
 
@@ -471,7 +341,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             except TypeError:
                 return WSGIResponder(app, scope)
 
-        return self.apply_asgi_middleware(self.create_app)(scope)
+        return self.app(scope)
 
     def run(
         self,
@@ -538,6 +408,3 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             )
         else:
             _run(self, host=host, port=port, **kwargs)
-
-    def __call__(self, scope: Scope) -> ASGIAppInstance:
-        return self.find_app(scope)

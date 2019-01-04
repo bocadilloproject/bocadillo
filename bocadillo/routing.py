@@ -5,8 +5,10 @@ from typing import Optional, NamedTuple, Dict, Callable, Union, Type, Any, Tuple
 
 from parse import parse
 
+from bocadillo.app_types import HTTPApp
+from bocadillo.redirection import Redirection
 from . import views
-from .exceptions import HTTPError, RouteDeclarationError
+from .http import HTTPError
 from .meta import DocsMeta
 from .request import Request
 from .response import Response
@@ -105,7 +107,7 @@ class WebSocketRouteMatch(NamedTuple):
     params: dict
 
 
-class Router:
+class Router(HTTPApp):
     # A collection of routes.
 
     def __init__(self):
@@ -190,6 +192,16 @@ class Router:
             return route
 
         return decorate
+
+    async def __call__(self, req: Request, res: Response) -> Response:
+        match: RouteMatch = self.match(req.url.path)
+        if match is None:
+            raise HTTPError(status=404)
+        try:
+            await match.route(req, res, **match.params)
+        except Redirection as redirection:
+            res = redirection.response
+        return res
 
 
 class RoutingMixin:
@@ -318,3 +330,7 @@ def check_route(pattern: str, view: View) -> None:
                     f"'{handler_param}' but it was not declared in the route "
                     f"pattern '{pattern}'"
                 )
+
+
+class RouteDeclarationError(Exception):
+    """Raised when a route is ill-declared."""

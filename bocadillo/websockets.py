@@ -1,11 +1,13 @@
 import json
 from typing import Awaitable, Callable, Optional, Any, Union, Tuple
 
-from starlette.websockets import WebSocket as StarletteWebSocket
+from starlette.websockets import (
+    WebSocket as StarletteWebSocket,
+    WebSocketDisconnect as _WebSocketDisconnect,
+)
 
 from .app_types import Event
 from .constants import WEBSOCKET_CLOSE_CODES
-from .exceptions import WebSocketDisconnect
 
 _STARLETTE_WEBSOCKET_DOCS = (
     "[Starlette.websockets.WebSocket](https://www.starlette.io/websockets/)"
@@ -201,3 +203,4 @@ class WebSocket:
 
 
 WebSocketView = Callable[[WebSocket], Awaitable[None]]
+WebSocketDisconnect = _WebSocketDisconnect
