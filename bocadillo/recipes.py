@@ -2,7 +2,7 @@ from typing import List, Sequence, Tuple
 
 from .meta import DocsMeta
 from .templates import TemplatesMixin
-from .websockets import WebSocketView
+from .websocket import WebSocketView
 
 
 class RecipeRoute:

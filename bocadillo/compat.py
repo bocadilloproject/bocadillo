@@ -1,14 +1,8 @@
-"""Various compatibility utilities."""
 import asyncio
 import re
 from typing import Callable, Coroutine, List
 
 from starlette.concurrency import run_in_threadpool
-
-# WSGI
-Environ = dict
-StartResponse = Callable[[str, List[str]], None]
-WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
 
 _camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
 _snake_regex = re.compile(r"([a-z0-9])([A-Z])")
@@ -37,6 +31,13 @@ def camel_to_snake(name: str) -> str:
     """Convert a `CamelCase` name to its `snake_case` version."""
     s1 = _camel_regex.sub(r"\1_\2", name)
     return _snake_regex.sub(r"\1_\2", s1).lower()
+
+
+# WSGI
+
+Environ = dict
+StartResponse = Callable[[str, List[str]], None]
+WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
 
 
 def empty_wsgi_app() -> WSGIApp:

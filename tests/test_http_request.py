@@ -1,5 +1,3 @@
-import json
-from io import StringIO
 import pytest
 
 from bocadillo import API

@@ -1,15 +1,12 @@
-"""Bocadillo middleware definition."""
-from typing import Callable, Awaitable, Optional
+from typing import Optional
 
 from .app_types import HTTPApp
-from .compat import call_async
 from .request import Request
 from .response import Response
+from ..compat import call_async
 
-Dispatcher = Callable[[Request], Awaitable[Response]]
 
-
-class Middleware:
+class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
@@ -83,7 +80,3 @@ class Middleware:
 
     async def __call__(self, req: Request, res: Response) -> Response:
         return await self.process(req, res)
-
-
-# TODO: remove in v0.8
-RoutingMiddleware = Middleware

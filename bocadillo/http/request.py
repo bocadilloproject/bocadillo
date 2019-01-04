@@ -18,7 +18,7 @@ class Request(_Request):
         try:
             return await super().json()
         except JSONDecodeError:
-            from .http import HTTPError  # prevent circular imports
+            from .errors import HTTPError  # prevent circular imports
 
             raise HTTPError(400, detail="JSON is malformed.")
 

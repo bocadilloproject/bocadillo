@@ -1,40 +1,36 @@
 import os
 from functools import partial
-from typing import Any, Dict, List, Optional, Type, Union, Callable
+from typing import Any, Dict, List, Optional, Type, Union, Callable, Tuple
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from starlette.middleware.lifespan import LifespanMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from .app_types import (
-    ASGIApp,
-    ASGIAppInstance,
-    Scope,
-    ErrorHandler,
-    Receive,
-    Send,
-)
+from .asgi import ASGIApp, ASGIAppInstance, Scope, Receive, Send, EventHandler
 from .compat import WSGIApp
 from .constants import DEFAULT_CORS_CONFIG
-from .events import EventsMixin
-from .http import ServerErrorMiddleware, HTTPErrorMiddleware
-from .media import Media
+from .error_handlers import error_to_text
+from .http.app_types import ErrorHandler
+from .http.errors import ServerErrorMiddleware, HTTPErrorMiddleware, HTTPError
+from .http.media import Media
+from .http.redirection import Redirection
+from .http.request import Request
+from .http.response import Response
+from .http.routing import HTTPRouter
 from .meta import DocsMeta
 from .recipes import RecipeBase
-from .redirection import Redirection
-from .request import Request
-from .response import Response
-from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
+from .websocket.routing import WebSocketRouter
 
 
-class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
+class API(TemplatesMixin, metaclass=DocsMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -116,6 +112,10 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         # Mounted apps
         self.apps: Dict[str, Any] = {}
 
+        # Routers
+        self.http_router = HTTPRouter()
+        self.websocket_router = WebSocketRouter()
+
         # Test client
         self.client = self.build_client()
 
@@ -133,8 +133,12 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
             self.http_router, debug=self._debug
         )
         self.server_error_middleware = ServerErrorMiddleware(
-            self.exception_middleware, debug=self._debug
+            self.exception_middleware, handler=error_to_text, debug=self._debug
         )
+        self.add_error_handler(HTTPError, error_to_text)
+
+        # Lifespan middleware
+        self.lifespan_middleware = LifespanMiddleware(self.dispatch_lifespan)
 
         # ASGI middleware
         if allowed_hosts is None:
@@ -238,6 +242,78 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
         return wrapper
 
+    def route(self, pattern: str, *, name: str = None, namespace: str = None):
+        """Register a new route by decorating a view.
+
+        # Parameters
+        pattern (str): an URL pattern.
+        methods (list of str):
+            An optional list of HTTP methods.
+            Defaults to `["get", "head"]`.
+            Ignored for class-based views.
+        name (str):
+            An optional name for the route.
+            If a route already exists for this name, it is replaced.
+            Defaults to a snake-cased version of the view's name.
+        namespace (str):
+            An optional namespace for the route. If given, it is prefixed to
+            the name and separated by a colon.
+
+        # Raises
+        RouteDeclarationError:
+            If route validation has failed.
+
+        # See Also
+        - [check_route](#check-route) for the route validation algorithm.
+        """
+        return self.http_router.route(
+            pattern=pattern, name=name, namespace=namespace
+        )
+
+    def websocket_route(
+        self,
+        pattern: str,
+        *,
+        value_type: Optional[str] = None,
+        receive_type: Optional[str] = None,
+        send_type: Optional[str] = None,
+        caught_close_codes: Optional[Tuple[int]] = None,
+    ):
+        """Register a WebSocket route by decorating a view.
+
+        # Parameters
+        pattern (str): an URL pattern.
+
+        # See Also
+        - [WebSocket](./websockets.md#websocket) for a description of keyword
+        arguments.
+        """
+        # NOTE: use named keyword arguments instead of `**kwargs` to improve
+        # their accessibility (e.g. for IDE discovery).
+        return self.websocket_router.route(
+            pattern,
+            value_type=value_type,
+            receive_type=receive_type,
+            send_type=send_type,
+            caught_close_codes=caught_close_codes,
+        )
+
+    def url_for(self, name: str, **kwargs) -> str:
+        """Build the URL path for a named route.
+
+        # Parameters
+        name (str): the name of the route.
+        kwargs (dict): route parameters.
+
+        # Returns
+        url (str): the URL path for a route.
+
+        # Raises
+        HTTPError(404) : if no route exists for the given `name`.
+        """
+        route = self.http_router.get_route_or_404(name)
+        return route.url(**kwargs)
+
     def redirect(
         self,
         *,
@@ -297,6 +373,57 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
         """
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
+    def on(self, event: str, handler: Optional[EventHandler] = None):
+        """Register an event handler.
+
+        # Parameters
+        event (str):
+            Either `"startup"` (when the server boots) or `"shutdown"`
+            (when the server stops).
+        handler (callback, optional):
+            The event handler. If not given, this should be used as a
+            decorator.
+
+        # Example
+
+        ```python
+        @api.on("startup")
+        async def startup():
+            pass
+
+        async def shutdown():
+            pass
+
+        api.on("shutdown", shutdown)
+        ```
+        """
+        if handler is None:
+
+            def register(func):
+                self.lifespan_middleware.add_event_handler(event, func)
+                return func
+
+            return register
+        else:
+            self.lifespan_middleware.add_event_handler(event, handler)
+            return handler
+
+    def dispatch_lifespan(self, scope: Scope):
+        # Strict implementation of the ASGI lifespan spec.
+        # This is required because the Starlette `LifespanMiddleware`
+        # does not send the `complete` responses.
+
+        async def asgi(receive, send):
+            message = await receive()
+            assert message["type"] == "lifespan.startup"
+            await send({"type": "lifespan.startup.complete"})
+
+            message = await receive()
+            assert message["type"] == "lifespan.shutdown"
+            await send({"type": "lifespan.shutdown.complete"})
+
+        return asgi
+
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         assert scope["type"] == "http"
         req = Request(scope, receive)
@@ -323,7 +450,7 @@ class API(TemplatesMixin, RoutingMixin, EventsMixin, metaclass=DocsMeta):
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
-            return self.handle_lifespan(scope)
+            return self.lifespan_middleware(scope)
 
         path: str = scope["path"]
 

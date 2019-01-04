@@ -1,7 +1,13 @@
+from http import HTTPStatus
+
 import pytest
 
 from bocadillo import API, HTTPError
-from bocadillo.http import error_to_html, error_to_media, error_to_text
+from bocadillo.error_handlers import (
+    error_to_html,
+    error_to_media,
+    error_to_text,
+)
 
 
 @pytest.mark.parametrize(
@@ -109,3 +115,13 @@ def test_builtin_handlers(api: API, detail, handler, content, expected):
     response = api.client.get("/")
     assert response.status_code == 403
     assert content(response) == expected(detail)
+
+
+def test_http_error_status_must_be_int_or_http_status():
+    HTTPError(404)
+    HTTPError(HTTPStatus.NOT_FOUND)
+
+    with pytest.raises(AssertionError) as ctx:
+        HTTPError("404")
+
+    assert "int or HTTPStatus" in str(ctx.value)
