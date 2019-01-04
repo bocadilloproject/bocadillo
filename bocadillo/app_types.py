@@ -1,7 +1,7 @@
 from typing import Callable, Awaitable, MutableMapping, Any
 
-from bocadillo.request import Request
-from bocadillo.response import Response
+from .request import Request
+from .response import Response
 
 Scope = dict
 Event = MutableMapping[str, Any]

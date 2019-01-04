@@ -26,6 +26,8 @@ class BaseRoute:
     # Base route class.
 
     def __init__(self, pattern: str):
+        if not pattern.startswith("/"):
+            pattern = f"/{pattern}"
         self._pattern = pattern
 
     def url(self, **kwargs) -> str:
@@ -152,8 +154,6 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
         if namespace is not None:
             name = namespace + ":" + name
 
-        check_route(pattern, view)
-
         route = HTTPRoute(pattern=pattern, view=view, name=name)
         self.routes[name] = route
 
@@ -175,54 +175,6 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
         except Redirection as redirection:
             res = redirection.response
         return res
-
-
-def check_route(pattern: str, view: View) -> None:
-    """Check compatibility of a route pattern and a view.
-
-    # Parameters
-    pattern (str): an URL pattern.
-    view (View): a `View` object.
-
-    # Raises
-    RouteDeclarationError :
-        - If `pattern` does not have a leading slash.
-        - If route parameters declared in the pattern do not match those
-        of any view handler, e.g. a parameter is declared in the pattern, but
-        not used in the handler or vice-versa.
-
-    # See Also
-    - `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
-    """
-    if not pattern.startswith("/"):
-        raise RouteDeclarationError(
-            f"Route pattern '{pattern}' on view '{view.name}' "
-            f"must start with '/' to avoid ambiguities."
-        )
-
-    parsed_format = Formatter().parse(pattern)
-    route_parameters: set = {name for _, name, _, _ in parsed_format if name}
-
-    for method, handler in views.get_handlers(view).items():
-        handler_parameters = dict(inspect.signature(handler).parameters)
-        handler_parameters.pop("self", None)  # paranoia check
-        handler_parameters = list(handler_parameters)
-
-        for route_param in route_parameters:
-            if route_param not in handler_parameters:
-                raise RouteDeclarationError(
-                    f"Route pattern '{pattern}' declares the route parameter "
-                    f"'{route_param}' and should be a parameter of "
-                    f"'{handler.__qualname__}'."
-                )
-
-        for handler_param in handler_parameters[2:]:
-            if handler_param not in route_parameters:
-                raise RouteDeclarationError(
-                    f"Handler '{handler.__qualname__}' expects parameter "
-                    f"'{handler_param}' but it was not declared in the route "
-                    f"pattern '{pattern}'"
-                )
 
 
 class RouteDeclarationError(Exception):
