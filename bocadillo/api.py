@@ -193,7 +193,7 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         self.apps[prefix] = app
 
     def recipe(self, recipe: RecipeBase):
-        recipe.apply(self)
+        recipe(self)
 
     @property
     def media_type(self) -> str:
@@ -313,7 +313,9 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         # Raises
         HTTPError(404) : if no route exists for the given `name`.
         """
-        route = self.http_router.get_route_or_404(name)
+        route = self.http_router.routes.get(name)
+        if route is None:
+            raise HTTPError(404)
         return route.url(**kwargs)
 
     def redirect(

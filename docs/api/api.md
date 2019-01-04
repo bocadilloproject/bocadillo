@@ -78,51 +78,6 @@ The path where templates are searched for, or `None` if not set.
 
 This is built from the `templates_dir` parameter.
 
-### on
-```python
-API.on(self, event: str, handler: Union[Callable[[], NoneType], NoneType] = None)
-```
-Register an event handler.
-
-__Parameters__
-
-- __event (str)__:
-    Either `"startup"` (when the server boots) or `"shutdown"`
-    (when the server stops).
-- __handler (callback, optional)__:
-    The event handler. If not given, this should be used as a
-    decorator.
-
-__Example__
-
-
-```python
-@api.on("startup")
-async def init_app():
-    pass
-```
-
-### handle_lifespan
-```python
-API.handle_lifespan(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
-```
-Create an ASGI application instance to handle `lifespan` messages.
-
-Registered event handlers will be called as appropriate.
-
-__Parameters__
-
-- __scope (dict)__: an ASGI connection scope.
-
-__Returns__
-
-`app (ASGIAppInstance)`: an ASGI application instance.
-
-__See Also__
-
-- [on](#on)
-- [Lifespan protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
-
 ### template
 ```python
 API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
@@ -175,7 +130,7 @@ __Returns__
 
 ### mount
 ```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
 ```
 Mount another WSGI or ASGI app at the given prefix.
 
@@ -199,6 +154,16 @@ __Parameters__
     `exception_cls` is caught.
     Should accept a `req`, a `res` and an `exc`.
 
+### error_handler
+```python
+API.error_handler(self, exception_cls: Type[Exception])
+```
+Register a new error handler (decorator syntax).
+
+__See Also__
+
+- [add_error_handler](#add-error-handler)
+
 ### route
 ```python
 API.route(self, pattern: str, *, name: str = None, namespace: str = None)
@@ -220,30 +185,9 @@ __Parameters__
     An optional namespace for the route. If given, it is prefixed to
     the name and separated by a colon.
 
-__Raises__
-
-- `RouteDeclarationError`:
-    If route validation has failed.
-
 __See Also__
 
 - [check_route](#check-route) for the route validation algorithm.
-
-### error_handler
-```python
-API.error_handler(self, exception_cls: Type[Exception])
-```
-Register a new error handler (decorator syntax).
-
-__Example__
-
-```python
->>> import bocadillo
->>> api = bocadillo.API()
->>> @api.error_handler(KeyError)
-... def on_key_error(req, res, exc):
-...     pass  # perhaps set res.content and res.status_code
-```
 
 ### websocket_route
 ```python
@@ -259,6 +203,25 @@ __See Also__
 
 - [WebSocket](./websockets.md#websocket) for a description of keyword
 arguments.
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### redirect
 ```python
@@ -283,25 +246,6 @@ __Raises__
 __See Also__
 
 - [Redirecting](../guides/http/redirecting.md)
-
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### add_middleware
 ```python
@@ -335,112 +279,34 @@ __See Also__
 - [Middleware](../guides/http/middleware.md)
 - [ASGI](https://asgi.readthedocs.io)
 
-### apply_asgi_middleware
+### on
 ```python
-API.apply_asgi_middleware(self, app: Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]) -> Callable[[dict], Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]]
+API.on(self, event: str, handler: Union[Callable[[], NoneType], NoneType] = None)
 ```
-Wrap the registered ASGI middleware around an ASGI app.
+Register an event handler.
 
 __Parameters__
 
-- __app (ASGIApp)__: a callable complying with the ASGI specification.
+- __event (str)__:
+    Either `"startup"` (when the server boots) or `"shutdown"`
+    (when the server stops).
+- __handler (callback, optional)__:
+    The event handler. If not given, this should be used as a
+    decorator.
 
-__Returns__
+__Example__
 
-`app_with_asgi_middleware (ASGIApp)`:
-    The result `app = asgi(app, *args, **kwargs)` for
-    each ASGI middleware class.
 
-__See Also__
-
-- [add_asgi_middleware](#add-asgi-middleware)
-
-### dispatch
 ```python
-API.dispatch(self, req: bocadillo.request.Request) -> bocadillo.response.Response
+@api.on("startup")
+async def startup():
+    pass
+
+async def shutdown():
+    pass
+
+api.on("shutdown", shutdown)
 ```
-Dispatch a request and return a response.
-
-__Parameters__
-
-- __req (Request)__: an inbound HTTP request.
-
-__Returns__
-
-`response (Response)`: an HTTP response.
-
-__See Also__
-
-- [How are requests processed?](../guides/http/routing.md#how-are-requests-processed) for the dispatch algorithm.
-
-### get_response
-```python
-API.get_response(self, req: bocadillo.request.Request) -> bocadillo.response.Response
-```
-Return a response for an incoming request.
-
-__Parameters__
-
-- __req (Request)__: a Request object.
-
-__Returns__
-
-`res (Response)`:
-    a Response object, obtained by going down the middleware chain,
-    calling `dispatch()` and going up the middleware chain.
-
-__See Also__
-
-- [dispatch](#dispatch)
-- [Middleware](../guides/http/middleware.md)
-
-### create_app
-```python
-API.create_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
-```
-Build and return an instance of the `API`'s own ASGI application.
-
-__Parameters__
-
-- __scope (dict)__: an ASGI connection scope.
-
-__Returns__
-
-`asgi (ASGIAppInstance)`:
-    creates a `Request` and awaits the result of `get_response()`.
-
-### find_app
-```python
-API.find_app(self, scope: dict) -> Callable[[Callable[[], MutableMapping[str, Any]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]
-```
-Return the ASGI application suited to the given ASGI scope.
-
-The application is chosen according to the following algorithm:
-
-- If `scope` has a `lifespan` type, the lifespan handler is returned.
-This occurs on server startup and shutdown.
-- If the scope's `path` begins with any of the prefixes of a mounted
-sub-app, said sub-app is returned (converting from WSGI to ASGI if
-necessary).
-- Otherwise, the `API`'s own ASGI application is returned.
-
-__Parameters__
-
-- __scope (dict)__:
-    An ASGI scope.
-
-__Returns__
-
-`app`:
-    An ASGI application instance.
-
-__See Also__
-
-- [Lifespan Protocol](https://asgi.readthedocs.io/en/latest/specs/lifespan.html)
-- [ASGI connection scope](https://asgi.readthedocs.io/en/latest/specs/main.html#connection-scope)
-- [Events](../guides/agnostic/events.md)
-- [mount](#mount)
-- [create_app](#create-app)
 
 ### run
 ```python

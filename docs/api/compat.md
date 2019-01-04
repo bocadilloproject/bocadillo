@@ -1,5 +1,5 @@
 # bocadillo.compat
-Various compatibility utilities.
+
 ## call_async
 ```python
 call_async(func: Callable, *args, sync=None, **kwargs) -> Coroutine

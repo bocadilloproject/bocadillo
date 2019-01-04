@@ -1,50 +1,28 @@
-from typing import List, Sequence, Tuple
+from typing import List, Sequence, Tuple, Any
 
 from .meta import DocsMeta
 from .templates import TemplatesMixin
 from .websockets import WebSocketView
 
 
-class RecipeRoute:
-    """A specific kind of route for recipes.
-
-    The route will be registered an actual API object during `recipe.apply()`.
-
-    Mostly an implementation detail.
-    """
-
-    def __init__(self, pattern, view, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-        self._pattern = pattern
-        self._view = view
-
-    def register(self, api, prefix: str) -> None:
-        """Register the route on the API object at the given prefix.
-
-        # Parameters
-
-        api (API):
-            A Bocadillo application.
-        prefix (str):
-            A path prefix.
-        """
-        api.route(prefix + self._pattern, *self._args, **self._kwargs)(
-            self._view
-        )
-
-
 class RecipeBase:
     """Definition of the recipe interface."""
 
-    def apply(self, api, root: str = ""):
+    def __init__(self, prefix: str):
+        assert prefix.startswith("/"), "recipe prefix must start with '/'"
+        self.prefix = prefix
+
+    def url(self, path: str) -> str:
+        return self.prefix + path
+
+    def __call__(self, api, root: str = ""):
         """Apply the recipe to an API object.
 
         Should be implemented by subclasses.
 
         # Parameters
         api (API): an API object.
-        root (str): a root URL path itself prefixed to the recipe's `prefix`.
+        root (str): a root URL path.
         """
         raise NotImplementedError
 
@@ -64,31 +42,26 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
     """
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
-        super().__init__(**kwargs)
         if prefix is None:
             prefix = f"/{name}"
-        assert prefix.startswith("/"), "recipe prefix must start with '/'"
-        self._name = name
-        self._prefix = prefix
-        self._routes: List[RecipeRoute] = []
+        super().__init__(prefix=prefix, **kwargs)
+        self.name = name
+        self._http_routes: List[Tuple[str, dict, Any]] = []
         self._ws_routes: List[Tuple[str, dict, WebSocketView]] = []
 
-    def route(self, *args, **kwargs):
+    def route(self, pattern: str, **kwargs):
         """Register a route on the recipe.
 
         Accepts the same arguments as `API.route()`, except `namespace` which
-        is given the value of the recipe's `name`.
+        will be given the value of the recipe's `name`.
 
         # See Also
         - [API.route()](./api.md#route)
         """
 
         def register(view):
-            route = RecipeRoute(
-                *args, view=view, namespace=self._name, **kwargs
-            )
-            self._routes.append(route)
-            return route
+            self._http_routes.append((pattern, kwargs, view))
+            return view
 
         return register
 
@@ -107,23 +80,15 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
 
         return register
 
-    def apply(self, api, root: str = ""):
-        """Apply the recipe to an API object.
-
-        This will:
-
-        - Mount registered routes onto the `api`.
-        - Update the templates directory to that of `api`.
-
-        # See Also
-        - [RecipeBase.apply()](#apply)
-        """
+    def __call__(self, api, root: str = ""):
+        """Apply the recipe to an API object."""
         # Apply routes on the API
-        for route in self._routes:
-            route.register(api, root + self._prefix)
+        for pattern, kwargs, view in self._http_routes:
+            kwargs["namespace"] = self.name
+            api.route(root + self.prefix + pattern, **kwargs)(view)
 
         for pattern, kwargs, view in self._ws_routes:
-            api.websocket_route(root + self._prefix + pattern, **kwargs)(view)
+            api.websocket_route(root + self.prefix + pattern, **kwargs)(view)
 
         # Look for templates where the API does, if not specified
         if self.templates_dir is None:
@@ -144,21 +109,14 @@ class RecipeBook(RecipeBase):
     # Parameters
     recipes (list): a list of `Recipe` objects.
     prefix (str):
-        A prefix that will be prepended to all of the recipes' own prefixes.
+        A prefix that will be prepended to all of the recipes' prefixes.
     """
 
     def __init__(self, recipes: Sequence[Recipe], prefix: str):
+        super().__init__(prefix)
         self.recipes = recipes
-        self.prefix = prefix
 
-    def apply(self, api, root: str = ""):
-        """Apply the recipe book to an API object.
-
-        This is equivalent to calling `recipe.apply(api, root=root + self.prefix)`
-        for each of the book's recipes.
-
-        # See Also
-        - [RecipeBase.apply()](#apply)
-        """
+    def __call__(self, api, root: str = ""):
+        """Apply the recipe book to an API object."""
         for recipe in self.recipes:
-            recipe.apply(api, root=root + self.prefix)
+            recipe(api, root=root + self.prefix)

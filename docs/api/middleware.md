@@ -1,8 +1,8 @@
 # bocadillo.middleware
-Bocadillo middleware definition.
+
 ## Middleware
 ```python
-Middleware(self, dispatch: Callable[[bocadillo.request.Request], Awaitable[bocadillo.response.Response]], **kwargs)
+Middleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[NoneType]], **kwargs)
 ```
 Base class for middleware classes.
 
@@ -15,24 +15,25 @@ __Parameters__
 
 ### before_dispatch
 ```python
-Middleware.before_dispatch(self, req: bocadillo.request.Request)
+Middleware.before_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> Union[bocadillo.response.Response, NoneType]
 ```
 Perform processing before a request is dispatched.
 
-If a `Response` object is returned, it will be used
+If the `Response` object is returned, it will be used
 and no further processing will be performed.
 
 __Parameters__
 
 - __req (Request)__: a Request object.
+- __res (Response)__: a Response object.
 
 ### after_dispatch
 ```python
-Middleware.after_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response)
+Middleware.after_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> Union[bocadillo.response.Response, NoneType]
 ```
 Perform processing after a request has been dispatched.
 
-If a `Response` object is returned, it is used instead of the response
+If the `Response` object is returned, it is used instead of the response
 obtained by awaiting `dispatch()`.
 
 __Parameters__
@@ -42,7 +43,7 @@ __Parameters__
 
 ### process
 ```python
-Middleware.process(self, req: bocadillo.request.Request) -> bocadillo.response.Response
+Middleware.process(self, req: bocadillo.request.Request, res: bocadillo.response.Response)
 ```
 Process an incoming request.
 

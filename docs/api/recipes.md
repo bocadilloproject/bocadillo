@@ -2,22 +2,9 @@
 
 ## RecipeBase
 ```python
-RecipeBase(self, /, *args, **kwargs)
+RecipeBase(self, prefix: str)
 ```
 Definition of the recipe interface.
-### apply
-```python
-RecipeBase.apply(self, api, root: str = '')
-```
-Apply the recipe to an API object.
-
-Should be implemented by subclasses.
-
-__Parameters__
-
-- __api (API)__: an API object.
-- __root (str)__: a root URL path itself prefixed to the recipe's `prefix`.
-
 ## Recipe
 ```python
 Recipe(self, name: str, prefix: str = None, **kwargs)
@@ -42,16 +29,28 @@ This is built from the `templates_dir` parameter.
 
 ### route
 ```python
-Recipe.route(self, *args, **kwargs)
+Recipe.route(self, pattern: str, **kwargs)
 ```
 Register a route on the recipe.
 
 Accepts the same arguments as `API.route()`, except `namespace` which
-is given the value of the recipe's `name`.
+will be given the value of the recipe's `name`.
 
 __See Also__
 
 - [API.route()](./api.md#route)
+
+### websocket_route
+```python
+Recipe.websocket_route(self, pattern: str, **kwargs)
+```
+Register a WebSocket route on the recipe.
+
+Accepts the same arguments as `API.websocket_route()`.
+
+__See Also__
+
+- [API.websocket_route()](./api.md#websocket-route)
 
 ### template
 ```python
@@ -73,17 +72,13 @@ __Parameters__
 - __kwargs (dict)__:
     Context variables to inject in the template.
 
-### websocket_route
+### book
 ```python
-Recipe.websocket_route(self, pattern: str, **kwargs)
+Recipe.book(*recipes: 'Recipe', prefix: str) -> 'RecipeBook'
 ```
-Register a WebSocket route on the recipe.
+Build a book of recipes.
 
-Accepts the same arguments as `API.websocket_route()`.
-
-__See Also__
-
-- [API.websocket_route()](./api.md#websocket-route)
+Shortcut for `RecipeBook(recipes, prefix)`.
 
 ### template_sync
 ```python
@@ -105,29 +100,6 @@ __Parameters__
 
 For other parameters, see `API.template()`.
 
-### apply
-```python
-Recipe.apply(self, api, root: str = '')
-```
-Apply the recipe to an API object.
-
-This will:
-
-- Mount registered routes onto the `api`.
-- Update the templates directory to that of `api`.
-
-__See Also__
-
-- [RecipeBase.apply()](#apply)
-
-### book
-```python
-Recipe.book(*recipes: 'Recipe', prefix: str) -> 'RecipeBook'
-```
-Build a book of recipes.
-
-Shortcut for `RecipeBook(recipes, prefix)`.
-
 ## RecipeBook
 ```python
 RecipeBook(self, recipes: Sequence[bocadillo.recipes.Recipe], prefix: str)
@@ -138,18 +110,5 @@ __Parameters__
 
 - __recipes (list)__: a list of `Recipe` objects.
 - __prefix (str)__:
-    A prefix that will be prepended to all of the recipes' own prefixes.
-
-### apply
-```python
-RecipeBook.apply(self, api, root: str = '')
-```
-Apply the recipe book to an API object.
-
-This is equivalent to calling `recipe.apply(api, root=root + self.prefix)`
-for each of the book's recipes.
-
-__See Also__
-
-- [RecipeBase.apply()](#apply)
+    A prefix that will be prepended to all of the recipes' prefixes.
 
