@@ -265,10 +265,6 @@ class API(TemplatesMixin, metaclass=DocsMeta):
             An optional namespace for the route. If given, it is prefixed to
             the name and separated by a colon.
 
-        # Raises
-        RouteDeclarationError:
-            If route validation has failed.
-
         # See Also
         - [check_route](#check-route) for the route validation algorithm.
         """

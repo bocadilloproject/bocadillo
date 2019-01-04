@@ -1,6 +1,5 @@
 import inspect
 from functools import partial
-from string import Formatter
 from typing import Callable, Union, Type, Any
 from typing import Optional, TypeVar, Generic, Dict
 
@@ -175,10 +174,6 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
         except Redirection as redirection:
             res = redirection.response
         return res
-
-
-class RouteDeclarationError(Exception):
-    """Raised when a route is ill-declared."""
 
 
 # WebSocket
