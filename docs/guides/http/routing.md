@@ -73,7 +73,7 @@ Working with absolute URLs can quickly become impractical, as changes to a route
 
 To overcome this, all routes are given a name which can be referenced later.
 
-### Inferred route names (default behavior)
+### Inferred route names
 
 Bocadillo will assign a name to routes based on the name of their view function or class.
 

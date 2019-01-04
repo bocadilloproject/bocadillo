@@ -90,6 +90,7 @@ module.exports = {
                     children: listDir('guides/http', [
                         'routing',
                         'views',
+                        'error-handling',
                         'requests',
                         'responses',
                         'redirecting',
