@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.9.1] - 2018-01-04
+
 ### Fixed
 
 - Add missing `url` attribute on `WebSocket` objects, which prevented accessing information about the URL from WebSocket views.
@@ -327,7 +329,9 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...HEAD
+
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...HEAD
+[v0.9.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...v0.9.0
 [v0.8.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...v0.8.0
