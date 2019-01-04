@@ -11,7 +11,6 @@ from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from bocadillo.errors import ServerErrorMiddleware, HTTPErrorMiddleware
 from .app_types import (
     ASGIApp,
     ASGIAppInstance,
@@ -23,6 +22,7 @@ from .app_types import (
 from .compat import WSGIApp
 from .constants import DEFAULT_CORS_CONFIG
 from .events import EventsMixin
+from .http import ServerErrorMiddleware, HTTPErrorMiddleware
 from .media import Media
 from .meta import DocsMeta
 from .recipes import RecipeBase

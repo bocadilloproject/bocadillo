@@ -1,7 +1,7 @@
 import pytest
 
 from bocadillo import API, HTTPError
-from bocadillo.errors import error_to_html, error_to_media, error_to_text
+from bocadillo.http import error_to_html, error_to_media, error_to_text
 
 
 @pytest.mark.parametrize(

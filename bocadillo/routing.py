@@ -16,11 +16,11 @@ from typing import (
 from parse import parse
 from starlette.websockets import WebSocketClose
 
-from bocadillo.app_types import HTTPApp, Receive, Send, Scope
-from bocadillo.redirection import Redirection
 from . import views
+from .app_types import HTTPApp, Receive, Send, Scope
 from .http import HTTPError
 from .meta import DocsMeta
+from .redirection import Redirection
 from .request import Request
 from .response import Response
 from .views import View, HandlerDoesNotExist

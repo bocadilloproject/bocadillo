@@ -1,7 +1,7 @@
 """Bocadillo middleware definition."""
 from typing import Callable, Awaitable, Optional
 
-from bocadillo.app_types import HTTPApp
+from .app_types import HTTPApp
 from .compat import call_async
 from .request import Request
 from .response import Response

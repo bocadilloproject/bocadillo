@@ -1,7 +1,6 @@
 from json import JSONDecodeError
 
 from starlette.requests import Request as _Request
-from .http import HTTPError
 
 
 class Request(_Request):
@@ -19,6 +18,8 @@ class Request(_Request):
         try:
             return await super().json()
         except JSONDecodeError:
+            from .http import HTTPError  # prevent circular imports
+
             raise HTTPError(400, detail="JSON is malformed.")
 
     async def __aiter__(self):
