@@ -7,8 +7,8 @@ from starlette.websockets import (
     WebSocketDisconnect as _WebSocketDisconnect,
 )
 
-from ..asgi import Event
-from ..constants import WEBSOCKET_CLOSE_CODES
+from .app_types import Event
+from .constants import WEBSOCKET_CLOSE_CODES
 
 _STARLETTE_WEBSOCKET_DOCS = (
     "[Starlette.websockets.WebSocket](https://www.starlette.io/websockets/)"

@@ -1,4 +1,6 @@
-from .http import Request, Response, HTTPError
+from .request import Request
+from .response import Response
+from .errors import HTTPError
 
 
 # Built-in HTTP error handlers.

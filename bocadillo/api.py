@@ -12,22 +12,28 @@ from starlette.testclient import TestClient
 from uvicorn.main import get_logger, run
 from uvicorn.reloaders.statreload import StatReload
 
-from .asgi import ASGIApp, ASGIAppInstance, Scope, Receive, Send, EventHandler
+from .app_types import (
+    ASGIApp,
+    ASGIAppInstance,
+    Scope,
+    Receive,
+    Send,
+    EventHandler,
+    ErrorHandler,
+)
 from .compat import WSGIApp
 from .constants import DEFAULT_CORS_CONFIG
 from .error_handlers import error_to_text
-from .http.app_types import ErrorHandler
-from .http.errors import ServerErrorMiddleware, HTTPErrorMiddleware, HTTPError
-from .http.media import Media
-from .http.redirection import Redirection
-from .http.request import Request
-from .http.response import Response
-from .http.routing import HTTPRouter
+from .errors import ServerErrorMiddleware, HTTPErrorMiddleware, HTTPError
+from .media import Media
 from .meta import DocsMeta
 from .recipes import RecipeBase
+from .redirection import Redirection
+from .request import Request
+from .response import Response
+from .routing import HTTPRouter, WebSocketRouter
 from .staticfiles import static
 from .templates import TemplatesMixin
-from .websocket.routing import WebSocketRouter
 
 
 class API(TemplatesMixin, metaclass=DocsMeta):

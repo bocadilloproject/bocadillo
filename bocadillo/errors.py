@@ -6,9 +6,9 @@ from starlette.middleware.errors import (
 )
 
 from .app_types import HTTPApp, ErrorHandler
+from .compat import call_async
 from .request import Request
 from .response import Response
-from ..compat import call_async
 
 
 class HTTPError(Exception):

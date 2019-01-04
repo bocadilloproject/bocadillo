@@ -1,9 +1,9 @@
 from typing import Optional
 
 from .app_types import HTTPApp
+from .compat import call_async
 from .request import Request
 from .response import Response
-from ..compat import call_async
 
 
 class Middleware(HTTPApp):
