@@ -87,6 +87,22 @@ def test_can_close_within_context(api: API):
     assert message == {"type": "websocket.close", "code": 4242}
 
 
+def test_websocket_url(api: API):
+    @api.websocket_route("/test")
+    async def test(ws: WebSocket):
+        async with ws:
+            assert ws.url == "ws://testserver/test"
+            assert ws.url.path == "/test"
+            assert ws.url.port is None
+            assert ws.url.scheme == "ws"
+            assert ws.url.hostname == "testserver"
+            assert ws.url.query == ""
+            assert ws.url.is_secure is False
+
+    with api.client.websocket_connect("/test"):
+        pass
+
+
 # Encoding / decoding of messages
 
 

@@ -1,6 +1,7 @@
 import json
 from typing import Awaitable, Callable, Optional, Any, Union, Tuple
 
+from starlette.datastructures import URL
 from starlette.websockets import WebSocket as StarletteWebSocket
 
 from .app_types import Event
@@ -107,6 +108,10 @@ class WebSocket:
     send_text = _Delegated()
     receive_bytes = _Delegated()
     send_bytes = _Delegated()
+
+    @property
+    def url(self) -> URL:
+        return self._websocket.url
 
     async def receive_json(self) -> Union[dict, list]:
         """Return `json.loads(await self.receive_text())`.
