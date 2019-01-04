@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Add missing `url` attribute on `WebSocket` objects, which prevented accessing information about the URL from WebSocket views.
+
 ## [v0.9.0] - 2018-01-03
 
 This release has **breaking API changes** due to an overhaul of the view system.
