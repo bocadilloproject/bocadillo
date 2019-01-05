@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Awaitable
 
 from .app_types import HTTPApp
 from .compat import call_async
