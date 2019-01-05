@@ -53,7 +53,7 @@ pip install pipenv
 Then run the following in order to install dependencies:
 
 ```bash
-pipenv install --dev -e .
+pipenv install --dev
 ```
 
 To verify Python dependencies have been correctly installed, first [run the tests](#running-tests). You can also fiddle with Bocadillo in the interpreter:
