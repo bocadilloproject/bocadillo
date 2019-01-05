@@ -34,7 +34,8 @@ The `.before_dispatch()` and `.after_dispatch()` can also be plain, non-`async` 
 
 ### Interrupting request processing
 
-If a hook returns the `Response` object, no further processing is performed.
+If the `before_dispatch` hook returns the `Response` object, no further
+processing is performed.
 
 For example, this middleware will result in a `202 Accepted: Foo` response being
 returned for *any* request made to the application.
@@ -49,6 +50,8 @@ class FooMiddleware(Middleware):
         res.status_code = 202
         return res
 ```
+
+Note: returning a response in `after_dispatch` has no effect.
 
 ### Configuration
 

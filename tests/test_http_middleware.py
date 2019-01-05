@@ -143,3 +143,21 @@ def test_middleware_uses_registered_http_error_handler(api: API):
     response = api.client.get("/")
     assert response.status_code == 401
     assert response.text == "Foo"
+
+
+def test_return_response_in_before_hook(api: API):
+    class NopeMiddleware(Middleware):
+        async def before_dispatch(self, req, res):
+            res.text = "Foo"
+            return res
+
+    api.add_middleware(NopeMiddleware)
+
+    @api.route("/")
+    async def index(req, res):
+        # Should not be called
+        assert False
+
+    r = api.client.get("/")
+    assert r.status_code == 200
+    assert r.text == "Foo"
