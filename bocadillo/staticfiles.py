@@ -2,8 +2,7 @@ from os.path import exists
 
 from whitenoise import WhiteNoise
 
-from .app_types import WSGIApp
-from bocadillo.compat import empty_wsgi_app
+from .compat import WSGIApp, empty_wsgi_app
 
 
 def static(directory: str) -> WSGIApp:

@@ -3,7 +3,7 @@ import json
 import pytest
 
 from bocadillo import API, Media
-from bocadillo.exceptions import UnsupportedMediaType
+from bocadillo.media import UnsupportedMediaType
 
 
 def test_defaults_to_json(api: API):

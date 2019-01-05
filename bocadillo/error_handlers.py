@@ -1,11 +1,9 @@
-"""Built-in error handlers."""
-import traceback
-from functools import wraps
-from typing import Callable, Optional
-
-from .exceptions import HTTPError
 from .request import Request
 from .response import Response
+from .errors import HTTPError
+
+
+# Built-in HTTP error handlers.
 
 
 async def error_to_html(req: Request, res: Response, exc: HTTPError):
@@ -71,6 +69,3 @@ async def error_to_text(req: Request, res: Response, exc: HTTPError):
     if exc.detail:
         text += f"\n{exc.detail}"
     res.text = text
-
-
-ErrorHandler = Callable[[Request, Response, Exception], None]

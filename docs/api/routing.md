@@ -1,93 +1,18 @@
 # bocadillo.routing
 
-## RoutingMixin
+## BaseRoute
 ```python
-RoutingMixin(self)
+BaseRoute(self, pattern: str)
 ```
-Provide routing capabilities to a class.
-### route
-```python
-RoutingMixin.route(self, pattern: str, *, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
+The base route class.
 
 __Parameters__
 
 - __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
-- __name (str)__:
-    An optional name for the route.
-    If a route already exists for this name, it is replaced.
-    Defaults to a snake-cased version of the view's name.
-- __namespace (str)__:
-    An optional namespace for the route. If given, it is prefixed to
-    the name and separated by a colon.
-
-__Raises__
-
-- `RouteDeclarationError`:
-    If route validation has failed.
-
-__See Also__
-
-- [check_route](#check-route) for the route validation algorithm.
-
-### websocket_route
-```python
-RoutingMixin.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
-```
-Register a WebSocket route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-
-__See Also__
-
-- [WebSocket](./websockets.md#websocket) for a description of keyword
-arguments.
-
-### url_for
-```python
-RoutingMixin.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
-
-## Route
-```python
-Route(self, pattern: str, view: bocadillo.views.View, name: str)
-```
-Represents the binding of an URL pattern to a view.
-
-Note: as a framework user, you will not need to create routes directly.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern. F-string syntax is supported for parameters.
-- __view (View)__:
-    A `View` object.
-- __name (str)__:
-    The route's name.
 
 ### url
 ```python
-Route.url(self, **kwargs) -> str
+BaseRoute.url(self, **kwargs) -> str
 ```
 Return full path for the given route parameters.
 
@@ -103,7 +28,7 @@ __Returns__
 
 ### parse
 ```python
-Route.parse(self, path: str) -> Union[dict, NoneType]
+BaseRoute.parse(self, path: str) -> Union[dict, NoneType]
 ```
 Parse an URL path against the route's URL pattern.
 
@@ -112,6 +37,107 @@ __Returns__
 `result (dict or None)`:
     If the URL path matches the URL pattern, this is a dictionary
     containing the route parameters, otherwise None.
+
+## RouteMatch
+```python
+RouteMatch(self, route: ~_R, params: dict)
+```
+Represents a match between an URL path and a route.
+
+__Parameters__
+
+- __route (BaseRoute)__: a route object.
+- __params (dict)__: extracted route parameters.
+
+## BaseRouter
+```python
+BaseRouter(self)
+```
+The base router class.
+
+__Attributes__
+
+- `routes (dict)`:
+    A mapping of patterns to route objects.
+
+### add_route
+```python
+BaseRouter.add_route(self, *args, **kwargs)
+```
+Register a route. Not implemented.
+### route
+```python
+BaseRouter.route(self, *args, **kwargs)
+```
+Register a route by decorating a view.
+### match
+```python
+BaseRouter.match(self, path: str) -> Union[bocadillo.routing.RouteMatch[~_R], NoneType]
+```
+Attempt to match an URL path against one of the registered routes.
+
+__Parameters__
+
+- __path (str)__: an URL path
+
+__Returns__
+
+`match (RouteMatch or None)`:
+    a `RouteMatch` object if the path matched a registered route,
+    `None` otherwise.
+
+## HTTPRoute
+```python
+HTTPRoute(self, pattern: str, view: bocadillo.views.View, name: str)
+```
+Represents the binding of an URL pattern to an HTTP view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __view (View)__:
+    A `View` object.
+- __name (str)__:
+    The route's name.
+
+## HTTPRouter
+```python
+HTTPRouter(self)
+```
+A router for HTTP routes.
+
+Extends [BaseRouter](#baserouter).
+
+Note: routes are stored by `name` instead of `pattern`.
+
+### add_route
+```python
+HTTPRouter.add_route(self, view: Union[bocadillo.views.View, Type[Any], Callable, Any], pattern: str, *, name: str = None, namespace: str = None) -> bocadillo.routing.HTTPRoute
+```
+Register an HTTP route.
+
+If the given `view` is not a `View` object, it is converted to one:
+
+- Classes are instanciated (without arguments) and converted with
+[from_obj].
+- Callables are converted with [from_handler].
+- Any other object is interpreted as a view-like object, and converted
+with [from_obj].
+
+[from_handler]: /api/views.md#from-handler
+[from_obj]: /api/views.md#from-obj
+
+__Parameters__
+
+- __view (View, class, callable, or object)__:
+    convertible to `View` (see above).
+- __pattern (str)__: an URL pattern.
+- __name (str)__: a route name (inferred from the view if not given).
+- __namespace (str)__: an optional route namespace.
+
+__Returns__
+
+`route (HTTPRoute)`: the registered route.
 
 ## WebSocketRoute
 ```python
@@ -119,61 +145,36 @@ WebSocketRoute(self, pattern: str, view: Callable[[bocadillo.websockets.WebSocke
 ```
 Represents the binding of an URL path to a WebSocket view.
 
+[WebSocket]: /api/websockets.md#websocket
+
 __Parameters__
 
 - __pattern (str)__: an URL pattern.
 - __view (coroutine function)__:
     Should take as parameter a `WebSocket` object and
     any extracted route parameters.
+- __kwargs (any)__: passed when building the [WebSocket] object.
 
-### url
+## WebSocketRouter
 ```python
-WebSocketRoute.url(self, **kwargs) -> str
+WebSocketRouter(self)
 ```
-Return full path for the given route parameters.
+A router for WebSocket routes.
 
-__Parameters__
+Extends [BaseRouter](#baserouter).
 
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`:
-    A full URL path obtained by formatting the route pattern with
-    the provided route parameters.
-
-### parse
+### add_route
 ```python
-WebSocketRoute.parse(self, path: str) -> Union[dict, NoneType]
+WebSocketRouter.add_route(self, pattern: str, view: Callable[[bocadillo.websockets.WebSocket], Awaitable[NoneType]], **kwargs)
 ```
-Parse an URL path against the route's URL pattern.
-
-__Returns__
-
-`result (dict or None)`:
-    If the URL path matches the URL pattern, this is a dictionary
-    containing the route parameters, otherwise None.
-
-## check_route
-```python
-check_route(pattern: str, view: bocadillo.views.View) -> None
-```
-Check compatibility of a route pattern and a view.
+Register a WebSocket route.
 
 __Parameters__
 
 - __pattern (str)__: an URL pattern.
-- __view (View)__: a `View` object.
+- __view (coroutine function)__: a WebSocket view.
 
-__Raises__
+__Returns__
 
-- `RouteDeclarationError `:
-    - If `pattern` does not have a leading slash.
-    - If route parameters declared in the pattern do not match those
-    of any view handler, e.g. a parameter is declared in the pattern, but
-    not used in the handler or vice-versa.
-
-__See Also__
-
-- `ALL_HTTP_METHODS` is defined in [constants.py](./constants.md).
+`route (WebSocketRoute)`: the registered route.
 

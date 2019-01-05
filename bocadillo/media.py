@@ -1,7 +1,5 @@
 import json
-from typing import Any, Callable, Dict, Union
-
-from .exceptions import UnsupportedMediaType
+from typing import Any, Callable, Union, List
 
 MediaHandler = Callable[[Any], str]
 
@@ -49,11 +47,10 @@ class Media:
     # Parameters
     media_type (str):
         The media type that will be used when serializing values.
-    handlers (dict):
-        A mapping of media types to `(Any) -> str` callables.
-        Defaults to built-in media handlers.
 
     # Attributes
+    handlers (dict):
+        A mapping of media types to `(Any) -> str` callables.
     JSON (str): `application/json`
     PLAIN_TEXT (str): `text/plain`
     HTML (str): `text/html`
@@ -63,12 +60,8 @@ class Media:
     PLAIN_TEXT = "text/plain"
     HTML = "text/html"
 
-    def __init__(
-        self, media_type: str, handlers: Dict[str, MediaHandler] = None
-    ):
-        if handlers is None:
-            handlers = get_default_handlers()
-        self.handlers = handlers
+    def __init__(self, media_type: str):
+        self.handlers = get_default_handlers()
         self.type = media_type
 
     def serialize(self, value: Any, media_type: str):
@@ -104,3 +97,21 @@ class Media:
                 media_type, available=list(self.handlers)
             )
         self._default_type = media_type
+
+
+class UnsupportedMediaType(Exception):
+    """Raised when trying to use an unsupported media type.
+
+    # Parameters
+    media_type (str):
+        the unsupported media type.
+    available (list of str):
+        a list of supported media types.
+    """
+
+    def __init__(self, media_type: str, available: List[str]):
+        self._media_type = media_type
+        self._available = available
+
+    def __str__(self):
+        return f'{self._media_type} (available: {", ".join(self._available)})'

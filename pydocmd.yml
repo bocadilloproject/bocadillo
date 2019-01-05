@@ -10,10 +10,8 @@ generate:
   - bocadillo.compat+
 - error_handlers.md:
   - bocadillo.error_handlers+
-- events.md:
-  - bocadillo.events++
-- exceptions.md:
-  - bocadillo.exceptions++
+- errors.md:
+  - bocadillo.errors++
 - hooks.md:
   - bocadillo.hooks:
       - bocadillo.hooks.before
@@ -34,11 +32,7 @@ generate:
       - bocadillo.recipes.Recipe+
       - bocadillo.recipes.RecipeBook+
 - routing.md:
-  - bocadillo.routing:
-      - bocadillo.routing.RoutingMixin+
-      - bocadillo.routing.Route+
-      - bocadillo.routing.WebSocketRoute+
-      - bocadillo.routing.check_route
+  - bocadillo.routing++
 - staticfiles.md:
   - bocadillo.staticfiles+
 - templates.md:

@@ -1,65 +1,69 @@
 # bocadillo.middleware
-Bocadillo middleware definition.
+
 ## Middleware
 ```python
-Middleware(self, dispatch: Callable[[bocadillo.request.Request], Awaitable[bocadillo.response.Response]], **kwargs)
+Middleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[bocadillo.response.Response]], **kwargs)
 ```
 Base class for middleware classes.
 
 __Parameters__
 
-- __dispatch (coroutine function)__:
-    a function whose return value can be awaited to obtain a response.
-- __kwargs (dict)__:
-    Keyword arguments passed when registering the middleware.
+- __app__: a function that may as well be another `Middleware` instance.
+- __kwargs (any)__:
+    Keyword arguments passed when registering the middleware on the API.
 
 ### before_dispatch
 ```python
-Middleware.before_dispatch(self, req: bocadillo.request.Request)
+Middleware.before_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> Union[bocadillo.response.Response, NoneType]
 ```
 Perform processing before a request is dispatched.
 
-If a `Response` object is returned, it will be used
+If the `Response` object is returned, it will be used
 and no further processing will be performed.
-
-__Parameters__
-
-- __req (Request)__: a Request object.
-
-### after_dispatch
-```python
-Middleware.after_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response)
-```
-Perform processing after a request has been dispatched.
-
-If a `Response` object is returned, it is used instead of the response
-obtained by awaiting `dispatch()`.
 
 __Parameters__
 
 - __req (Request)__: a Request object.
 - __res (Response)__: a Response object.
 
-### process
+__Returns__
+
+`res (Response or None)`: an optional response object.
+
+### after_dispatch
 ```python
-Middleware.process(self, req: bocadillo.request.Request) -> bocadillo.response.Response
+Middleware.after_dispatch(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> Union[bocadillo.response.Response, NoneType]
 ```
-Process an incoming request.
-
-Roughly equivalent to:
-
-```python
-res = await self.before_dispatch(req) or None
-res = res or await self.dispatch(req)
-res = await self.after_dispatch(req, res) or res
-return res
-```
-
-Aliased by `__call__()`.
+Perform processing after a request has been dispatched.
 
 __Parameters__
 
-- __req (Request)__: a request object.
+- __req (Request)__: a Request object.
+- __res (Response)__: a Response object.
+
+__Returns__
+
+`res (Response or None)`: an optional response object.
+
+### process
+```python
+Middleware.process(self, req: bocadillo.request.Request, res: bocadillo.response.Response) -> bocadillo.response.Response
+```
+Process an incoming request.
+
+- Call `before_dispatch()`. If a response is returned here, no
+further processing is performed.
+- Call the underlying HTTP `app`.
+- Call `after_dispatch()`.
+- Return the response.
+
+Note: this is aliased to `__call__()`, which means middleware
+instances are callable.
+
+__Parameters__
+
+- __req (Request)__: a Request object.
+- __res (Response)__: a Response object.
 
 __Returns__
 

@@ -1,14 +1,22 @@
-from typing import List, Callable, Awaitable, MutableMapping, Any
+from typing import Callable, Awaitable, MutableMapping, Any
+
+from .request import Request
+from .response import Response
 
 # ASGI
 Scope = dict
 Event = MutableMapping[str, Any]
-Receive = Callable[[], Event]
+Receive = Callable[[], Awaitable[Event]]
 Send = Callable[[Event], None]
 ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]
 ASGIApp = Callable[[Scope], ASGIAppInstance]
 
-# WSGI
-Environ = dict
-StartResponse = Callable[[str, List[str]], None]
-WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
+# Views
+Handler = Callable[[Request, Response, Any], Awaitable[None]]
+
+# HTTP
+HTTPApp = Callable[[Request, Response], Awaitable[Response]]
+ErrorHandler = Callable[[Request, Response, Exception], None]
+
+# Server lifespan events
+EventHandler = Callable[[], Awaitable[None]]

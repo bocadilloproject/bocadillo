@@ -1,13 +1,11 @@
 import inspect
 from functools import partial, wraps
-from typing import List, Union, Any, Awaitable, Callable, Dict
+from typing import List, Union, Any, Dict
 
+from .app_types import Handler
 from .compat import call_async, camel_to_snake
 from .constants import ALL_HTTP_METHODS
-from .request import Request
-from .response import Response
 
-Handler = Callable[[Request, Response, Any], Awaitable[None]]
 MethodsParam = Union[List[str], all]
 
 
