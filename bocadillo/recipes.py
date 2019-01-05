@@ -12,9 +12,6 @@ class RecipeBase:
         assert prefix.startswith("/"), "recipe prefix must start with '/'"
         self.prefix = prefix
 
-    def url(self, path: str) -> str:
-        return self.prefix + path
-
     def __call__(self, api, root: str = ""):
         """Apply the recipe to an API object.
 

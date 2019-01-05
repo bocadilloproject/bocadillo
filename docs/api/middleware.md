@@ -51,12 +51,11 @@ Middleware.process(self, req: bocadillo.request.Request, res: bocadillo.response
 ```
 Process an incoming request.
 
-- Call `before_dispatch()`.
+- Call `before_dispatch()`. If a response is returned here, no
+further processing is performed.
 - Call the underlying HTTP `app`.
 - Call `after_dispatch()`.
-
-If a hook returns a `Response`, it is returned without further
-processing.
+- Return the response.
 
 Note: this is aliased to `__call__()`, which means middleware
 instances are callable.

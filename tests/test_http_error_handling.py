@@ -125,3 +125,7 @@ def test_http_error_status_must_be_int_or_http_status():
         HTTPError("404")
 
     assert "int or HTTPStatus" in str(ctx.value)
+
+
+def test_http_error_str_representation():
+    assert str(HTTPError(404, detail="foo")) == "404 Not Found"

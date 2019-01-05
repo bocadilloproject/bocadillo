@@ -15,10 +15,6 @@ BEFORE = "before"
 AFTER = "after"
 
 
-async def empty_hook(req: Request, res: Response, params: dict):
-    pass
-
-
 class Hooks:
     """Hooks manager."""
 
