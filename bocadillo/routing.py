@@ -204,10 +204,6 @@ class RoutingMixin:
 
         # Parameters
         pattern (str): an URL pattern.
-        methods (list of str):
-            An optional list of HTTP methods.
-            Defaults to `["get", "head"]`.
-            Ignored for class-based views.
         name (str):
             An optional name for the route.
             If a route already exists for this name, it is replaced.

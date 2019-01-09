@@ -14,10 +14,6 @@ Register a new route by decorating a view.
 __Parameters__
 
 - __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
 - __name (str)__:
     An optional name for the route.
     If a route already exists for this name, it is replaced.
