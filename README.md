@@ -11,7 +11,7 @@
 [![python](https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=)][python-url]
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
 [![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
-[![travis](https://img.shields.io/travis-ci/bocadilloproject/bocadillo.svg)][travis-url]
+[![travis](https://img.shields.io/travis/bocadilloproject/bocadillo.svg)][travis-url]
 [![black](https://img.shields.io/badge/code_style-black-000000.svg)][black]
 [![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)][codecov]
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
