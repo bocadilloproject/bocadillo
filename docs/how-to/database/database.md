@@ -53,6 +53,60 @@ If you're using NoSQL, you don't need an ORM and — luckily — many high-quali
 - [aioelasticsearch] for ElasticSearch.
 - [aioredis] for Redis.
 
+## Integrating Tortoise ORM
+
+1. Install Tortoise itself:
+
+```bash
+pip install tortoise-orm
+```
+
+2. Tortoise comes with [aiosqlite] by default, but if you're using another database than SQLite, install the adequate async driver among [those supported by Tortoise][tortoise-db-backends], e.g. [asyncpg]:
+
+```bash
+pip install asyncpg
+```
+
+3. Register startup and shutdown [event handlers][events] to initialize and clean up database connection (see also [Set up (Tortoise)][tortoise-setup]):
+
+```python
+from bocadillo import API
+from tortoise import Tortoise
+
+api = API()
+
+
+@api.on("startup")
+async def db_init():
+    await Tortoise.init(
+        # Connect to a database located at `$DATABASE_URL`,
+        db_url=os.environ["DATABASE_URL"],
+        # Register the `models.py` file to be discovered for models.
+        # The dict key will be used as a namespace to reference models,
+        # e.g. when setting up relationships.
+        modules={"models": ["models"]}
+    )
+    # Generate the schema
+    await Tortoise.generate_schemas()
+
+
+@api.on("shutdown")
+async def db_cleanup():
+    await Tortoise.close_connections()
+```
+
+There are no additional integration steps. Once this is done, you can start using Tortoise as described in the official documentation. We recommend you follow the [Tortoise Getting Started guide][tortoise-getting-started] to get the ground running.
+
+## Bloguero: a basic blog example
+
+Bloguero is an example blog app that makes use of Tortoise to store blog posts.
+
+The full code for this application can be found [on GitHub][bloguero].
+
+<<<@/docs/how-to/database/snippets/models.py
+
+<<<@/docs/how-to/database/snippets/blog.py
+
 [orm-wikipedia]: https://en.wikipedia.org/wiki/Object-relational_mapping
 [tortoise]: https://tortoise-orm.readthedocs.io/en/latest/
 [flask]: http://flask.pocoo.org
@@ -68,3 +122,8 @@ If you're using NoSQL, you don't need an ORM and — luckily — many high-quali
 [motor]: https://github.com/mongodb/motor
 [aioelasticsearch]: https://github.com/aio-libs/aioelasticsearch
 [aioredis]: https://github.com/aio-libs/aioredis
+[tortoise-db-backends]: https://tortoise-orm.readthedocs.io/en/latest/index.html#pluggable-database-backends
+[tortoise-setup]: https://tortoise-orm.readthedocs.io/en/latest/setup.html
+[events]: ../../guides/agnostic/events.md
+[tortoise-getting-started]: https://tortoise-orm.readthedocs.io/en/latest/getting_started.html
+[bloguero]: https://github.com/bocadilloproject/bloguero
