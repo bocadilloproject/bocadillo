@@ -10,7 +10,7 @@ Information Security is hard, and we're no experts. If you notice anything wrong
 
 HTTPS allows the server and a client to perform an encrypted communication, which means no one will be able to intercept or forge packets. It typically helps in preventing Man-in-the-Middle (MITM) attacks and is a necessary condition for securing a web application. Many web browsers today even display your site as "insecure" if it does not have HTTPS.
 
-To set up HTTPS, you need to get a certificate from a Certificate Authority (CA). [Let's Encrypt] is a popular, free and open source CA. Certificates need to be regularly updated, so we recommend you use [Certbot] to automate the process.
+To set up HTTPS, you need to get a certificate from a Certificate Authority (CA). [Let's Encrypt](https://letsencrypt.org) is a popular, free and open source CA. Certificates need to be regularly updated, so we recommend you use [Certbot](https://certbot.eff.org) to automate the process.
 
 Once your certificate and key files (`.crt`, `.key`) are generated, you can pass them to Gunicorn (see our [Deployment] guide) like so:
 
@@ -28,7 +28,7 @@ An XSS attack consists in injecting malicious JavaScript code into HTML, such as
 
 One way to prevent XSS attacks is by escaping all quotes, replacing them with their HTML equivalent.
 
-If you're using the [templating utilities](../agnostic/templates.md) provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
+If you're using the [templating utilities][templates] provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
 
 However, you should always quote attributes in order for this to work, e.g.
 
@@ -101,15 +101,13 @@ The example above is taken from the [sqlite3](https://docs.python.org/3/library/
 
 ## Host header validation
 
-An HTTP Host Header attack consists in a malicious user providing a fake `Host` header in a request in order to execute a potentially harmful operation. An example of this is [cache poisoning].
+An HTTP Host Header attack consists in a malicious user providing a fake `Host` header in a request in order to execute a potentially harmful operation. An example of this is [cache poisoning](https://www.owasp.org/index.php/Cache_Poisoning).
 
 In order to prevent this type of attack, every Bocadillo applications has a whitelist of hosts which the `Host` header is validated against. An invalid `Host` will result in Bocadillo sending a `400 Bad Request` response.
 
 By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `API` — see [allowed hosts].
 
-[Let's Encrypt]: https://letsencrypt.org
-[Certbot]: https://certbot.eff.org
 [Deployment]: ./deployment.md
-[HSTS]: ../http/middleware.md#hsts
-[cache poisoning]: https://www.owasp.org/index.php/Cache_Poisoning
-[Allowed hosts]: ../api.md#allowed-hosts
+[templates]: ../guides/agnostic/templates.md
+[HSTS]: ../guides/http/middleware.md#hsts
+[Allowed hosts]: ../guides/api.md#allowed-hosts

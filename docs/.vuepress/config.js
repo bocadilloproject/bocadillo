@@ -58,6 +58,10 @@ module.exports = {
                 link: '/how-to/',
             },
             {
+                text: 'Discussions',
+                link: '/discussions/',
+            },
+            {
                 text: 'API Reference',
                 link: '/api/',
             },
@@ -130,15 +134,6 @@ module.exports = {
                         'cli',
                     ]),
                 },
-                {
-                    title: 'Discussions',
-                    collapsable: false,
-                    children: listDir('guides/discussions', [
-                        'async-vs-sync',
-                        'deployment',
-                        'security',
-                    ])
-                }
             ],
             '/how-to/': [
                 {
@@ -151,6 +146,16 @@ module.exports = {
                         'tortoise',
                     ]),
                 },
+            ],
+            '/discussions/': [
+                {
+                    title: 'Discussions',
+                    collapsable: false,
+                    children: listDir('discussions', [
+                        'deployment',
+                        'security',
+                    ])
+                }
             ],
             '/api/': [
                 {

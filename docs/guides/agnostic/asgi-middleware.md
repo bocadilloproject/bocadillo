@@ -82,4 +82,4 @@ api = bocadillo.API(enable_gzip=True, gzip_min_size=2048)
 [HTTP middleware]: ../http/middleware.md
 [HSTS]: #hsts
 [ASGI]: https://asgi.readthedocs.io
-[Security: HTTPs]: ../discussions/security.md#https
+[Security: HTTPS]: ../../discussions/security.md#https
