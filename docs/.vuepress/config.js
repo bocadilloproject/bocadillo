@@ -148,7 +148,7 @@ module.exports = {
                         'custom-cli-commands',
                         'extra-media-handlers',
                         'middleware',
-                        'database/database',
+                        'tortoise',
                     ]),
                 },
             ],
