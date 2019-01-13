@@ -143,6 +143,7 @@ module.exports = {
                         'custom-cli-commands',
                         'extra-media-handlers',
                         'middleware',
+                        'tortoise',
                     ]),
                 },
             ],
@@ -151,6 +152,7 @@ module.exports = {
                     title: 'Discussions',
                     collapsable: false,
                     children: listDir('discussions', [
+                        'databases',
                         'deployment',
                         'security',
                     ])
