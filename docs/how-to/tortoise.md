@@ -1,9 +1,8 @@
 # Use Tortoise ORM to interact with an SQL database
 
-Relational databases are a robust, well-established and convenient way to
-persist and query application data.
+[Tortoise ORM][tortoise] is a promising asynchronous Python ORM that allows you to interact with an SQL database asynchronously using a Django-like API. This guide will take you through the steps of integrating it into a Bocadillo application.
 
-[Tortoise ORM][tortoise] is a promising asynchronous Python ORM that allows you to interact with an SQL database asynchronously using a Django-like API.
+For more background, see our [discussion on databases][databases-discussion].
 
 ::: warning
 Tortoise ORM is still a rather young project. As such, some convenient features like database migrations are not supported *yet*. See also their [roadmap][tortoise-roadmap].
@@ -129,75 +128,13 @@ if __name__ == "__main__":
 
 Again, feel free to read through Bloguero's source code [on GitHub][bloguero] to understand the finer details and see the complete CRUD implementation.
 
-## Discussion
-
-### What is an ORM?
-
-Paraphrasing the [Wikipedia page][orm-wikipedia], ORM — a.k.a. *Object Relational Mapping* — is a programming technique to convert data between incompatible type systems.
-
-Although it is a general concept, *an ORM* typically refers to software that acts as **a conversion layer between a given programming language and a database**, e.g. between Python and PostgreSQL.
-
-Put simply, an ORM allows the developer to interact with the database through objects and method calls instead of writing SQL queries by hand.
-
-### Do I need an ORM?
-
-Using an ORM has the benefit of making the data manipulation code more reusable, more consistent and more secure.
-
-That said, keep in mind that ORMs have downsides, too. [Full Stack Python's article on Object Relation Mappers][fsp-article] mentions impedance mismatch, potentially reduced performance, and shift of complexity from the database to application code.
-
-Depending on your use case, you may get away with using an async SQL client such as:
-
-- [asyncpg] for PostgreSQL.
-- [aiomysql] for MySQL.
-- [aiosqlite] for SQLite.
-
-### Why not SQLAlchemy?
-
-[SQLAlchemy] is a very popular Python ORM, commonly used in conjonction with a microframework such as [Flask], [Falcon] or similar.
-
-The main issue with SQLAlchemy in the context of asynchronous web servers is that it is *synchronous*. This means that while the query is being executed, the server will block while it is waiting on I/O.
-
-In fact, querying a database is almost always an I/O-bound operation. This makes asynchronous programming a very suitable paradigm for interacting with databases.
-
-### Why Tortoise ORM?
-
-Because it is async-first, just like Bocadillo.
-
-Implementations of async Python ORMs rely on the recent development of async Python database clients (such as [asyncpg] or [aiomysql]).
-
-A popular approach has been to map synchronous ORMs to be asynchronous. This is the case of [GINO][gino], built on top of SQLAlchemy Core, or [peewee-async], built on top of [peewee].
-
-On the other hand, [Tortoise ORM][tortoise] is a from-scratch ORM implementation specifically targeted at async Python applications. It exposes a clean API very reminiscent of the Django ORM.
-
-### What about NoSQL?
-
-If you're using NoSQL, you don't need an ORM and — luckily — many high-quality async clients are already available, such as:
-
-- [Motor] for MongoDB.
-- [aioelasticsearch] for ElasticSearch.
-- [aioredis] for Redis.
-
-[orm-wikipedia]: https://en.wikipedia.org/wiki/Object-relational_mapping
-[fsp-article]: https://www.fullstackpython.com/object-relational-mappers-orms.html
-[flask]: http://flask.pocoo.org
-[falcon]: https://falcon.readthedocs.io
-[sqlalchemy]: https://www.sqlalchemy.org
-[asyncpg]: https://www.github.com/MagicStack/asyncpg
-[aiomysql]: https://github.com/aio-libs/aiomysql
-[aiosqlite]: https://github.com/jreese/aiosqlite
-[gino]: https://github.com/fantix/gino
-[peewee-async]: https://github.com/05bit/peewee-async
-[peewee]: https://github.com/coleifer/peewee
-[motor]: https://github.com/mongodb/motor
-[aioelasticsearch]: https://github.com/aio-libs/aioelasticsearch
-[aioredis]: https://github.com/aio-libs/aioredis
-[events]: ../guides/agnostic/events.md
-[bloguero]: https://github.com/bocadilloproject/bloguero
-[tortoise]: https://tortoise-orm.readthedocs.io/en/latest/
+[tortoise]: https://tortoise-orm.readthedocs.io
+[databases-discussion]: ../discussions/databases.md
+[tortoise-roadmap]: https://tortoise-orm.readthedocs.io/en/latest/roadmap.html
 [tortoise-db-backends]: https://tortoise-orm.readthedocs.io/en/latest/index.html#pluggable-database-backends
 [tortoise-setup]: https://tortoise-orm.readthedocs.io/en/latest/setup.html
-[tortoise-roadmap]: https://tortoise-orm.readthedocs.io/en/latest/roadmap.html
 [tortoise-models]: https://tortoise-orm.readthedocs.io/en/latest/models.html
 [tortoise-queries]: https://tortoise-orm.readthedocs.io/en/latest/query.html
 [tortoise-getting-started]: https://tortoise-orm.readthedocs.io/en/latest/getting_started.html
 [tortoise-fields]: https://tortoise-orm.readthedocs.io/en/latest/fields.html
+[bloguero]: https://github.com/bocadilloproject/bloguero
