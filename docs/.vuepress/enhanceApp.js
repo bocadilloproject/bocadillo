@@ -1,6 +1,6 @@
-export default ({router}) => {
+export default ({ router }) => {
     router.addRoutes([
         // After renaming "Topics" section to "Guides"
-        {path: '/topics/', redirect: '/guides/'},
+        { path: '/topics/', redirect: '/guides/' },
     ])
 }

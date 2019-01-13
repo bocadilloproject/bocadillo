@@ -9,14 +9,14 @@ module.exports = {
     lastUpdated: true,
     head: [
         // Twitter card meta tags
-        ['meta', {name: 'twitter:card', content: 'summary'}],
+        ['meta', { name: 'twitter:card', content: 'summary' }],
         ['meta', {
             name: 'twitter:url',
             content: 'https://bocadillo.github.io'
         }],
-        ['meta', {name: 'twitter:site', content: 'Bocadillo'}],
-        ['meta', {name: 'twitter:creator', content: 'Florimond Manca'}],
-        ['meta', {name: 'twitter:title', content: 'Bocadillo'}],
+        ['meta', { name: 'twitter:site', content: 'Bocadillo' }],
+        ['meta', { name: 'twitter:creator', content: 'Florimond Manca' }],
+        ['meta', { name: 'twitter:title', content: 'Bocadillo' }],
         ['meta', {
             name: 'twitter:description',
             content: 'A modern Python web framework filled with asynchronous salsa'
@@ -35,7 +35,7 @@ module.exports = {
         editLinkText: 'Edit this page on GitHub',
         sidebarDepth: 2,
         lastUpdated: true,
-        serviceWorker: {updatePopup: true},
+        serviceWorker: { updatePopup: true },
         algolia: process.env.NODE_ENV === "production" ? {
             apiKey: process.env.ALGOLIA_API_KEY,
             indexName: "bocadilloproject",
@@ -56,6 +56,10 @@ module.exports = {
             {
                 text: 'How-To',
                 link: '/how-to/',
+            },
+            {
+                text: 'Discussions',
+                link: '/discussions/',
             },
             {
                 text: 'API Reference',
@@ -130,15 +134,6 @@ module.exports = {
                         'cli',
                     ]),
                 },
-                {
-                    title: 'Discussions',
-                    collapsable: false,
-                    children: listDir('guides/discussions', [
-                        'async-vs-sync',
-                        'deployment',
-                        'security',
-                    ])
-                }
             ],
             '/how-to/': [
                 {
@@ -150,6 +145,16 @@ module.exports = {
                         'middleware',
                     ]),
                 },
+            ],
+            '/discussions/': [
+                {
+                    title: 'Discussions',
+                    collapsable: false,
+                    children: listDir('discussions', [
+                        'deployment',
+                        'security',
+                    ])
+                }
             ],
             '/api/': [
                 {

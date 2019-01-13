@@ -4,7 +4,7 @@ In development, running the `api.py` application script has the effect of passin
 
 In production you'll probably also want to use a process manager to be able to spin up multiple workers and increase throughput.
 
-You'll also want to turn off [debug mode](../api.md#debug-mode) to disable auto-reload and prevent displaying error tracebacks in the browser.
+You'll also want to turn off [debug mode] to disable auto-reload and prevent displaying error tracebacks in the browser.
 
 ## Running with Gunicorn
 
@@ -37,3 +37,4 @@ In practice, this means that **you won't need any extra steps to serve static fi
 [asyncio]: https://docs.python.org/3/library/asyncio.html
 [Gunicorn]: http://docs.gunicorn.org/en/stable/
 [Uvicorn Deployment]: https://www.uvicorn.org/deployment/
+[debug mode]: ../guides/api.md#debug-mode

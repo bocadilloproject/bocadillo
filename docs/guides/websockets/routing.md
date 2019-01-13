@@ -67,7 +67,7 @@ req.query_params["sub"]  # "2"  (first item)
 req.query_params.getlist("sub")  # ["2", "3"]
 ```
 
-[deployment]: ../discussions/deployment.md
+[deployment]: ../../discussions/deployment.md
 [upgrade]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism
 [ASGI close]: https://asgi.readthedocs.io/en/latest/specs/www.html#close
 [Error handling]: ./error-handling.md

@@ -1,3 +1,0 @@
-# Async vs Sync
-
-> TODO
