@@ -26,6 +26,7 @@ As a result, we strongly recommend you read this document carefully before upgra
   - `UnsupportedMediaType` has moved to `bocadillo.media`.
   - `HTTPError` has moved to `bocadillo.errors` (but is still available at the top level: `from bocadillo import HTTPError`).
 - Other internal refactoring that should not affect framework users.
+- (Docs) Moved discussions to a dedicated section.
 
 ### Fixed
 
