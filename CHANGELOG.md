@@ -22,7 +22,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - The `before_dispatch` hook on HTTP middleware classes now takes a `Response` as second argument.
 - The `bocadillo.exceptions` module has been removed:
-  - `WebSocketDisconnect` has moved to `bocadillo.exceptions`.
+  - `WebSocketDisconnect` has moved to `bocadillo.websockets`.
   - `UnsupportedMediaType` has moved to `bocadillo.media`.
   - `HTTPError` has moved to `bocadillo.errors` (but is still available at the top level: `from bocadillo import HTTPError`).
 - Other internal refactoring that should not affect framework users.
@@ -30,7 +30,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Fixed
 
-- Even if an error handler was registered for a given exception class, Bocadillo used to return a 500 error response. It will now honor what the error handler does to the `res` object.
+- Even if an error handler was registered for a given exception class, Bocadillo used to return a 500 error response. It will now honor what the error handler does to the `res` object, i.e. only returning a 500 error response if the error handler does so or if it re-raised the exception.
 - The `after_dispatch` hook on HTTP middleware classes is not called anymore if the inbound HTTP method is not supported by the view.
 
 ## [v0.9.1] - 2018-01-04
