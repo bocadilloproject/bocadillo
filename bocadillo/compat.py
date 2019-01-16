@@ -1,17 +1,21 @@
-"""Various compatibility utilities."""
 import asyncio
 import re
-from typing import Callable, Coroutine
+from typing import Callable, List, TypeVar, Union, Optional, Any, Coroutine
 
 from starlette.concurrency import run_in_threadpool
-
-from .app_types import WSGIApp
 
 _camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
 _snake_regex = re.compile(r"([a-z0-9])([A-Z])")
 
+_V = TypeVar("_V")
 
-async def call_async(func: Callable, *args, sync=None, **kwargs) -> Coroutine:
+
+async def call_async(
+    func: Union[Callable[..., Coroutine[Any, Any, _V]], Callable[..., _V]],
+    *args: Any,
+    sync: Optional[bool] = None,
+    **kwargs: Any,
+) -> _V:
     """Call a function in an async manner.
 
     # Parameters
@@ -34,6 +38,13 @@ def camel_to_snake(name: str) -> str:
     """Convert a `CamelCase` name to its `snake_case` version."""
     s1 = _camel_regex.sub(r"\1_\2", name)
     return _snake_regex.sub(r"\1_\2", s1).lower()
+
+
+# WSGI
+
+Environ = dict
+StartResponse = Callable[[str, List[str]], None]
+WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
 
 
 def empty_wsgi_app() -> WSGIApp:

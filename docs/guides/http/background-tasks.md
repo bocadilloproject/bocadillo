@@ -25,10 +25,14 @@ To create a background task, decorate a no-argument async function with `@res.ba
 
 Here's an example that simulates sending a confirmation email:
 
-```python
+```python{9-12}
 from asyncio import sleep
+from bocadillo import API, view
 
-@api.route('/orders', methods=['post'])
+api = API()
+
+@api.route("/orders")
+@view(methods=["post"])
 async def create_order(req, res):
     @res.background
     def send_confirmation():
@@ -42,16 +46,20 @@ async def create_order(req, res):
 
 You can also use `res.background()` as a regular function. This is useful to define parametrized tasks. Extra arguments or keyword arguments passed to `res.background()` will be passed to the task function.
 
-```python
+```python{6-8,13}
 from asyncio import sleep
+from bocadillo import API, view
+
+api = API()
 
 async def send_confirmation(who: str):
     # TODO: send an email here
     await sleep(1)
 
-@api.route('/orders', methods=['post'])
+@api.route("/orders")
+@view(methods=["post"])
 async def create_order(req, res):
-    res.background(send_confirmation, 'user@example.net')
+    res.background(send_confirmation, "user@example.net")
     res.status_code = 201
 ```
 

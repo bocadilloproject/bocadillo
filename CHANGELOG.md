@@ -14,9 +14,36 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
-This release has **breaking API changes**. This is due to an overhaul of the view system.
+### Added
 
-If your application uses any of the features below, you are affected and should review these changes thoroughly before upgrading:
+- In-browser traceback of unhandled exceptions when running with `debug=True`.
+
+### Changed
+
+- The `before_dispatch` hook on HTTP middleware classes now takes a `Response` as second argument.
+- The `bocadillo.exceptions` module has been removed:
+  - `WebSocketDisconnect` has moved to `bocadillo.websockets`.
+  - `UnsupportedMediaType` has moved to `bocadillo.media`.
+  - `HTTPError` has moved to `bocadillo.errors` (but is still available at the top level: `from bocadillo import HTTPError`).
+- Other internal refactoring that should not affect framework users.
+- (Docs) Moved discussions to a dedicated section.
+
+### Fixed
+
+- Even if an error handler was registered for a given exception class, Bocadillo used to return a 500 error response. It will now honor what the error handler does to the `res` object, i.e. only returning a 500 error response if the error handler does so or if it re-raised the exception.
+- The `after_dispatch` hook on HTTP middleware classes is not called anymore if the inbound HTTP method is not supported by the view.
+
+## [v0.9.1] - 2018-01-04
+
+### Fixed
+
+- Add missing `url` attribute on `WebSocket` objects, which prevented accessing information about the URL from WebSocket views.
+
+## [v0.9.0] - 2018-01-03
+
+This release has **breaking API changes** due to an overhaul of the view system.
+
+If your application uses the features below, you are most likely affected and should review these changes thoroughly before upgrading:
 
 - Use hooks via `@api.before()` or `@api.after()`.
 - Restriction of HTTP methods via the `methods` parameter to `@api.route()`.
@@ -60,6 +87,7 @@ class Index:
 ```
 
 - API reference for the `views` module.
+- Various documentation additions and improvements.
 
 ### Changed
 
@@ -320,7 +348,10 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...HEAD
+
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...HEAD
+[v0.9.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...v0.9.1
+[v0.9.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...v0.9.0
 [v0.8.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...v0.8.1
 [v0.8.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.7.0...v0.8.0
 [v0.7.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.6.1...v0.7.0

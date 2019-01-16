@@ -5,18 +5,14 @@ from typing import Callable, Dict, Union, Awaitable, Type
 from .compat import call_async
 from .request import Request
 from .response import Response
-from .routing import Route
+from .routing import HTTPRoute
 from .views import Handler, get_handlers, View
 
 HookFunction = Callable[[Request, Response, dict], Awaitable[None]]
-HookCollection = Dict[Route, HookFunction]
+HookCollection = Dict[HTTPRoute, HookFunction]
 
 BEFORE = "before"
 AFTER = "after"
-
-
-async def empty_hook(req: Request, res: Response, params: dict):
-    pass
 
 
 class Hooks:

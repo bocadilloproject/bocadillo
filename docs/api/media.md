@@ -30,7 +30,7 @@ __Returns__
 
 ## Media
 ```python
-Media(self, media_type: str, handlers: Dict[str, Callable[[Any], str]] = None)
+Media(self, media_type: str)
 ```
 Registry of media handlers.
 
@@ -38,12 +38,11 @@ __Parameters__
 
 - __media_type (str)__:
     The media type that will be used when serializing values.
-- __handlers (dict)__:
-    A mapping of media types to `(Any) -> str` callables.
-    Defaults to built-in media handlers.
 
 __Attributes__
 
+- `handlers (dict)`:
+    A mapping of media types to `(Any) -> str` callables.
 - `JSON (str)`: `application/json`
 - `PLAIN_TEXT (str)`: `text/plain`
 - `HTML (str)`: `text/html`

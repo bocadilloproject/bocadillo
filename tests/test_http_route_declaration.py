@@ -1,7 +1,4 @@
-import pytest
-
 from bocadillo import API
-from bocadillo.exceptions import RouteDeclarationError
 
 
 def test_index_returns_404_by_default(api: API):
@@ -28,9 +25,9 @@ def test_default_status_code_is_200_on_routes(api: API):
     assert api.client.get("/").status_code == 200
 
 
-def test_route_must_start_with_slash(api: API):
-    with pytest.raises(RouteDeclarationError):
+def test_leading_slash_is_added_if_not_present(api: API):
+    @api.route("foo")
+    async def index(req, res):
+        pass
 
-        @api.route("foo")
-        async def index(req, res):
-            pass
+    assert api.client.get("/foo").status_code == 200

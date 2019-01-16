@@ -1,4 +1,4 @@
-# bocadillo.exceptions
+# bocadillo.errors
 
 ## HTTPError
 ```python
@@ -27,21 +27,19 @@ Return the HTTP error's status code, e.g. `404`.
 Return the HTTP error's status phrase, e.g. `"Not Found"`.
 ### title
 Return the HTTP error's title, e.g. `"404 Not Found"`.
-## UnsupportedMediaType
+## ServerErrorMiddleware
 ```python
-UnsupportedMediaType(self, media_type: str, available: List[str])
+ServerErrorMiddleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[bocadillo.response.Response]], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], NoneType], debug: bool = False) -> None
 ```
-Raised when trying to use an unsupported media type.
+Return 500 response when an unhandled exception occurs.
 
-__Parameters__
+Adaption of Starlette's ServerErrorMiddleware.
 
-- __media_type (str)__:
-    the unsupported media type.
-- __available (list of str)__:
-    a list of supported media types.
-
-## RouteDeclarationError
+## HTTPErrorMiddleware
 ```python
-RouteDeclarationError(self, /, *args, **kwargs)
+HTTPErrorMiddleware(self, app: Callable[[bocadillo.request.Request, bocadillo.response.Response], Awaitable[bocadillo.response.Response]], debug: bool = False) -> None
 ```
-Raised when a route is ill-declared.
+Handle exceptions that occur while handling HTTP requests.
+
+Adaptation of Starlette's ExceptionMiddleware.
+

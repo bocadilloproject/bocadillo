@@ -1,76 +1,80 @@
-"""Bocadillo middleware definition."""
-from typing import Callable, Awaitable
+from typing import Optional, Awaitable
 
+from .app_types import HTTPApp
 from .compat import call_async
 from .request import Request
 from .response import Response
 
-Dispatcher = Callable[[Request], Awaitable[Response]]
 
-
-class Middleware:
+class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    dispatch (coroutine function):
-        a function whose return value can be awaited to obtain a response.
-    kwargs (dict):
-        Keyword arguments passed when registering the middleware.
+    app: a function that may as well be another `Middleware` instance.
+    kwargs (any):
+        Keyword arguments passed when registering the middleware on the API.
     """
 
-    def __init__(self, dispatch: Dispatcher, **kwargs):
-        self.dispatch = dispatch
+    def __init__(self, app: HTTPApp, **kwargs):
+        self.app = app
         self.kwargs = kwargs
 
-    async def before_dispatch(self, req: Request):
+    async def before_dispatch(
+        self, req: Request, res: Response
+    ) -> Optional[Response]:
         """Perform processing before a request is dispatched.
 
-        If a `Response` object is returned, it will be used
+        If the `Response` object is returned, it will be used
         and no further processing will be performed.
 
         # Parameters
         req (Request): a Request object.
+        res (Response): a Response object.
+
+        # Returns
+        res (Response or None): an optional response object.
         """
 
-    async def after_dispatch(self, req: Request, res: Response):
+    async def after_dispatch(
+        self, req: Request, res: Response
+    ) -> Optional[Response]:
         """Perform processing after a request has been dispatched.
-
-        If a `Response` object is returned, it is used instead of the response
-        obtained by awaiting `dispatch()`.
 
         # Parameters
         req (Request): a Request object.
         res (Response): a Response object.
+
+        # Returns
+        res (Response or None): an optional response object.
         """
 
-    async def process(self, req: Request) -> Response:
+    async def process(self, req: Request, res: Response) -> Response:
         """Process an incoming request.
 
-        Roughly equivalent to:
+        - Call `before_dispatch()`. If a response is returned here, no
+        further processing is performed.
+        - Call the underlying HTTP `app`.
+        - Call `after_dispatch()`.
+        - Return the response.
 
-        ```python
-        res = await self.before_dispatch(req) or None
-        res = res or await self.dispatch(req)
-        res = await self.after_dispatch(req, res) or res
-        return res
-        ```
-
-        Aliased by `__call__()`.
+        Note: this is aliased to `__call__()`, which means middleware
+        instances are callable.
 
         # Parameters
-        req (Request): a request object.
+        req (Request): a Request object.
+        res (Response): a Response object.
 
         # Returns
         res (Response): a Response object.
         """
-        res = await call_async(self.before_dispatch, req) or None
-        res = res or await self.dispatch(req)
+        before_res = await call_async(self.before_dispatch, req, res)
+        if before_res:
+            return before_res
+
+        res = await self.app(req, res)
+
         res = await call_async(self.after_dispatch, req, res) or res
+
         return res
 
-    async def __call__(self, req: Request) -> Response:
-        return await self.process(req)
-
-
-# TODO: remove in v0.8
-RoutingMiddleware = Middleware
+    __call__ = process

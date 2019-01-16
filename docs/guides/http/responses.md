@@ -33,10 +33,15 @@ res.headers['Content-Type'] = 'text/css'
 
 You can set the numeric status code on the response using `res.status_code`:
 
-```python
-@api.route('/jobs', methods=['post'])
-async def create_job(req, res):
-    res.status_code = 201
+```python{8}
+from bocadillo import API
+
+api = API()
+
+@api.route("/jobs")
+class Jobs:
+    async def post(self, req, res):
+        res.status_code = 201
 ```
 
 ::: tip

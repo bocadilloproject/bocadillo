@@ -9,14 +9,14 @@ module.exports = {
     lastUpdated: true,
     head: [
         // Twitter card meta tags
-        ['meta', {name: 'twitter:card', content: 'summary'}],
+        ['meta', { name: 'twitter:card', content: 'summary' }],
         ['meta', {
             name: 'twitter:url',
             content: 'https://bocadillo.github.io'
         }],
-        ['meta', {name: 'twitter:site', content: 'Bocadillo'}],
-        ['meta', {name: 'twitter:creator', content: 'Florimond Manca'}],
-        ['meta', {name: 'twitter:title', content: 'Bocadillo'}],
+        ['meta', { name: 'twitter:site', content: 'Bocadillo' }],
+        ['meta', { name: 'twitter:creator', content: 'Florimond Manca' }],
+        ['meta', { name: 'twitter:title', content: 'Bocadillo' }],
         ['meta', {
             name: 'twitter:description',
             content: 'A modern Python web framework filled with asynchronous salsa'
@@ -35,7 +35,7 @@ module.exports = {
         editLinkText: 'Edit this page on GitHub',
         sidebarDepth: 2,
         lastUpdated: true,
-        serviceWorker: {updatePopup: true},
+        serviceWorker: { updatePopup: true },
         algolia: process.env.NODE_ENV === "production" ? {
             apiKey: process.env.ALGOLIA_API_KEY,
             indexName: "bocadilloproject",
@@ -50,12 +50,16 @@ module.exports = {
                 link: '/getting-started/',
             },
             {
-                text: 'Topics',
-                link: '/topics/',
+                text: 'Guides',
+                link: '/guides/',
             },
             {
                 text: 'How-To',
                 link: '/how-to/',
+            },
+            {
+                text: 'Discussions',
+                link: '/discussions/',
             },
             {
                 text: 'API Reference',
@@ -82,14 +86,15 @@ module.exports = {
                     ]),
                 },
             ],
-            '/topics/': [
-                '/topics/api',
+            '/guides/': [
+                '/guides/api',
                 {
                     title: 'HTTP',
                     collapsable: false,
-                    children: listDir('topics/http', [
-                        'routes-url-design',
+                    children: listDir('guides/http', [
+                        'routing',
                         'views',
+                        'error-handling',
                         'requests',
                         'responses',
                         'redirecting',
@@ -103,7 +108,7 @@ module.exports = {
                 {
                     title: 'WebSockets',
                     collapsable: false,
-                    children: listDir('topics/websockets', [
+                    children: listDir('guides/websockets', [
                         '',
                         'routing',
                         'connections',
@@ -115,7 +120,8 @@ module.exports = {
                 {
                     title: 'Protocol-agnostic',
                     collapsable: false,
-                    children: listDir('topics/agnostic', [
+                    children: listDir('guides/agnostic', [
+                        'asgi-middleware',
                         'templates',
                         'recipes',
                         'events',
@@ -124,19 +130,10 @@ module.exports = {
                 {
                     title: 'Tooling',
                     collapsable: false,
-                    children: listDir('topics/tooling', [
+                    children: listDir('guides/tooling', [
                         'cli',
                     ]),
                 },
-                {
-                    title: 'Discussions',
-                    collapsable: false,
-                    children: listDir('topics/discussions', [
-                        'async-vs-sync',
-                        'deployment',
-                        'security',
-                    ])
-                }
             ],
             '/how-to/': [
                 {
@@ -146,8 +143,20 @@ module.exports = {
                         'custom-cli-commands',
                         'extra-media-handlers',
                         'middleware',
+                        'tortoise',
                     ]),
                 },
+            ],
+            '/discussions/': [
+                {
+                    title: 'Discussions',
+                    collapsable: false,
+                    children: listDir('discussions', [
+                        'databases',
+                        'deployment',
+                        'security',
+                    ])
+                }
             ],
             '/api/': [
                 {

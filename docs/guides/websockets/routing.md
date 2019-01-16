@@ -67,11 +67,11 @@ req.query_params["sub"]  # "2"  (first item)
 req.query_params.getlist("sub")  # ["2", "3"]
 ```
 
-[deployment]: ../discussions/deployment.md
+[deployment]: ../../discussions/deployment.md
 [upgrade]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism
 [ASGI close]: https://asgi.readthedocs.io/en/latest/specs/www.html#close
 [Error handling]: ./error-handling.md
-[http-routes]: ../http/routes-url-design.md
-[named]: ../http/routes-url-design.md#naming-routes
-[reversed]: ../http/routes-url-design.md#reversing-named-routes
+[http-routes]: ../http/routing.md
+[named]: ../http/routing.md#naming-routes
+[reversed]: ../http/routing.md#reversing-named-routes
 [url-for]: ../../api/api.md#url-for

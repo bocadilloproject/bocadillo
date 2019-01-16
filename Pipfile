@@ -20,6 +20,7 @@ bumpversion = "*"
 pre-commit = "*"
 pydoc-markdown = "*"
 pylint = "*"
+bocadillo = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"

@@ -1,10 +1,12 @@
+from http import HTTPStatus
+
 import pytest
 
 from bocadillo import API, HTTPError
 from bocadillo.error_handlers import (
+    error_to_html,
     error_to_media,
     error_to_text,
-    error_to_html,
 )
 
 
@@ -54,13 +56,15 @@ def test_custom_error_handler(api: API, exception_cls):
     async def index(req, res):
         raise exception_cls("foo")
 
+    client = api.build_client(raise_server_exceptions=False)
+
     if exception_cls == KeyError:
-        response = api.client.get("/")
+        response = client.get("/")
         assert called
-        assert response.status_code == 500
+        assert response.status_code == 200
         assert response.text == "Oops!"
     else:
-        response = api.client.get("/")
+        response = client.get("/")
         assert response.status_code == 500
         assert not called
 
@@ -111,3 +115,17 @@ def test_builtin_handlers(api: API, detail, handler, content, expected):
     response = api.client.get("/")
     assert response.status_code == 403
     assert content(response) == expected(detail)
+
+
+def test_http_error_status_must_be_int_or_http_status():
+    HTTPError(404)
+    HTTPError(HTTPStatus.NOT_FOUND)
+
+    with pytest.raises(AssertionError) as ctx:
+        HTTPError("404")
+
+    assert "int or HTTPStatus" in str(ctx.value)
+
+
+def test_http_error_str_representation():
+    assert str(HTTPError(404, detail="foo")) == "404 Not Found"
