@@ -17,8 +17,6 @@
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
 [![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)][gitter-url]
 
-**NOTE**: v0.9 contains breaking API changes compared to 0.8.x and below. Review the [changelog][changelog-unreleased] to know if you are affected and read about migration tips.
-
 # Bocadillo
 
 Bocadillo is a Python web framework that provides a sane toolkit for quickly building performant web applications and services, while encouraging best practices and keeping developer experience in mind.
