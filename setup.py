@@ -20,6 +20,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["bocadillo", "bocadillo.scaffold"],
+    package_data={"bocadillo": ["assets/*"]},
     install_requires=[
         "starlette",
         "uvicorn",
