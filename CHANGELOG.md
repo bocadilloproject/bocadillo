@@ -14,9 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.10.0] - 2019-01-17
+
 ### Added
 
 - In-browser traceback of unhandled exceptions when running with `debug=True`.
+- Various documentation improvements and additions, e.g. databases discussion and Tortoise ORM how-to.
 
 ### Changed
 
@@ -26,12 +29,16 @@ As a result, we strongly recommend you read this document carefully before upgra
   - `UnsupportedMediaType` has moved to `bocadillo.media`.
   - `HTTPError` has moved to `bocadillo.errors` (but is still available at the top level: `from bocadillo import HTTPError`).
 - Other internal refactoring that should not affect framework users.
-- (Docs) Moved discussions to a dedicated section.
+- Discussions are now in a separate section in the documentation.
 
 ### Fixed
 
 - Even if an error handler was registered for a given exception class, Bocadillo used to return a 500 error response. It will now honor what the error handler does to the `res` object, i.e. only returning a 500 error response if the error handler does so or if it re-raised the exception.
 - The `after_dispatch` hook on HTTP middleware classes is not called anymore if the inbound HTTP method is not supported by the view.
+
+### Removed
+
+- `RoutingMiddleware` was removed as it had been deprecated since v0.8.
 
 ## [v0.9.1] - 2018-01-04
 
@@ -349,7 +356,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `CONTRIBUTING.md`.
 
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...HEAD
+[v0.10.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...v0.9.0
 [v0.8.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.0...v0.8.1
