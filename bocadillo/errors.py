@@ -1,12 +1,13 @@
+import traceback
 from http import HTTPStatus
-from typing import Union, Any, Dict, Type, Optional
+from typing import Any, Dict, Optional, Type, Union
 
-from starlette.middleware.errors import (
-    ServerErrorMiddleware as _ServerErrorMiddleware,
-)
+import jinja2
+from starlette.responses import HTMLResponse, PlainTextResponse
 
-from .app_types import HTTPApp, ErrorHandler
+from .app_types import ErrorHandler, HTTPApp
 from .compat import call_async
+from .misc import read_asset
 from .request import Request
 from .response import Response
 
@@ -60,8 +61,10 @@ class HTTPError(Exception):
 class ServerErrorMiddleware(HTTPApp):
     """Return 500 response when an unhandled exception occurs.
 
-    Adaption of Starlette's ServerErrorMiddleware.
+    Adaptation of Starlette's ServerErrorMiddleware.
     """
+
+    template_name = "server_error.jinja"
 
     def __init__(
         self, app: HTTPApp, handler: ErrorHandler, debug: bool = False
@@ -70,8 +73,32 @@ class ServerErrorMiddleware(HTTPApp):
         self.handler = handler
         self.debug = debug
         self.exception = None
+        self.jinja = jinja2.Environment()
 
-    debug_response = _ServerErrorMiddleware.debug_response
+    def generate_html(self, req: Request, exc: Exception) -> str:
+        template = self.jinja.from_string(read_asset(self.template_name))
+        tb_exc = traceback.TracebackException.from_exception(
+            exc, capture_locals=True
+        )
+        return template.render(
+            exc_type=exc.__class__.__name__,
+            exc=exc,
+            url_path=req.url.path,
+            frames=tb_exc.stack,
+        )
+
+    def generate_plain_text(self, exc: Exception) -> str:
+        return "".join(traceback.format_tb(exc.__traceback__))
+
+    def debug_response(self, req: Request, exc: Exception) -> Response:
+        accept = req.headers.get("accept", "")
+
+        if "text/html" in accept:
+            content = self.generate_html(req, exc)
+            return HTMLResponse(content, status_code=500)
+
+        content = self.generate_plain_text(exc)
+        return PlainTextResponse(content, status_code=500)
 
     def raise_if_exception(self):
         if self.exception is not None:

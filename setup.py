@@ -13,13 +13,14 @@ CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 setuptools.setup(
     name="bocadillo",
-    version="0.9.1",
+    version="0.10.0",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=["bocadillo", "bocadillo.scaffold"],
+    package_data={"bocadillo": ["assets/*"]},
     install_requires=[
         "starlette",
         "uvicorn",
