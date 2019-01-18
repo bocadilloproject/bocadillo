@@ -71,15 +71,10 @@ class Server(Process):
         super().start()
         sleep(0.5)
 
-    def close(self):
-        self.terminate()
-        while self.is_alive():
-            sleep(0.1)
-        super().close()
-
 
 @pytest.fixture(scope="function")
 def server(api: API):
     s = Server(api)
     yield s
-    s.close()
+    s.terminate()
+    s.join()

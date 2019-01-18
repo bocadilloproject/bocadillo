@@ -15,7 +15,12 @@ def stream_until_disconnect(req: Request, source: Stream) -> Stream:
     async def stream():
         async for item in source:
             if await req.is_disconnected():
-                await source.athrow(ClientDisconnect)
+                try:
+                    await source.athrow(ClientDisconnect)
+                except StopAsyncIteration:
+                    # May be raised in Python 3.6 if the `source`'s error
+                    # handling code did not `yield` anything.
+                    pass
             yield item
 
     return stream()
