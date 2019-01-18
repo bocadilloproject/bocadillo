@@ -1,9 +1,11 @@
 from multiprocessing import Value
+import time
 
 import pytest
 import requests
 
 from bocadillo import API, server_event
+from bocadillo.request import ClientDisconnect
 
 from .utils import stops_incrementing
 
@@ -72,18 +74,23 @@ def test_cache_control_header_not_replaced_if_manually_set(api: API):
 
 
 def test_stop_on_client_disconnect(api: API, server):
-    num_sent = Value("i", 0)  # Shared accross processes
+    num_sent = Value("i", 0)
+    caught = Value("i", 0)
 
     @api.route("/events")
     async def sse(req, res):
         @res.event_stream
         async def events():
-            nonlocal num_sent
-            while True:
-                yield server_event("hello")
-                num_sent.value += 1
+            nonlocal num_sent, caught
+            try:
+                while True:
+                    yield server_event("hello")
+                    num_sent.value += 1
+            except ClientDisconnect:
+                caught.value = 1
 
     server.start()
     r = requests.get("http://localhost:8000/events", stream=True)
     assert r.status_code == 200
     assert stops_incrementing(counter=num_sent, response=r, tolerance=5)
+    assert caught.value

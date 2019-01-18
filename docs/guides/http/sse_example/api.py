@@ -18,16 +18,14 @@ class Events:
         async def send_events():
             hello = {"message": "hello"}
             yield server_event(json=hello, name="hello")
-            while True:
-                message = await client.get()
-                yield server_event(json=message, name="message")
-                print("Sent", message, "to client", id(client))
-                client.task_done()
-
-        @res.background
-        async def cleanup():
-            print("Client disconnected:", id(client))
-            clients.remove(client)
+            try:
+                while True:
+                    message = await client.get()
+                    yield server_event(json=message, name="message")
+                    print("Sent", message, "to client", id(client))
+                    client.task_done()
+            finally:
+                print("Client disconnected:", id(client))
 
     async def post(self, req, res):
         json = await req.json()

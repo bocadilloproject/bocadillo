@@ -5,6 +5,7 @@ import pytest
 import requests
 
 from bocadillo import API
+from bocadillo.request import ClientDisconnect
 
 from .utils import stops_incrementing
 
@@ -135,20 +136,26 @@ def test_stream_response(api: API):
 
 def test_stop_on_client_disconnect(api: API, server):
     sent = Value("i", 0)
+    caught = Value("i", 0)
 
     @api.route("/inf")
     async def infinity(req, res):
         @res.stream
         async def stream():
-            while True:
-                yield "∞"
-                sent.value += 1
+            nonlocal sent, caught
+            try:
+                while True:
+                    yield "∞"
+                    sent.value += 1
+            except ClientDisconnect:
+                caught.value = 1
 
     server.start()
 
     r = requests.get("http://localhost:8000/inf", stream=True)
     assert r.status_code == 200
-    assert stops_incrementing(counter=sent, response=r, tolerance=3)
+    assert stops_incrementing(counter=sent, response=r, tolerance=5)
+    assert caught.value
 
 
 def test_stream_func_must_be_async_generator_function(api: API):

@@ -1,6 +1,9 @@
 from json import JSONDecodeError
 
-from starlette.requests import Request as _Request
+from starlette.requests import Request as _Request, ClientDisconnect as _CD
+
+
+ClientDisconnect = _CD
 
 
 class Request(_Request):
