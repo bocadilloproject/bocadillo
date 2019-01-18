@@ -1,7 +1,5 @@
 import json
 from typing import NamedTuple
-from multiprocessing import Process
-from time import sleep
 
 import pytest
 from click.testing import CliRunner
@@ -59,22 +57,3 @@ def template_file_elsewhere(api: API, tmpdir_factory):
 @pytest.fixture
 def runner():
     return CliRunner()
-
-
-class Server(Process):
-    # Run the API in a separate process.
-
-    def __init__(self, api):
-        super().__init__(target=api.run)
-
-    def start(self):
-        super().start()
-        sleep(0.5)
-
-
-@pytest.fixture(scope="function")
-def server(api: API):
-    s = Server(api)
-    yield s
-    s.terminate()
-    s.join()

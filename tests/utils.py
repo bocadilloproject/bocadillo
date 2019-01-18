@@ -2,7 +2,8 @@ import os
 import time
 from contextlib import contextmanager
 from typing import Any
-from multiprocessing import Value
+from random import randint
+from multiprocessing import Process, Value
 
 import requests
 
@@ -80,6 +81,27 @@ def env(var: str, value: str):
 
 class Oops(Exception):
     pass
+
+
+class Server(Process):
+    # Run the API in a separate process.
+
+    def __init__(self, api):
+        port = randint(3000, 9000)
+        super().__init__(target=api.run, args=(None, port))
+        self.base_url = f"http://localhost:{port}"
+
+    def start(self):
+        super().start()
+        time.sleep(0.5)
+
+    def __enter__(self):
+        self.start()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.terminate()
+        self.join()
 
 
 def stops_incrementing(

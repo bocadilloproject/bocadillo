@@ -7,7 +7,7 @@ import requests
 from bocadillo import API
 from bocadillo.request import ClientDisconnect
 
-from .utils import stops_incrementing
+from .utils import stops_incrementing, Server
 
 
 def test_if_nothing_set_then_response_is_empty(api: API):
@@ -134,30 +134,6 @@ def test_stream_response(api: API):
     assert "transfer-encoding" not in r.headers
 
 
-def test_stop_on_client_disconnect(api: API, server):
-    sent = Value("i", 0)
-    caught = Value("i", 0)
-
-    @api.route("/inf")
-    async def infinity(req, res):
-        @res.stream
-        async def stream():
-            nonlocal sent, caught
-            try:
-                while True:
-                    yield "∞"
-                    sent.value += 1
-            except ClientDisconnect:
-                caught.value = 1
-
-    server.start()
-
-    r = requests.get("http://localhost:8000/inf", stream=True)
-    assert r.status_code == 200
-    assert stops_incrementing(counter=sent, response=r)
-    assert caught.value
-
-
 def test_stream_func_must_be_async_generator_function(api: API):
     @api.route("/")
     async def index(req, res):
@@ -178,3 +154,26 @@ def test_stream_func_must_be_async_generator_function(api: API):
             @res.stream
             def duh():
                 yield "nope"
+
+
+def test_stop_on_client_disconnect(api: API):
+    sent = Value("i", 0)
+    caught = Value("i", 0)
+
+    @api.route("/inf")
+    async def infinity(req, res):
+        @res.stream
+        async def stream():
+            nonlocal sent, caught
+            try:
+                while True:
+                    yield "∞"
+                    sent.value += 1
+            except ClientDisconnect:
+                caught.value = 1
+
+    with Server(api) as server:
+        r = requests.get(f"{server.base_url}/inf", stream=True)
+        assert r.status_code == 200
+        assert stops_incrementing(counter=sent, response=r)
+        assert caught.value

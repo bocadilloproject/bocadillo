@@ -7,7 +7,7 @@ import requests
 from bocadillo import API, server_event
 from bocadillo.request import ClientDisconnect
 
-from .utils import stops_incrementing
+from .utils import stops_incrementing, Server
 
 
 @pytest.mark.parametrize(
@@ -73,7 +73,7 @@ def test_cache_control_header_not_replaced_if_manually_set(api: API):
     assert r.headers["cache-control"] == "foo"
 
 
-def test_stop_on_client_disconnect(api: API, server):
+def test_stop_on_client_disconnect(api: API):
     num_sent = Value("i", 0)
     caught = Value("i", 0)
 
@@ -89,8 +89,8 @@ def test_stop_on_client_disconnect(api: API, server):
             except ClientDisconnect:
                 caught.value = 1
 
-    server.start()
-    r = requests.get("http://localhost:8000/events", stream=True)
-    assert r.status_code == 200
-    assert stops_incrementing(counter=num_sent, response=r)
-    assert caught.value
+    with Server(api) as server:
+        r = requests.get(f"{server.base_url}/events", stream=True)
+        assert r.status_code == 200
+        assert stops_incrementing(counter=num_sent, response=r)
+        assert caught.value
