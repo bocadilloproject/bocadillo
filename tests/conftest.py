@@ -1,11 +1,12 @@
 import json
 from typing import NamedTuple
+from multiprocessing import Process
+from time import sleep
 
 import pytest
 from click.testing import CliRunner
 
 from bocadillo import API
-from .utils import RouteBuilder
 
 
 @pytest.fixture
@@ -23,11 +24,6 @@ def api():
 
     _api.client.websocket_connect = websocket_connect
     return _api
-
-
-@pytest.fixture
-def builder(api: API):
-    return RouteBuilder(api)
 
 
 class TemplateWrapper(NamedTuple):
@@ -63,3 +59,27 @@ def template_file_elsewhere(api: API, tmpdir_factory):
 @pytest.fixture
 def runner():
     return CliRunner()
+
+
+class Server(Process):
+    # Run the API in a separate process.
+
+    def __init__(self, api):
+        super().__init__(target=api.run)
+
+    def start(self):
+        super().start()
+        sleep(0.5)
+
+    def close(self):
+        self.terminate()
+        while self.is_alive():
+            sleep(0.1)
+        super().close()
+
+
+@pytest.fixture(scope="function")
+def server(api: API):
+    s = Server(api)
+    yield s
+    s.close()

@@ -1,62 +1,51 @@
-import inspect
 from json import dumps
-from typing import Union, Optional, Awaitable, Callable, AsyncIterable
-
-from starlette.requests import ClientDisconnect
+from typing import Union, Optional, Any
 
 
-class ServerSentEvent:
+def _format_server_sent_event(**parts: Optional[Any]) -> str:
+    return (
+        "\n".join(
+            f"{name}: {value}"
+            for name, value in parts.items()
+            if value is not None
+        )
+        + "\n\n"
+    )
+
+
+class server_event(str):
+    """A string-like object that represents a Server-Sent Event.
+
+    # Parameters
+    data (str):
+        The event data line(s), as defined in the SSE standard.
+    id (int):
+        The event ID, as defined in the SSE standard.
+    name (str):
+        The event name, as defined biny the SSE standard.
+    json (list or dict):
+        A JSON-serializable value. If given, it is serialized and used as
+        `data`.
+    """
+
     __slots__ = ("data", "id", "name")
 
-    def __init__(
-        self,
+    def __new__(
+        cls,
         data: Optional[str] = None,
         id: Optional[int] = None,
         name: Optional[str] = None,
         json: Optional[Union[list, dict]] = None,
     ):
-        self.data = data if json is None else dumps(json)
-        self.id = id
+        if json is not None:
+            data = dumps(json)
+
+        message = _format_server_sent_event(id=id, event=name, data=data)
+
+        self = super().__new__(cls, message)
+
+        self.data = data
         self.name = name
+        self.id = id
 
-    def __str__(self):
-        parts = []
-
-        def _add_part(name: str, value: Optional[str]):
-            if value is not None:
-                parts.append(f"{name}: {value}")
-
-        _add_part("id", self.id)
-        _add_part("event", self.name)
-        _add_part("data", self.data)
-        parts.append("\n")
-
-        return "\n".join(parts)
-
-
-def server_event(*args, **kwargs) -> ServerSentEvent:
-    return ServerSentEvent(*args, **kwargs)
-
-
-def add_sse_headers(headers: dict) -> dict:
-    return {
-        # v Overridden by `headers`
-        "cache-control": "no-cache",
-        # ^
-        **headers,
-        # v Override `headers`
-        "content-type": "text/event-stream",
-        "connection": "keep-alive",
-        # ^
-    }
-
-
-# TODO: add cleanup
-class EventStream:
-    def __init__(self, source: Callable[[], AsyncIterable]):
-        assert inspect.isasyncgenfunction(source)
-        self.source = source()
-
-    async def __aiter__(self):
-        async for event in self.source:
-            yield str(event)
+        return self

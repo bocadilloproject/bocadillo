@@ -1,4 +1,3 @@
-import inspect
 from typing import AnyStr, Any, Callable, Coroutine, Optional, AsyncIterable
 
 from starlette.background import BackgroundTask
@@ -9,10 +8,9 @@ from starlette.responses import (
 )
 
 from .media import Media
-from .server_sent_events import add_sse_headers, EventStream
+from .streaming import StreamFunc, stream_until_disconnect
 
 BackgroundFunc = Callable[..., Coroutine]
-StreamFunc = Callable[[], AsyncIterable[AnyStr]]
 
 
 class Response:
@@ -69,22 +67,39 @@ class Response:
             return BackgroundTask(self._background)
         return None
 
-    def stream(self, func: StreamFunc):
+    def stream(self, func: StreamFunc) -> StreamFunc:
         """Stream the response.
 
-        Should be used to decorate a no-argument asynchronous generator
-        function.
+        The decorated function should be a no-argument asynchronous generator
+        function that yields strings or bytes.
         """
-        assert inspect.isasyncgenfunction(func)
-        self._generator = func()
+        self._generator = stream_until_disconnect(self.request, func())
         return func
 
-    def event_stream(self, func: StreamFunc):
-        """Send server-sent events."""
-        self.headers = add_sse_headers(self.headers)
-        stream = EventStream(func)
-        self._generator = stream
-        return stream
+    def event_stream(self, func: StreamFunc) -> StreamFunc:
+        """Stream server-sent events.
+
+        The decorated function should be a no-argument asynchronous generator
+        function that yields strings or bytes, formatted according to the
+        Server-Sent Event specification.
+
+        This is nearly equivalent to `@stream()`. The only difference is that
+        this decorator also sets SSE-specific HTTP headers:
+
+        - `Cache-Control: no-cache`
+        - `Content-Type: text/event/stream`
+        - `Connection: Keep-Alive`
+
+        # See Also
+        - [Using server-sent events (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)
+        """
+        self.headers = {
+            "cache-control": "no-cache",
+            **self.headers,
+            "content-type": "text/event-stream",
+            "connection": "keep-alive",
+        }
+        return self.stream(func)
 
     async def __call__(self, receive, send):
         """Build and send the response."""

@@ -1,33 +1,10 @@
 import os
+import time
 from contextlib import contextmanager
 from typing import Any
+from multiprocessing import Value
 
-from bocadillo import API
-
-
-class RouteBuilder:
-    """Builder of simple testing routes."""
-
-    def __init__(self, api: API = None):
-        self._api = api
-
-    @property
-    def api(self):
-        return self._api
-
-    def function_based(self, pattern: str, *args, res: dict = None, **kwargs):
-        if res is None:
-            res = {}
-
-        @self._api.route(pattern, *args, **kwargs)
-        def view(request, response):
-            for key, value in res.items():
-                setattr(response, key, value)
-
-    def class_based(self, pattern: str, *args, **kwargs):
-        @self._api.route(pattern, *args, **kwargs)
-        class View:
-            pass
+import requests
 
 
 @contextmanager
@@ -103,3 +80,36 @@ def env(var: str, value: str):
 
 class Oops(Exception):
     pass
+
+
+def stops_incrementing(
+    counter: Value, response: requests.Response, tolerance: int = 0
+) -> bool:
+    """Check that a counter stops incrementing after the response is closed.
+    
+    # Parameters
+    counter (multiprocessing.Value):
+        A counter of events.
+    response (requests.Response):
+        A streaming response.
+    tolerance (int):
+        Maximum number of events the server is allowed to send after the
+        connection has been closed. Defaults to 0.
+    """
+
+    # Maximum number of events the server is allowed to send after the client
+    # closed the connection.
+    def wait_for_events(expect_many=False):
+        nonlocal counter
+        num_before = counter.value
+        time.sleep(0.1)
+        num_after = counter.value
+        if expect_many:
+            assert num_after - num_before >= 10 * tolerance
+        return num_after
+
+    sent_before_closing = wait_for_events(expect_many=True)
+    response.close()
+    sent_after_closing = wait_for_events() - sent_before_closing
+    assert sent_after_closing <= tolerance
+    return True
