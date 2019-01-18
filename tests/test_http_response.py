@@ -154,7 +154,7 @@ def test_stop_on_client_disconnect(api: API, server):
 
     r = requests.get("http://localhost:8000/inf", stream=True)
     assert r.status_code == 200
-    assert stops_incrementing(counter=sent, response=r, tolerance=5)
+    assert stops_incrementing(counter=sent, response=r)
     assert caught.value
 
 

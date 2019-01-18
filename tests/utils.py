@@ -83,7 +83,7 @@ class Oops(Exception):
 
 
 def stops_incrementing(
-    counter: Value, response: requests.Response, tolerance: int = 0
+    counter: Value, response: requests.Response, tolerance: int = 10
 ) -> bool:
     """Check that a counter stops incrementing after the response is closed.
     
@@ -105,7 +105,11 @@ def stops_incrementing(
         time.sleep(0.1)
         num_after = counter.value
         if expect_many:
-            assert num_after - num_before >= 10 * tolerance
+            assert num_after - num_before >= 5 * tolerance, (
+                num_after,
+                num_before,
+                tolerance,
+            )
         return num_after
 
     sent_before_closing = wait_for_events(expect_many=True)
