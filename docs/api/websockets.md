@@ -27,7 +27,7 @@ __Parameters__
 
 ### accept
 ```python
-WebSocket.accept(self, subprotocol: List[str] = None) -> None
+WebSocket.accept(self, subprotocol: str = None) -> None
 ```
 
 

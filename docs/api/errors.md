@@ -33,7 +33,7 @@ ServerErrorMiddleware(self, app: Callable[[bocadillo.request.Request, bocadillo.
 ```
 Return 500 response when an unhandled exception occurs.
 
-Adaption of Starlette's ServerErrorMiddleware.
+Adaptation of Starlette's ServerErrorMiddleware.
 
 ## HTTPErrorMiddleware
 ```python

@@ -1,46 +1,46 @@
-site_name: ""  # Irrelevant to us.
+site_name: "" # Irrelevant to us.
 
 generate:
-- api.md:
-  - bocadillo.api:
-    - bocadillo.api.API+
-- cli.md:
-  - bocadillo.cli+
-- compat.md:
-  - bocadillo.compat+
-- error_handlers.md:
-  - bocadillo.error_handlers+
-- errors.md:
-  - bocadillo.errors++
-- hooks.md:
-  - bocadillo.hooks:
-      - bocadillo.hooks.before
-      - bocadillo.hooks.after
-- media.md:
-  - bocadillo.media:
-    - bocadillo.media.handle_json
-    - bocadillo.media.handle_text
-    - bocadillo.media.Media:
-      - bocadillo.media.Media.serialize
-      - bocadillo.media.Media.type
-- middleware.md:
-  - bocadillo.middleware:
-      - bocadillo.middleware.Middleware+
-- recipes.md:
-  - bocadillo.recipes:
-      - bocadillo.recipes.RecipeBase+
-      - bocadillo.recipes.Recipe+
-      - bocadillo.recipes.RecipeBook+
-- routing.md:
-  - bocadillo.routing++
-- staticfiles.md:
-  - bocadillo.staticfiles+
-- templates.md:
-  - bocadillo.templates++
-- views.md:
-  - bocadillo.views++
-- websockets.md:
-  - bocadillo.websockets++
+  - api.md:
+      - bocadillo.api:
+          - bocadillo.api.API+
+  - cli.md:
+      - bocadillo.cli+
+  - compat.md:
+      - bocadillo.compat+
+  - error_handlers.md:
+      - bocadillo.error_handlers+
+  - errors.md:
+      - bocadillo.errors++
+  - hooks.md:
+      - bocadillo.hooks:
+          - bocadillo.hooks.before
+          - bocadillo.hooks.after
+  - media.md:
+      - bocadillo.media:
+          - bocadillo.media.handle_json
+          - bocadillo.media.handle_text
+          - bocadillo.media.Media:
+              - bocadillo.media.Media.serialize
+              - bocadillo.media.Media.type
+  - middleware.md:
+      - bocadillo.middleware:
+          - bocadillo.middleware.Middleware+
+  - recipes.md:
+      - bocadillo.recipes:
+          - bocadillo.recipes.RecipeBase+
+          - bocadillo.recipes.Recipe+
+          - bocadillo.recipes.RecipeBook+
+  - routing.md:
+      - bocadillo.routing++
+  - staticfiles.md:
+      - bocadillo.staticfiles+
+  - templates.md:
+      - bocadillo.templates++
+  - views.md:
+      - bocadillo.views++
+  - websockets.md:
+      - bocadillo.websockets++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
