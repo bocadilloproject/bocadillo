@@ -3,7 +3,7 @@ import time
 from contextlib import contextmanager
 from typing import Any
 from random import randint
-from multiprocessing import Process, Value
+from multiprocessing import Process, Value, Event
 
 import requests
 
@@ -87,16 +87,22 @@ class Server(Process):
     # Run the API in a separate process.
 
     def __init__(self, api):
-        port = randint(3000, 9000)
-        super().__init__(target=api.run, args=(None, port))
-        self.base_url = f"http://localhost:{port}"
+        super().__init__()
+        self.api = api
+        self.host = "127.0.0.1"
+        self.port = randint(3000, 9000)
+        self.ready = Event()
 
-    def start(self):
-        super().start()
-        time.sleep(0.5)
+    @property
+    def url(self) -> str:
+        return f"http://{self.host}:{self.port}"
+
+    def run(self):
+        self.api.run(host=self.host, port=self.port, ready_event=self.ready)
 
     def __enter__(self):
         self.start()
+        self.ready.wait()
         return self
 
     def __exit__(self, *args, **kwargs):
