@@ -14,6 +14,15 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Changed
+
+- Now requires `uvicorn>=0.3.26`.
+
+### Fixed
+
+- Fixed a bug that caused an `ImportError` when importing from
+`bocadillo.api` using `uvicorn<0.3.26`.
+
 ## [v0.10.0] - 2019-01-17
 
 ### Added
