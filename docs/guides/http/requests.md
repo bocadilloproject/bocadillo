@@ -82,7 +82,7 @@ See also: [Why dict.get(key) instead of dict[key]?](https://stackoverflow.com/qu
 
 ## Body
 
-In Bocadillo, **the response body is an awaitable**, which means it can
+In Bocadillo, **the request body is an awaitable**, which means it can
 only be used inside **asynchronous** views.
 
 You can retrieve it in several ways, depending on the expected encoding:
@@ -111,5 +111,5 @@ async for chunk in req:
 This is useful when the request body may be too large to be fully loaded in memory, or to implement HTTP streaming, e.g. receiving and processing an unbounded stream of data during a single HTTP session.
 
 ::: warning
-The request's stream cannot be consumed more than once. If you try to do so, a `RunetimeError` will be raised.
+The request's stream cannot be consumed more than once. If you try to do so, a `RuntimeError` will be raised.
 :::
