@@ -14,6 +14,17 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.10.1] - 2019-01-21
+
+### Changed
+
+- Now requires `uvicorn>=0.3.26`.
+
+### Fixed
+
+- Fixed a bug that caused an `ImportError` when importing from
+`bocadillo.api` using `uvicorn<0.3.26`.
+
 ## [v0.10.0] - 2019-01-17
 
 ### Added
@@ -356,7 +367,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `CONTRIBUTING.md`.
 
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...HEAD
+[v0.10.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...v0.9.1
 [v0.9.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.8.1...v0.9.0

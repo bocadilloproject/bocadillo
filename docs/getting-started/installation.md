@@ -54,13 +54,13 @@ To verify that Bocadillo can be seen by Python, type `python` from your shell, t
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.10.0'
+'0.10.1'
 ```
 
 Alternatively, you can use an inline script:
 ```bash
 python -c "import bocadillo; print(bocadillo.__version__)"
-0.10.0
+0.10.1
 ```
 
 Note that you may have another version of Bocadillo installed.

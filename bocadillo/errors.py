@@ -64,7 +64,7 @@ class ServerErrorMiddleware(HTTPApp):
     Adaptation of Starlette's ServerErrorMiddleware.
     """
 
-    template_name = "server_error.jinja"
+    _template_name = "server_error.jinja"
 
     def __init__(
         self, app: HTTPApp, handler: ErrorHandler, debug: bool = False
@@ -76,7 +76,7 @@ class ServerErrorMiddleware(HTTPApp):
         self.jinja = jinja2.Environment()
 
     def generate_html(self, req: Request, exc: Exception) -> str:
-        template = self.jinja.from_string(read_asset(self.template_name))
+        template = self.jinja.from_string(read_asset(self._template_name))
         tb_exc = traceback.TracebackException.from_exception(
             exc, capture_locals=True
         )
