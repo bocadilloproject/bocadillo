@@ -1,6 +1,6 @@
 import os
 from functools import partial
-from typing import Any, Dict, List, Optional, Type, Union, Callable, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -9,22 +9,23 @@ from starlette.middleware.lifespan import LifespanMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.testclient import TestClient
-from uvicorn.main import get_logger, run
+from uvicorn.config import get_logger
+from uvicorn.main import run
 from uvicorn.reloaders.statreload import StatReload
 
 from .app_types import (
     ASGIApp,
     ASGIAppInstance,
-    Scope,
-    Receive,
-    Send,
-    EventHandler,
     ErrorHandler,
+    EventHandler,
+    Receive,
+    Scope,
+    Send,
 )
 from .compat import WSGIApp
 from .constants import DEFAULT_CORS_CONFIG
 from .error_handlers import error_to_text
-from .errors import ServerErrorMiddleware, HTTPErrorMiddleware, HTTPError
+from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import Media
 from .meta import DocsMeta
 from .recipes import RecipeBase
@@ -525,16 +526,14 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         if debug:
             self.debug = True
             reloader = StatReload(get_logger(log_level))
-            reloader.run(
-                run,
-                {
-                    "app": self,
-                    "host": host,
-                    "port": port,
-                    "log_level": log_level,
-                    "debug": self.debug,
-                    **kwargs,
-                },
-            )
+            kwargs = {
+                "app": self,
+                "host": host,
+                "port": port,
+                "log_level": log_level,
+                "debug": self.debug,
+                **kwargs,
+            }
+            reloader.run(run, kwargs)
         else:
             _run(self, host=host, port=port, **kwargs)
