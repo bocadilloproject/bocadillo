@@ -4,7 +4,7 @@ from asyncio import sleep
 from json import JSONDecodeError
 from typing import List, NamedTuple, Optional, Dict
 
-from bocadillo import API, Middleware, Recipe, HTTPError, hooks
+from bocadillo import API, Middleware, Recipe, HTTPError, hooks, Response, Request
 
 
 # We'll start by defining a few helper classes and functions.
@@ -77,7 +77,7 @@ class TokenMiddleware(Middleware):
 
     _regex = re.compile("^Token: (\w+)$")
 
-    def before_dispatch(self, req):
+    def before_dispatch(self, req: Request, res: Response):
         """Attach API token to req, if provided in header."""
         # Request headers!
         header = req.headers.get("Authorization", "")
