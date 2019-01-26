@@ -1,5 +1,6 @@
 from typing import Sequence
 
+
 from .meta import DocsMeta
 from .misc import overrides
 from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
@@ -57,14 +58,17 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     def websocket_route(self, pattern: str, **kwargs) -> WebSocketRoute:
         return super().websocket_route(self.prefix + pattern, **kwargs)
 
-    def __call__(self, api, root: str = ""):
-        """Apply the recipe to an API object."""
-        api.http_router.mount(self.http_router, root=root)
-        api.websocket_router.mount(self.websocket_router, root=root)
+    def __call__(self, obj, root: str = ""):
+        """Apply the recipe to an object.
+        
+        Said object must be a subclass `RoutingMixin` and `TemplateMixin`.
+        """
+        obj.http_router.mount(self.http_router, root=root)
+        obj.websocket_router.mount(self.websocket_router, root=root)
 
         # Look for templates where the API does, if not specified
         if self.templates_dir is None:
-            self.templates_dir = api.templates_dir
+            self.templates_dir = obj.templates_dir
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
@@ -88,7 +92,7 @@ class RecipeBook(RecipeBase):
         super().__init__(prefix)
         self.recipes = recipes
 
-    def __call__(self, api, root: str = ""):
+    def __call__(self, api: RoutingMixin, root: str = ""):
         """Apply the recipe book to an API object."""
         for recipe in self.recipes:
             recipe(api, root=root + self.prefix)

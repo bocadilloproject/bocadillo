@@ -189,6 +189,14 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self.apps[prefix] = app
 
     def recipe(self, recipe: RecipeBase):
+        """Apply a recipe.
+
+        # Parameters
+        recipe (Recipe or RecipeBook): a recipe to be applied to the API.
+
+        # See Also
+        - [Recipes](../agnostic/recipes.md)
+        """
         recipe(self)
 
     @property

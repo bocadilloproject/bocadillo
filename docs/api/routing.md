@@ -165,7 +165,7 @@ Extends [BaseRouter](#baserouter).
 
 ### add_route
 ```python
-WebSocketRouter.add_route(self, pattern: str, view: Callable[[bocadillo.websockets.WebSocket], Awaitable[NoneType]], **kwargs)
+WebSocketRouter.add_route(self, view: Callable[[bocadillo.websockets.WebSocket], Awaitable[NoneType]], pattern: str, **kwargs)
 ```
 Register a WebSocket route.
 
@@ -177,4 +177,94 @@ __Parameters__
 __Returns__
 
 `route (WebSocketRoute)`: the registered route.
+
+## RoutingMixin
+```python
+RoutingMixin(self, **kwargs)
+```
+Provide HTTP and WebSocket routing to an application class.
+### route
+```python
+RoutingMixin.route(self, pattern: str, *, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
+__See Also__
+
+- [check_route](#check-route) for the route validation algorithm.
+
+### websocket_route
+```python
+RoutingMixin.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+```
+Register a WebSocket route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+
+__See Also__
+
+- [WebSocket](./websockets.md#websocket) for a description of keyword
+arguments.
+
+### url_for
+```python
+RoutingMixin.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
+
+### redirect
+```python
+RoutingMixin.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
+```
+Redirect to another HTTP route.
+
+__Parameters__
+
+- __name (str)__: name of the route to redirect to.
+- __url (str)__:
+    URL of the route to redirect to (required if `name` is omitted).
+- __permanent (bool)__:
+    If `False` (the default), returns a temporary redirection (302).
+    If `True`, returns a permanent redirection (301).
+- __kwargs (dict)__:
+    Route parameters.
+
+__Raises__
+
+- `Redirection`:
+    an exception that will be caught to trigger a redirection.
+
+__See Also__
+
+- [Redirecting](../guides/http/redirecting.md)
 
