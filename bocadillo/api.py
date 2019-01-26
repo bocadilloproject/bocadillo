@@ -294,7 +294,7 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         # NOTE: use named keyword arguments instead of `**kwargs` to improve
         # their accessibility (e.g. for IDE discovery).
         return self.websocket_router.route(
-            pattern,
+            pattern=pattern,
             value_type=value_type,
             receive_type=receive_type,
             send_type=send_type,
