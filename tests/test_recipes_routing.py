@@ -40,3 +40,21 @@ def test_url_for():
         pass
 
     assert numbers.url_for("numbers:real") == "/numbers/real"
+
+
+def test_redirect(api: API):
+    numbers = Recipe("numbers")
+
+    @numbers.route("/R")
+    async def R(req, res):
+        numbers.redirect(name="numbers:real")
+
+    @numbers.route("/real")
+    async def real(req, res):
+        res.text = "inf"
+
+    api.recipe(numbers)
+
+    response = api.client.get("/numbers/R")
+    assert response.status_code == 200
+    assert response.text == "inf"

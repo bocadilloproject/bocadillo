@@ -52,13 +52,21 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 Recipes expose the following features, which can be used just as you would on the `API` object:
 
-- [Routes](../http/routing.md), e.g. `@recipe.route()`.
+- [HTTP routes](../http/routing.md), e.g. `@recipe.route()`.
 - [WebSocket routes](../websockets/routing.md), .e.g `@recipe.websocket_route()`.
+- [HTTP redirects](../http/redirecting.md), e.g. `recipe.redirect(name="recipe:foo")`.
 - [Templates](./templates.md), e.g. `await recipe.template()`.
-- [Hooks](../http/hooks.md), e.g. `@recipe.before()`.
 
 ::: tip
-If your recipe needs to use its own templates, you should pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.
+The `url_for()` template global is also available from recipes, and works no differently than for the `API`.
+
+This means that you must use the namespaced name if the target route has been registered on the recipe, e.g. `url_for("recipe:foo")`.
+
+See [Reversing named routes](../http/routing.md#reversing-named-routes) for more information on `url_for()`.
+:::
+
+::: tip
+If your recipe needs to use its own templates, you can pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `API` will be used.
 :::
 
 ::: tip
@@ -66,7 +74,7 @@ You can decorate your recipe views with [hooks](../http/hooks.md) as usual.
 :::
 
 ::: warning CAVEAT
-Note that recipes apply the exact same [routing algorithm](../http/routing.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/prefix`. Accessing `/prefix` would return a 404 error, as per the routing algorithm.
+Note that recipes apply the exact same [routing algorithm](../http/routing.md#how-are-requests-processed) than the `API`. In particular, the `/` route will be mounted on the `API` at `/{prefix}/`, *not* `/{prefix}`. Accessing `/{prefix}` would return a 404 error, as per the routing algorithm.
 :::
 
 ## Recipe books
@@ -162,25 +170,5 @@ You'll end up with the following routes:
 - `/entities/companies/`
 
 ::: warning
-Recipe books do not expose the `API` API. They only serve as a means of grouping recipes together.
+Recipe books do not expose any specific features. They only serve as a means of grouping recipes together.
 :::
-
-## Named routes and `url_for`
-
-If a recipe defines a named route, you'll need to prefix its name with the name of the recipe when building the full URL using `api.url_for()`.
-
-For example:
-
-```python{7}
-from bocadillo import Recipe
-
-tacos = Recipe('tacos')
-
-@tacos.route('/')
-async def root(req, res):
-    tacos.redirect('tacos.taco-detail', pk=4)
-
-@tacos.route('/{pk}', name='taco-detail')
-async def retrieve_taco(req, res, pk):
-    res.media = {'id': pk, 'recipe': 'tacos'}
-```
