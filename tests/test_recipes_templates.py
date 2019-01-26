@@ -55,3 +55,23 @@ def test_render_sync_template_in_recipe_route(
     response = api.client.get("/numbers/sync")
     assert response.status_code == 200
     assert response.text == template_file.rendered
+
+
+def test_use_url_for(api: API):
+    foo = Recipe("foo")
+
+    @foo.route("/bar")
+    async def bar(req, res):
+        pass
+
+    @foo.route("/fez")
+    async def fez(req, res):
+        res.html = foo.template_string(
+            "<a href=\"{{ url_for('bar') }}>To bar</a>"
+        )
+
+    api.recipe(foo)
+
+    response = api.client.get("/foo/fez")
+    assert response.status_code == 200
+    assert response.text == '<a href="/foo/bar">To bar</a>'
