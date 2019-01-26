@@ -256,7 +256,7 @@ class WebSocketRouter(BaseRouter[WebSocketRoute]):
     Extends [BaseRouter](#baserouter).
     """
 
-    def add_route(self, pattern: str, view: WebSocketView, **kwargs):
+    def add_route(self, view: WebSocketView, pattern: str, **kwargs):
         """Register a WebSocket route.
 
         # Parameters

@@ -1,8 +1,22 @@
-from typing import List, Sequence, Tuple, Any
+from typing import Sequence, Tuple, Any
 
 from .meta import DocsMeta
 from .templates import TemplatesMixin
-from .websockets import WebSocketView
+from .routing import BaseRouter
+
+
+RecipeRoute = Tuple[Any, str, dict]
+
+
+class RecipeRouter(BaseRouter[RecipeRoute]):
+    def __init__(self):
+        super().__init__()
+        self.routes = []
+
+    def add_route(self, view: Any, pattern: str, **kwargs: Any) -> RecipeRoute:
+        route = (view, pattern, kwargs)
+        self.routes.append(route)
+        return route
 
 
 class RecipeBase:
@@ -43,8 +57,8 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
             prefix = f"/{name}"
         super().__init__(prefix=prefix, **kwargs)
         self.name = name
-        self._http_routes: List[Tuple[str, dict, Any]] = []
-        self._ws_routes: List[Tuple[str, dict, WebSocketView]] = []
+        self.http_router = RecipeRouter()
+        self.websocket_router = RecipeRouter()
 
     def route(self, pattern: str, **kwargs):
         """Register a route on the recipe.
@@ -55,12 +69,8 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
         # See Also
         - [API.route()](./api.md#route)
         """
-
-        def register(view):
-            self._http_routes.append((pattern, kwargs, view))
-            return view
-
-        return register
+        kwargs["namespace"] = self.name
+        return self.http_router.route(pattern=pattern, **kwargs)
 
     def websocket_route(self, pattern: str, **kwargs):
         """Register a WebSocket route on the recipe.
@@ -70,21 +80,14 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
         # See Also
         - [API.websocket_route()](./api.md#websocket-route)
         """
-
-        def register(view):
-            self._ws_routes.append((pattern, kwargs, view))
-            return view
-
-        return register
+        return self.websocket_router.route(pattern=pattern, **kwargs)
 
     def __call__(self, api, root: str = ""):
         """Apply the recipe to an API object."""
         # Apply routes on the API
-        for pattern, kwargs, view in self._http_routes:
-            kwargs["namespace"] = self.name
+        for view, pattern, kwargs in self.http_router.routes:
             api.route(root + self.prefix + pattern, **kwargs)(view)
-
-        for pattern, kwargs, view in self._ws_routes:
+        for view, pattern, kwargs in self.websocket_router.routes:
             api.websocket_route(root + self.prefix + pattern, **kwargs)(view)
 
         # Look for templates where the API does, if not specified
