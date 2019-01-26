@@ -67,7 +67,7 @@ def test_use_url_for(api: API):
     @foo.route("/fez")
     async def fez(req, res):
         res.html = foo.template_string(
-            "<a href=\"{{ url_for('bar') }}>To bar</a>"
+            "<a href=\"{{ url_for('foo:bar') }}\">To bar</a>"
         )
 
     api.recipe(foo)

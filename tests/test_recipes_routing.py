@@ -30,3 +30,13 @@ def test_if_prefix_then_routes_mounted_at_prefix(api: API):
 def test_if_prefix_does_not_start_with_slash_then_error_raised():
     with pytest.raises(AssertionError):
         Recipe("numbers", prefix="numbers-yo")
+
+
+def test_url_for():
+    numbers = Recipe("numbers")
+
+    @numbers.route("/real")
+    async def real(req, res):
+        pass
+
+    assert numbers.url_for("numbers:real") == "/numbers/real"
