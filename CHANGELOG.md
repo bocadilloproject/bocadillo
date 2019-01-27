@@ -14,6 +14,14 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Recipes now support redirections, e.g. `recipe.redirect(name="recipe:foo")`.
+
+### Fixed
+
+- Using `url_for()` in a template rendered from a recipe (e.g. `await recipe.template()`) used to raise an `UndefinedError`. This has been fixed.
+
 ## [v0.10.1] - 2019-01-21
 
 ### Changed
