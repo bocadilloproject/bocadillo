@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.10.2] - 2019-01-27
+
 ### Added
 
 - Recipes now support redirections, e.g. `recipe.redirect(name="recipe:foo")`.
@@ -375,7 +377,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `CONTRIBUTING.md`.
 
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...HEAD
+[v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
 [v0.10.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...v0.10.0
 [v0.9.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.0...v0.9.1

@@ -61,7 +61,7 @@ To verify Python dependencies have been correctly installed, first [run the test
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.10.1'
+'0.10.2'
 ```
 
 #### Installing the documentation packages
