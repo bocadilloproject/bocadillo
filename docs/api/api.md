@@ -151,7 +151,7 @@ __Parameters__
 
 __See Also__
 
-- [Recipes](../agnostic/recipes.md)
+- [Recipes](../guides/agnostic/recipes.md)
 
 ### add_error_handler
 ```python

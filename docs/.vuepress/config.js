@@ -66,6 +66,10 @@ module.exports = {
                 link: '/api/',
             },
             {
+                text: 'FAQ',
+                link: '/faq/',
+            },
+            {
                 text: 'Changelog',
                 link: 'https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md',
             },
@@ -168,6 +172,9 @@ module.exports = {
                         return [child, displayName];
                     }),
                 },
+            ],
+            '/faq/': [
+                '/faq/',
             ],
         },
     },
