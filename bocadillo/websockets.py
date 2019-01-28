@@ -7,7 +7,7 @@ from starlette.websockets import (
     WebSocketDisconnect as _WebSocketDisconnect,
 )
 
-from .app_types import Event
+from .app_types import Event, Scope, Receive, Send
 from .constants import WEBSOCKET_CLOSE_CODES
 
 _STARLETTE_WEBSOCKET_DOCS = (
@@ -75,7 +75,9 @@ class WebSocket:
 
     def __init__(
         self,
-        *args,
+        scope: Scope,
+        receive: Receive,
+        send: Send,
         value_type: Optional[str] = None,
         receive_type: Optional[str] = None,
         send_type: Optional[str] = None,
@@ -86,7 +88,7 @@ class WebSocket:
         # WebSocket class uses those in many other functions, which we
         # do not need / want to re-implement.
         # The compromise is the definition of delegated methods below.
-        self._websocket = StarletteWebSocket(*args)
+        self._websocket = StarletteWebSocket(scope, receive=receive, send=send)
 
         if caught_close_codes is None:
             caught_close_codes = (1000, 1001)

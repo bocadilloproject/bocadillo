@@ -263,7 +263,7 @@ class WebSocketRoute(BaseRoute):
     async def __call__(
         self, scope: Scope, receive: Receive, send: Send, **params
     ):
-        ws = WebSocket(scope, receive, send, **self._ws_kwargs)
+        ws = WebSocket(scope, receive=receive, send=send, **self._ws_kwargs)
         try:
             await self.view(ws, **params)
         except BaseException:
