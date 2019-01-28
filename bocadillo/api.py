@@ -195,7 +195,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         recipe (Recipe or RecipeBook): a recipe to be applied to the API.
 
         # See Also
-        - [Recipes](../agnostic/recipes.md)
+        - [Recipes](../guides/agnostic/recipes.md)
         """
         recipe(self)
 
