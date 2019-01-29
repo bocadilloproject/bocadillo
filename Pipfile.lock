@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "df58ab53c699a0c12dcbac13156ccd9dd1589cf2b0ad3ffc60abd982a89c26cd"
+            "sha256": "cd70104d041a20d59489cdfc341ac075342282110d5d705f41681055afcc3a8a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -188,10 +188,10 @@
     "develop": {
         "aspy.yaml": {
             "hashes": [
-                "sha256:04d26279513618f1024e1aba46471db870b3b33aef204c2d09bcf93bea9ba13f",
-                "sha256:0a77e23fafe7b242068ffc0252cee130d3e509040908fc678d9d1060e7494baa"
+                "sha256:19dd2ee74f96b72a3096d78be1a872914c70982299cda137725478954870a896",
+                "sha256:5eaaacd0886e8b581f0e4ff383fb6504720bb2b3c7be17307724246261a41adf"
             ],
-            "version": "==1.1.1"
+            "version": "==1.1.2"
         },
         "astroid": {
             "hashes": [
