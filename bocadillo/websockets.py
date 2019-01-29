@@ -1,4 +1,3 @@
-import json
 from typing import Awaitable, Callable, Optional, Any, Union, Tuple
 
 from starlette.datastructures import URL
@@ -9,7 +8,6 @@ from starlette.websockets import (
 
 from .app_types import Event, Scope, Receive, Send
 from .constants import WEBSOCKET_CLOSE_CODES
-from .misc import overrides
 
 
 class WebSocket:
