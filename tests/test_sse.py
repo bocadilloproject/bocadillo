@@ -92,5 +92,5 @@ def test_stop_on_client_disconnect(api: API):
     with Server(api) as server:
         r = requests.get(f"{server.url}/events", stream=True)
         assert r.status_code == 200
-        assert stops_incrementing(counter=num_sent, response=r)
+        assert stops_incrementing(counter=num_sent, response=r, tolerance=12)
         assert caught.value

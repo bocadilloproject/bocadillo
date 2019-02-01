@@ -98,7 +98,13 @@ class Server(Process):
         return f"http://{self.host}:{self.port}"
 
     def run(self):
-        self.api.run(host=self.host, port=self.port, ready_event=self.ready)
+        async def callback_notify():
+            # Run periodically by the Uvicorn server.
+            self.ready.set()
+
+        self.api.run(
+            host=self.host, port=self.port, callback_notify=callback_notify
+        )
 
     def __enter__(self):
         self.start()
