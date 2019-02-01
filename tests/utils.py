@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from contextlib import contextmanager
 from multiprocessing import Event, Process, Value
@@ -86,12 +87,13 @@ class Oops(Exception):
 class Server(Process):
     # Run the API in a separate process.
 
-    def __init__(self, api):
+    def __init__(self, api, ready_timeout: int = 1):
         super().__init__()
         self.api = api
         self.host = "127.0.0.1"
         self.port = randint(3000, 9000)
         self.ready = Event()
+        self.ready_timeout = ready_timeout
 
     @property
     def url(self) -> str:
@@ -108,7 +110,9 @@ class Server(Process):
 
     def __enter__(self):
         self.start()
-        self.ready.wait()
+        timeout = self.ready_timeout
+        if not self.ready.wait(timeout):
+            raise TimeoutError(f"Live server not ready after {timeout} seconds")
         return self
 
     def __exit__(self, *args, **kwargs):
