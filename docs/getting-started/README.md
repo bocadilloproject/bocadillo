@@ -110,6 +110,10 @@ Here's a sneak peak into what you'll find in Bocadillo:
 - (Soon) Third-party extensions framework
 - (Soon) Databases and async ORM
 
+## Getting more background
+
+To learn more about the framework's history, design decisions or why it's even called Bocadillo, check out our [Frequently Asked Questions][faq] page.
+
 [ASGI]: https://asgi.readthedocs.io
 [Django]: https://www.djangoproject.com
 [Channels]: https://channels.readthedocs.io
@@ -121,3 +125,4 @@ Here's a sneak peak into what you'll find in Bocadillo:
 [WhiteNoise]: http://whitenoise.evans.io
 [Jinja]: http://jinja.pocoo.org
 [Click]: https://click.palletsprojects.com
+[faq]: ../faq/

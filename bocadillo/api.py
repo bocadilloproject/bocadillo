@@ -29,15 +29,14 @@ from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import Media
 from .meta import DocsMeta
 from .recipes import RecipeBase
-from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .routing import HTTPRouter, WebSocketRouter
+from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
 
 
-class API(TemplatesMixin, metaclass=DocsMeta):
+class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -119,10 +118,6 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         # Mounted apps
         self.apps: Dict[str, Any] = {}
 
-        # Routers
-        self.http_router = HTTPRouter()
-        self.websocket_router = WebSocketRouter()
-
         # Test client
         self.client = self.build_client()
 
@@ -194,6 +189,14 @@ class API(TemplatesMixin, metaclass=DocsMeta):
         self.apps[prefix] = app
 
     def recipe(self, recipe: RecipeBase):
+        """Apply a recipe.
+
+        # Parameters
+        recipe (Recipe or RecipeBook): a recipe to be applied to the API.
+
+        # See Also
+        - [Recipes](../guides/agnostic/recipes.md)
+        """
         recipe(self)
 
     @property
@@ -248,109 +251,6 @@ class API(TemplatesMixin, metaclass=DocsMeta):
             return handler
 
         return wrapper
-
-    def route(self, pattern: str, *, name: str = None, namespace: str = None):
-        """Register a new route by decorating a view.
-
-        # Parameters
-        pattern (str): an URL pattern.
-        methods (list of str):
-            An optional list of HTTP methods.
-            Defaults to `["get", "head"]`.
-            Ignored for class-based views.
-        name (str):
-            An optional name for the route.
-            If a route already exists for this name, it is replaced.
-            Defaults to a snake-cased version of the view's name.
-        namespace (str):
-            An optional namespace for the route. If given, it is prefixed to
-            the name and separated by a colon.
-
-        # See Also
-        - [check_route](#check-route) for the route validation algorithm.
-        """
-        return self.http_router.route(
-            pattern=pattern, name=name, namespace=namespace
-        )
-
-    def websocket_route(
-        self,
-        pattern: str,
-        *,
-        value_type: Optional[str] = None,
-        receive_type: Optional[str] = None,
-        send_type: Optional[str] = None,
-        caught_close_codes: Optional[Tuple[int]] = None,
-    ):
-        """Register a WebSocket route by decorating a view.
-
-        # Parameters
-        pattern (str): an URL pattern.
-
-        # See Also
-        - [WebSocket](./websockets.md#websocket) for a description of keyword
-        arguments.
-        """
-        # NOTE: use named keyword arguments instead of `**kwargs` to improve
-        # their accessibility (e.g. for IDE discovery).
-        return self.websocket_router.route(
-            pattern,
-            value_type=value_type,
-            receive_type=receive_type,
-            send_type=send_type,
-            caught_close_codes=caught_close_codes,
-        )
-
-    def url_for(self, name: str, **kwargs) -> str:
-        """Build the URL path for a named route.
-
-        # Parameters
-        name (str): the name of the route.
-        kwargs (dict): route parameters.
-
-        # Returns
-        url (str): the URL path for a route.
-
-        # Raises
-        HTTPError(404) : if no route exists for the given `name`.
-        """
-        route = self.http_router.routes.get(name)
-        if route is None:
-            raise HTTPError(404)
-        return route.url(**kwargs)
-
-    def redirect(
-        self,
-        *,
-        name: str = None,
-        url: str = None,
-        permanent: bool = False,
-        **kwargs,
-    ):
-        """Redirect to another HTTP route.
-
-        # Parameters
-        name (str): name of the route to redirect to.
-        url (str):
-            URL of the route to redirect to (required if `name` is omitted).
-        permanent (bool):
-            If `False` (the default), returns a temporary redirection (302).
-            If `True`, returns a permanent redirection (301).
-        kwargs (dict):
-            Route parameters.
-
-        # Raises
-        Redirection:
-            an exception that will be caught to trigger a redirection.
-
-        # See Also
-        - [Redirecting](../guides/http/redirecting.md)
-        """
-        if name is not None:
-            url = self.url_for(name=name, **kwargs)
-        else:
-            assert url is not None, "url is expected if no route name is given"
-        raise Redirection(url=url, permanent=permanent)
 
     def add_middleware(self, middleware_cls, **kwargs):
         """Register a middleware class.

@@ -79,6 +79,8 @@ See [CHANGELOG](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGE
 
 ## Roadmap
 
+For a list of short, mid and long-term feature ideas currently in our scope, see the [Roadmap][roadmap].
+
 To see what has already been implemented for the next release, see the [Unreleased][changelog-unreleased] section of our changelog.
 
 <!-- URLs -->
@@ -92,4 +94,5 @@ To see what has already been implemented for the next release, see the [Unreleas
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo
 [gitter-url]: https://gitter.im/bocadilloproject/bocadillo
+[roadmap]: https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md
 [changelog-unreleased]: https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased

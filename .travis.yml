@@ -32,7 +32,7 @@ jobs:
       before_install:
         - nvm install 8
         - nvm use 8
-      install: npm install --dev
+      install: npm install --only=dev
       script: npm run docs:build
       deploy:
         provider: pages

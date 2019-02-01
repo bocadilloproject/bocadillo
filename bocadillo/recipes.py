@@ -1,8 +1,10 @@
-from typing import List, Sequence, Tuple, Any
+from typing import Sequence
+
 
 from .meta import DocsMeta
+from .misc import overrides
+from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
 from .templates import TemplatesMixin
-from .websockets import WebSocketView
 
 
 class RecipeBase:
@@ -24,7 +26,7 @@ class RecipeBase:
         raise NotImplementedError
 
 
-class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
+class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
@@ -43,53 +45,30 @@ class Recipe(TemplatesMixin, RecipeBase, metaclass=DocsMeta):
             prefix = f"/{name}"
         super().__init__(prefix=prefix, **kwargs)
         self.name = name
-        self._http_routes: List[Tuple[str, dict, Any]] = []
-        self._ws_routes: List[Tuple[str, dict, WebSocketView]] = []
 
-    def route(self, pattern: str, **kwargs):
-        """Register a route on the recipe.
+    def get_template_globals(self):
+        return {"url_for": self.url_for}
 
-        Accepts the same arguments as `API.route()`, except `namespace` which
-        will be given the value of the recipe's `name`.
+    @overrides(RoutingMixin.route)
+    def route(self, pattern: str, **kwargs) -> HTTPRoute:
+        kwargs["namespace"] = self.name
+        return super().route(self.prefix + pattern, **kwargs)
 
-        # See Also
-        - [API.route()](./api.md#route)
+    @overrides(RoutingMixin.websocket_route)
+    def websocket_route(self, pattern: str, **kwargs) -> WebSocketRoute:
+        return super().websocket_route(self.prefix + pattern, **kwargs)
+
+    def __call__(self, obj, root: str = ""):
+        """Apply the recipe to an object.
+        
+        Said object must be a subclass `RoutingMixin` and `TemplateMixin`.
         """
-
-        def register(view):
-            self._http_routes.append((pattern, kwargs, view))
-            return view
-
-        return register
-
-    def websocket_route(self, pattern: str, **kwargs):
-        """Register a WebSocket route on the recipe.
-
-        Accepts the same arguments as `API.websocket_route()`.
-
-        # See Also
-        - [API.websocket_route()](./api.md#websocket-route)
-        """
-
-        def register(view):
-            self._ws_routes.append((pattern, kwargs, view))
-            return view
-
-        return register
-
-    def __call__(self, api, root: str = ""):
-        """Apply the recipe to an API object."""
-        # Apply routes on the API
-        for pattern, kwargs, view in self._http_routes:
-            kwargs["namespace"] = self.name
-            api.route(root + self.prefix + pattern, **kwargs)(view)
-
-        for pattern, kwargs, view in self._ws_routes:
-            api.websocket_route(root + self.prefix + pattern, **kwargs)(view)
+        obj.http_router.mount(self.http_router, root=root)
+        obj.websocket_router.mount(self.websocket_router, root=root)
 
         # Look for templates where the API does, if not specified
         if self.templates_dir is None:
-            self.templates_dir = api.templates_dir
+            self.templates_dir = obj.templates_dir
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
@@ -113,7 +92,7 @@ class RecipeBook(RecipeBase):
         super().__init__(prefix)
         self.recipes = recipes
 
-    def __call__(self, api, root: str = ""):
+    def __call__(self, api: RoutingMixin, root: str = ""):
         """Apply the recipe book to an API object."""
         for recipe in self.recipes:
             recipe(api, root=root + self.prefix)
