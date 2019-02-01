@@ -1,5 +1,4 @@
 from multiprocessing import Value
-import time
 
 import pytest
 import requests
@@ -7,7 +6,7 @@ import requests
 from bocadillo import API, server_event
 from bocadillo.request import ClientDisconnect
 
-from .utils import stops_incrementing, Server
+from .utils import Server, stops_incrementing
 
 
 @pytest.mark.parametrize(

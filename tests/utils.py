@@ -1,9 +1,9 @@
 import os
 import time
 from contextlib import contextmanager
-from typing import Any
+from multiprocessing import Event, Process, Value
 from random import randint
-from multiprocessing import Process, Value, Event
+from typing import Any
 
 import requests
 

@@ -1,3 +1,4 @@
+import asyncio
 import json
 from typing import NamedTuple
 
@@ -5,6 +6,16 @@ import pytest
 from click.testing import CliRunner
 
 from bocadillo import API
+
+
+# FIX: the default fixture from `pytest-asyncio` closes the event loop,
+# which for some reason causes tests that use a live server to fail.
+# (Perhaps because they'll try to close the loop themselves and fail).
+# For the default fixture, see:
+# https://github.com/pytest-dev/pytest-asyncio/blob/master/pytest_asyncio/plugin.py#L204
+@pytest.fixture
+def event_loop():
+    return asyncio.get_event_loop_policy().new_event_loop()
 
 
 @pytest.fixture
