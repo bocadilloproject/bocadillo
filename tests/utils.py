@@ -87,13 +87,14 @@ class Oops(Exception):
 class Server(Process):
     # Run the API in a separate process.
 
-    def __init__(self, api, ready_timeout: int = 1):
+    def __init__(self, api, ready_timeout: int = 1, stop_timeout: int = 1):
         super().__init__()
         self.api = api
         self.host = "127.0.0.1"
         self.port = randint(3000, 9000)
         self.ready = Event()
         self.ready_timeout = ready_timeout
+        self.stop_timeout = stop_timeout
 
     @property
     def url(self) -> str:
@@ -110,14 +111,19 @@ class Server(Process):
 
     def __enter__(self):
         self.start()
-        timeout = self.ready_timeout
-        if not self.ready.wait(timeout):
-            raise TimeoutError(f"Live server not ready after {timeout} seconds")
+        if not self.ready.wait(self.ready_timeout):
+            raise TimeoutError(
+                f"Live server not ready after {self.ready_timeout} seconds"
+            )
         return self
 
     def __exit__(self, *args, **kwargs):
         self.terminate()
-        self.join()
+        self.join(self.stop_timeout)
+        if self.exitcode is None:
+            raise TimeoutError(
+                f"Live server still running after {self.stop_timeout} seconds."
+            )
 
 
 def stops_incrementing(
