@@ -183,12 +183,12 @@ class WebSocket:
             # Returning `True` here silences the exception. See:
             # https://docs.python.org/3/reference/datamodel.html#object.__exit__
             return exc_val.code in self.caught_close_codes
-        else:
-            # Close with Internal Error if an exception was raised.
-            code = 1000 if exc_type is None else 1011
-            # NOTE: view may have closed the WebSocket already, so we
-            # must use ensure_closed().
-            await self.ensure_closed(code)
+
+        # Close with Internal Error if an unknown exception was raised.
+        code = 1000 if exc_type is None else 1011
+        # NOTE: view may have closed the WebSocket already, so we
+        # must use ensure_closed().
+        await self.ensure_closed(code)
 
     # Asynchronous iterator.
 
