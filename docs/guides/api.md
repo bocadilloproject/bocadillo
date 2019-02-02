@@ -1,6 +1,6 @@
-# The API object
+# The application class
 
-The main object you'll manipulate in Bocadillo is the `API`  object, an
+The main object you'll manipulate in Bocadillo is the `API` object, an
 ASGI-compliant application.
 
 ## Running a Bocadillo app

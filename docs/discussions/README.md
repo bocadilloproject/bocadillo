@@ -2,4 +2,4 @@
 
 Welcome to the **discussions** section of the Bocadillo documentation.
 
-Discussions aim at providing more background about key concepts, notions or topics that you may need to study while working with Bocadillo.
+Discussions aim at providing background and nuances about key concepts or topics that you may need to work with while working with Bocadillo.
