@@ -54,4 +54,4 @@ curl http://localhost:8000/greet/Bocadillo
 {"message": "Hi, Bocadillo!"}
 ```
 
-Hungry for more? Head to our [Get Started](./getting-started/README.md) guide!
+Hungry for more? Head to our [Getting Started](./getting-started/README.md) guide!

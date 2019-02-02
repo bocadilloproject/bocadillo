@@ -113,6 +113,7 @@ All documentation lives in the `docs/` directory. It is structured as follows:
 - `how-to`: recipes for solving key problems or addressing specific use cases.
 - `discussions`: these give more in-depth background about important topics or activities related to application development.
 - `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
+- `faq`: frequently asked questions.
 
 #### Running the docs site
 

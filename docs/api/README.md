@@ -1,5 +1,5 @@
-# API Reference
+# Reference
 
-Welcome to the **API reference** section of the Bocadillo documentation.
+Welcome to the **Reference** section of the Bocadillo documentation.
 
-API reference provides technical details about the contents of the `bocadillo` package: inputs, outputs, usage hints, etc.
+API reference provides technical details about the contents of the `bocadillo` package: modules, classes, functions, etc.
