@@ -1,36 +1,12 @@
 # CLI
 
-Bocadillo comes with `boca`, a handy CLI built with [Click] for performing common tasks when working on Bocadillo apps.
+To help you build Bocadillo applications faster and automate common tasks, we built **Boca**, a zero-config, extensible and familiar CLI built on top of [Click].
 
-## Basic usage
-
-```
-$ boca --help
-Usage: boca [OPTIONS] COMMAND [ARGS]...
-
-Options:
-  -v, -V, --version  Show the version and exit.
-  --help             Show this message and exit.
-
-Commands:
-  init:custom  Generate files required to build custom commands.
-  version      Show the version and exit.
-```
-
-::: tip
-The CLI can also be invoked by running Bocadillo as a module. The following commands are thus equivalent:
-
-```bash
-boca --version
-python -m bocadillo --version
-```
+::: tip CHANGED IN v0.11.0
+Boca now ships as a separate package.
 :::
 
-## Extending `boca`
-
-You can write custom CLI commands to help you automate certain tasks.
-
-See our how-to guide: [Write custom CLI commands].
+Documentation is available at [Boca: Tasty development tooling for Bocadillo][boca].
 
 [Click]: https://click.palletsprojects.com
-[Write custom CLI commands]: ../../how-to/custom-cli-commands.md
+[boca]: https://bocadilloproject.github.io/boca

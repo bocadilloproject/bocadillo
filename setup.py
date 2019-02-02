@@ -19,7 +19,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo", "bocadillo.scaffold"],
+    packages=["bocadillo"],
     package_data={"bocadillo": ["assets/*"]},
     install_requires=[
         "starlette>=0.10",
@@ -49,5 +49,4 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    entry_points={"console_scripts": ["boca=bocadillo.__main__:cli"]},
 )

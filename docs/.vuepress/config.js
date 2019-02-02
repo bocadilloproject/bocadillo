@@ -92,6 +92,7 @@ module.exports = {
             ],
             '/guides/': [
                 '/guides/api',
+                '/guides/tooling/cli',
                 {
                     title: 'HTTP',
                     collapsable: false,
@@ -131,20 +132,12 @@ module.exports = {
                         'events',
                     ]),
                 },
-                {
-                    title: 'Tooling',
-                    collapsable: false,
-                    children: listDir('guides/tooling', [
-                        'cli',
-                    ]),
-                },
             ],
             '/how-to/': [
                 {
                     title: 'How-To',
                     collapsable: false,
                     children: listDir('how-to', [
-                        'custom-cli-commands',
                         'extra-media-handlers',
                         'middleware',
                         'tortoise',
