@@ -75,7 +75,15 @@ For example, instead of dealing with multiple types of responses (such as `Plain
 
 Lastly, without this approach we probably wouldn't have been able to implement a pleasant enough API for background tasks or streaming responses. In fact, this is true for any feature that relies on using an attribute, a method or a decorator attached to the `Response` object.
 
-## Into the wild
+### How fast is Bocadillo?
+
+Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
+
+[benchmarks]: https://github.com/bocadilloproject/benchmarks
+
+Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
+
+## Going live
 
 ### Is Bocadillo production-ready yet?
 
@@ -94,14 +102,6 @@ Other than that, a Bocadillo application can be scaled up and out as any other w
 ::: tip
 For hints on deploying Bocadillo applications, see our [Deployment](../discussions/deployment.md) guide.
 :::
-
-### How fast is Bocadillo?
-
-Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
-
-[benchmarks]: https://github.com/bocadilloproject/benchmarks
-
-Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
 
 ### Do I need to run Bocadillo behind a reverse proxy such as Nginx?
 
