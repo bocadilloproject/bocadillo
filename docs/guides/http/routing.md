@@ -42,10 +42,10 @@ async def get_listing(req, res, id: int):
 
 Note that:
 
-- Every URL pattern *must* start with a leading slash.
+- An URL pattern *should* start with a leading slash. If it doesn't, Bocadillo adds one for you (except for the catch-all pattern `{}`).
 - Bocadillo honors the presence or absence of a trailing slash on the URL. It will not perform any redirection by default.
-- Route parameters are defined using the [F-string notation].
-- Route parameters can optionally use [format specifiers] to perform validation and conversion. For instance, in `get_listing()`, `{id:d}` validates that `id` is an integer. By default, route parameters are extracted as strings.
+- Route parameters are defined using the F-string notation.
+- Route parameters can optionally use format specifiers to perform validation and conversion. For instance, in `get_listing()`, `{id:d}` validates that `id` is an integer. By default, route parameters are extracted as strings.
 
 Here's how a few example requests would be handled:
 
@@ -57,13 +57,79 @@ Here's how a few example requests would be handled:
 
 The router searches against the requested *URL path* — which does not include the domain name nor GET or POST parameters.
 
-For your information, [parse] is used to match the path against a known URL pattern and extract route parameters.
+## Route parameters
+
+Route parameters allows a single URL pattern to match a variety of URLs. Their syntax is inspired by F-strings and is powered by [parse](https://pypi.org/project/parse/).
+
+### Basic usage
+
+A route parameter is defined with the `{param_name}` syntax. When a request is made to a matching URL, the parameter value is extracted and made available to the view.
+
+For example, consider the following route pattern:
+
+```python
+"/say/{message}"
+```
+
+If a request is made to `/say/hello`, the view will be given a keyword argument `message` with the value `"hello"`.
+
+You can learn more about the format syntax in the `parse` documentation: [Format Syntax](https://github.com/r1chardj0n3s/parse#format-syntax).
+
+### Validation and conversion
+
+Lightweight validation and conversion of route parameters can be achieved by decorating them with **format specifiers**.
+
+This allows you to make sure the provided parameters comply with a certain format. When they don't, matching is considered to have failed.
+
+The basic syntax is `{param_name:specifier}`. Common format specifiers include `d` for integers and `w` for alphanumerical characters.
+
+A typical use case is using the `d` specifier to require that an `id` is an integer:
+
+```python
+from bocadillo import API
+
+api = API()
+
+@api.route("/items/{id:d}")
+async def get_item(req, res, id: int):
+    pass
+```
+
+As you can tell from the type annotation, the `id` will be given as an integer to the view instead of a string thanks to the integer specifier `d`.
+
+You can find the full list of supported specifiers in the parse documentation: [Format Specification](https://github.com/r1chardj0n3s/parse#format-specification).
+
+### Wildcard matching
+
+Wildcard URL matching is made possible thanks the anonymous parameter `{}`.
+
+This is useful to implement routes that serve as defaults when no other routes matches the requested URL.
+
+For example, the following snippet shows how to implement a "catch-all" route.
+
+```python
+from bocadillo import API
+
+api = API()
+
+@api.route("{}")
+async def hello(req, res):
+    res.text = "Hello, world!"
+```
+
+As you can see, the value of an anonymous parameter is not passed to the view. If you need to the value, you should use a regular named route parameter.
+
+::: warning CAUTION
+- **Order matters**. If `/foo/{}` is defined before `/foo/bar`, making a request to `/foo/bar` will match the former.
+- The anonymous parameter `{}` expects a **non-empty string**. This means that the pattern `/{}` will *not* match the root URL `/` because it expects a non-empty value after the leading slash.
+- Wildcard routes should not be used to implement 404 pages — see the next section for how Bocadillo deals with URLs that don't match any route.
+:::
 
 ## Route error handling
 
 When Bocadillo cannot find a matching route for the requested URL, a `404 Not Found` error response is returned.
 
-If a route was found but it did not supported the requested HTTP method (e.g. `POST` or `DELETE`), a `405 Method Not Allowed` error response is returned.
+If a route was found but it did not support the requested HTTP method (e.g. `POST` or `DELETE` when only `GET` is supported), a `405 Method Not Allowed` error response is returned.
 
 See [customizing error handling](views.md#customizing-error-handling) for how to customize this behavior.
 
@@ -165,8 +231,5 @@ Bocadillo implements the `HEAD` method automatically if your route supports `GET
 
 [Request]: requests.md
 [Response]: responses.md
-[F-string notation]: https://www.python.org/dev/peps/pep-0498/
-[format specifiers]: https://www.python.org/dev/peps/pep-0498/#format-specifiers
-[parse]: https://pypi.org/project/parse/
 [hooks]: ./hooks.md
 [middleware]: ./middleware.md

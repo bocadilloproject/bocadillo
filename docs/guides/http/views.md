@@ -156,6 +156,14 @@ class Index:
         res.text = 'Post it, get it, put it, delete it.'
 ```
 
+## About type annotations
+
+You may have seen in the previous examples that we sometimes use type hints to annotate view arguments, such as the request, the response or route parameters.
+
+However, **type annotations are not used at all by Bocadillo**.
+
+Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
+
 [Routes and URL design]: routing.md
 [naming routes]: routing.md#naming-routes
 [Request]: requests.md
