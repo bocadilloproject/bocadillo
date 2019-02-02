@@ -129,7 +129,7 @@ the correct ASGI events if something goes wrong.
 :::
 
 While ASGI middleware is very low-level, it also means that
-third-party middleware classes implement in this form can be plugged in without
+third-party middleware classes implemented in this form can be plugged in without
 extra plumbing. 
 
 [ASGI]: https://asgi.readthedocs.io
