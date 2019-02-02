@@ -103,7 +103,7 @@ You can find the full list of supported specifiers in the parse documentation: [
 
 Wildcard URL matching is made possible thanks the anonymous parameter `{}`.
 
-This is useful to implement routes that serve as defaults when no other routes matches the requested URL.
+This is useful to implement routes that serve as defaults when no other route matches the requested URL.
 
 For example, the following snippet shows how to implement a "catch-all" route.
 
