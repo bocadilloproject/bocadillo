@@ -59,7 +59,7 @@ The router searches against the requested *URL path* — which does not include 
 
 ## Route parameters
 
-Route parameters allows a single URL pattern to match a variety of URLs. Their syntax is inspired by F-strings and is powered by [parse].
+Route parameters allows a single URL pattern to match a variety of URLs. Their syntax is inspired by F-strings and is powered by [parse](https://pypi.org/project/parse/).
 
 ### Basic usage
 
@@ -230,8 +230,6 @@ Bocadillo implements the `HEAD` method automatically if your route supports `GET
 :::
 
 [Request]: requests.md
-[Response]: responses.md 
-[format specifiers]: https://www.python.org/dev/peps/pep-0498/#format-specifiers
-[parse]: https://pypi.org/project/parse/
+[Response]: responses.md
 [hooks]: ./hooks.md
 [middleware]: ./middleware.md
