@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.10.3] - 2019-02-02
+
 ### Fixed
 
 - Better documentation about route parameters, including how to implement wildcard matching.
@@ -382,7 +384,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `CONTRIBUTING.md`.
 
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...HEAD
+[v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
 [v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
 [v0.10.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...v0.10.0
