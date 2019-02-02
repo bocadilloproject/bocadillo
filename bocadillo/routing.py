@@ -26,6 +26,8 @@ from .websockets import WebSocket, WebSocketView
 
 # Base classes
 
+WILDCARD = "{}"
+
 
 class BaseRoute:
     """The base route class.
@@ -35,7 +37,7 @@ class BaseRoute:
     """
 
     def __init__(self, pattern: str):
-        if not pattern.startswith("/"):
+        if pattern != WILDCARD and not pattern.startswith("/"):
             pattern = f"/{pattern}"
         self.pattern = pattern
 

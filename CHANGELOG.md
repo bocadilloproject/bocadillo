@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Previously, it was not possible to create a catch-all route using the pattern `{}` because a leading slash was automatically added, preventing the pattern from matching a request to the root URL `/`. This has been fixed!
+
 ## [v0.10.2] - 2019-01-27
 
 ### Added
