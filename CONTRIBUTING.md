@@ -277,17 +277,17 @@ As a rule of thumb, don't use comments to explain *what* your code is doing, but
 
 Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion/).
 
-We use an utility script `scripts/bumpversion.sh` that passes all the provided arguments to `bumpversion`, and also bumps the changelog.
-
-By default, `bumpversion` will create a new commit tagged with the new version.
+The utility script `scripts/bumpversion.sh` runs `bumpversion` with all the provided arguments*, bumps the changelog and creates a tagged commit for the new version.
 
 Example usage:
 
 ```bash
-bash scripts/bumpversion.sh "patch | minor | major | post_release"
+bash scripts/bumpversion.sh "patch | minor | major"
 ```
 
-See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options and `.bumpversion.cfg` for the default configuration.
+> Tip: you may want to `chmod +x scripts/bumpversion.sh` to use `./scripts/bumpversion.sh` for convenience.
+
+\*See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options and `.bumpversion.cfg` for the default configuration.
 
 ### Releasing
 
