@@ -277,15 +277,17 @@ As a rule of thumb, don't use comments to explain *what* your code is doing, but
 
 Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion/).
 
-To update the package's version, use:
+We use an utility script `scripts/bumpversion.sh` that passes all the provided arguments to `bumpversion`, and also bumps the changelog.
+
+By default, `bumpversion` will create a new commit tagged with the new version.
+
+Example usage:
 
 ```bash
-bumpversion "patch | minor | major | post_release"
+bash scripts/bumpversion.sh "patch | minor | major | post_release"
 ```
 
-This will create a new commit tagged with the new version.
-
-See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options.
+See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options and `.bumpversion.cfg` for the default configuration.
 
 ### Releasing
 
