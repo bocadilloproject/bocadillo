@@ -90,6 +90,10 @@ module.exports = {
             text: 'News',
             items: [
               {
+                text: 'Mentions',
+                link: '/mentions',
+              },
+              {
                 text: 'Twitter',
                 link: 'https://twitter.com/bocadillopy',
               },
