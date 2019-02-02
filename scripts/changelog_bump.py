@@ -52,28 +52,12 @@ def bump_changelog(content: str, next_version: str):
     return content
 
 
-def main(path: str, next_version: str, debug=True):
+def main(path: str, next_version: str):
     with open(path, "r") as f:
         out = bump_changelog(f.read(), next_version)
-    if debug:
-        print(out)
-    else:
-        with open(path, "w") as f:
-            f.write(out)
-
-
-def get_debug():
-    try:
-        sys.argv[2]
-    except IndexError:
-        return True
-    else:
-        return False
+    with open(path, "w") as f:
+        f.write(out)
 
 
 if __name__ == "__main__":
-    main(
-        os.path.join(os.getcwd(), "CHANGELOG.md"),
-        next_version=sys.argv[1],
-        debug=get_debug(),
-    )
+    main(os.path.join(os.getcwd(), sys.argv[1]), next_version=sys.argv[2])
