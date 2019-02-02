@@ -1,6 +1,6 @@
 # Routes and URL design
 
-The point of a web framework is to make it easy to work with HTTP requests, which means managing routes and designing URLs. This topic guide shows you how to do this in Bocadillo.
+The point of a web framework is to make it easy to work with HTTP requests, which means managing routes and designing URLs. This guide shows you how to do this in Bocadillo.
 
 ## Overview
 

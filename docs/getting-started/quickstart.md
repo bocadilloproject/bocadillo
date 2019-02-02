@@ -46,7 +46,7 @@ You can now head to [http://localhost:8000](http://localhost:8000), and see "Hel
 The following example is a courses management app.
 It showcases a lot of Bocadillo's features: routing, views,
 templates, hooks, and more.
-You'll find a link to each feature's topic guide after the code.
+You'll find a link to each feature's guide after the code.
 
 Brace yourselves — fair chunk of code ahead!
 
@@ -113,9 +113,9 @@ Cheers. :burrito:
 Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer. 
 
 Of course, we haven't dived into the details just yet.
-You should now head to our [Topic guides] section to learn more.
+You should now head to our [Guides] section to learn more.
 
-As a starting point, here are the topic guides for the features showcased in
+As a starting point, here are the guides for the features showcased in
 the courses app example:
 
 - [Routes]
@@ -133,7 +133,7 @@ the courses app example:
 Happy coding!
 
 [Installation]: ./installation.md
-[Topic guides]: ../guides/
+[Guides]: ../guides/
 [Uvicorn]: https://www.uvicorn.org
 [Flask]: http://flask.pocoo.org
 [Falcon]: https://falconframework.org
