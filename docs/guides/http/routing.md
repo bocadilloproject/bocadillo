@@ -117,11 +117,11 @@ async def hello(req, res):
     res.text = "Hello, world!"
 ```
 
-As you can see, the value of an anonymous parameter is not passed to the view. If you need to the value, you should use a regular named route parameter.
+As you can see, the value of an anonymous parameter is not passed to the view. If you need access to the value, you should use a regular named route parameter.
 
 ::: warning CAUTION
 - **Order matters**. If `/foo/{}` is defined before `/foo/bar`, making a request to `/foo/bar` will match the former.
-- The anonymous parameter `{}` expects a **non-empty string**. This means that the pattern `/{}` will *not* match the root URL `/` because it expects a non-empty value after the leading slash.
+- The anonymous parameter `{}` expects a **non-empty string**. This means that, unlike the catch-all `{}`, the pattern `/{}` will *not* match the root URL `/` because it expects a non-empty value after the leading slash.
 - Wildcard routes should not be used to implement 404 pages — see the next section for how Bocadillo deals with URLs that don't match any route.
 :::
 
