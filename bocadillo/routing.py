@@ -12,7 +12,7 @@ from typing import (
     Union,
 )
 
-from parse import parse
+from parse import Parser
 from starlette.websockets import WebSocketClose
 
 from . import views
@@ -42,6 +42,7 @@ class BaseRoute:
         if pattern != WILDCARD and not pattern.startswith("/"):
             pattern = f"/{pattern}"
         self._pattern = pattern
+        self._parser = Parser(self._pattern)
 
     @property
     def pattern(self) -> str:
@@ -68,10 +69,8 @@ class BaseRoute:
             If the URL path matches the URL pattern, this is a dictionary
             containing the route parameters, otherwise it is `None`.
         """
-        result = parse(self._pattern, path)
-        if result is not None:
-            return result.named
-        return None
+        result = self._parser.parse(path)
+        return result.named if result is not None else None
 
     def _get_clone_kwargs(self) -> dict:
         return {"pattern": self._pattern}
