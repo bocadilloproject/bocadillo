@@ -26,6 +26,8 @@ from .websockets import WebSocket, WebSocketView
 
 WILDCARD = "{}"
 
+T = TypeVar("T")
+
 # Base classes
 
 
@@ -39,7 +41,11 @@ class BaseRoute:
     def __init__(self, pattern: str):
         if pattern != WILDCARD and not pattern.startswith("/"):
             pattern = f"/{pattern}"
-        self.pattern = pattern
+        self._pattern = pattern
+
+    @property
+    def pattern(self) -> str:
+        return self._pattern
 
     def url(self, **kwargs) -> str:
         """Return full path for the given route parameters.
@@ -52,7 +58,7 @@ class BaseRoute:
             A full URL path obtained by formatting the route pattern with
             the provided route parameters.
         """
-        return self.pattern.format(**kwargs)
+        return self._pattern.format(**kwargs)
 
     def parse(self, path: str) -> Optional[dict]:
         """Parse an URL path against the route's URL pattern.
@@ -62,19 +68,23 @@ class BaseRoute:
             If the URL path matches the URL pattern, this is a dictionary
             containing the route parameters, otherwise it is `None`.
         """
-        result = parse(self.pattern, path)
+        result = parse(self._pattern, path)
         if result is not None:
             return result.named
         return None
+
+    def _get_clone_kwargs(self) -> dict:
+        return {"pattern": self._pattern}
+
+    def clone(self: T, **kwargs: Any) -> T:
+        kwargs = {**self._get_clone_kwargs(), **kwargs}
+        return type(self)(**kwargs)
 
     async def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
 
-_R = TypeVar("_R")
-
-
-class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
+class RouteMatch(Generic[T]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -82,12 +92,12 @@ class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     params (dict): extracted route parameters.
     """
 
-    def __init__(self, route: _R, params: dict):
+    def __init__(self, route: T, params: dict):
         self.route = route
         self.params = params
 
 
-class BaseRouter(Generic[_R]):
+class BaseRouter(Generic[T]):
     """The base router class.
 
     # Attributes
@@ -96,7 +106,7 @@ class BaseRouter(Generic[_R]):
     """
 
     def __init__(self):
-        self.routes: Dict[str, _R] = {}
+        self.routes: Dict[str, T] = {}
 
     def _get_key(self, route: BaseRoute) -> str:
         raise NotImplementedError
@@ -105,14 +115,14 @@ class BaseRouter(Generic[_R]):
         """Register a route. Not implemented."""
         raise NotImplementedError
 
-    def add(self, route: _R):
+    def add(self, route: T):
         self.routes[self._get_key(route)] = route
 
     def route(self, *args, **kwargs):
         """Register a route by decorating a view."""
         return partial(self.add_route, *args, **kwargs)
 
-    def match(self, path: str) -> Optional[RouteMatch[_R]]:
+    def match(self, path: str) -> Optional[RouteMatch[T]]:
         """Attempt to match an URL path against one of the registered routes.
 
         # Parameters
@@ -129,10 +139,9 @@ class BaseRouter(Generic[_R]):
                 return RouteMatch(route=route, params=params)
         return None
 
-    def mount(self, other: "BaseRouter[_R]", root: str = ""):
+    def mount(self, other: "BaseRouter[T]", root: str = ""):
         for route in other.routes.values():
-            route.pattern = root + route.pattern
-            self.add(route)
+            self.add(route.clone(pattern=root + route.pattern))
 
 
 # HTTP
@@ -153,6 +162,11 @@ class HTTPRoute(BaseRoute):
         super().__init__(pattern)
         self.view = view
         self.name = name
+
+    def _get_clone_kwargs(self) -> dict:
+        kwargs = super()._get_clone_kwargs()
+        kwargs.update({"view": self.view, "name": self.name})
+        return kwargs
 
     async def __call__(self, req: Request, res: Response, **params) -> None:
         method = req.method.lower()
@@ -268,6 +282,11 @@ class WebSocketRoute(BaseRoute):
         super().__init__(pattern)
         self.view = view
         self._ws_kwargs = kwargs
+
+    def _get_clone_kwargs(self) -> dict:
+        kwargs = super()._get_clone_kwargs()
+        kwargs.update({"view": self.view, **self._ws_kwargs})
+        return kwargs
 
     async def __call__(
         self, scope: Scope, receive: Receive, send: Send, **params
