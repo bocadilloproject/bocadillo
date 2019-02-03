@@ -4,8 +4,8 @@ from typing import Callable, List, TypeVar, Union, Optional, Any, Coroutine
 
 from starlette.concurrency import run_in_threadpool
 
-_camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
-_snake_regex = re.compile(r"([a-z0-9])([A-Z])")
+_CAMEL_REGEX = re.compile(r"(.)([A-Z][a-z]+)")
+_SNAKE_REGEX = re.compile(r"([a-z0-9])([A-Z])")
 
 _V = TypeVar("_V")
 
@@ -36,8 +36,8 @@ async def call_async(
 
 def camel_to_snake(name: str) -> str:
     """Convert a `CamelCase` name to its `snake_case` version."""
-    s1 = _camel_regex.sub(r"\1_\2", name)
-    return _snake_regex.sub(r"\1_\2", s1).lower()
+    s1 = _CAMEL_REGEX.sub(r"\1_\2", name)
+    return _SNAKE_REGEX.sub(r"\1_\2", s1).lower()
 
 
 # WSGI
