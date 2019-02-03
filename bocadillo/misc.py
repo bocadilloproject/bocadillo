@@ -1,4 +1,5 @@
 from os.path import join, dirname, abspath
+from typing import Callable
 
 assets_dir = join(dirname(abspath(__file__)), "assets")
 
@@ -9,7 +10,7 @@ def read_asset(filename: str) -> str:
         return f.read()
 
 
-def overrides(original):
+def overrides(original: Callable) -> Callable:
     def decorate(func):
         func.__doc__ = original.__doc__
         return func

@@ -1,6 +1,6 @@
 import inspect
 from functools import partial, wraps
-from typing import List, Union, Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 from .app_types import Handler
 from .compat import call_async, camel_to_snake
@@ -54,13 +54,10 @@ class View:
     delete: Handler
     head: Handler
     options: Handler
+    handle: Optional[Handler]
 
     @classmethod
     def create(cls, name: str, docstring: str, handlers: dict) -> "View":
-        # Create a view object.
-        view = cls(name)
-        view.__doc__ = docstring
-
         # Convert handlers to async if necessary
         for method, handler in handlers.items():
             if not inspect.iscoroutinefunction(handler):
@@ -71,23 +68,24 @@ class View:
         if "get" in handlers and "head" not in handlers:
             handlers["head"] = handlers["get"]
 
+        # Create the view object.
+        vue = cls(name)
+        vue.__doc__ = docstring
+
+        # Assign method handlers.
         for method, handler in handlers.items():
-            setattr(view, method, handler)
+            setattr(vue, method, handler)
 
-        return view
+        return vue
 
-    def _get_handler(self, req):
-        if hasattr(self, "handle"):
-            return self.handle
-        return getattr(self, req.method.lower())
-
-    async def __call__(self, req, res, **kwargs):
+    def get_handler(self, method: str) -> Handler:
         try:
-            handler: Handler = self._get_handler(req)
-        except AttributeError as e:
-            raise HandlerDoesNotExist from e
-        else:
-            await handler(req, res, **kwargs)
+            return self.handle
+        except AttributeError:
+            try:
+                return getattr(self, method)
+            except AttributeError as exc:
+                raise HandlerDoesNotExist from exc
 
 
 def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
@@ -145,11 +143,17 @@ def get_handlers(obj: Any) -> Dict[str, Handler]:
     handlers (dict):
         A dict mapping an HTTP method to a handler.
     """
-    return {
-        method: getattr(obj, method)
-        for method in ("handle", *map(str.lower, ALL_HTTP_METHODS))
-        if hasattr(obj, method)
-    }
+    all_methods = map(str.lower, ALL_HTTP_METHODS)
+    try:
+        handle = obj.handle
+    except AttributeError:
+        return {
+            method: getattr(obj, method)
+            for method in all_methods
+            if hasattr(obj, method)
+        }
+    else:
+        return {method: handle for method in all_methods}
 
 
 def view(methods: MethodsParam = None):

@@ -24,9 +24,9 @@ from .response import Response
 from .views import HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
 
-# Base classes
-
 WILDCARD = "{}"
+
+# Base classes
 
 
 class BaseRoute:
@@ -58,9 +58,9 @@ class BaseRoute:
         """Parse an URL path against the route's URL pattern.
 
         # Returns
-        result (dict or None):
+        params (dict or None):
             If the URL path matches the URL pattern, this is a dictionary
-            containing the route parameters, otherwise None.
+            containing the route parameters, otherwise it is `None`.
         """
         result = parse(self.pattern, path)
         if result is not None:
@@ -74,7 +74,7 @@ class BaseRoute:
 _R = TypeVar("_R")
 
 
-class RouteMatch(Generic[_R]):
+class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -155,10 +155,14 @@ class HTTPRoute(BaseRoute):
         self.name = name
 
     async def __call__(self, req: Request, res: Response, **params) -> None:
+        method = req.method.lower()
+
         try:
-            await self.view(req, res, **params)
+            handler = self.view.get_handler(method)
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
+
+        await handler(req, res, **params)
 
 
 class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
@@ -232,12 +236,15 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
 
     async def __call__(self, req: Request, res: Response) -> Response:
         match = self.match(req.url.path)
+
         if match is None:
             raise HTTPError(status=404)
+
         try:
             await match.route(req, res, **match.params)
         except Redirection as redirection:
             res = redirection.response
+
         return res
 
 
