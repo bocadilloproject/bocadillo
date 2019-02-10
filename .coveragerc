@@ -12,5 +12,4 @@ ignore_errors = True
 omit =
     setup.py
     tests/*
-    bocadillo/scaffold/*
     _*.py
