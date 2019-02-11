@@ -2,7 +2,7 @@
 
 ## WebSocket
 ```python
-WebSocket(self, scope: dict, receive: Callable[[], Awaitable[MutableMapping[str, Any]]], send: Callable[[MutableMapping[str, Any]], NoneType], value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+WebSocket(self, scope: dict, receive: Callable[[], Awaitable[MutableMapping[str, Any]]], send: Callable[[MutableMapping[str, Any]], NoneType], value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int, ...], NoneType] = None)
 ```
 Represents a WebSocket connection.
 
