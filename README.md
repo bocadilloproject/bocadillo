@@ -1,9 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
-</p>
-
-<p align="center">
-    <em>A modern Python web framework filled with asynchronous salsa.</em>
+    <img src=".github/banner.png">
 </p>
 
 ---
@@ -82,6 +78,13 @@ See [CHANGELOG](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGE
 For a list of short, mid and long-term feature ideas currently in our scope, see the [Roadmap][roadmap].
 
 To see what has already been implemented for the next release, see the [Unreleased][changelog-unreleased] section of our changelog.
+
+## Credits
+
+Logo:
+
+- Designed by Florimond Manca.
+- Sandwich icon designed by [macrovector](http://macrovector.com).
 
 <!-- URLs -->
 
