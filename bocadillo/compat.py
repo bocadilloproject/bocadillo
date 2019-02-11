@@ -1,6 +1,6 @@
 import asyncio
 import re
-from typing import Callable, List, TypeVar, Union, Optional, Any, Coroutine
+from typing import Callable, List, TypeVar, Union, Optional, Any, Awaitable
 
 from starlette.concurrency import run_in_threadpool
 
@@ -11,10 +11,10 @@ _V = TypeVar("_V")
 
 
 async def call_async(
-    func: Union[Callable[..., Coroutine[Any, Any, _V]], Callable[..., _V]],
+    func: Callable[..., Union[_V, Awaitable[_V]]],
     *args: Any,
     sync: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> _V:
     """Call a function in an async manner.
 

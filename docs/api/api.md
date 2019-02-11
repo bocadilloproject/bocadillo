@@ -2,7 +2,7 @@
 
 ## API
 ```python
-API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: Union[str, NoneType] = 'application/json')
+API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json')
 ```
 The all-mighty API class.
 
@@ -80,7 +80,7 @@ This is built from the `templates_dir` parameter.
 
 ### template
 ```python
-API.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
+API.template(self, name_: str, context: dict = None, **kwargs) -> str
 ```
 Render a template asynchronously.
 
@@ -155,7 +155,7 @@ __See Also__
 
 ### add_error_handler
 ```python
-API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], NoneType])
+API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], Awaitable[NoneType]])
 ```
 Register a new error handler.
 

@@ -12,7 +12,7 @@ This is built from the `templates_dir` parameter.
 
 ### template
 ```python
-TemplatesMixin.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
+TemplatesMixin.template(self, name_: str, context: dict = None, **kwargs) -> str
 ```
 Render a template asynchronously.
 

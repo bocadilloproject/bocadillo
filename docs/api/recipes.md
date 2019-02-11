@@ -77,7 +77,7 @@ Shortcut for `RecipeBook(recipes, prefix)`.
 
 ### template
 ```python
-Recipe.template(self, name_: str, context: dict = None, **kwargs) -> Coroutine
+Recipe.template(self, name_: str, context: dict = None, **kwargs) -> str
 ```
 Render a template asynchronously.
 

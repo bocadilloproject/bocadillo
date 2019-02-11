@@ -15,8 +15,13 @@ ASGIApp = Callable[[Scope], ASGIAppInstance]
 Handler = Callable[[Request, Response, Any], Awaitable[None]]
 
 # HTTP
-HTTPApp = Callable[[Request, Response], Awaitable[Response]]
-ErrorHandler = Callable[[Request, Response, Exception], None]
+ErrorHandler = Callable[[Request, Response, Exception], Awaitable[None]]
+
+
+class HTTPApp:
+    async def __call__(self, req: Request, res: Response) -> Response:
+        raise NotImplementedError
+
 
 # Server lifespan events
 EventHandler = Callable[[], Awaitable[None]]

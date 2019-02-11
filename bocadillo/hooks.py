@@ -49,8 +49,7 @@ class Hooks:
                 for method, handler in get_handlers(view_cls).items():
                     setattr(view_cls, method, decorator(handler))
                 return view_cls
-            else:
-                return _with_hook(hook_type, hook_func, handler)
+            return _with_hook(hook_type, hook_func, handler)
 
         return decorator
 

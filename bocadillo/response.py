@@ -1,5 +1,13 @@
 import inspect
-from typing import AnyStr, Any, Callable, Coroutine, Optional, AsyncIterable
+from typing import (
+    AnyStr,
+    Any,
+    Callable,
+    Coroutine,
+    Optional,
+    AsyncIterable,
+    Dict,
+)
 
 from starlette.background import BackgroundTask
 from starlette.requests import Request
@@ -25,12 +33,12 @@ class Response:
 
     def __init__(self, request: Request, media: Media):
         self.request = request
-        self._content: AnyStr = None
-        self.status_code: int = None
-        self.headers = {}
+        self._content: Optional[AnyStr] = None
+        self.status_code: Optional[int] = None
+        self.headers: Dict[str, str] = {}
         self._media = media
-        self._background: BackgroundFunc = None
-        self._generator: AsyncIterable[bytes] = None
+        self._background: Optional[BackgroundFunc] = None
+        self._generator: Optional[AsyncIterable[bytes]] = None
         self.chunked = False
 
     @property
