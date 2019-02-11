@@ -14,6 +14,19 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- A parser for URL patterns used to be compiled on every call to a route. The parser is now compiled once and for all on startup. As a result, URL matching is slightly faster.
+
+### Changed
+
+- New colors and logo for the docs site.
+- Various documentation improvements.
+
+### Removed
+
+- **BREAKING**: Boca was moved to a separate package: [boca](https://bocadilloproject.github.io/boca/). It can be installed from PyPI using `pip install boca` and does not come installed with Bocadillo by default.
+
 ## [v0.10.3] - 2019-02-02
 
 ### Fixed
