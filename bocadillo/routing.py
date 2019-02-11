@@ -75,7 +75,7 @@ class BaseRoute:
     def _get_clone_kwargs(self) -> dict:
         return {"pattern": self._pattern}
 
-    def clone(self: _T, **kwargs: Any) -> _T:
+    def clone(self, **kwargs: Any):
         kwargs = {**self._get_clone_kwargs(), **kwargs}
         return type(self)(**kwargs)
 
@@ -107,7 +107,7 @@ class BaseRouter(Generic[_T]):
     def __init__(self):
         self.routes: Dict[str, _T] = {}
 
-    def _get_key(self, route: BaseRoute) -> str:
+    def _get_key(self, route: _T) -> str:
         raise NotImplementedError
 
     def add_route(self, *args, **kwargs):
@@ -138,7 +138,7 @@ class BaseRouter(Generic[_T]):
                 return RouteMatch(route=route, params=params)
         return None
 
-    def mount(self, other: "BaseRouter[T]", root: str = ""):
+    def mount(self, other: "BaseRouter[_T]", root: str = ""):
         for route in other.routes.values():
             self.add(route.clone(pattern=root + route.pattern))
 
@@ -167,7 +167,7 @@ class HTTPRoute(BaseRoute):
         kwargs.update({"view": self.view, "name": self.name})
         return kwargs
 
-    async def __call__(self, req: Request, res: Response, **params) -> None:
+    async def __call__(self, req: Request, res: Response, **params):
         method = req.method.lower()
 
         try:

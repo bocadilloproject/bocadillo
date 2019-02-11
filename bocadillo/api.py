@@ -1,6 +1,6 @@
 import os
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -105,7 +105,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         enable_hsts: bool = False,
         enable_gzip: bool = False,
         gzip_min_size: int = 1024,
-        media_type: Optional[str] = Media.JSON,
+        media_type: str = Media.JSON,
     ):
         super().__init__(templates_dir=templates_dir)
 

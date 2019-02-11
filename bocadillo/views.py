@@ -54,7 +54,6 @@ class View:
     delete: Handler
     head: Handler
     options: Handler
-    handle: Optional[Handler]
 
     @classmethod
     def create(cls, name: str, docstring: str, handlers: dict) -> "View":
@@ -80,7 +79,7 @@ class View:
 
     def get_handler(self, method: str) -> Handler:
         try:
-            return self.handle
+            return getattr(self, "handle")
         except AttributeError:
             try:
                 return getattr(self, method)

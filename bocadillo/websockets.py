@@ -43,7 +43,7 @@ class WebSocket:
         value_type: Optional[str] = None,
         receive_type: Optional[str] = None,
         send_type: Optional[str] = None,
-        caught_close_codes: Optional[Tuple[int]] = None,
+        caught_close_codes: Optional[Tuple[int, ...]] = None,
     ):
         # NOTE: we use composition over inheritance here, because
         # we want to redefine `receive()` and `send()` but Starlette's
@@ -55,7 +55,7 @@ class WebSocket:
         if caught_close_codes is None:
             caught_close_codes = (1000, 1001)
         if caught_close_codes is all:
-            caught_close_codes = list(WEBSOCKET_CLOSE_CODES)
+            caught_close_codes = tuple(WEBSOCKET_CLOSE_CODES)
         self.caught_close_codes = caught_close_codes
 
         if value_type is not None:

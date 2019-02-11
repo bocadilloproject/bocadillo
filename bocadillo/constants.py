@@ -1,9 +1,19 @@
-ALL_HTTP_METHODS = ("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+from typing import Dict, Tuple
+
+ALL_HTTP_METHODS: Tuple[str, ...] = (
+    "GET",
+    "HEAD",
+    "POST",
+    "PUT",
+    "DELETE",
+    "OPTIONS",
+    "PATCH",
+)
 
 DEFAULT_CORS_CONFIG = {"allow_origins": [], "allow_methods": ["GET"]}
 
 # See: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
-WEBSOCKET_CLOSE_CODES = {
+WEBSOCKET_CLOSE_CODES: Dict[int, str] = {
     1000: "Normal Closure",
     1001: "Going Away",
     1002: "Protocol Error",

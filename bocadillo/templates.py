@@ -22,6 +22,7 @@ class TemplatesMixin:
 
     def __init__(self, templates_dir: str = None, **kwargs):
         super().__init__(**kwargs)
+        dirs: List[str]
         if templates_dir is None:
             dirs = []
         else:
@@ -73,9 +74,7 @@ class TemplatesMixin:
         context.update(kwargs)
         return context
 
-    async def template(
-        self, name_: str, context: dict = None, **kwargs
-    ) -> Coroutine:
+    async def template(self, name_: str, context: dict = None, **kwargs) -> str:
         """Render a template asynchronously.
 
         Can only be used within `async` functions.

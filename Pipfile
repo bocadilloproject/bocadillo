@@ -21,6 +21,7 @@ pre-commit = "*"
 pydoc-markdown = "*"
 pylint = "*"
 bocadillo = {editable = true,path = "."}
+mypy = "*"
 
 [requires]
 python_version = "3.7"
