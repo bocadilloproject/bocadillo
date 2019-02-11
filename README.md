@@ -1,9 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
-</p>
-
-<p align="center">
-    <em>A modern Python web framework filled with asynchronous salsa.</em>
+    <img src=".github/banner.png">
 </p>
 
 ---
