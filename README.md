@@ -79,6 +79,13 @@ For a list of short, mid and long-term feature ideas currently in our scope, see
 
 To see what has already been implemented for the next release, see the [Unreleased][changelog-unreleased] section of our changelog.
 
+## Credits
+
+Logo:
+
+- Designed by Florimond Manca.
+- Sandwich icon designed by [macrovector](http://macrovector.com).
+
 <!-- URLs -->
 
 [python-url]: https://www.python.org
