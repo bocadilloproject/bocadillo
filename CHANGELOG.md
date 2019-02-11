@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.11.0] - 2019-02-11
+
 ### Fixed
 
 - A parser for URL patterns used to be compiled on every call to a route. The parser is now compiled once and for all on startup. As a result, URL matching is slightly faster.
@@ -397,7 +399,8 @@ won't be called anymore if the HTTP method is not allowed.
 - `CONTRIBUTING.md`.
 
 
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...HEAD
+[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...HEAD
+[v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
 [v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
 [v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
 [v0.10.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...v0.10.1
