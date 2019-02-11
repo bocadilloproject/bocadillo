@@ -279,25 +279,6 @@ __See Also__
 - [WebSocket](./websockets.md#websocket) for a description of keyword
 arguments.
 
-### url_for
-```python
-API.url_for(self, name: str, **kwargs) -> str
-```
-Build the URL path for a named route.
-
-__Parameters__
-
-- __name (str)__: the name of the route.
-- __kwargs (dict)__: route parameters.
-
-__Returns__
-
-`url (str)`: the URL path for a route.
-
-__Raises__
-
-- `HTTPError(404) `: if no route exists for the given `name`.
-
 ### run
 ```python
 API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
@@ -330,6 +311,25 @@ __See Also__
 - [Debug mode](../guides/api.md#debug-mode)
 - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
 available keyword arguments.
+
+### url_for
+```python
+API.url_for(self, name: str, **kwargs) -> str
+```
+Build the URL path for a named route.
+
+__Parameters__
+
+- __name (str)__: the name of the route.
+- __kwargs (dict)__: route parameters.
+
+__Returns__
+
+`url (str)`: the URL path for a route.
+
+__Raises__
+
+- `HTTPError(404) `: if no route exists for the given `name`.
 
 ### redirect
 ```python

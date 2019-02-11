@@ -26,7 +26,7 @@ from .websockets import WebSocket, WebSocketView
 
 WILDCARD = "{}"
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 # Base classes
 
@@ -75,7 +75,7 @@ class BaseRoute:
     def _get_clone_kwargs(self) -> dict:
         return {"pattern": self._pattern}
 
-    def clone(self: T, **kwargs: Any) -> T:
+    def clone(self: _T, **kwargs: Any) -> _T:
         kwargs = {**self._get_clone_kwargs(), **kwargs}
         return type(self)(**kwargs)
 
@@ -83,7 +83,7 @@ class BaseRoute:
         raise NotImplementedError
 
 
-class RouteMatch(Generic[T]):  # pylint: disable=unsubscriptable-object
+class RouteMatch(Generic[_T]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -91,12 +91,12 @@ class RouteMatch(Generic[T]):  # pylint: disable=unsubscriptable-object
     params (dict): extracted route parameters.
     """
 
-    def __init__(self, route: T, params: dict):
+    def __init__(self, route: _T, params: dict):
         self.route = route
         self.params = params
 
 
-class BaseRouter(Generic[T]):
+class BaseRouter(Generic[_T]):
     """The base router class.
 
     # Attributes
@@ -105,7 +105,7 @@ class BaseRouter(Generic[T]):
     """
 
     def __init__(self):
-        self.routes: Dict[str, T] = {}
+        self.routes: Dict[str, _T] = {}
 
     def _get_key(self, route: BaseRoute) -> str:
         raise NotImplementedError
@@ -114,14 +114,14 @@ class BaseRouter(Generic[T]):
         """Register a route. Not implemented."""
         raise NotImplementedError
 
-    def add(self, route: T):
+    def add(self, route: _T):
         self.routes[self._get_key(route)] = route
 
     def route(self, *args, **kwargs):
         """Register a route by decorating a view."""
         return partial(self.add_route, *args, **kwargs)
 
-    def match(self, path: str) -> Optional[RouteMatch[T]]:
+    def match(self, path: str) -> Optional[RouteMatch[_T]]:
         """Attempt to match an URL path against one of the registered routes.
 
         # Parameters

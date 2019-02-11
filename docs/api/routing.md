@@ -34,13 +34,13 @@ Parse an URL path against the route's URL pattern.
 
 __Returns__
 
-`result (dict or None)`:
+`params (dict or None)`:
     If the URL path matches the URL pattern, this is a dictionary
-    containing the route parameters, otherwise None.
+    containing the route parameters, otherwise it is `None`.
 
 ## RouteMatch
 ```python
-RouteMatch(self, route: ~_R, params: dict)
+RouteMatch(self, route: ~_T, params: dict)
 ```
 Represents a match between an URL path and a route.
 
@@ -72,7 +72,7 @@ BaseRouter.route(self, *args, **kwargs)
 Register a route by decorating a view.
 ### match
 ```python
-BaseRouter.match(self, path: str) -> Union[bocadillo.routing.RouteMatch[~_R], NoneType]
+BaseRouter.match(self, path: str) -> Union[bocadillo.routing.RouteMatch[~_T], NoneType]
 ```
 Attempt to match an URL path against one of the registered routes.
 
