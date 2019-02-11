@@ -1,5 +1,6 @@
 ---
 home: true
+heroImage: /social-image.png
 actionText: Get Started →
 actionLink: /getting-started/
 features:
