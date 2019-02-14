@@ -1,6 +1,6 @@
 # Response
 ```python
-Response(self, request: starlette.requests.Request, media: bocadillo.media.Media)
+Response(self, request: starlette.requests.Request, media_type: str, media_handler: Callable[[Any], str])
 ```
 The response builder, passed to HTTP views and typically named `res`.
 
@@ -10,6 +10,12 @@ spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
 [media]: ../guides/http/media.md
 
+__Parameters__
+
+- __request (Request)__: the currently processed request.
+- __media_type (str)__: the configured media type (given by the `API`).
+- __media_handler (callable)__: the configured media handler (given by the `API`).
+
 __Attributes__
 
 - `content (bytes or str)`: the raw response content.
@@ -17,18 +23,14 @@ __Attributes__
 - `headers (dict)`:
     a case-insensitive dictionary of HTTP headers.
     If not set, `content-type` header is set to `text/plain`.
-- `request (Request)`: the currently processed request.
 - `chunked (bool)`: sets the `transfer-encoding` header to `chunked`.
 
-**Content setters**
-
-These write-only properties set the response's `content`.
-
-- `text (str)`: uses the `text/plain` content type.
-- `html (str)`: uses the `text/html` content type.
-- `media (any)`: uses the configured [media] handler.
-
-
+## html
+Write-only property that sets `content` to the set value and sets the `Content-Type` header to `"text/html"`.
+## media
+Write-only property that sets `content` to the set value serializer using the `media_handler`, sets the `Content-Type` header to the `media_type`.
+## text
+Write-only property that sets `content` to the set value and sets the `Content-Type` header to `"text/plain"`.
 ## background
 ```python
 Response.background(self, func: Callable[..., Coroutine], *args, **kwargs) -> Callable[..., Coroutine]

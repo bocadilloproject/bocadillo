@@ -18,6 +18,18 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - API reference for the `Response` class.
 
+### Fixed
+
+- `Response.text` and `Response.html` are now proper write-only Python properties, which should be more friendly with type checkers.
+
+### Changed
+
+- Content types are now available on the `bocadillo.constants.CONTENT_TYPE` enum, instead of `bocadillo.media.Media`.
+
+### Removed
+
+- Removed the `handle_text` media handler. The only built-in media handler is now `handle_json`.
+
 ## [v0.11.0] - 2019-02-11
 
 ### Fixed

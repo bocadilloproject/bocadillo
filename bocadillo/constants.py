@@ -28,3 +28,9 @@ WEBSOCKET_CLOSE_CODES: Dict[int, str] = {
     1011: "Internal Error",
     1015: "TLS Failure [Internal]",
 }
+
+
+class CONTENT_TYPE:
+    PLAIN_TEXT = "text/plain"
+    HTML = "text/html"
+    JSON = "application/json"
