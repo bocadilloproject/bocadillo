@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- API reference for the `Response` class.
+
 ## [v0.11.0] - 2019-02-11
 
 ### Fixed
@@ -55,7 +59,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Fixed
 
 - Fixed a bug that caused an `ImportError` when importing from
-`bocadillo.api` using `uvicorn<0.3.26`.
+  `bocadillo.api` using `uvicorn<0.3.26`.
 
 ## [v0.10.0] - 2019-01-17
 
@@ -104,7 +108,7 @@ If your application uses the features below, you are most likely affected and sh
 - Send a chunk-encoded response with `res.chunked = True`.
 - Support for request and response streaming with `async for chunk in req` and `@res.stream`.
 - View definition utilities: `from_handler()`, `from_obj()`, `@view()`.
-- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus,  passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
+- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus, passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
 - Function-based views are automatically decorated with `@view()` to ensure backwards compatibility.
 
 ```python
@@ -250,7 +254,7 @@ async def foo(req, res):
 
 ### Changed
 
-- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now *always* lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
+- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now _always_ lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
 - All routes now have an inferred `name` based on their function or class name. Explicit route naming is still possible.
 - Because of the above, names of routes in recipes now use the recipe's name as a namespace, i.e. `recipe_name:route_name` instead of `route_name`.
 - Unsafe HTTP verbs used to be supported by defaults on function-based routes. Only the safe ones, GET and HEAD, are supported by default now.
@@ -285,7 +289,7 @@ async def foo(req, res):
 
 - Route hooks via `@api.before()` and `@api.after()`.
 - Media types and media handlers: `API([media_type='application/json'])`, `api.media_type`,
-`api.media_handlers`.
+  `api.media_handlers`.
 - Support for async callbacks on `RoutingMiddleware`.
 - Documentation for the above.
 - (Development) Black auto-formatting with pre-commit.
@@ -298,10 +302,10 @@ async def foo(req, res):
 ### Fixed
 
 - Exceptions raised inside a middleware callback
-(`before_dispatch()` or `after_dispatch()`) are now properly handled by
-registered error handlers (they were previously left uncaught).
+  (`before_dispatch()` or `after_dispatch()`) are now properly handled by
+  registered error handlers (they were previously left uncaught).
 - Middleware callbacks (especially `before_dispatch()`)
-won't be called anymore if the HTTP method is not allowed.
+  won't be called anymore if the HTTP method is not allowed.
 
 ## [v0.5.0] - 2018-11-18
 
@@ -323,7 +327,7 @@ won't be called anymore if the HTTP method is not allowed.
 - Redirections using `api.redirect()`. Can be by route name, internal URL, or external URL. Make it permanent with `permanent=True`.
 - Template rendering from string using `api.template_string()`.
 - Add allowed hosts configuration through `allowed_host` argument to `API()`.
-- *Experimental* support for routing middleware through `bocadillo.RoutingMiddleware`.
+- _Experimental_ support for routing middleware through `bocadillo.RoutingMiddleware`.
 - Add CORS support with restrictive defaults. Enable using `enable_cors = True`, configure through `cors_config`.
 - Add HSTS support through `enable_hsts`.
 
@@ -398,8 +402,7 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...HEAD
 [v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
 [v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
 [v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
