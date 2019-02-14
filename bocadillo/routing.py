@@ -26,9 +26,10 @@ from .websockets import WebSocket, WebSocketView
 
 WILDCARD = "{}"
 
+# Route generic type.
 _T = TypeVar("_T")
 
-# Base classes
+# Base classes.
 
 
 class BaseRoute:
@@ -143,7 +144,7 @@ class BaseRouter(Generic[_T]):
             self.add(route.clone(pattern=root + route.pattern))
 
 
-# HTTP
+# HTTP.
 
 
 class HTTPRoute(BaseRoute):
@@ -261,7 +262,7 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
         return res
 
 
-# WebSocket
+# WebSocket.
 
 
 class WebSocketRoute(BaseRoute):
