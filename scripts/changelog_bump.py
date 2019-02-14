@@ -2,17 +2,16 @@ import os
 import re
 import sys
 from datetime import datetime
-from typing import Match
-
+from typing import Callable, Match, Optional
 
 LINK_REGEX = re.compile(r"\[(\w+)\](.*)(v.*)\.\.\.(.*)")
 
 
 def update(
     content,
-    match: Match,
-    first_line: callable,
-    second_line: callable,
+    match: Optional[Match],
+    first_line: Callable,
+    second_line: Callable,
     sep: str = "\n",
 ):
     assert match is not None
