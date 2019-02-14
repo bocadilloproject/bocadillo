@@ -39,13 +39,9 @@ an `UnsupportedMediaType` exception is raised.
 
 ## Built-in media types
 
-| Format | `media_type` | Constant* | Handler |
-|------------|--------------|----------|---------|
-| Plain text | `text/plain` | `PLAIN_TEXT` | `str` |
-| HTML | `text/html` | `HTML` | `str` |
-| JSON | `application/json` | `JSON` | `json.dumps` |
-
-*Accessible on the `bocadillo.Media` object.
+| Format | Media type         | Handler      |
+| ------ | ------------------ | ------------ |
+| JSON   | `application/json` | `json.dumps` |
 
 ## Custom media types
 
@@ -69,6 +65,6 @@ api.media_handlers = {
 }
 ```
 
-For a practical example, read our [how to register extra media handlers](../../how-to/extra-media-handlers.md) guide.
+For a practical example, see [YAML media serialization](../../how-to/yaml-media.md).
 
-[MIME type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+[mime type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
