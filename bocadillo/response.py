@@ -31,41 +31,45 @@ class Response:
     it is a callable and accepts `receive` and `send` as defined in the [ASGI
     spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
+    [media]: ../guides/http/media.md
+
     # Attributes
-    request (Request): the currently processed request.
+    content (bytes or str): the raw response content.
     status_code (int): the HTTP status code. If not set, defaults to `200`.
     headers (dict):
         a case-insensitive dictionary of HTTP headers.
         If not set, `content-type` header is set to `text/plain`.
+    request (Request): the currently processed request.
     chunked (bool): sets the `transfer-encoding` header to `chunked`.
+
+    **Content setters**
+
+    These write-only properties set the response's `content`.
+
+    text (str): uses the `text/plain` content type.
+    html (str): uses the `text/html` content type.
+    media (any): uses the configured [media] handler.
+
     """
 
     _MEDIA_ATTRS = {"text": Media.PLAIN_TEXT, "html": Media.HTML, "media": None}
 
     def __init__(self, request: Request, media: Media):
         # Public attributes.
+        self.content: Optional[AnyStr] = None
         self.request = request
         self.status_code: Optional[int] = None
         self.headers: Dict[str, str] = {}
         self.chunked = False
         # Private attributes.
-        self._content: Optional[AnyStr] = None
         self._media = media
         self._background: Optional[BackgroundFunc] = None
         self._stream: Optional[Stream] = None
 
-    @property
-    def content(self) -> Optional[AnyStr]:
-        return self._content
-
-    @content.setter
-    def content(self, content: AnyStr):
-        self._content = content
-
     def _set_media(self, value: Any, media_type: str):
         content = self._media.serialize(value, media_type=media_type)
         self.headers["content-type"] = media_type
-        self._content = content
+        self.content = content
 
     def __setattr__(self, key, value):
         if key in self._MEDIA_ATTRS:
@@ -83,7 +87,7 @@ class Response:
 
         # Parameters
         func (callable):
-            A no-parameter coroutine function.
+            A coroutine function.
         *args, **kwargs:
             Any positional and keyword arguments to pass to `func` when
             executing it.

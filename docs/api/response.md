@@ -8,14 +8,26 @@ At the lower-level, `Response` behaves like an ASGI application instance:
 it is a callable and accepts `receive` and `send` as defined in the [ASGI
 spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
+[media]: ../guides/http/media.md
+
 __Attributes__
 
-- `request (Request)`: the currently processed request.
+- `content (bytes or str)`: the raw response content.
 - `status_code (int)`: the HTTP status code. If not set, defaults to `200`.
 - `headers (dict)`:
     a case-insensitive dictionary of HTTP headers.
     If not set, `content-type` header is set to `text/plain`.
+- `request (Request)`: the currently processed request.
 - `chunked (bool)`: sets the `transfer-encoding` header to `chunked`.
+
+**Content setters**
+
+These write-only properties set the response's `content`.
+
+- `text (str)`: uses the `text/plain` content type.
+- `html (str)`: uses the `text/html` content type.
+- `media (any)`: uses the configured [media] handler.
+
 
 ## background
 ```python
@@ -28,7 +40,7 @@ This can be used either as a decorator or a regular function.
 __Parameters__
 
 - __func (callable)__:
-    A no-parameter coroutine function.
+    A coroutine function.
 - __*args, **kwargs__:
     Any positional and keyword arguments to pass to `func` when
     executing it.
