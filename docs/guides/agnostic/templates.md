@@ -4,6 +4,25 @@ Bocadillo allows you to render [Jinja2] templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
+::: tip CHANGED IN v0.12.0
+To use templates, you need to install Bocadillo using the `[templates]` extra,
+e.g.:
+
+```bash
+pip install bocadillo[templates]
+```
+
+Besides, templates rendering is now performed via a separate `Templates` helper,
+which allows to use templates outside the context of an application.
+
+Here's where the previous `API` template rendering methods went:
+
+- `.template()` -> `Templates.render()`
+- `.template_sync()` -> `Templates.render_sync()`
+- `.template_string()` -> `Templates.render_string()`
+
+:::
+
 ## How templates work
 
 To begin with, templates (when loaded from the file system) are just regular files. For example, when writing HTML templates, the regular `.html` extension is used as for any other HTML file.
@@ -19,13 +38,13 @@ Here's an example HTML template:
 ```html
 <!-- index.html -->
 <html>
-<head>
+  <head>
     <title>{{ title }}</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>{{ title }}</h1>
     <p>Templates are great, aren't they?</p>
-</body>
+  </body>
 </html>
 ```
 
@@ -35,32 +54,44 @@ You may find Jinja2's [Template Designer Documentation] handy as a thorough desc
 
 ## Rendering templates
 
-Bocadillo provides a few shortcuts to render templates. You can typically use these in views to create and return HTML content.
+You can render templates using the [Templates] helper. A typical use case is to create and send HTML content in HTTP views.
 
-- Render a template using `await api.template()`. You can pass context variables as keyword arguments:
+[templates]: ../../api/templates.md#templates
+
+1. Create an instance of `Templates`:
+
+```python
+from bocadillo import API
+from bocadillo.templates import Templates
+
+api = API()
+templates = Templates(api)
+```
+
+2. Render a template using `await templates.render()`. You can pass context variables as keyword arguments:
 
 ```python
 async def post_detail(req, res):
-    res.html = await api.template('index.html', title='Hello, Bocadillo!')
+    res.html = await templates.render('index.html', title='Hello, Bocadillo!')
 ```
 
-- In synchronous views, use `api.template_sync()` instead:
+- In synchronous views, use `templates.render_sync()` instead:
 
 ```python
 def post_detail(req, res):
-    res.html = api.template_sync('index.html', title='Hello, Bocadillo!')
+    res.html = templates.render_sync('index.html', title='Hello, Bocadillo!')
 ```
 
 - Context variables can also be given as a dictionary:
 
 ```python
-await api.template('index.html', {'title': 'Hello, Bocadillo!'})
+await templates.render('index.html', {'title': 'Hello, Bocadillo!'})
 ```
 
 - Lastly, you can render a template directly from a string:
 
 ```python
->>> api.template_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
+>>> templates.render_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
 '<h1>Hello, Bocadillo!</h1>'
 ```
 
@@ -78,15 +109,15 @@ to where the application is run. For example:
     └── index.html
 ```
 
-Here, using `api.template('index.html')` would load and use the template defined in the `./templates/index.html` file.
+Here, using `await templates.render('index.html')` would load and use the template defined in the `./templates/index.html` file.
 
 ### Changing the templates location
 
-You can change the templates directory using the `templates_dir` option to `API()`:
+You can change the templates directory by passing a `directory` to `Templates`:
 
 ```python
-api = bocadillo.API(templates_dir='path/to/templates')
+templates = Templates(directory='path/to/templates')
 ```
 
-[Jinja2]: http://jinja.pocoo.org
-[Template Designer Documentation]: http://jinja.pocoo.org/docs/latest/templates/
+[jinja2]: http://jinja.pocoo.org
+[template designer documentation]: http://jinja.pocoo.org/docs/latest/templates/
