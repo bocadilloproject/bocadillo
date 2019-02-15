@@ -37,7 +37,7 @@ Templates.render(self, filename: str, *args: dict, **kwargs: str) -> str
 ```
 Render a template asynchronously.
 
-Can only be used within ``async`` functions.
+Can only be used within async functions.
 
 __Parameters__
 

@@ -99,7 +99,7 @@ class Templates:
     async def render(self, filename: str, *args: dict, **kwargs: str) -> str:
         """Render a template asynchronously.
 
-        Can only be used within ``async`` functions.
+        Can only be used within async functions.
 
         # Parameters
         name (str):
