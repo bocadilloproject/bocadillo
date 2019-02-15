@@ -96,7 +96,11 @@ class Response:
         self.headers["content-type"] = self._media_type
 
     def attach(
-        self, path: str = None, content: str = None, inline: bool = False
+        self,
+        path: str = None,
+        content: str = None,
+        filename: str = None,
+        inline: bool = False,
     ):
         """Send a file for the client to download.
 
@@ -131,6 +135,8 @@ class Response:
             ), "`filename` is required if `path` is not given"
             self.content = content
 
+        # NOTE: can't let `FileResponse` set this header because it doesn't
+        # have an option for the `disposition` (always attachment).
         disposition = "inline" if inline else "attachment"
         content_disposition = f"{disposition}; filename='{filename}'"
         self.headers.setdefault("content-disposition", content_disposition)
@@ -194,6 +200,9 @@ class Response:
 
         if self._file_path is not None:
             response_cls = _FileResponse
+            response_kwargs["path"] = self._file_path
+            del response_kwargs["content"]
+            del response_kwargs["status_code"]
         elif self._stream is not None:
             response_cls = _StreamingResponse
             response_kwargs["content"] = self._stream

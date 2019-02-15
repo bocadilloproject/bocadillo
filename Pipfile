@@ -22,6 +22,7 @@ pydoc-markdown = "*"
 pylint = "*"
 bocadillo = {editable = true,path = "."}
 mypy = "*"
+aiofiles = "*"
 
 [requires]
 python_version = "3.7"
