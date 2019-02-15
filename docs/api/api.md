@@ -62,17 +62,14 @@ __Parameters__
     Defaults to `"application/json"`.
     See also [Media](../guides/http/media.md).
 
-### media_handlers
-The dictionary of supported media handlers.
+__Attributes__
 
-You can access, edit or replace this at will.
+- `media_handlers (dict)`:
+    The dictionary of media handlers.
+    You can access, edit or replace this at will.
 
 ### media_type
-The currently configured media type.
-
-When setting it to a value outside of built-in or custom media types,
-an `UnsupportedMediaType` exception is raised.
-
+The media type configured when instanciating the application.
 ### templates_dir
 The path where templates are searched for, or `None` if not set.
 

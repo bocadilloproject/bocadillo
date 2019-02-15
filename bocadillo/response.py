@@ -18,7 +18,8 @@ from starlette.responses import (
     FileResponse as _FileResponse,
 )
 
-from .media import Media
+from .constants import CONTENT_TYPE
+from .media import MediaHandler
 
 try:
     import aiofiles
@@ -32,43 +33,73 @@ Stream = AsyncIterable[AnyStr]
 StreamFunc = Callable[[], Stream]
 
 
+def _content_setter(content_type: str):
+    def fset(res: "Response", value: AnyStr):
+        res.content = value
+        res.headers["content-type"] = content_type
+
+    doc = (
+        "Write-only property that sets `content` to the set value and sets "
+        f'the `Content-Type` header to `"{content_type}"`.'
+    )
+
+    return property(fget=None, fset=fset, doc=doc)
+
+
 class Response:
-    """Response builder."""
+    """The response builder, passed to HTTP views and typically named `res`.
 
-    _MEDIA_ATTRS = {"text": Media.PLAIN_TEXT, "html": Media.HTML, "media": None}
+    At the lower-level, `Response` behaves like an ASGI application instance:
+    it is a callable and accepts `receive` and `send` as defined in the [ASGI
+    spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
-    def __init__(self, request: Request, media: Media):
+    [media]: ../guides/http/media.md
+
+    # Parameters
+    request (Request): the currently processed request.
+    media_type (str): the configured media type (given by the `API`).
+    media_handler (callable): the configured media handler (given by the `API`).
+
+    # Attributes
+    content (bytes or str): the raw response content.
+    status_code (int): the HTTP status code. If not set, defaults to `200`.
+    headers (dict):
+        a case-insensitive dictionary of HTTP headers.
+        If not set, `content-type` header is set to `text/plain`.
+    chunked (bool): sets the `transfer-encoding` header to `chunked`.
+    """
+
+    text = _content_setter(CONTENT_TYPE.PLAIN_TEXT)
+    html = _content_setter(CONTENT_TYPE.HTML)
+
+    def __init__(
+        self, request: Request, media_type: str, media_handler: MediaHandler
+    ):
         # Public attributes.
+        self.content: Optional[AnyStr] = None
         self.request = request
         self.status_code: Optional[int] = None
         self.headers: Dict[str, str] = {}
         self.chunked = False
         # Private attributes.
-        self._content: Optional[AnyStr] = None
-        self._media = media
+        self._file_path: Optional[str] = None
+        self._media_type = media_type
+        self._media_handler = media_handler
         self._background: Optional[BackgroundFunc] = None
         self._stream: Optional[Stream] = None
-        self._file_path: Optional[str] = None
 
-    @property
-    def content(self) -> Optional[AnyStr]:
-        return self._content
+    media = property(
+        doc=(
+            "Write-only property that sets `content` to the set value "
+            "serializer using the `media_handler`, sets the "
+            "`Content-Type` header to the `media_type`."
+        )
+    )
 
-    @content.setter
-    def content(self, content: AnyStr):
-        self._content = content
-
-    def _set_media(self, value: Any, media_type: str):
-        content = self._media.serialize(value, media_type=media_type)
-        self.headers["content-type"] = media_type
-        self._content = content
-
-    def __setattr__(self, key, value):
-        if key in self._MEDIA_ATTRS:
-            media_type = self._MEDIA_ATTRS[key] or self._media.type
-            self._set_media(value, media_type=media_type)
-        else:
-            super().__setattr__(key, value)
+    @media.setter
+    def media(self, value: Any):
+        self.content = self._media_handler(value)
+        self.headers["content-type"] = self._media_type
 
     def attach(
         self, path: str = None, content: str = None, inline: bool = False
@@ -104,14 +135,26 @@ class Response:
             assert (
                 filename is not None
             ), "`filename` is required if `path` is not given"
-            self._content = content
+            self.content = content
 
         disposition = "inline" if inline else "attachment"
         content_disposition = f"{disposition}; filename='{filename}'"
         self.headers.setdefault("content-disposition", content_disposition)
 
-    def background(self, func: BackgroundFunc, *args, **kwargs):
-        """Register a coroutine function to be executed in the background."""
+    def background(
+        self, func: BackgroundFunc, *args, **kwargs
+    ) -> BackgroundFunc:
+        """Register a coroutine function to be executed in the background.
+
+        This can be used either as a decorator or a regular function.
+
+        # Parameters
+        func (callable):
+            A coroutine function.
+        *args, **kwargs:
+            Any positional and keyword arguments to pass to `func` when
+            executing it.
+        """
 
         async def background():
             await func(*args, **kwargs)
@@ -125,7 +168,7 @@ class Response:
             return BackgroundTask(self._background)
         return None
 
-    def stream(self, func: StreamFunc):
+    def stream(self, func: StreamFunc) -> StreamFunc:
         """Stream the response.
 
         Should be used to decorate a no-argument asynchronous generator
@@ -141,25 +184,25 @@ class Response:
             self.status_code = 200
 
         if self.status_code != 204:
-            self.headers.setdefault("content-type", Media.PLAIN_TEXT)
+            self.headers.setdefault("content-type", "text/plain")
 
         if self.chunked:
             self.headers["transfer-encoding"] = "chunked"
 
-        res_kwargs = {
+        response_kwargs = {
             "content": self.content,
             "headers": self.headers,
             "status_code": self.status_code,
             "background": self._background_task,
         }
 
-        res_cls = _Response
+        response_cls = _Response
 
         if self._file_path is not None:
-            res_cls = _FileResponse
+            response_cls = _FileResponse
         elif self._stream is not None:
-            res_cls = _StreamingResponse
-            res_kwargs["content"] = self._stream
+            response_cls = _StreamingResponse
+            response_kwargs["content"] = self._stream
 
-        response = res_cls(**res_kwargs)
+        response: _Response = response_cls(**response_kwargs)
         await response(receive, send)

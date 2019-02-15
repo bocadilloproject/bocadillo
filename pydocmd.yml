@@ -17,10 +17,8 @@ generate:
   - media.md:
       - bocadillo.media:
           - bocadillo.media.handle_json
-          - bocadillo.media.handle_text
-          - bocadillo.media.Media:
-              - bocadillo.media.Media.serialize
-              - bocadillo.media.Media.type
+          - bocadillo.media.get_default_handlers
+          - bocadillo.media.UnsupportedMediaType
   - middleware.md:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
@@ -31,6 +29,8 @@ generate:
           - bocadillo.recipes.RecipeBook+
   - routing.md:
       - bocadillo.routing++
+  - response.md:
+      - bocadillo.response.Response+
   - staticfiles.md:
       - bocadillo.staticfiles+
   - templates.md:

@@ -2,7 +2,8 @@ import json
 
 import pytest
 
-from bocadillo import API, Media
+from bocadillo import API
+from bocadillo.constants import CONTENT_TYPE
 from bocadillo.media import UnsupportedMediaType
 
 
@@ -15,12 +16,12 @@ def test_defaults_to_json(api: API):
 
     response = api.client.get("/")
     assert response.status_code == 200
-    assert response.headers["content-type"] == Media.JSON
+    assert response.headers["content-type"] == "application/json"
     assert response.json() == data
 
 
 def test_can_specify_media_type_when_creating_the_api_object():
-    API(media_type=Media.PLAIN_TEXT)
+    API(media_type=CONTENT_TYPE.JSON)
 
 
 def test_media_type_is_accessible_on_api(api: API):
@@ -28,10 +29,9 @@ def test_media_type_is_accessible_on_api(api: API):
 
 
 @pytest.mark.parametrize(
-    "media_type, expected_text",
-    [(Media.JSON, json.dumps), (Media.PLAIN_TEXT, str), (Media.HTML, str)],
+    "media_type, expected_text", [(CONTENT_TYPE.JSON, json.dumps)]
 )
-def test_use_builtin_media_handlers(api: API, media_type, expected_text):
+def test_use_builtin_media_handlers(api: API, media_type: str, expected_text):
     api.media_type = media_type
     data = {"message": "hello"}
 
@@ -83,15 +83,19 @@ def test_replace_media_handlers(api: API, foo_type, handle_foo):
     assert response.text == handle_foo("bar")
 
 
-def test_if_media_type_not_supported_then_setting_it_raises_error(api: API):
-    foo_type = "application/foo"
-
+def test_if_media_type_not_supported_then_passing_it_raises_error(
+    api: API, foo_type
+):
     with pytest.raises(UnsupportedMediaType) as ctx:
-        api.media_type = foo_type
+        API(media_type=foo_type)
 
     assert foo_type in str(ctx.value)
 
+
+def test_if_media_type_not_supported_then_setting_it_raises_error(
+    api: API, foo_type
+):
     with pytest.raises(UnsupportedMediaType) as ctx:
-        API(media_type="application/foo")
+        api.media_type = foo_type
 
     assert foo_type in str(ctx.value)

@@ -23,10 +23,10 @@ from .app_types import (
     Send,
 )
 from .compat import WSGIApp
-from .constants import DEFAULT_CORS_CONFIG
+from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .media import Media
+from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .recipes import RecipeBase
 from .request import Request
@@ -92,6 +92,11 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         Can be one of the supported media types.
         Defaults to `"application/json"`.
         See also [Media](../guides/http/media.md).
+
+    # Attributes
+    media_handlers (dict):
+        The dictionary of media handlers.
+        You can access, edit or replace this at will.
     """
 
     def __init__(
@@ -105,7 +110,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         enable_hsts: bool = False,
         enable_gzip: bool = False,
         gzip_min_size: int = 1024,
-        media_type: str = Media.JSON,
+        media_type: str = CONTENT_TYPE.JSON,
     ):
         super().__init__(templates_dir=templates_dir)
 
@@ -127,8 +132,10 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
                 static_root = static_dir
             self.mount(static_root, static(static_dir))
 
-        # Media handlers
-        self._media = Media(media_type=media_type)
+        # Media
+        self.media_handlers = get_default_handlers()
+        self._media_type = ""
+        self.media_type = media_type
 
         # HTTP middleware
         self.exception_middleware = HTTPErrorMiddleware(
@@ -201,28 +208,14 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     @property
     def media_type(self) -> str:
-        """The currently configured media type.
-
-        When setting it to a value outside of built-in or custom media types,
-        an `UnsupportedMediaType` exception is raised.
-        """
-        return self._media.type
+        """The media type configured when instanciating the application."""
+        return self._media_type
 
     @media_type.setter
     def media_type(self, media_type: str):
-        self._media.type = media_type
-
-    @property
-    def media_handlers(self) -> dict:
-        """The dictionary of supported media handlers.
-
-        You can access, edit or replace this at will.
-        """
-        return self._media.handlers
-
-    @media_handlers.setter
-    def media_handlers(self, media_handlers: dict):
-        self._media.handlers = media_handlers
+        if media_type not in self.media_handlers:
+            raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
+        self._media_type = media_type
 
     def add_error_handler(
         self, exception_cls: Type[Exception], handler: ErrorHandler
@@ -333,10 +326,18 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         assert scope["type"] == "http"
+
         req = Request(scope, receive)
-        res = Response(req, media=self._media)
+
+        res = Response(
+            req,
+            media_type=self.media_type,
+            media_handler=self.media_handlers[self.media_type],
+        )
         res = await self.server_error_middleware(req, res)
+
         await res(receive, send)
+
         # Re-raise the exception to allow the server to log the error
         # and for the test client to optionally re-raise it too.
         self.server_error_middleware.raise_if_exception()

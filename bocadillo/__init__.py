@@ -1,6 +1,5 @@
 from .api import API
 from .errors import HTTPError
-from .media import Media
 from .middleware import Middleware
 from .recipes import Recipe
 from .staticfiles import static
