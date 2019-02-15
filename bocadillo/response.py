@@ -16,12 +16,26 @@ from starlette.responses import (
     StreamingResponse as _StreamingResponse,
 )
 
-from .media import Media
+from .constants import CONTENT_TYPE
+from .media import MediaHandler
 
 AnyStr = Union[str, bytes]
 BackgroundFunc = Callable[..., Coroutine]
 Stream = AsyncIterable[AnyStr]
 StreamFunc = Callable[[], Stream]
+
+
+def _content_setter(content_type: str):
+    def fset(res: "Response", value: AnyStr):
+        res.content = value
+        res.headers["content-type"] = content_type
+
+    doc = (
+        "Write-only property that sets `content` to the set value and sets "
+        f'the `Content-Type` header to `"{content_type}"`.'
+    )
+
+    return property(fget=None, fset=fset, doc=doc)
 
 
 class Response:
@@ -33,28 +47,26 @@ class Response:
 
     [media]: ../guides/http/media.md
 
+    # Parameters
+    request (Request): the currently processed request.
+    media_type (str): the configured media type (given by the `API`).
+    media_handler (callable): the configured media handler (given by the `API`).
+
     # Attributes
     content (bytes or str): the raw response content.
     status_code (int): the HTTP status code. If not set, defaults to `200`.
     headers (dict):
         a case-insensitive dictionary of HTTP headers.
         If not set, `content-type` header is set to `text/plain`.
-    request (Request): the currently processed request.
     chunked (bool): sets the `transfer-encoding` header to `chunked`.
-
-    **Content setters**
-
-    These write-only properties set the response's `content`.
-
-    text (str): uses the `text/plain` content type.
-    html (str): uses the `text/html` content type.
-    media (any): uses the configured [media] handler.
-
     """
 
-    _MEDIA_ATTRS = {"text": Media.PLAIN_TEXT, "html": Media.HTML, "media": None}
+    text = _content_setter(CONTENT_TYPE.PLAIN_TEXT)
+    html = _content_setter(CONTENT_TYPE.HTML)
 
-    def __init__(self, request: Request, media: Media):
+    def __init__(
+        self, request: Request, media_type: str, media_handler: MediaHandler
+    ):
         # Public attributes.
         self.content: Optional[AnyStr] = None
         self.request = request
@@ -62,21 +74,23 @@ class Response:
         self.headers: Dict[str, str] = {}
         self.chunked = False
         # Private attributes.
-        self._media = media
+        self._media_type = media_type
+        self._media_handler = media_handler
         self._background: Optional[BackgroundFunc] = None
         self._stream: Optional[Stream] = None
 
-    def _set_media(self, value: Any, media_type: str):
-        content = self._media.serialize(value, media_type=media_type)
-        self.headers["content-type"] = media_type
-        self.content = content
+    media = property(
+        doc=(
+            "Write-only property that sets `content` to the set value "
+            "serializer using the `media_handler`, sets the "
+            "`Content-Type` header to the `media_type`."
+        )
+    )
 
-    def __setattr__(self, key, value):
-        if key in self._MEDIA_ATTRS:
-            media_type = self._MEDIA_ATTRS[key] or self._media.type
-            self._set_media(value, media_type=media_type)
-        else:
-            super().__setattr__(key, value)
+    @media.setter
+    def media(self, value: Any):
+        self.content = self._media_handler(value)
+        self.headers["content-type"] = self._media_type
 
     def background(
         self, func: BackgroundFunc, *args, **kwargs
@@ -121,7 +135,7 @@ class Response:
             self.status_code = 200
 
         if self.status_code != 204:
-            self.headers.setdefault("content-type", Media.PLAIN_TEXT)
+            self.headers.setdefault("content-type", "text/plain")
 
         if self.chunked:
             self.headers["transfer-encoding"] = "chunked"
