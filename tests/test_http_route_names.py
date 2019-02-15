@@ -29,21 +29,6 @@ def test_name_can_be_explicitly_given(api: API):
     assert url == "/about/me"
 
 
-def test_url_for_can_be_used_in_templates(api: API):
-    @api.route("/about/{who}")
-    async def about(req, res, who):
-        pass
-
-    @api.route("/")
-    async def index(req, res):
-        template = "{{ url_for('about', who=who) }}"
-        res.html = api.template_string(template, who="me")
-
-    response = api.client.get("/")
-    assert response.status_code == 200
-    assert response.text == "/about/me"
-
-
 def test_name_is_inferred_from_view_name(api: API):
     @api.route("/about/{who}")
     class AboutPerson:

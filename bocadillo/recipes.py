@@ -4,7 +4,6 @@ from typing import Sequence
 from .meta import DocsMeta
 from .misc import overrides
 from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
-from .templates import TemplatesMixin
 
 
 class RecipeBase:
@@ -26,7 +25,7 @@ class RecipeBase:
         raise NotImplementedError
 
 
-class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
+class Recipe(RoutingMixin, RecipeBase, metaclass=DocsMeta):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
@@ -36,8 +35,6 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     prefix (str):
         The path prefix where the recipe will be mounted.
         Defaults to `"/" + name`.
-    templates_dir (str):
-        See #API.
     """
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
@@ -45,9 +42,6 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
             prefix = f"/{name}"
         super().__init__(prefix=prefix, **kwargs)
         self.name = name
-
-    def get_template_globals(self):
-        return {"url_for": self.url_for}
 
     @overrides(RoutingMixin.route)
     def route(self, pattern: str, **kwargs) -> HTTPRoute:
@@ -65,10 +59,6 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
         """
         obj.http_router.mount(self.http_router, root=root)
         obj.websocket_router.mount(self.websocket_router, root=root)
-
-        # Look for templates where the API does, if not specified
-        if self.templates_dir is None:
-            self.templates_dir = obj.templates_dir
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
