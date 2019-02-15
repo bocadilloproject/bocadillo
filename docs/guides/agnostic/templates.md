@@ -27,6 +27,10 @@ Here's where the previous `API` template rendering methods went:
 
 To begin with, templates (when loaded from the file system) are just regular files. For example, when writing HTML templates, the regular `.html` extension is used as for any other HTML file.
 
+::: tip
+Note that a template does not _have_ to be an HTML file. Any text file will do: `.txt`, `.md`, `.rst`, etc.
+:::
+
 The only difference with regular text-based formats is that templates use a **templating language** with a set of specific tags and keywords that allow to perform **programmatic manipulations**. These are performed on **context variables** that are passed to the template when it is rendered.
 
 ## Writing templates
@@ -85,7 +89,7 @@ def post_detail(req, res):
 - Context variables can also be given as a dictionary:
 
 ```python
-await templates.render('index.html', {'title': 'Hello, Bocadillo!'})
+templates.render_sync('index.html', {'title': 'Hello, Bocadillo!'})
 ```
 
 - Lastly, you can render a template directly from a string:
@@ -113,10 +117,25 @@ Here, using `await templates.render('index.html')` would load and use the templa
 
 ### Changing the templates location
 
-You can change the templates directory by passing a `directory` to `Templates`:
+You can change the templates directory by passing the path to a `directory` to `Templates`:
 
 ```python
 templates = Templates(directory='path/to/templates')
+```
+
+## Using templates outside an application
+
+It is not mendatory that you pass an `API` instance when creating a `Templates` helper. All it does is try to configure some global variables for you, such as `url_for()` in order to reference absolute URLs.
+
+This means that `Templates` can be used to perform _any_ templating task.
+
+For example, let's render email! 📨
+
+```python
+from bocadillo.templates import Templates
+
+email = Templates(directory="email/templates")
+content = email.render_sync("welcome.md", username="lazydog")
 ```
 
 [jinja2]: http://jinja.pocoo.org

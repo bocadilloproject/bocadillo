@@ -1,7 +1,7 @@
 from contextlib import contextmanager
-from typing import Any, Union, cast
+from typing import Any, Optional, Union, cast
 
-from ..routing import RoutingMixin
+from .routing import RoutingMixin
 
 try:
     from jinja2 import Environment, FileSystemLoader, Template
@@ -16,10 +16,11 @@ DEFAULT_TEMPLATES_DIR = "templates"
 
 
 class Templates:
-    """Provide templating capabilities to an application class.
+    """This class provides templating capabilities.
 
-    The templating engine used is [jinja2](http://jinja.pocoo.org/docs).
-    Requires to install Bocadillo using the `[templates]` extra.
+    This is a light wrapper around [jinja2](http://jinja.pocoo.org/docs) and using it requires to install Bocadillo using the `[templates]` extra.
+
+    See also [Templates](../guides/agnostic/templates.md) for detail.
 
     [RoutingMixin]: ./routing.md#routingmixin
 
@@ -31,7 +32,7 @@ class Templates:
     :::
 
     app (any):
-        an application object. May implement the [RoutingMixin] API.
+        an optional application object. May be a subclass of [RoutingMixin].
     directory (str):
         The directory where templates should be searched for.
         Passed to the `engine`.
@@ -44,7 +45,7 @@ class Templates:
 
     def __init__(
         self,
-        app: Any,
+        app: Optional[Any] = None,
         directory: str = DEFAULT_TEMPLATES_DIR,
         context: dict = None,
     ):

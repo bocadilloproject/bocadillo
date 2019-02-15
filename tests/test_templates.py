@@ -59,3 +59,8 @@ def test_url_for_can_be_used_in_templates(api: API, templates: Templates):
     response = api.client.get("/")
     assert response.status_code == 200
     assert response.text == "/about/me"
+
+
+def test_use_without_app():
+    templates = Templates()
+    assert templates.render_string("foo") == "foo"
