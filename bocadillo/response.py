@@ -21,13 +21,7 @@ from starlette.responses import (
 from .constants import CONTENT_TYPE
 from .media import MediaHandler
 
-try:
-    import aiofiles
-except ImportError:
-    aiofiles = None
-
 AnyStr = Union[str, bytes]
-
 BackgroundFunc = Callable[..., Coroutine]
 Stream = AsyncIterable[AnyStr]
 StreamFunc = Callable[[], Stream]
