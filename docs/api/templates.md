@@ -2,7 +2,7 @@
 
 ## Templates
 ```python
-Templates(self, app: Any, directory: str = 'templates', context: dict = None)
+Templates(self, app: Union[Any, NoneType] = None, directory: str = 'templates', context: dict = None)
 ```
 This class provides templating capabilities.
 
@@ -21,7 +21,7 @@ modified at runtime.
 :::
 
 - __app (any)__:
-    an application object. May implement the [RoutingMixin] API.
+    an optional application object. May be a subclass of [RoutingMixin].
 - __directory (str)__:
     The directory where templates should be searched for.
     Passed to the `engine`.

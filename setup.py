@@ -19,7 +19,7 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo", "bocadillo.templates"],
+    packages=["bocadillo"],
     package_data={"bocadillo": ["assets/*"]},
     install_requires=[
         "starlette>=0.10",

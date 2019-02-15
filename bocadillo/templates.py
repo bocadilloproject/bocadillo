@@ -1,11 +1,11 @@
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from typing import Any, Optional, Union, cast
 
 from .routing import RoutingMixin
 
 try:
     from jinja2 import Environment, FileSystemLoader, Template
-except ImportError as exc:
+except ImportError as exc:  # pragma: no cover
     raise ImportError(
         "`jinja2` is not installed. "
         "Have you installed Bocadillo using `bocadillo[templates]`?"
@@ -52,31 +52,16 @@ class Templates:
         if context is None:
             context = {}
 
+        with suppress(AttributeError):
+            context["url_for"] = app.url_for  # type: ignore
+
+        self.app = app
+
         self._directory = directory
         self._environment = Environment(
             loader=FileSystemLoader([self.directory]), autoescape=True
         )
         self._environment.globals.update(context)
-
-        self._app = app
-        self._update_app_context()
-
-    def _update_app_context(self):
-        try:
-            url_for = self._app.url_for
-        except AttributeError:
-            pass
-        else:
-            self.context["url_for"] = url_for
-
-    @property
-    def app(self):
-        return self._app
-
-    @app.setter
-    def app(self, app: Any):
-        self._app = app  # pylint: disable=attribute-defined-outside-init
-        self._update_app_context()
 
     @property
     def directory(self) -> str:
