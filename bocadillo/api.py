@@ -24,6 +24,7 @@ from .app_types import (
 )
 from .compat import WSGIApp
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
+from .deprecated import TemplatesMixin
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
@@ -35,7 +36,7 @@ from .routing import RoutingMixin
 from .staticfiles import static
 
 
-class API(RoutingMixin, metaclass=DocsMeta):
+class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     """The all-mighty API class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -96,6 +97,7 @@ class API(RoutingMixin, metaclass=DocsMeta):
 
     def __init__(
         self,
+        templates_dir: Optional[str] = "templates",
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
@@ -106,7 +108,7 @@ class API(RoutingMixin, metaclass=DocsMeta):
         gzip_min_size: int = 1024,
         media_type: str = CONTENT_TYPE.JSON,
     ):
-        super().__init__()
+        super().__init__(templates_dir=templates_dir)
 
         # Debug mode defaults to `False` but it can be set in `.run()`.
         self._debug = False

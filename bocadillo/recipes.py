@@ -1,6 +1,7 @@
 from typing import Sequence
 
 
+from .deprecated import TemplatesMixin
 from .meta import DocsMeta
 from .misc import overrides
 from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
@@ -25,7 +26,7 @@ class RecipeBase:
         raise NotImplementedError
 
 
-class Recipe(RoutingMixin, RecipeBase, metaclass=DocsMeta):
+class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     """A grouping of capabilities that can be merged back into an API.
 
     # Parameters
