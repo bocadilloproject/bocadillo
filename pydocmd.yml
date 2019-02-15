@@ -34,7 +34,8 @@ generate:
   - staticfiles.md:
       - bocadillo.staticfiles+
   - templates.md:
-      - bocadillo.templates++
+      - bocadillo.templates:
+          - bocadillo.templates.Templates+
   - views.md:
       - bocadillo.views++
   - websockets.md:

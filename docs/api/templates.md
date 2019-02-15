@@ -1,52 +1,75 @@
 # bocadillo.templates
 
-## TemplatesMixin
+## Templates
 ```python
-TemplatesMixin(self, templates_dir: str = None, **kwargs)
+Templates(self, app: Any, directory: str = 'templates', context: dict = None)
 ```
 Provide templating capabilities to an application class.
-### templates_dir
-The path where templates are searched for, or `None` if not set.
 
-This is built from the `templates_dir` parameter.
+The templating engine used is [jinja2](http://jinja.pocoo.org/docs).
+Requires to install Bocadillo using the `[templates]` extra.
 
-### template
-```python
-TemplatesMixin.template(self, name_: str, context: dict = None, **kwargs) -> str
-```
-Render a template asynchronously.
-
-Can only be used within `async` functions.
+[RoutingMixin]: ./routing.md#routingmixin
 
 __Parameters__
 
+
+::: tip
+These parameters are also stored as attributes and can be accessed or
+modified at runtime.
+:::
+
+- __app (any)__:
+    an application object. May implement the [RoutingMixin] API.
+- __directory (str)__:
+    The directory where templates should be searched for.
+    Passed to the `engine`.
+    Defaults to `"templates"` relative to the current working directory.
+- __context (dict, optional)__:
+    Global template variables passed to the `engine`.
+    If present, the app's `.url_for()` method is registered as
+    an `url_for` global variable.
+
+### render
+```python
+Templates.render(self, filename: str, *args: dict, **kwargs: str) -> str
+```
+Render a template asynchronously.
+
+Can only be used within ``async`` functions.
+
+__Parameters__
 
 - __name (str)__:
     Name of the template, located inside `templates_dir`.
     The trailing underscore avoids collisions with a potential
     context variable named `name`.
-- __context (dict)__:
+- __*args (dict)__:
     Context variables to inject in the template.
-- __kwargs (dict)__:
+- __*kwargs (str)__:
     Context variables to inject in the template.
 
-### template_sync
+### render_sync
 ```python
-TemplatesMixin.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
+Templates.render_sync(self, filename: str, *args: dict, **kwargs: str) -> str
 ```
 Render a template synchronously.
 
-See also: `API.template()`.
+__See Also__
 
-### template_string
+[Templates.render](#render) for the accepted arguments.
+
+### render_string
 ```python
-TemplatesMixin.template_string(self, source: str, context: dict = None, **kwargs) -> str
+Templates.render_string(self, source: str, *args: dict, **kwargs: str) -> str
 ```
-Render a template from a string (synchronous).
+Render a template from a string (synchronously).
 
 __Parameters__
 
 - __source (str)__: a template given as a string.
 
-For other parameters, see `API.template()`.
+__See Also__
+
+[Templates.render](#render) for the other accepted arguments.
 
