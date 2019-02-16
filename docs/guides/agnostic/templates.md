@@ -4,7 +4,7 @@ Bocadillo allows you to render [Jinja2] templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
-::: tip CHANGED IN v0.12.0
+::: warning REQUIREMENTS
 To use templates, you need to install Bocadillo using the `[templates]` extra,
 e.g.:
 
@@ -12,14 +12,16 @@ e.g.:
 pip install bocadillo[templates]
 ```
 
-Besides, templates rendering is now performed via a separate `Templates` helper,
-which allows to use templates outside the context of an application.
+:::
 
-Here's where the previous `API` template rendering methods went:
+::: tip CHANGED IN v0.12.0
+Template rendering is now performed via a `Templates` helper, separate from the `API` class, which allows to use templates outside the context of an application.
 
-- `.template()` -> `Templates.render()`
-- `.template_sync()` -> `Templates.render_sync()`
-- `.template_string()` -> `Templates.render_string()`
+As migration hints, here's where the previous `API` template rendering methods went (suppose that `api = API()` and `templates = Templates(api)`):
+
+- `api.template()` -> `templates.render()`
+- `api.template_sync()` -> `templates.render_sync()`
+- `api.template_string()` -> `templates.render_string()`
 
 :::
 
@@ -65,8 +67,7 @@ You can render templates using the [Templates] helper. A typical use case is to 
 1. Create an instance of `Templates`:
 
 ```python
-from bocadillo import API
-from bocadillo.templates import Templates
+from bocadillo import API, Templates
 
 api = API()
 templates = Templates(api)

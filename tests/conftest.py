@@ -4,8 +4,7 @@ from typing import NamedTuple
 import pytest
 from click.testing import CliRunner
 
-from bocadillo import API
-from bocadillo.templates import Templates
+from bocadillo import API, Templates
 
 from .utils import RouteBuilder
 
