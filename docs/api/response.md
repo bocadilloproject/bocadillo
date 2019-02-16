@@ -35,14 +35,16 @@ Write-only property that sets `content` to the set value and sets the `Content-T
 ```python
 Response.attach(self, path: str = None, content: str = None, filename: str = None)
 ```
-Send a file for the client to download.
+Send a file asynchronously using [aiofiles].
 
-The [Content-Disposition] header is set automatically:
+This is typically used when the file should be downloaded by the client.
+The [Content-Disposition] header is set automatically to:
 
 ```
 attachment; filename='{filename}'
 ```
 
+[aiofiles]: https://github.com/Tinche/aiofiles
 [Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
 __Parameters__
