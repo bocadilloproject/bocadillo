@@ -121,7 +121,7 @@ If you want to tell the client's browser that the response should be downloaded 
 ```python
 @api.route("/hello.txt")
 async def send_hello(req, res):
-    res.content = "Hi, there!
+    res.text = "Hi, there!
     res.attachment = "hello.txt"
 ```
 
