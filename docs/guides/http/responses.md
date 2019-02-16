@@ -21,6 +21,8 @@ appropriate `Content-Type`, as depicted above.
 The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media] for more information.
 :::
 
+[media]: media.md
+
 If you need to send another content type, use `.content` and set
 the `Content-Type` header yourself:
 
@@ -53,6 +55,7 @@ library's `http` module.
 from http import HTTPStatus
 res.status_code = HTTPStatus.CREATED.value
 ```
+
 :::
 
 ## Headers
@@ -68,7 +71,9 @@ res.headers['Cache-Control'] = 'no-cache'
 
 Similar to [request streaming](./requests.md#streaming), response content can be streamed to prevent loading a full (potentially large) response body in memory. An example use case may be sending results of a massive database query.
 
-A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][Media] streaming is not supported).
+A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][media] streaming is not supported).
+
+[async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
 
 ```python{7,8,9,10}
 from bocadillo import API
@@ -105,7 +110,43 @@ res.chunked = True
 res.headers["transfer-encoding"] = "chunked"
 ```
 
-[Transfer-Encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
+[transfer-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
 
-[async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
-[Media]: media.md
+## Files and attachments
+
+Sometimes, the response content should be populated from a file and / or you may want to enable the client's browser to trigger a "Save As…" box when receiving it.
+
+This can be achieved via `res.attach()`, a helper method that sets the [Content-Disposition] header for you.
+
+For example, let's create a simple CSV file containing random data:
+
+```python
+import csv
+from random import random
+
+data = [{"id": i, "value": random()} for i in range(100)]
+
+with open("random.csv", "w") as f:
+    writer = csv.DictWriter(f, fieldnames=["id", "value"])
+
+    write.writeheader()
+    for item in data:
+        writer.writerow(item)
+```
+
+Let's send it to the client so that they can download it:
+
+```python
+from bocadillo import API
+
+api = API()
+
+@api.route("/random.csv")
+async def send_csv(req, res):
+    res.attach("random.csv")
+
+if __name__ == "__main__":
+    api.run()
+```
+
+Run the script and visit `/random.csv`, and your browser should download the CSV file and put it in your downloads folder — or open a "Save As…" dialog, depending on which browser you're using.
