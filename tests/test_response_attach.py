@@ -14,25 +14,19 @@ def txt(tmp_path) -> Path:
     return txt
 
 
-def _get_disposition(inline: Optional[bool], filename: str) -> str:
-    style = "inline" if inline is True else "attachment"
-    return f"{style}; filename='{filename}'"
+def _get_disposition(filename: str) -> str:
+    return f"attachment; filename='{filename}'"
 
 
-@pytest.mark.parametrize("inline", (True, False, None))
-def test_file_response(api: API, txt: Path, inline: bool):
-    kwargs = {"inline": inline} if inline is not None else {}
-
+def test_file_response(api: API, txt: Path):
     @api.route("/")
     async def index(req, res):
-        res.attach(str(txt), **kwargs)
+        res.attach(str(txt))
 
     response = api.client.get("/")
     assert response.status_code == 200
     assert response.text == txt.read_text()
-    assert response.headers["content-disposition"] == _get_disposition(
-        inline, txt.name
-    )
+    assert response.headers["content-disposition"] == _get_disposition(txt.name)
 
 
 def test_if_file_does_not_exist_then_fail(api: API):
@@ -41,24 +35,21 @@ def test_if_file_does_not_exist_then_fail(api: API):
         res.attach("doesnotexist.txt")
 
     with pytest.raises(RuntimeError) as ctx:
-        response = api.client.get("/")
+        api.client.get("/")
 
     assert "does not exist" in str(ctx.value)
 
 
-@pytest.mark.parametrize("inline", (True, False, None))
-def test_manual_attach(api: API, inline):
-    kwargs = {"inline": inline} if inline is not None else {}
-
+def test_manual_attach(api: API):
     @api.route("/")
     async def index(req, res):
-        res.attach(content="hi files", filename="hello.txt", **kwargs)
+        res.attach(content="hi files", filename="hello.txt")
 
     response = api.client.get("/")
     assert response.status_code == 200
     assert response.text == "hi files"
     assert response.headers["content-disposition"] == _get_disposition(
-        inline, "hello.txt"
+        "hello.txt"
     )
 
 

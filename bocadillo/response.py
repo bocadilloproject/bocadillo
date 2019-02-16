@@ -96,16 +96,15 @@ class Response:
         self.headers["content-type"] = self._media_type
 
     def attach(
-        self,
-        path: str = None,
-        content: str = None,
-        filename: str = None,
-        inline: bool = False,
+        self, path: str = None, content: str = None, filename: str = None
     ):
         """Send a file for the client to download.
 
-        The [Content-Disposition] header is set automatically based on the
-        `inline` argument.
+        The [Content-Disposition] header is set automatically:
+
+        ```
+        attachment; filename='{filename}'
+        ```
 
         [Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
@@ -114,14 +113,11 @@ class Response:
             A path to a file on this machine.
         content (str, optional):
             Raw content to be sent, instead of reading from a file.
+            Required if `path` is not given.
         filename (str, optional):
             The name of the file to be sent.
             If `path` is given, its base name (as given by `os.path.basename`)
             is used. Otherwise, this is a required parameter.
-        inline (bool, optional):
-            Whether the file should be sent `inline` (for in-browser preview)
-            or as an `attachment` (typically triggers a "Save As" dialog).
-            Defaults to `False`, i.e. send as an attachment.
         """
         if path is not None:
             self._file_path = path
@@ -135,10 +131,9 @@ class Response:
             ), "`filename` is required if `path` is not given"
             self.content = content
 
-        # NOTE: can't let `FileResponse` set this header because it doesn't
-        # have an option for the `disposition` (always attachment).
-        disposition = "inline" if inline else "attachment"
-        content_disposition = f"{disposition}; filename='{filename}'"
+        # NOTE: `FileResponse` would set the header for us, but it won't
+        # be used if we passed raw `content`, so let's set it ourselves.
+        content_disposition = f"attachment; filename='{filename}'"
         self.headers.setdefault("content-disposition", content_disposition)
 
     def background(

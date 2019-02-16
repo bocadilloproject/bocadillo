@@ -31,6 +31,32 @@ Write-only property that sets `content` to the set value and sets the `Content-T
 Write-only property that sets `content` to the set value serializer using the `media_handler`, sets the `Content-Type` header to the `media_type`.
 ## text
 Write-only property that sets `content` to the set value and sets the `Content-Type` header to `"text/plain"`.
+## attach
+```python
+Response.attach(self, path: str = None, content: str = None, filename: str = None)
+```
+Send a file for the client to download.
+
+The [Content-Disposition] header is set automatically:
+
+```
+attachment; filename='{filename}'
+```
+
+[Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+
+__Parameters__
+
+- __path (str, optional)__:
+    A path to a file on this machine.
+- __content (str, optional)__:
+    Raw content to be sent, instead of reading from a file.
+    Required if `path` is not given.
+- __filename (str, optional)__:
+    The name of the file to be sent.
+    If `path` is given, its base name (as given by `os.path.basename`)
+    is used. Otherwise, this is a required parameter.
+
 ## background
 ```python
 Response.background(self, func: Callable[..., Coroutine], *args, **kwargs) -> Callable[..., Coroutine]
