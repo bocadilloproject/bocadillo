@@ -112,13 +112,37 @@ res.headers["transfer-encoding"] = "chunked"
 
 [transfer-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
 
-## Files and attachments
+## Attachments
 
-Sometimes, the response content should be populated from a file and / or you may want to enable the client's browser to trigger a "Save As…" box when receiving it.
+If you want to tell the client's browser that the response should be downloaded and saved locally into a file, set `res.attachment` and the [Content-Disposition] header will be set for you.
 
-This can be achieved via `res.attach()`, a helper method that sets the [Content-Disposition] header for you.
+[content-disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
-For example, let's create a simple CSV file containing random data:
+```python
+@api.route("/hello.txt")
+async def send_hello(req, res):
+    res.content = "Hi, there!
+    res.attachment = "hello.txt"
+```
+
+## File responses
+
+::: tip REQUIREMENTS
+This feature requires that you install Bocadillo with the `files` extra, e.g.
+
+```bash
+pip install bocadillo[files]
+```
+
+:::
+
+Sometimes, the response should be populated from a file that is not a [static file][static]. For example, it may have been generated or uploaded to the server.
+
+[static]: ./static-files.md
+
+This can be done with `res.file()`, a performant helper that reads and sends the file _asynchronously_ in small chunks.
+
+As an example, let's create a sample CSV file containing random data:
 
 ```python
 import csv
@@ -128,25 +152,25 @@ data = [{"id": i, "value": random()} for i in range(100)]
 
 with open("random.csv", "w") as f:
     writer = csv.DictWriter(f, fieldnames=["id", "value"])
-
-    write.writeheader()
+    writer.writeheader()
     for item in data:
         writer.writerow(item)
 ```
 
-Let's send it to the client so that they can download it:
+Here's how we could populate the response with `random.csv`:
 
 ```python
-from bocadillo import API
-
-api = API()
-
 @api.route("/random.csv")
 async def send_csv(req, res):
-    res.attach("random.csv")
-
-if __name__ == "__main__":
-    api.run()
+    res.file("random.csv")
 ```
 
-Run the script and visit `/random.csv`, and your browser should download the CSV file and put it in your downloads folder — or open a "Save As…" dialog, depending on which browser you're using.
+Most of the time, files sent like this are meant to be downloaded. For this reason, `res.file()` sends the file as an [attachment](#attachments) by default. To disable this, pass `attach=False`:
+
+```python
+@api.route("/random.csv")
+async def send_csv(req, res):
+    # The file will be sent "inline", i.e. display in the browser
+    # instead of triggering a download.
+    res.file("random.csv", attach=False)
+```
