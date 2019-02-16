@@ -2,7 +2,7 @@ import pytest
 from bocadillo import API
 from jinja2.exceptions import TemplateNotFound
 
-from bocadillo.templates import Templates
+from bocadillo import Templates
 
 from .conftest import TemplateWrapper, create_template
 

@@ -4,12 +4,12 @@ heroImage: /social-image.png
 actionText: Get Started →
 actionLink: /getting-started/
 features:
-- title: Simple and productive
-  details: A minimal setup and carefully chosen included batteries help you solve common (and more advanced) problems in no time. 
-- title: Async-first
-  details: Embrace modern Python asynchronous programming capabilities! Don't worry, though — it's all optional.
-- title: Performant
-  details: Built on Starlette and Uvicorn, the lightning-fast Python ASGI toolkit and server.
+  - title: Simple and productive
+    details: A minimal setup and carefully chosen included batteries help you solve common (and more advanced) problems in no time.
+  - title: Async-first
+    details: Embrace modern Python asynchronous programming capabilities! Don't worry, though — it's all optional.
+  - title: Performant
+    details: Built on Starlette and Uvicorn, the lightning-fast Python ASGI toolkit and server.
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 ---
 
@@ -18,21 +18,22 @@ footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 Install it:
 
 ```bash
-pip install bocadillo
+pip install bocadillo[templates]
 ```
 
 Build something:
 
 ```python
 # api.py
-import bocadillo
+from bocadillo import API, Templates
 
-api = bocadillo.API()
+api = API()
+templates = Templates(api)
 
 @api.route("/")
 async def index(req, res):
     # Use a template from the ./templates directory
-    res.html = await api.template("index.html")
+    res.html = await templates.render("index.html")
 
 @api.route("/greet/{person}")
 async def greet(req, res, person):

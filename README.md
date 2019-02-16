@@ -26,21 +26,22 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
 Install it:
 
 ```bash
-pip install bocadillo
+pip install bocadillo[templates]
 ```
 
 Build something:
 
 ```python
 # api.py
-import bocadillo
+from bocadillo import API, Templates
 
-api = bocadillo.API()
+api = API()
+templates = Templates(api)
 
 @api.route("/")
 async def index(req, res):
-    # Use a template from the ./templates directory 
-    res.html = await api.template("index.html")
+    # Use a template from the ./templates directory
+    res.html = await templates.render("index.html")
 
 @api.route("/greet/{person}")
 async def greet(req, res, person):
@@ -92,7 +93,7 @@ Logo:
 [travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
-[Orator]: https://orator-orm.com
+[orator]: https://orator-orm.com
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo

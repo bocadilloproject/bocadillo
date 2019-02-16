@@ -1,15 +1,12 @@
 from contextlib import contextmanager, suppress
-from typing import Any, Optional, Union, cast
-
-from .routing import RoutingMixin
+from typing import Any, Optional, cast
 
 try:
-    from jinja2 import Environment, FileSystemLoader, Template
+    import jinja2
 except ImportError as exc:  # pragma: no cover
-    raise ImportError(
-        "`jinja2` is not installed. "
-        "Have you installed Bocadillo using `bocadillo[templates]`?"
-    ) from exc
+    jinja2 = None  # type: ignore
+else:
+    from jinja2 import Environment, FileSystemLoader, Template
 
 
 DEFAULT_TEMPLATES_DIR = "templates"
@@ -49,6 +46,12 @@ class Templates:
         directory: str = DEFAULT_TEMPLATES_DIR,
         context: dict = None,
     ):
+        if jinja2 is None:
+            raise ImportError(
+                "`jinja2` is not installed. "
+                "Did you install Bocadillo using `bocadillo[templates]`?"
+            ) from exc
+
         if context is None:
             context = {}
 
