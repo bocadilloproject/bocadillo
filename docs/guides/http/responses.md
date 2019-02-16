@@ -1,8 +1,15 @@
 # Responses
 
-Bocadillo passes the request and the response object to each view, much like
-Falcon does.
-To send a response, the idiomatic process is to mutate the `res` object directly.
+Bocadillo passes the request and the response objects to each HTTP view.
+
+This means that the idiomatic way of sending a response is to mutate the `res` object directly.
+
+::: tip
+To learn more about this design decision, see our [FAQ][why-pass-req-res].
+
+[why-pass-req-res]: ../../faq/#why-pass-the-request-and-response-around-everywhere
+
+:::
 
 ## Sending content
 
@@ -14,8 +21,8 @@ res.html = '<h1>My awesome post</h1>'  # text/html
 res.media = {'title': 'My awesome post'}  # application/json
 ```
 
-Setting a response type attribute automatically sets the
-appropriate `Content-Type`, as depicted above.
+Setting one of the above attributes automatically sets the
+appropriate `Content-Type` header (shown in comments above).
 
 ::: tip
 The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media] for more information.
@@ -28,8 +35,10 @@ the `Content-Type` header yourself:
 
 ```python
 res.content = 'h1 { color; gold; }'
-res.headers['Content-Type'] = 'text/css'
+res.headers['content-type'] = 'text/css'
 ```
+
+or, alternatively, create a [custom media handler](./media.md#custom-media-types).
 
 ## Status codes
 
@@ -61,15 +70,15 @@ res.status_code = HTTPStatus.CREATED.value
 ## Headers
 
 You can access and modify a response's headers using `res.headers`, which is
-a standard Python dictionary object:
+a standard (but case-insensitive) Python dictionary object:
 
 ```python
-res.headers['Cache-Control'] = 'no-cache'
+res.headers['cache-control'] = 'no-cache'
 ```
 
 ## Streaming
 
-Similar to [request streaming](./requests.md#streaming), response content can be streamed to prevent loading a full (potentially large) response body in memory. An example use case may be sending results of a massive database query.
+Similar to [request streaming](./requests.md#streaming), response content can be streamed to prevent loading the full (and potentially large) response body into memory. An example use case may be sending the results of a massive database query over the wire.
 
 A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][media] streaming is not supported).
 
@@ -89,11 +98,7 @@ async def number_range(req, res, n):
 ```
 
 ::: warning
-A stream response is not chunk-encoded by default, which means that clients will still receive the response in one piece. To send the response in chunks, follow the instructions described in [Chunked responses](#chunked-responses).
-:::
-
-::: tip
-All attributes of the `Response` object — including [res.background](./background-tasks.md) but excluding [content attributes](#sending-content) — can be used along with a stream response.
+A stream response is not chunk-encoded by default, which means that clients will still receive the response in one piece. To send the response in chunks, see [Chunked responses](#chunked-responses).
 :::
 
 ## Chunked responses
@@ -121,13 +126,17 @@ If you want to tell the client's browser that the response should be downloaded 
 ```python
 @api.route("/hello.txt")
 async def send_hello(req, res):
-    res.text = "Hi, there!
+    res.text = "Hi, there!"
     res.attachment = "hello.txt"
 ```
 
+::: tip NOTE
+The above example will _not_ perform any I/O nor try to read the `"hello.txt"` file. All it will do is set the `Content-Disposition` header to `attachment; filename='hello.txt'`.
+:::
+
 ## File responses
 
-::: tip REQUIREMENTS
+::: warning REQUIREMENTS
 This feature requires that you install Bocadillo with the `files` extra, e.g.
 
 ```bash
@@ -140,7 +149,7 @@ Sometimes, the response should be populated from a file that is not a [static fi
 
 [static]: ./static-files.md
 
-This can be done with `res.file()`, a performant helper that reads and sends the file _asynchronously_ in small chunks.
+This can be done with `res.file()`, a performant helper that will read and send a file _asynchronously_ in small chunks.
 
 As an example, let's create a sample CSV file containing random data:
 
@@ -165,12 +174,17 @@ async def send_csv(req, res):
     res.file("random.csv")
 ```
 
-Most of the time, files sent like this are meant to be downloaded. For this reason, `res.file()` sends the file as an [attachment](#attachments) by default. To disable this, pass `attach=False`:
+::: tip
+Most of the time, files sent like this are meant to be downloaded. For this reason, `res.file()` sends the file as an [attachment](#attachments) by default.
+
+To disable this, pass `attach=False`:
 
 ```python
 @api.route("/random.csv")
 async def send_csv(req, res):
-    # The file will be sent "inline", i.e. display in the browser
+    # The file will be sent "inline", i.e. displayed in the browser
     # instead of triggering a download.
     res.file("random.csv", attach=False)
 ```
+
+:::
