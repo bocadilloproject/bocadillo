@@ -9,6 +9,7 @@ it is a callable and accepts `receive` and `send` as defined in the [ASGI
 spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
 [media]: ../guides/http/media.md
+[Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
 __Parameters__
 
@@ -24,6 +25,11 @@ __Attributes__
     a case-insensitive dictionary of HTTP headers.
     If not set, `content-type` header is set to `text/plain`.
 - `chunked (bool)`: sets the `transfer-encoding` header to `chunked`.
+- `attachment (str)`:
+    a file name that this response should be sent as.
+    This is done by setting the [Content-Disposition] header, and
+    typically makes the client browser trigger a "Save As…" dialog or
+    download and save the file locally.
 
 ## html
 Write-only property that sets `content` to the set value and sets the `Content-Type` header to `"text/html"`.
@@ -31,6 +37,24 @@ Write-only property that sets `content` to the set value and sets the `Content-T
 Write-only property that sets `content` to the set value serializer using the `media_handler`, sets the `Content-Type` header to the `media_type`.
 ## text
 Write-only property that sets `content` to the set value and sets the `Content-Type` header to `"text/plain"`.
+## file
+```python
+Response.file(self, path: str, attach: bool = True)
+```
+Send a file asynchronously using [aiofiles].
+
+This is typically used when the file should be downloaded by the client.
+
+[aiofiles]: https://github.com/Tinche/aiofiles
+
+__Parameters__
+
+- __path (str)__:
+    A path to a file on this machine.
+- __attach (bool, optional)__:
+    Whether to send the file as an [attachment](#response).
+    Defaults to `True`.
+
 ## background
 ```python
 Response.background(self, func: Callable[..., Coroutine], *args, **kwargs) -> Callable[..., Coroutine]

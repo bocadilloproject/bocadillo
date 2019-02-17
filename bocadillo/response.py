@@ -1,4 +1,5 @@
 import inspect
+from os.path import basename
 from typing import (
     Any,
     AsyncIterable,
@@ -14,6 +15,7 @@ from starlette.requests import Request
 from starlette.responses import (
     Response as _Response,
     StreamingResponse as _StreamingResponse,
+    FileResponse as _FileResponse,
 )
 
 from .constants import CONTENT_TYPE
@@ -46,6 +48,7 @@ class Response:
     spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
     [media]: ../guides/http/media.md
+    [Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
     # Parameters
     request (Request): the currently processed request.
@@ -59,6 +62,11 @@ class Response:
         a case-insensitive dictionary of HTTP headers.
         If not set, `content-type` header is set to `text/plain`.
     chunked (bool): sets the `transfer-encoding` header to `chunked`.
+    attachment (str):
+        a file name that this response should be sent as.
+        This is done by setting the [Content-Disposition] header, and
+        typically makes the client browser trigger a "Save As…" dialog or
+        download and save the file locally.
     """
 
     text = _content_setter(CONTENT_TYPE.PLAIN_TEXT)
@@ -73,7 +81,9 @@ class Response:
         self.status_code: Optional[int] = None
         self.headers: Dict[str, str] = {}
         self.chunked = False
+        self.attachment: Optional[str] = None
         # Private attributes.
+        self._file_path: Optional[str] = None
         self._media_type = media_type
         self._media_handler = media_handler
         self._background: Optional[BackgroundFunc] = None
@@ -91,6 +101,22 @@ class Response:
     def media(self, value: Any):
         self.content = self._media_handler(value)
         self.headers["content-type"] = self._media_type
+
+    def file(self, path: str, attach: bool = True):
+        """Send a file asynchronously using [aiofiles].
+
+        [aiofiles]: https://github.com/Tinche/aiofiles
+
+        # Parameters
+        path (str):
+            A path to a file on this machine.
+        attach (bool, optional):
+            Whether to send the file as an [attachment](#response).
+            Defaults to `True`.
+        """
+        self._file_path = path
+        if attach:
+            self.attachment = basename(path)
 
     def background(
         self, func: BackgroundFunc, *args, **kwargs
@@ -140,16 +166,28 @@ class Response:
         if self.chunked:
             self.headers["transfer-encoding"] = "chunked"
 
+        if self.attachment is not None:
+            disposition = f"attachment; filename='{self.attachment}'"
+            self.headers.setdefault("content-disposition", disposition)
+
         response_kwargs = {
             "content": self.content,
-            "status_code": self.status_code,
             "headers": self.headers,
+            "status_code": self.status_code,
             "background": self._background_task,
         }
 
         response_cls = _Response
 
-        if self._stream is not None:
+        if self._file_path is not None:
+            response_cls = _FileResponse
+            response_kwargs["path"] = self._file_path
+            # `FileResponse` will populate the response from `path` and
+            # doesn't expect `content` to be passed.
+            del response_kwargs["content"]
+            # `FileResponse` will set the status code to 200.
+            del response_kwargs["status_code"]
+        elif self._stream is not None:
             response_cls = _StreamingResponse
             response_kwargs["content"] = self._stream
 

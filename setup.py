@@ -30,6 +30,7 @@ setuptools.setup(
         "parse",
         "websockets>=6.0",
     ],
+    extras_require={"files": ["aiofiles"]},
     url=DOCS,
     project_urls={
         "Source": GITHUB,
