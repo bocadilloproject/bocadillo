@@ -4,7 +4,7 @@ This module defines classes (both abstract and concrete) that power routing.
 ::: tip NOTATIONS
 This modules uses the following [generic types]:
 
-- `_T` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
+- `_R` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
 - `_V` refers to a view object.
 
 [generic types]: https://docs.python.org/3/library/typing.html#generics
@@ -16,7 +16,7 @@ BaseRoute(self, pattern: str, view: ~_V)
 ```
 The base route class.
 
-This is referenced as `_T` in the rest of this module.
+This is referenced as `_R` in the rest of this module.
 
 __Parameters__
 
@@ -55,7 +55,7 @@ __Returns__
 
 ## RouteMatch
 ```python
-RouteMatch(self, route: ~_T, params: dict)
+RouteMatch(self, route: ~_R, params: dict)
 ```
 Represents a match between an URL path and a route.
 
@@ -85,12 +85,12 @@ This is a no-op by default, i.e. it returns what it's given.
 
 ### add_route
 ```python
-BaseRouter.add_route(self, view: ~_V, pattern: str, **kwargs) -> ~_T
+BaseRouter.add_route(self, view: ~_V, pattern: str, **kwargs) -> ~_R
 ```
 Register a route (to be implemented by concrete routers).
 ### route
 ```python
-BaseRouter.route(self, *args, **kwargs) -> Callable[[Any], ~_T]
+BaseRouter.route(self, *args, **kwargs) -> Callable[[Any], ~_R]
 ```
 Register a route by decorating a view.
 
@@ -106,7 +106,7 @@ __Parameters__
 
 ### match
 ```python
-BaseRouter.match(self, path: str) -> Union[bocadillo.routing.RouteMatch[~_T], NoneType]
+BaseRouter.match(self, path: str) -> Union[bocadillo.routing.RouteMatch[~_R], NoneType]
 ```
 Attempt to match an URL path against one of the registered routes.
 

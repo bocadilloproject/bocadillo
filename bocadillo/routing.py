@@ -3,7 +3,7 @@
 ::: tip NOTATIONS
 This modules uses the following [generic types]:
 
-- `_T` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
+- `_R` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
 - `_V` refers to a view object.
 
 [generic types]: https://docs.python.org/3/library/typing.html#generics
@@ -28,7 +28,7 @@ from .websockets import WebSocket, WebSocketView
 WILDCARD = "{}"
 
 # Route generic types.
-_T = TypeVar("_T", bound="BaseRoute")  # route
+_R = TypeVar("_R", bound="BaseRoute")  # route
 _V = TypeVar("_V")  # view
 
 # Base classes.
@@ -37,7 +37,7 @@ _V = TypeVar("_V")  # view
 class BaseRoute(Generic[_V]):
     """The base route class.
 
-    This is referenced as `_T` in the rest of this module.
+    This is referenced as `_R` in the rest of this module.
 
     # Parameters
     pattern (str): an URL pattern.
@@ -84,12 +84,12 @@ class BaseRoute(Generic[_V]):
     def _get_clone_kwargs(self) -> dict:
         return {"pattern": self._pattern, "view": self.view}
 
-    def clone(self: _T, **kwargs: Any) -> _T:
+    def clone(self: _R, **kwargs: Any) -> _R:
         kwargs = {**self._get_clone_kwargs(), **kwargs}
         return type(self)(**kwargs)
 
 
-class RouteMatch(Generic[_T]):  # pylint: disable=unsubscriptable-object
+class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -97,12 +97,12 @@ class RouteMatch(Generic[_T]):  # pylint: disable=unsubscriptable-object
     params (dict): extracted route parameters.
     """
 
-    def __init__(self, route: _T, params: dict):
+    def __init__(self, route: _R, params: dict):
         self.route = route
         self.params = params
 
 
-class BaseRouter(Generic[_T, _V]):
+class BaseRouter(Generic[_R, _V]):
     """The base router class.
 
     # Attributes
@@ -111,9 +111,9 @@ class BaseRouter(Generic[_T, _V]):
     """
 
     def __init__(self):
-        self.routes: Dict[str, _T] = {}
+        self.routes: Dict[str, _R] = {}
 
-    def _get_key(self, route: _T) -> str:
+    def _get_key(self, route: _R) -> str:
         # Return the key at which `route` should be stored internally.
         raise NotImplementedError
 
@@ -124,14 +124,14 @@ class BaseRouter(Generic[_T, _V]):
         """
         return view
 
-    def add_route(self, view: _V, pattern: str, **kwargs) -> _T:
+    def add_route(self, view: _V, pattern: str, **kwargs) -> _R:
         """Register a route (to be implemented by concrete routers)."""
         raise NotImplementedError
 
-    def add(self, route: _T) -> None:
+    def add(self, route: _R) -> None:
         self.routes[self._get_key(route)] = route
 
-    def route(self, *args, **kwargs) -> Callable[[Any], _T]:
+    def route(self, *args, **kwargs) -> Callable[[Any], _R]:
         """Register a route by decorating a view.
 
         The decorated function or class will be converted to a proper view using
@@ -144,13 +144,13 @@ class BaseRouter(Generic[_T, _V]):
             along with the normalized view.
         """
 
-        def decorate(view: Any) -> _T:
+        def decorate(view: Any) -> _R:
             normalized_view: _V = self.normalize(view)
             return self.add_route(normalized_view, *args, **kwargs)
 
         return decorate
 
-    def match(self, path: str) -> Optional[RouteMatch[_T]]:
+    def match(self, path: str) -> Optional[RouteMatch[_R]]:
         """Attempt to match an URL path against one of the registered routes.
 
         # Parameters
