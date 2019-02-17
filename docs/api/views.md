@@ -2,7 +2,7 @@
 
 ## View
 ```python
-View(self, name: str)
+View(self, name: str, doc: str = None)
 ```
 This class defines how all HTTP views are represented internally.
 
