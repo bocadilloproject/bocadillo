@@ -132,7 +132,7 @@ __Raises__
 
 ### redirect
 ```python
-Recipe.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
+Recipe.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
 ```
 Redirect to another HTTP route.
 

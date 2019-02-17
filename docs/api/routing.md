@@ -305,7 +305,7 @@ __Raises__
 
 ### redirect
 ```python
-RoutingMixin.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
+RoutingMixin.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
 ```
 Redirect to another HTTP route.
 

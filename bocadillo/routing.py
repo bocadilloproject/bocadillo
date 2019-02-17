@@ -11,7 +11,16 @@ This modules uses the following [generic types]:
 """
 
 import inspect
-from typing import Any, Callable, Dict, Generic, Optional, Tuple, TypeVar
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    NoReturn,
+    Optional,
+    Tuple,
+    TypeVar,
+)
 
 from parse import Parser
 from starlette.websockets import WebSocketClose
@@ -465,7 +474,7 @@ class RoutingMixin:
         url: str = None,
         permanent: bool = False,
         **kwargs,
-    ):
+    ) -> NoReturn:
         """Redirect to another HTTP route.
 
         This is only meant to be used inside an HTTP view.
