@@ -31,7 +31,9 @@ class HTTPError(Exception):
 
     def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
-            status = HTTPStatus(status)
+            status = HTTPStatus(  # pylint: disable=no-value-for-parameter
+                status
+            )
         else:
             assert isinstance(
                 status, HTTPStatus
@@ -112,7 +114,9 @@ class ServerErrorMiddleware(HTTPApp):
             if self.debug:
                 # In debug mode, return traceback responses.
                 res = self.debug_response(req, exc)
-            await call_async(self.handler, req, res, HTTPError(500))
+            await call_async(  # type: ignore
+                self.handler, req, res, HTTPError(500)
+            )
             return res
         else:
             return res
@@ -150,7 +154,7 @@ class HTTPErrorMiddleware(HTTPApp):
             handler = self._get_exception_handler(exc)
             if handler is None:
                 raise exc from None
-            await call_async(handler, req, res, exc)
+            await call_async(handler, req, res, exc)  # type: ignore
             return res
         else:
             return res

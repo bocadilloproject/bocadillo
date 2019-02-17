@@ -39,7 +39,9 @@ class Hooks:
     ):
         # Enclose args and kwargs
         async def hook_func(req: Request, res: Response, params: dict):
-            await call_async(hook, req, res, params, *args, **kwargs)
+            await call_async(  # type: ignore
+                hook, req, res, params, *args, **kwargs
+            )
 
         def decorator(handler: Union[Type[View], Handler]):
             """Attach the hook to the given handler."""
