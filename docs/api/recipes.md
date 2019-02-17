@@ -48,10 +48,6 @@ __Parameters__
     An optional namespace for the route. If given, it is prefixed to
     the name and separated by a colon.
 
-__See Also__
-
-- [check_route](#check-route) for the route validation algorithm.
-
 ### websocket_route
 ```python
 Recipe.websocket_route(self, pattern: str, **kwargs) -> bocadillo.routing.WebSocketRoute
@@ -119,7 +115,7 @@ For other parameters, see `API.template()`.
 ```python
 Recipe.url_for(self, name: str, **kwargs) -> str
 ```
-Build the URL path for a named route.
+Build the full URL path for a named route.
 
 __Parameters__
 
@@ -128,7 +124,7 @@ __Parameters__
 
 __Returns__
 
-`url (str)`: the URL path for a route.
+`url (str)`: an URL path.
 
 __Raises__
 
@@ -136,9 +132,11 @@ __Raises__
 
 ### redirect
 ```python
-Recipe.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
+Recipe.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
 ```
 Redirect to another HTTP route.
+
+This is only meant to be used inside an HTTP view.
 
 __Parameters__
 

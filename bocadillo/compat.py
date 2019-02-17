@@ -1,6 +1,15 @@
 import asyncio
 import re
-from typing import Callable, List, TypeVar, Union, Optional, Any, Awaitable
+from typing import (
+    Callable,
+    cast,
+    List,
+    TypeVar,
+    Union,
+    Optional,
+    Any,
+    Awaitable,
+)
 
 from starlette.concurrency import run_in_threadpool
 
@@ -11,7 +20,7 @@ _V = TypeVar("_V")
 
 
 async def call_async(
-    func: Callable[..., Union[_V, Awaitable[_V]]],
+    func: Union[Callable[..., _V], Callable[..., Awaitable[_V]]],
     *args: Any,
     sync: Optional[bool] = None,
     **kwargs: Any
@@ -31,7 +40,9 @@ async def call_async(
     """
     if sync or (sync is None and not asyncio.iscoroutinefunction(func)):
         return await run_in_threadpool(func, *args, **kwargs)
-    return await func(*args, **kwargs)
+
+    async_func = cast(Callable[..., Awaitable[_V]], func)
+    return await async_func(*args, **kwargs)
 
 
 def camel_to_snake(name: str) -> str:

@@ -1,4 +1,4 @@
-from typing import Optional, Awaitable
+from typing import Optional
 
 from .app_types import HTTPApp
 from .compat import call_async
@@ -67,13 +67,18 @@ class Middleware(HTTPApp):
         # Returns
         res (Response): a Response object.
         """
-        before_res = await call_async(self.before_dispatch, req, res)
+        before_res: Optional[Response] = await call_async(  # type: ignore
+            self.before_dispatch, req, res
+        )
         if before_res:
             return before_res
 
         res = await self.app(req, res)
 
-        res = await call_async(self.after_dispatch, req, res) or res
+        res = (
+            await call_async(self.after_dispatch, req, res)  # type: ignore
+            or res
+        )
 
         return res
 

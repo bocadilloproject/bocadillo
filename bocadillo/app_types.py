@@ -1,7 +1,9 @@
-from typing import Callable, Awaitable, MutableMapping, Any
+from typing import Any, Awaitable, Callable, MutableMapping, Union, TypeVar
 
 from .request import Request
 from .response import Response
+
+_E = TypeVar("_E", bound=Exception)
 
 # ASGI
 Scope = dict
@@ -11,11 +13,11 @@ Send = Callable[[Event], None]
 ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]
 ASGIApp = Callable[[Scope], ASGIAppInstance]
 
-# Views
-Handler = Callable[[Request, Response, Any], Awaitable[None]]
-
 # HTTP
-ErrorHandler = Callable[[Request, Response, Exception], Awaitable[None]]
+AsyncHandler = Callable[[Request, Response, Any], Awaitable[None]]
+SyncHandler = Callable[[Request, Response, Any], None]
+Handler = Union[AsyncHandler, SyncHandler]
+ErrorHandler = Callable[[Request, Response, _E], Awaitable[None]]
 
 
 class HTTPApp:
