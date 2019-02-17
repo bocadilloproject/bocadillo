@@ -1,4 +1,4 @@
-from typing import Callable, Awaitable, MutableMapping, Any
+from typing import Any, Awaitable, Callable, MutableMapping, Union
 
 from .request import Request
 from .response import Response
@@ -12,7 +12,9 @@ ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]
 ASGIApp = Callable[[Scope], ASGIAppInstance]
 
 # HTTP
-Handler = Callable[[Request, Response, Any], Awaitable[None]]
+AsyncHandler = Callable[[Request, Response, Any], Awaitable[None]]
+SyncHandler = Callable[[Request, Response, Any], None]
+Handler = Union[AsyncHandler, SyncHandler]
 ErrorHandler = Callable[[Request, Response, Exception], Awaitable[None]]
 
 

@@ -31,7 +31,7 @@ from .errors import HTTPError
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .views import HandlerDoesNotExist, View, Handler
+from .views import AsyncHandler, HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
 
 WILDCARD = "{}"
@@ -217,7 +217,7 @@ class HTTPRoute(BaseRoute[View]):
         method: str = req.method.lower()
 
         try:
-            handler: Handler = self.view.get_handler(method)
+            handler: AsyncHandler = self.view.get_handler(method)
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 

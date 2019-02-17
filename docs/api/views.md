@@ -35,7 +35,7 @@ __Attributes__
 
 ## from_handler
 ```python
-from_handler(handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], Awaitable[NoneType]], methods: Union[List[str], <built-in function all>] = None) -> bocadillo.views.View
+from_handler(handler: Union[Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], Awaitable[NoneType]], Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], NoneType]], methods: Union[List[str], <built-in function all>] = None) -> bocadillo.views.View
 ```
 Convert a handler to a `View` instance.
 
@@ -76,7 +76,7 @@ __Returns__
 
 ## get_handlers
 ```python
-get_handlers(obj: Any) -> Dict[str, Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], Awaitable[NoneType]]]
+get_handlers(obj: Any) -> Dict[str, Union[Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], Awaitable[NoneType]], Callable[[bocadillo.request.Request, bocadillo.response.Response, Any], NoneType]]]
 ```
 Return all `View` handlers declared on an object.
 
