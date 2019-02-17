@@ -236,46 +236,6 @@ async def shutdown():
 api.on("shutdown", shutdown)
 ```
 
-### route
-```python
-API.route(self, pattern: str, *, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
-- __name (str)__:
-    An optional name for the route.
-    If a route already exists for this name, it is replaced.
-    Defaults to a snake-cased version of the view's name.
-- __namespace (str)__:
-    An optional namespace for the route. If given, it is prefixed to
-    the name and separated by a colon.
-
-__See Also__
-
-- [check_route](#check-route) for the route validation algorithm.
-
-### websocket_route
-```python
-API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
-```
-Register a WebSocket route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-
-__See Also__
-
-- [WebSocket](./websockets.md#websocket) for a description of keyword
-arguments.
-
 ### run
 ```python
 API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
@@ -309,11 +269,47 @@ __See Also__
 - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
 available keyword arguments.
 
+### route
+```python
+API.route(self, pattern: str, *, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
+### websocket_route
+```python
+API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+```
+Register a WebSocket route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+
+__See Also__
+
+- [WebSocket](./websockets.md#websocket) for a description of keyword
+arguments.
+
 ### url_for
 ```python
 API.url_for(self, name: str, **kwargs) -> str
 ```
-Build the URL path for a named route.
+Build the full URL path for a named route.
 
 __Parameters__
 
@@ -322,7 +318,7 @@ __Parameters__
 
 __Returns__
 
-`url (str)`: the URL path for a route.
+`url (str)`: an URL path.
 
 __Raises__
 
@@ -333,6 +329,8 @@ __Raises__
 API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
 ```
 Redirect to another HTTP route.
+
+This is only meant to be used inside an HTTP view.
 
 __Parameters__
 

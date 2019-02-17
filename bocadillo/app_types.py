@@ -11,10 +11,8 @@ Send = Callable[[Event], None]
 ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]
 ASGIApp = Callable[[Scope], ASGIAppInstance]
 
-# Views
-Handler = Callable[[Request, Response, Any], Awaitable[None]]
-
 # HTTP
+Handler = Callable[[Request, Response, Any], Awaitable[None]]
 ErrorHandler = Callable[[Request, Response, Exception], Awaitable[None]]
 
 
