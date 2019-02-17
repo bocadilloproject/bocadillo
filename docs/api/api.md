@@ -152,7 +152,7 @@ __See Also__
 
 ### add_error_handler
 ```python
-API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], Awaitable[NoneType]])
+API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])
 ```
 Register a new error handler.
 

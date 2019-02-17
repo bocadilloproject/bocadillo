@@ -29,7 +29,7 @@ Return the HTTP error's status phrase, e.g. `"Not Found"`.
 Return the HTTP error's title, e.g. `"404 Not Found"`.
 ## ServerErrorMiddleware
 ```python
-ServerErrorMiddleware(self, app: bocadillo.app_types.HTTPApp, handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], Awaitable[NoneType]], debug: bool = False) -> None
+ServerErrorMiddleware(self, app: bocadillo.app_types.HTTPApp, handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]], debug: bool = False) -> None
 ```
 Return 500 response when an unhandled exception occurs.
 
