@@ -6,7 +6,7 @@ from .app_types import Handler
 from .compat import call_async, camel_to_snake
 from .constants import ALL_HTTP_METHODS
 
-MethodsParam = Union[List[str], all]
+MethodsParam = Union[List[str], all]  # type: ignore
 
 
 class HandlerDoesNotExist(Exception):
@@ -44,8 +44,10 @@ class View:
     name (str): the name of the view.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, doc: str = None):
         self.name = name
+        if doc is not None:
+            self.__doc__ = doc
 
     get: Handler
     post: Handler
@@ -54,9 +56,12 @@ class View:
     delete: Handler
     head: Handler
     options: Handler
+    handle: Handler
 
     @classmethod
-    def create(cls, name: str, docstring: str, handlers: dict) -> "View":
+    def create(
+        cls, name: str, docstring: Optional[str], handlers: dict
+    ) -> "View":
         # Convert handlers to async if necessary
         for method, handler in handlers.items():
             if not inspect.iscoroutinefunction(handler):
@@ -68,8 +73,7 @@ class View:
             handlers["head"] = handlers["get"]
 
         # Create the view object.
-        vue = cls(name)
-        vue.__doc__ = docstring
+        vue = cls(name, doc=docstring)
 
         # Assign method handlers.
         for method, handler in handlers.items():
