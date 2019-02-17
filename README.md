@@ -39,7 +39,7 @@ api = bocadillo.API()
 
 @api.route("/")
 async def index(req, res):
-    # Use a template from the ./templates directory 
+    # Use a template from the ./templates directory
     res.html = await api.template("index.html")
 
 @api.route("/greet/{person}")
@@ -92,7 +92,6 @@ Logo:
 [travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
-[Orator]: https://orator-orm.com
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo
