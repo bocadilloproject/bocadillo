@@ -14,6 +14,7 @@ from uvicorn.main import run
 from uvicorn.reloaders.statreload import StatReload
 
 from .app_types import (
+    _E,
     ASGIApp,
     ASGIAppInstance,
     ErrorHandler,
@@ -217,9 +218,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
 
-    def add_error_handler(
-        self, exception_cls: Type[Exception], handler: ErrorHandler
-    ):
+    def add_error_handler(self, exception_cls: Type[_E], handler: ErrorHandler):
         """Register a new error handler.
 
         # Parameters
