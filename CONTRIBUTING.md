@@ -267,6 +267,32 @@ A comment is a line that starts with `#`. There are two use cases to comments:
 
 As a rule of thumb, don't use comments to explain _what_ your code is doing, but to explain _why_ it's doing what it's doing. Again, code should be self-documenting. If you need to explain _what_ your code is doing, try simplifying it into smaller components (functions, methods, objects) with descriptive names.
 
+## Linting
+
+Linting refers to the process of running a program that will analyze the code base for potential errors. This repo uses two linters: Pylint and Mypy.
+
+### PyLint
+
+Pylint is used for general error checking. It has a lot of useful features which you can read about on the official website: [pylint.org](https://www.pylint.org).
+
+Pylint comes installed along with the development dependencies, and can be used to check for errors using:
+
+```
+pylint bocadillo
+```
+
+FYI, the Pylint configuration is located in `pylintrc`.
+
+### Static type checking with MyPy
+
+MyPy is installed along with the development dependencies, so you can manually type check the code base using:
+
+```bash
+mypy bocadillo
+```
+
+We also encourage you to configure your IDE of choice to automatically type check the code using MyPy for you (e.g. on save).
+
 ## Pull Request process
 
 1. Make sure to **open an issue** before submitting a PR (see [Always discuss ideas](#always-discuss-ideas)). Note: not all features can be accepted, as some may be out-of-scope and would be better off as third-party packages. It would be sad if you worked on a PR for days but it gets rejected because of reasons that could have been quickly pointed at if you discussed it in an issue.
