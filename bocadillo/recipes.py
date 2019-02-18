@@ -42,11 +42,12 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
         if prefix is None:
             prefix = f"/{name}"
         super().__init__(prefix=prefix, **kwargs)
-        self._templates_dir_given = "templates_dir" in kwargs  # DEPRECATED
+        # DEPRECATED: 0.13.0
+        self._templates_dir_given = "templates_dir" in kwargs
         self.name = name
 
     def get_template_globals(self):
-        # DEPRECATED
+        # DEPRECATED: 0.13.0
         return {"url_for": self.url_for}
 
     @overrides(RoutingMixin.route)
@@ -66,8 +67,8 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
         obj.http_router.mount(self.http_router, root=root)
         obj.websocket_router.mount(self.websocket_router, root=root)
 
+        # DEPRECATED: 0.13.0
         # Look for templates where the API does, if not specified
-        # DEPRECATED
         if not self._templates_dir_given:
             self.templates_dir = obj.templates_dir
 

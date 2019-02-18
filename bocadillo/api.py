@@ -174,6 +174,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         return TestClient(self, **kwargs)
 
     def get_template_globals(self):
+        # DEPRECATED: 0.13.0
         return {"url_for": self.url_for}
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):

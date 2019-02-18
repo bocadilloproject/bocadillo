@@ -19,6 +19,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 - API reference for the `Response` class.
 - Automatic `content-disposition` for attachments with `res.attachment`.
 - File responses with `res.file()`.
+- Generic templating with `bocadillo.templates.Templates`.
 
 ### Fixed
 
@@ -31,6 +32,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Removed
 
 - Removed the `handle_text` media handler. The only built-in media handler is now `handle_json`.
+
+### Deprecated
+
+- The `.template[_sync | _string]` methods on `API` and `Recipe` have been deprecated in favor of `Templates`. They will be removed in v0.13.0.
 
 ## [v0.11.0] - 2019-02-11
 
