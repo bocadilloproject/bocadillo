@@ -1,6 +1,13 @@
 from typing import Any, Optional
 
-from ..templates import Templates, DEFAULT_TEMPLATES_DIR
+from bocadillo.templates import DEFAULT_TEMPLATES_DIR, Templates
+from bocadillo.deprecation import deprecated as deprecated_decorator
+
+
+def replaced_by(alternative: str):
+    return deprecated_decorator(
+        since="v0.12", removal="0.13", alternative=alternative
+    )
 
 
 class TemplatesMixin:
@@ -10,14 +17,6 @@ class TemplatesMixin:
         super().__init__(**kwargs)
         self._templates = Templates(
             directory=templates_dir, context=self.get_template_globals()
-        )
-
-    def _fail(self):
-        raise NotImplementedError(
-            "Rendering templates from the API or Recipe has been removed in "
-            "v0.12.0. Please now use `bocadillo.templates.Templates`. "
-            "Docs are available at: "
-            "https://bocadilloproject.github.io/guides/agnostic/templates.html"
         )
 
     def get_template_globals(self) -> dict:
@@ -34,6 +33,7 @@ class TemplatesMixin:
     def templates_dir(self, templates_dir: str):
         self._templates.directory = templates_dir
 
+    @replaced_by("bocadillo.Templates.render")
     async def template(self, name_: str, *args: dict, **kwargs: Any) -> str:
         """Render a template asynchronously.
         Can only be used within `async` functions.
@@ -49,12 +49,14 @@ class TemplatesMixin:
         """
         return await self._templates.render(name_, *args, **kwargs)
 
+    @replaced_by("bocadillo.Templates.render_sync")
     def template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str:
         """Render a template synchronously.
         See also: #API.template().
         """
         return self._templates.render_sync(name_, *args, **kwargs)
 
+    @replaced_by("bocadillo.Templates.render_string")
     def template_string(self, source: str, *args: dict, **kwargs: Any) -> str:
         """Render a template from a string (synchronous).
         # Parameters
