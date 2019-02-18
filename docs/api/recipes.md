@@ -22,14 +22,28 @@ __Parameters__
 
 ### templates_dir
 The path where templates are searched for, or `None` if not set.
-This is built from the `templates_dir` parameter.
 
+::: warning DEPRECATED
+`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#Templates) instead.
+:::
+
+
+
+This is built from the `templates_dir` parameter.
 ### template
 ```python
 Recipe.template(self, name_: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template asynchronously.
+
+::: warning DEPRECATED
+`template` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render`](./templates.md#render) instead.
+:::
+
+
+
 Can only be used within `async` functions.
+
 __Parameters__
 
 - __name (str)__:
@@ -40,7 +54,6 @@ __Parameters__
     Context variables to inject in the template.
 - __**kwargs (any)__:
     Context variables to inject in the template.
-
 ### route
 ```python
 Recipe.route(self, pattern: str, **kwargs) -> bocadillo.routing.HTTPRoute
@@ -62,13 +75,6 @@ __Parameters__
     An optional namespace for the route. If given, it is prefixed to
     the name and separated by a colon.
 
-### template_sync
-```python
-Recipe.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
-```
-Render a template synchronously.
-See also: `API.template()`.
-
 ### websocket_route
 ```python
 Recipe.websocket_route(self, pattern: str, **kwargs) -> bocadillo.routing.WebSocketRoute
@@ -84,16 +90,36 @@ __See Also__
 - [WebSocket](./websockets.md#websocket) for a description of keyword
 arguments.
 
+### template_sync
+```python
+Recipe.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template synchronously.
+
+::: warning DEPRECATED
+`template_sync` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render_sync`](./templates.md#render-sync) instead.
+:::
+
+
+
+For parameters, see [.template()](#template).
 ### template_string
 ```python
 Recipe.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template from a string (synchronous).
+
+::: warning DEPRECATED
+`template_string` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render_string`](./templates.md#render-string) instead.
+:::
+
+
+
 __Parameters__
 
 - __source (str)__: a template given as a string.
-For other parameters, see `API.template()`.
 
+For other parameters, see [.template()](#template).
 ### book
 ```python
 Recipe.book(*recipes: 'Recipe', prefix: str) -> 'RecipeBook'

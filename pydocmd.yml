@@ -40,6 +40,8 @@ generate:
       - bocadillo.views++
   - websockets.md:
       - bocadillo.websockets++
+  - deprecated.md:
+      - bocadillo.deprecated.templates++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []
