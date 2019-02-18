@@ -11,7 +11,9 @@ jobs:
       language: python
       cache: pip
       python: "3.6"
-      install: pip install ".[templates]"
+      install:
+        - pip install ".[files][templates"
+        - pip install -U pytest
       script: pytest
 
     - stage: test
@@ -22,7 +24,8 @@ jobs:
       dist: xenial
       python: "3.7"
       install:
-        - pip install ".[templates]"
+        - pip install ".[files][templates]"
+        - pip install -U pytest
         - pip install codecov pytest-cov
       script: pytest --cov=./
       after_success: codecov

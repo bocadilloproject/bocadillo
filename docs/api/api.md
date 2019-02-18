@@ -2,7 +2,7 @@
 
 ## API
 ```python
-API(self, templates_dir: Union[str, NoneType] = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json')
+API(self, static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json', **kwargs)
 ```
 The all-mighty API class.
 
@@ -66,6 +66,44 @@ __Attributes__
 
 ### media_type
 The media type configured when instanciating the application.
+### templates_dir
+The path where templates are searched for, or `None` if not set.
+This is built from the `templates_dir` parameter.
+
+### template
+```python
+API.template(self, name_: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template asynchronously.
+Can only be used within `async` functions.
+__Parameters__
+
+- __name (str)__:
+    Name of the template, located inside `templates_dir`.
+    The trailing underscore avoids collisions with a potential
+    context variable named `name`.
+- __*args (dict)__:
+    Context variables to inject in the template.
+- __**kwargs (any)__:
+    Context variables to inject in the template.
+
+### template_sync
+```python
+API.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template synchronously.
+See also: `API.template()`.
+
+### template_string
+```python
+API.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template from a string (synchronous).
+__Parameters__
+
+- __source (str)__: a template given as a string.
+For other parameters, see `API.template()`.
+
 ### mount
 ```python
 API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
@@ -93,7 +131,7 @@ __See Also__
 
 ### add_error_handler
 ```python
-API.add_error_handler(self, exception_cls: Type[Exception], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, Exception], Awaitable[NoneType]])
+API.add_error_handler(self, exception_cls: Type[~_E], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])
 ```
 Register a new error handler.
 
@@ -177,31 +215,6 @@ async def shutdown():
 api.on("shutdown", shutdown)
 ```
 
-### route
-```python
-API.route(self, pattern: str, *, name: str = None, namespace: str = None)
-```
-Register a new route by decorating a view.
-
-__Parameters__
-
-- __pattern (str)__: an URL pattern.
-- __methods (list of str)__:
-    An optional list of HTTP methods.
-    Defaults to `["get", "head"]`.
-    Ignored for class-based views.
-- __name (str)__:
-    An optional name for the route.
-    If a route already exists for this name, it is replaced.
-    Defaults to a snake-cased version of the view's name.
-- __namespace (str)__:
-    An optional namespace for the route. If given, it is prefixed to
-    the name and separated by a colon.
-
-__See Also__
-
-- [check_route](#check-route) for the route validation algorithm.
-
 ### run
 ```python
 API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
@@ -235,6 +248,27 @@ __See Also__
 - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
 available keyword arguments.
 
+### route
+```python
+API.route(self, pattern: str, *, name: str = None, namespace: str = None)
+```
+Register a new route by decorating a view.
+
+__Parameters__
+
+- __pattern (str)__: an URL pattern.
+- __methods (list of str)__:
+    An optional list of HTTP methods.
+    Defaults to `["get", "head"]`.
+    Ignored for class-based views.
+- __name (str)__:
+    An optional name for the route.
+    If a route already exists for this name, it is replaced.
+    Defaults to a snake-cased version of the view's name.
+- __namespace (str)__:
+    An optional namespace for the route. If given, it is prefixed to
+    the name and separated by a colon.
+
 ### websocket_route
 ```python
 API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
@@ -254,7 +288,7 @@ arguments.
 ```python
 API.url_for(self, name: str, **kwargs) -> str
 ```
-Build the URL path for a named route.
+Build the full URL path for a named route.
 
 __Parameters__
 
@@ -263,7 +297,7 @@ __Parameters__
 
 __Returns__
 
-`url (str)`: the URL path for a route.
+`url (str)`: an URL path.
 
 __Raises__
 
@@ -271,9 +305,11 @@ __Raises__
 
 ### redirect
 ```python
-API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs)
+API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
 ```
 Redirect to another HTTP route.
+
+This is only meant to be used inside an HTTP view.
 
 __Parameters__
 

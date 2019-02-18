@@ -33,7 +33,7 @@ modified at runtime.
 
 ### render
 ```python
-Templates.render(self, filename: str, *args: dict, **kwargs: str) -> str
+Templates.render(self, filename: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template asynchronously.
 
@@ -52,7 +52,7 @@ __Parameters__
 
 ### render_sync
 ```python
-Templates.render_sync(self, filename: str, *args: dict, **kwargs: str) -> str
+Templates.render_sync(self, filename: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template synchronously.
 
@@ -62,7 +62,7 @@ __See Also__
 
 ### render_string
 ```python
-Templates.render_string(self, source: str, *args: dict, **kwargs: str) -> str
+Templates.render_string(self, source: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template from a string (synchronously).
 

@@ -17,6 +17,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Added
 
 - API reference for the `Response` class.
+- Automatic `content-disposition` for attachments with `res.attachment`.
+- File responses with `res.file()`.
 
 ### Fixed
 

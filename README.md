@@ -93,7 +93,6 @@ Logo:
 [travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
-[orator]: https://orator-orm.com
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo

@@ -2,7 +2,7 @@
 
 ## call_async
 ```python
-call_async(func: Callable[..., Union[~_V, Awaitable[~_V]]], *args: Any, sync: Union[bool, NoneType] = None, **kwargs: Any) -> ~_V
+call_async(func: Union[Callable[..., ~_V], Callable[..., Awaitable[~_V]]], *args: Any, sync: Union[bool, NoneType] = None, **kwargs: Any) -> ~_V
 ```
 Call a function in an async manner.
 
