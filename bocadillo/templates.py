@@ -99,7 +99,7 @@ class Templates:
         finally:
             self._environment.is_async = False
 
-    async def render(self, filename: str, *args: dict, **kwargs: str) -> str:
+    async def render(self, filename: str, *args: dict, **kwargs: Any) -> str:
         """Render a template asynchronously.
 
         Can only be used within async functions.
@@ -119,7 +119,7 @@ class Templates:
                 *args, **kwargs
             )
 
-    def render_sync(self, filename: str, *args: dict, **kwargs: str) -> str:
+    def render_sync(self, filename: str, *args: dict, **kwargs: Any) -> str:
         """Render a template synchronously.
 
         # See Also
@@ -127,7 +127,7 @@ class Templates:
         """
         return self._get_template(filename).render(*args, **kwargs)
 
-    def render_string(self, source: str, *args: dict, **kwargs: str) -> str:
+    def render_string(self, source: str, *args: dict, **kwargs: Any) -> str:
         """Render a template from a string (synchronously).
 
         # Parameters

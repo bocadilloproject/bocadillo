@@ -97,7 +97,6 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     def __init__(
         self,
-        templates_dir: Optional[str] = "templates",
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
@@ -107,8 +106,9 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         enable_gzip: bool = False,
         gzip_min_size: int = 1024,
         media_type: str = CONTENT_TYPE.JSON,
+        **kwargs,
     ):
-        super().__init__(templates_dir=templates_dir)
+        super().__init__(**kwargs)
 
         # Debug mode defaults to `False` but it can be set in `.run()`.
         self._debug = False
@@ -171,6 +171,9 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     def build_client(self, **kwargs) -> TestClient:
         return TestClient(self, **kwargs)
+
+    def get_template_globals(self):
+        return {"url_for": self.url_for}
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
