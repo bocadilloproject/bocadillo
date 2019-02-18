@@ -24,6 +24,7 @@ setuptools.setup(
     install_requires=[
         "starlette>=0.10",
         "uvicorn>=0.3.26",
+        "jinja2>=2.10",
         "whitenoise",
         "requests",
         "parse",
