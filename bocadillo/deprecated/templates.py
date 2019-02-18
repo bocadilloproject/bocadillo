@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
-from bocadillo.templates import DEFAULT_TEMPLATES_DIR, Templates
 from bocadillo.deprecation import deprecated as deprecated_decorator
+from bocadillo.templates import DEFAULT_TEMPLATES_DIR, Templates
 
 
 def replaced_by(alternative: str):
@@ -22,14 +22,16 @@ class TemplatesMixin:
     def get_template_globals(self) -> dict:
         return {}
 
-    @property
+    @property  # type: ignore
+    @replaced_by("bocadillo.Templates.directory")
     def templates_dir(self) -> Optional[str]:
         """The path where templates are searched for, or `None` if not set.
         This is built from the `templates_dir` parameter.
         """
         return self._templates.directory
 
-    @templates_dir.setter
+    @templates_dir.setter  # type: ignore
+    @replaced_by("bocadillo.Templates.directory")
     def templates_dir(self, templates_dir: str):
         self._templates.directory = templates_dir
 
