@@ -1,7 +1,7 @@
 {
   "_meta": {
     "hash": {
-      "sha256": "d57005b865ad11f48dafd8bab4043c037512f773aa01365d92813bf43f97ce6f"
+      "sha256": "dc5957d519855cbf74b1cab5354550224ddfa257304de4947f7d740b0b03ed61"
     },
     "pipfile-spec": 6,
     "requires": {
@@ -74,10 +74,10 @@
     },
     "starlette": {
       "hashes": [
-        "sha256:abaf46f62be0540b2e851bf14aed088bf1c4b2cb25b87421743a64b71a08a5af"
+        "sha256:513e2819bdc2b43fc68f32fb084fe8242b9b8a4fd024b6f459fc2e06d7f5c782"
       ],
       "index": "pypi",
-      "version": "==0.10.3"
+      "version": "==0.10.4"
     },
     "urllib3": {
       "hashes": [
@@ -88,10 +88,10 @@
     },
     "uvicorn": {
       "hashes": [
-        "sha256:f9c15827ec2b9846425c30c1962e73d80d750eda70ac2dfa3a7340c7c10df9c3"
+        "sha256:f27889a332ee5c55b4841b11b2392d00dac079f39063fabc1e13e18ada3eb7ba"
       ],
       "index": "pypi",
-      "version": "==0.4.4"
+      "version": "==0.4.5"
     },
     "uvloop": {
       "hashes": [
@@ -524,10 +524,10 @@
     },
     "starlette": {
       "hashes": [
-        "sha256:abaf46f62be0540b2e851bf14aed088bf1c4b2cb25b87421743a64b71a08a5af"
+        "sha256:513e2819bdc2b43fc68f32fb084fe8242b9b8a4fd024b6f459fc2e06d7f5c782"
       ],
       "index": "pypi",
-      "version": "==0.10.3"
+      "version": "==0.10.4"
     },
     "toml": {
       "hashes": [
@@ -575,10 +575,10 @@
     },
     "uvicorn": {
       "hashes": [
-        "sha256:f9c15827ec2b9846425c30c1962e73d80d750eda70ac2dfa3a7340c7c10df9c3"
+        "sha256:f27889a332ee5c55b4841b11b2392d00dac079f39063fabc1e13e18ada3eb7ba"
       ],
       "index": "pypi",
-      "version": "==0.4.4"
+      "version": "==0.4.5"
     },
     "uvloop": {
       "hashes": [
