@@ -29,7 +29,7 @@ setuptools.setup(
         "parse",
         "websockets>=6.0",
     ],
-    extras_require={"files": ["aiofiles"], "templates": ["jinja2>=2.10"]},
+    extras_require={"files": ["aiofiles"]},
     url=DOCS,
     project_urls={
         "Source": GITHUB,

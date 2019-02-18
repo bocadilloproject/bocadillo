@@ -4,16 +4,6 @@ Bocadillo allows you to render [Jinja2] templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
-::: warning REQUIREMENTS
-To use templates, you need to install Bocadillo using the `[templates]` extra,
-e.g.:
-
-```bash
-pip install bocadillo[templates]
-```
-
-:::
-
 ::: tip CHANGED IN v0.12.0
 Template rendering is now performed via a `Templates` helper, separate from the `API` class, which allows to use templates outside the context of an application.
 

@@ -26,7 +26,7 @@ Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit a
 Install it:
 
 ```bash
-pip install bocadillo[templates]
+pip install bocadillo
 ```
 
 Build something:

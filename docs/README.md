@@ -18,7 +18,7 @@ footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 Install it:
 
 ```bash
-pip install bocadillo[templates]
+pip install bocadillo
 ```
 
 Build something:

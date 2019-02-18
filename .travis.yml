@@ -12,7 +12,7 @@ jobs:
       cache: pip
       python: "3.6"
       install:
-        - pip install ".[files, templates]"
+        - pip install ".[files]"
         - pip install -U pytest
       script: pytest
 
@@ -24,7 +24,7 @@ jobs:
       dist: xenial
       python: "3.7"
       install:
-        - pip install ".[files, templates]"
+        - pip install ".[files]"
         - pip install -U pytest
         - pip install codecov pytest-cov
       script: pytest --cov=./
