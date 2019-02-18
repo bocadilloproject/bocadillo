@@ -28,7 +28,6 @@ The path where templates are searched for, or `None` if not set.
 :::
 
 
-
 This is built from the `templates_dir` parameter.
 ### route
 ```python
@@ -85,7 +84,6 @@ Render a template asynchronously.
 :::
 
 
-
 Can only be used within `async` functions.
 
 __Parameters__
@@ -109,7 +107,6 @@ Render a template synchronously.
 :::
 
 
-
 For parameters, see [.template()](#template).
 ### template_string
 ```python
@@ -120,7 +117,6 @@ Render a template from a string (synchronous).
 ::: warning DEPRECATED
 `template_string` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render_string`](./templates.md#render-string) instead.
 :::
-
 
 
 __Parameters__

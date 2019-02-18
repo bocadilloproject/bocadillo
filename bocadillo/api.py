@@ -32,9 +32,9 @@ from .meta import DocsMeta
 from .recipes import RecipeBase
 from .request import Request
 from .response import Response
-from .templates import TemplatesMixin
 from .routing import RoutingMixin
 from .staticfiles import static
+from .templates import TemplatesMixin
 
 
 class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):

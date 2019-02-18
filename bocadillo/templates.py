@@ -200,7 +200,7 @@ class TemplatesMixin:
 
         # Parameters
         source (str): a template given as a string.
-        
+
         For other parameters, see [.template()](#template).
         """
         return self._templates.render_string(source, *args, **kwargs)

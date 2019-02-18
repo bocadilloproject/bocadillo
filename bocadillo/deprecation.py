@@ -44,7 +44,7 @@ def deprecated(
         )
 
     def get_doc_warning(obj: _T) -> str:
-        return f"::: warning DEPRECATED\n{get_message(obj)}\n:::\n"
+        return f"::: warning DEPRECATED\n{get_message(obj)}\n:::"
 
     def add_warning(obj: _T) -> _T:
         if isclass(obj):
