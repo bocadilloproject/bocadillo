@@ -1,10 +1,10 @@
 from typing import Sequence
 
 
-from .deprecated import TemplatesMixin
 from .meta import DocsMeta
 from .misc import overrides
 from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
+from .templates import TemplatesMixin
 
 
 class RecipeBase:

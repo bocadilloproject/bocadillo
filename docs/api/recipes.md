@@ -24,36 +24,12 @@ __Parameters__
 The path where templates are searched for, or `None` if not set.
 
 ::: warning DEPRECATED
-`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#Templates) instead.
+`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#templates) instead.
 :::
 
 
 
 This is built from the `templates_dir` parameter.
-### template
-```python
-Recipe.template(self, name_: str, *args: dict, **kwargs: Any) -> str
-```
-Render a template asynchronously.
-
-::: warning DEPRECATED
-`template` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render`](./templates.md#render) instead.
-:::
-
-
-
-Can only be used within `async` functions.
-
-__Parameters__
-
-- __name (str)__:
-    Name of the template, located inside `templates_dir`.
-    The trailing underscore avoids collisions with a potential
-    context variable named `name`.
-- __*args (dict)__:
-    Context variables to inject in the template.
-- __**kwargs (any)__:
-    Context variables to inject in the template.
 ### route
 ```python
 Recipe.route(self, pattern: str, **kwargs) -> bocadillo.routing.HTTPRoute
@@ -90,6 +66,38 @@ __See Also__
 - [WebSocket](./websockets.md#websocket) for a description of keyword
 arguments.
 
+### book
+```python
+Recipe.book(*recipes: 'Recipe', prefix: str) -> 'RecipeBook'
+```
+Build a book of recipes.
+
+Shortcut for `RecipeBook(recipes, prefix)`.
+
+### template
+```python
+Recipe.template(self, name_: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template asynchronously.
+
+::: warning DEPRECATED
+`template` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render`](./templates.md#render) instead.
+:::
+
+
+
+Can only be used within `async` functions.
+
+__Parameters__
+
+- __name (str)__:
+    Name of the template, located inside `templates_dir`.
+    The trailing underscore avoids collisions with a potential
+    context variable named `name`.
+- __*args (dict)__:
+    Context variables to inject in the template.
+- __**kwargs (any)__:
+    Context variables to inject in the template.
 ### template_sync
 ```python
 Recipe.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
@@ -120,14 +128,6 @@ __Parameters__
 - __source (str)__: a template given as a string.
 
 For other parameters, see [.template()](#template).
-### book
-```python
-Recipe.book(*recipes: 'Recipe', prefix: str) -> 'RecipeBook'
-```
-Build a book of recipes.
-
-Shortcut for `RecipeBook(recipes, prefix)`.
-
 ### url_for
 ```python
 Recipe.url_for(self, name: str, **kwargs) -> str

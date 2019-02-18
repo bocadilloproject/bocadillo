@@ -36,12 +36,11 @@ generate:
   - templates.md:
       - bocadillo.templates:
           - bocadillo.templates.Templates+
+          - bocadillo.templates.TemplatesMixin+
   - views.md:
       - bocadillo.views++
   - websockets.md:
       - bocadillo.websockets++
-  - deprecated.md:
-      - bocadillo.deprecated.templates++
 
 # Required by Pydoc-Markdown, but irrelevant to us.
 pages: []

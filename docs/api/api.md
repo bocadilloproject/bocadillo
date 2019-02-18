@@ -70,7 +70,7 @@ The media type configured when instanciating the application.
 The path where templates are searched for, or `None` if not set.
 
 ::: warning DEPRECATED
-`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#Templates) instead.
+`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#templates) instead.
 :::
 
 
@@ -100,6 +100,17 @@ __Parameters__
     Context variables to inject in the template.
 - __**kwargs (any)__:
     Context variables to inject in the template.
+### mount
+```python
+API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
+```
+Mount another WSGI or ASGI app at the given prefix.
+
+__Parameters__
+
+- __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
+- __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+
 ### template_sync
 ```python
 API.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
@@ -113,6 +124,20 @@ Render a template synchronously.
 
 
 For parameters, see [.template()](#template).
+### recipe
+```python
+API.recipe(self, recipe: bocadillo.recipes.RecipeBase)
+```
+Apply a recipe.
+
+__Parameters__
+
+- __recipe (Recipe or RecipeBook)__: a recipe to be applied to the API.
+
+__See Also__
+
+- [Recipes](../guides/agnostic/recipes.md)
+
 ### template_string
 ```python
 API.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
@@ -130,31 +155,6 @@ __Parameters__
 - __source (str)__: a template given as a string.
 
 For other parameters, see [.template()](#template).
-### mount
-```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
-```
-Mount another WSGI or ASGI app at the given prefix.
-
-__Parameters__
-
-- __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
-- __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
-
-### recipe
-```python
-API.recipe(self, recipe: bocadillo.recipes.RecipeBase)
-```
-Apply a recipe.
-
-__Parameters__
-
-- __recipe (Recipe or RecipeBook)__: a recipe to be applied to the API.
-
-__See Also__
-
-- [Recipes](../guides/agnostic/recipes.md)
-
 ### add_error_handler
 ```python
 API.add_error_handler(self, exception_cls: Type[~_E], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])

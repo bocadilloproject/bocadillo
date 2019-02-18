@@ -25,7 +25,6 @@ from .app_types import (
 )
 from .compat import WSGIApp
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
-from .deprecated import TemplatesMixin
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
@@ -33,6 +32,7 @@ from .meta import DocsMeta
 from .recipes import RecipeBase
 from .request import Request
 from .response import Response
+from .templates import TemplatesMixin
 from .routing import RoutingMixin
 from .staticfiles import static
 
