@@ -22,7 +22,7 @@ setuptools.setup(
     packages=["bocadillo"],
     package_data={"bocadillo": ["assets/*"]},
     install_requires=[
-        "starlette>=0.10",
+        "starlette>=0.11",
         "uvicorn>=0.3.26",
         "jinja2",
         "whitenoise",

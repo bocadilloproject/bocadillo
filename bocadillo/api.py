@@ -5,9 +5,9 @@ from typing import Any, Callable, Dict, List, Optional, Type, Union
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
-from starlette.middleware.lifespan import LifespanMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
+from starlette.routing import Lifespan
 from starlette.testclient import TestClient
 from uvicorn.config import get_logger
 from uvicorn.main import run
@@ -140,7 +140,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self.add_error_handler(HTTPError, error_to_text)
 
         # Lifespan middleware
-        self.lifespan_middleware = LifespanMiddleware(self.dispatch_lifespan)
+        self._lifespan = Lifespan()
 
         # ASGI middleware
         if allowed_hosts is None:
@@ -307,29 +307,13 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if handler is None:
 
             def register(func):
-                self.lifespan_middleware.add_event_handler(event, func)
+                self._lifespan.add_event_handler(event, func)
                 return func
 
             return register
         else:
-            self.lifespan_middleware.add_event_handler(event, handler)
+            self._lifespan.add_event_handler(event, handler)
             return handler
-
-    def dispatch_lifespan(self, scope: Scope):
-        # Strict implementation of the ASGI lifespan spec.
-        # This is required because the Starlette `LifespanMiddleware`
-        # does not send the `complete` responses.
-
-        async def asgi(receive, send):
-            message = await receive()
-            assert message["type"] == "lifespan.startup"
-            await send({"type": "lifespan.startup.complete"})
-
-            message = await receive()
-            assert message["type"] == "lifespan.shutdown"
-            await send({"type": "lifespan.shutdown.complete"})
-
-        return asgi
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         assert scope["type"] == "http"
@@ -355,7 +339,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
-            return self.lifespan_middleware(scope)
+            return self._lifespan(scope)
 
         path: str = scope["path"]
 
