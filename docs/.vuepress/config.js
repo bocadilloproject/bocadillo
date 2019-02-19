@@ -93,8 +93,8 @@ module.exports = {
             text: "Tooling",
             items: [
               {
-                text: "Boca (CLI)",
-                link: "https://bocadilloproject.github.io/boca"
+                text: "Queso (CLI)",
+                link: "https://bocadilloproject.github.io/queso"
               }
             ]
           },
