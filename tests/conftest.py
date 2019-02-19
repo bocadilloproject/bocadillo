@@ -4,15 +4,16 @@ from typing import NamedTuple
 import pytest
 from click.testing import CliRunner
 
-from bocadillo import API, Templates
+from bocadillo import App, API, Templates
 
 from .utils import RouteBuilder
 
 
-@pytest.fixture
-def api():
-    _api = API()
-    _websocket_connect = _api.client.websocket_connect
+@pytest.fixture(params=[App, API])
+def api(request):
+    cls = request.param
+    _app = cls()
+    _websocket_connect = _app.client.websocket_connect
 
     def websocket_connect(url, *args, **kwargs):
         session = _websocket_connect(url, *args, **kwargs)
@@ -22,8 +23,8 @@ def api():
         session.send_json = lambda value: session.send_text(json.dumps(value))
         return session
 
-    _api.client.websocket_connect = websocket_connect
-    return _api
+    _app.client.websocket_connect = websocket_connect
+    return _app
 
 
 @pytest.fixture
