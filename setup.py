@@ -13,7 +13,7 @@ CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 setuptools.setup(
     name="bocadillo",
-    version="0.11.0",
+    version="0.11.1",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     description=description,
@@ -22,7 +22,7 @@ setuptools.setup(
     packages=["bocadillo"],
     package_data={"bocadillo": ["assets/*"]},
     install_requires=[
-        "starlette>=0.10",
+        "starlette>=0.11",
         "uvicorn>=0.3.26",
         "jinja2>=2.10",
         "whitenoise",
