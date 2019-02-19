@@ -115,10 +115,10 @@
         },
         "starlette": {
             "hashes": [
-                "sha256:abaf46f62be0540b2e851bf14aed088bf1c4b2cb25b87421743a64b71a08a5af"
+                "sha256:9d48b35d1fc7521d59ae53c421297ab3878d3c7cd4b75266d77f6c73cccb78bb"
             ],
             "index": "pypi",
-            "version": "==0.10.3"
+            "version": "==0.11.1"
         },
         "urllib3": {
             "hashes": [
@@ -129,10 +129,10 @@
         },
         "uvicorn": {
             "hashes": [
-                "sha256:f9c15827ec2b9846425c30c1962e73d80d750eda70ac2dfa3a7340c7c10df9c3"
+                "sha256:f27889a332ee5c55b4841b11b2392d00dac079f39063fabc1e13e18ada3eb7ba"
             ],
             "index": "pypi",
-            "version": "==0.4.4"
+            "version": "==0.4.5"
         },
         "uvloop": {
             "hashes": [
@@ -486,11 +486,11 @@
         },
         "pre-commit": {
             "hashes": [
-                "sha256:40bc3f3a56402d73c54db2dc855fccfb2e7b1b8136da29c61470c1d999614060",
-                "sha256:dfca349528e1b1272bc35511e4375d8bb01d4b0dec5eb632e0cf2d7e7458fecc"
+                "sha256:d3d69c63ae7b7584c4b51446b0b583d454548f9df92575b2fe93a68ec800c4d3",
+                "sha256:fc512f129b9526e35e80d656a16a31c198f584c4fce3a5c739045b5140584917"
             ],
             "index": "pypi",
-            "version": "==1.14.3"
+            "version": "==1.14.4"
         },
         "py": {
             "hashes": [
@@ -516,11 +516,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:80cfd9c8b9e93f419abcc0400e9f595974a98e44b6863a77d3e1039961bfc9c4",
-                "sha256:c2396a15726218a2dfef480861c4ba37bd3952ebaaa5b0fede3fc23fddcd7f8c"
+                "sha256:067a1d4bf827ffdd56ad21bd46674703fce77c5957f6c1eef731f6146bfcef1c",
+                "sha256:9687049d53695ad45cf5fdc7bbd51f0c49f1ea3ecfc4b7f3fde7501b541f17f4"
             ],
             "index": "pypi",
-            "version": "==4.2.1"
+            "version": "==4.3.0"
         },
         "pytest-asyncio": {
             "hashes": [
@@ -565,10 +565,10 @@
         },
         "starlette": {
             "hashes": [
-                "sha256:abaf46f62be0540b2e851bf14aed088bf1c4b2cb25b87421743a64b71a08a5af"
+                "sha256:9d48b35d1fc7521d59ae53c421297ab3878d3c7cd4b75266d77f6c73cccb78bb"
             ],
             "index": "pypi",
-            "version": "==0.10.3"
+            "version": "==0.11.1"
         },
         "toml": {
             "hashes": [
@@ -616,10 +616,10 @@
         },
         "uvicorn": {
             "hashes": [
-                "sha256:f9c15827ec2b9846425c30c1962e73d80d750eda70ac2dfa3a7340c7c10df9c3"
+                "sha256:f27889a332ee5c55b4841b11b2392d00dac079f39063fabc1e13e18ada3eb7ba"
             ],
             "index": "pypi",
-            "version": "==0.4.4"
+            "version": "==0.4.5"
         },
         "uvloop": {
             "hashes": [
