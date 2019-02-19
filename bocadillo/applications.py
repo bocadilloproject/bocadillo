@@ -25,6 +25,7 @@ from .app_types import (
 )
 from .compat import WSGIApp
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
+from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
@@ -418,4 +419,11 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
 
 # DEPRECATED: 0.13
-API = App
+@deprecated(
+    since="0.12",
+    removal="0.13",
+    alternative=("bocadillo.App", "/api/app.md#App"),
+    wrap_class=True,
+)
+class API(App):
+    """The all-might API class."""

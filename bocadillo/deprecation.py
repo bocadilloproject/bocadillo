@@ -3,7 +3,9 @@ from functools import wraps, partial
 from inspect import cleandoc, isclass
 from typing import Callable, cast, TypeVar, Union, Type, Tuple
 
-_T = TypeVar("_T", bound=Union[Type, Callable])
+_F = TypeVar("_F", bound=Callable)
+_T = TypeVar("_T")
+_FT = Union[_F, Type[_T]]
 
 
 def deprecated(
@@ -11,6 +13,7 @@ def deprecated(
     removal: str,
     alternative: Union[str, Tuple[str, str]],
     update_doc: bool = True,
+    wrap_class: bool = False,
 ) -> Callable:
     """Mark a function or a class as deprecated.
 
@@ -35,7 +38,7 @@ def deprecated(
     else:
         alternative_formatted = f"`{alternative}`"
 
-    def get_message(obj: _T, strip: bool = False) -> str:
+    def get_message(obj: _FT, strip: bool = False) -> str:
         obj_name = obj.__name__ if strip else f"`{obj.__name__}`"
         alt = alternative if strip else alternative_formatted
         return (
@@ -43,24 +46,38 @@ def deprecated(
             f"be **removed** in v{removal}. Please use {alt} instead."
         )
 
-    def get_doc_warning(obj: _T) -> str:
+    def show_warning(obj: _FT):
+        warnings.simplefilter("always", DeprecationWarning)
+        warnings.warn(
+            get_message(obj, strip=True),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        warnings.simplefilter("default", DeprecationWarning)
+
+    def get_doc_warning(obj: _FT) -> str:
         return f"::: warning DEPRECATED\n{get_message(obj)}\n:::"
 
-    def add_warning(obj: _T) -> _T:
+    def add_warning(obj: _FT) -> _FT:
         if isclass(obj):
-            wrapped = obj
+            cls = cast(Type, obj)
+
+            if wrap_class:
+
+                class wrapped(cls):  # type: ignore
+                    def __init__(self, *args, **kwargs):
+                        show_warning(obj)
+                        super().__init__(*args, **kwargs)
+
+            else:
+                wrapped = cls  # type: ignore
+
         else:
             func = cast(Callable, obj)
 
             @wraps(func)  # type: ignore
             def wrapped(*args, **kwargs):
-                warnings.simplefilter("always", DeprecationWarning)
-                warnings.warn(
-                    get_message(func, strip=True),
-                    category=DeprecationWarning,
-                    stacklevel=2,
-                )
-                warnings.simplefilter("default", DeprecationWarning)
+                show_warning(func)
                 return func(*args, **kwargs)
 
         if update_doc:
