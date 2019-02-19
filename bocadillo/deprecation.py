@@ -1,5 +1,5 @@
 import warnings
-from functools import wraps, partial
+from functools import wraps, partial, update_wrapper
 from inspect import cleandoc, isclass
 from typing import Callable, cast, TypeVar, Union, Type, Tuple
 
@@ -68,6 +68,8 @@ def deprecated(
                     def __init__(self, *args, **kwargs):
                         show_warning(obj)
                         super().__init__(*args, **kwargs)
+
+                wrapped.__name__ = cls.__name__
 
             else:
                 wrapped = cls  # type: ignore

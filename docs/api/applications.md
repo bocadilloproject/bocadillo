@@ -355,3 +355,14 @@ __See Also__
 
 - [Redirecting](../guides/http/redirecting.md)
 
+## API
+```python
+API(self, *args, **kwargs)
+```
+The all-mighty API class. An alias to `App`, nothing more.
+
+::: warning DEPRECATED
+`API` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.App`](/api/applications.md#App) instead.
+:::
+
+

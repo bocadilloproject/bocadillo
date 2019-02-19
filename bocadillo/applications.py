@@ -422,8 +422,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 @deprecated(
     since="0.12",
     removal="0.13",
-    alternative=("bocadillo.App", "/api/app.md#App"),
+    alternative=("bocadillo.App", "/api/applications.md#App"),
     wrap_class=True,
 )
 class API(App):
-    """The all-might API class."""
+    """The all-mighty API class. An alias to `App`, nothing more."""
