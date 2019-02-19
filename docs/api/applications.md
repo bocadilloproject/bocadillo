@@ -244,7 +244,6 @@ App.run(self, host: str = None, port: int = None, debug: bool = False, log_level
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
 
-
 __Parameters__
 
 
