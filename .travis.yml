@@ -33,6 +33,7 @@ jobs:
         - nvm install 8
         - nvm use 8
       install:
+        - pip install .
         - pip install pydoc-markdown
         - npm install
       script:
