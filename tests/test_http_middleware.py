@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 import pytest
 
-from bocadillo import API, Middleware, HTTPError
+from bocadillo import App, Middleware, HTTPError
 
 
 @contextmanager
@@ -47,59 +47,59 @@ def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
         assert kwargs == expect_kwargs
 
 
-def test_if_middleware_is_added_then_it_is_called(api: API):
+def test_if_middleware_is_added_then_it_is_called(app: App):
     with build_middleware() as middleware:
-        api.add_middleware(middleware)
+        app.add_middleware(middleware)
 
-        @api.route("/")
+        @app.route("/")
         async def index(req, res):
             pass
 
-        api.client.get("/")
+        app.client.get("/")
 
 
-def test_can_pass_extra_kwargs(api: API):
+def test_can_pass_extra_kwargs(app: App):
     kwargs = {"foo": "bar"}
     with build_middleware(expect_kwargs=kwargs) as middleware:
-        api.add_middleware(middleware, **kwargs)
+        app.add_middleware(middleware, **kwargs)
 
-        @api.route("/")
+        @app.route("/")
         async def index(req, res):
             pass
 
-        api.client.get("/")
+        app.client.get("/")
 
 
-def test_only_before_dispatch_is_called_if_method_not_allowed(api: API):
+def test_only_before_dispatch_is_called_if_method_not_allowed(app: App):
     with build_middleware(expect_call_after=False) as middleware:
-        api.add_middleware(middleware)
+        app.add_middleware(middleware)
 
-        @api.route("/")
+        @app.route("/")
         async def index(req, res):
             pass
 
-        response = api.client.put("/")
+        response = app.client.put("/")
         assert response.status_code == 405
 
 
-def test_callbacks_can_be_sync(api: API):
+def test_callbacks_can_be_sync(app: App):
     with build_middleware(sync=True) as middleware:
-        api.add_middleware(middleware)
+        app.add_middleware(middleware)
 
-        @api.route("/")
+        @app.route("/")
         async def index(req, res):
             pass
 
-        response = api.client.get("/")
+        response = app.client.get("/")
         assert response.status_code == 200
 
 
 @pytest.mark.parametrize("when", ["before", "after"])
-def test_errors_raised_in_callback_are_handled(api: API, when):
+def test_errors_raised_in_callback_are_handled(app: App, when):
     class CustomError(Exception):
         pass
 
-    @api.error_handler(CustomError)
+    @app.error_handler(CustomError)
     def handle_error(req, res, exception):
         res.text = "gotcha!"
 
@@ -112,20 +112,20 @@ def test_errors_raised_in_callback_are_handled(api: API, when):
             if when == "after":
                 raise CustomError
 
-    api.add_middleware(MiddlewareWithErrors)
+    app.add_middleware(MiddlewareWithErrors)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         pass
 
-    client = api.build_client(raise_server_exceptions=False)
+    client = app.build_client(raise_server_exceptions=False)
     r = client.get("/")
     assert r.status_code == 200
     assert r.text == "gotcha!"
 
 
-def test_middleware_uses_registered_http_error_handler(api: API):
-    @api.error_handler(HTTPError)
+def test_middleware_uses_registered_http_error_handler(app: App):
+    @app.error_handler(HTTPError)
     def custom(req, res, exc: HTTPError):
         res.status_code = exc.status_code
         res.text = "Foo"
@@ -134,30 +134,30 @@ def test_middleware_uses_registered_http_error_handler(api: API):
         async def before_dispatch(self, req, res):
             raise HTTPError(401)
 
-    api.add_middleware(NopeMiddleware)
+    app.add_middleware(NopeMiddleware)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         pass
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == 401
     assert response.text == "Foo"
 
 
-def test_return_response_in_before_hook(api: API):
+def test_return_response_in_before_hook(app: App):
     class NopeMiddleware(Middleware):
         async def before_dispatch(self, req, res):
             res.text = "Foo"
             return res
 
-    api.add_middleware(NopeMiddleware)
+    app.add_middleware(NopeMiddleware)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         # Should not be called
         assert False
 
-    r = api.client.get("/")
+    r = app.client.get("/")
     assert r.status_code == 200
     assert r.text == "Foo"

@@ -1,5 +1,5 @@
 import pytest
-from bocadillo import API
+from bocadillo import App
 from jinja2.exceptions import TemplateNotFound
 
 from bocadillo import Templates
@@ -46,17 +46,17 @@ async def test_if_template_does_not_exist_then_not_found_raised(
         await templates.render("doesnotexist.html")
 
 
-def test_url_for(api: API, templates: Templates):
-    @api.route("/about/{who}")
+def test_url_for(app: App, templates: Templates):
+    @app.route("/about/{who}")
     async def about(req, res, who):
         pass
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         template = "{{ url_for('about', who=who) }}"
         res.html = templates.render_string(template, who="me")
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == 200
     assert response.text == "/about/me"
 

@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from bocadillo import API, HTTPError
+from bocadillo import App, HTTPError
 from bocadillo.error_handlers import (
     error_to_html,
     error_to_media,
@@ -26,16 +26,16 @@ from bocadillo.error_handlers import (
     ],
 )
 def test_if_http_error_is_raised_then_automatic_response_is_sent(
-    api: API, status: str
+    app: App, status: str
 ):
-    status_code, phrase = status.split(" ", 1)
-    status_code = int(status_code)
+    status, phrase = status.split(" ", 1)
+    status_code = int(status)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         raise HTTPError(status_code)
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == status_code
     assert phrase in response.text
 
@@ -43,20 +43,20 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
 @pytest.mark.parametrize(
     "exception_cls", [KeyError, ValueError, AttributeError]
 )
-def test_custom_error_handler(api: API, exception_cls):
+def test_custom_error_handler(app: App, exception_cls):
     called = False
 
-    @api.error_handler(KeyError)
+    @app.error_handler(KeyError)
     def on_key_error(req, res, exc):
         nonlocal called
         res.text = "Oops!"
         called = True
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         raise exception_cls("foo")
 
-    client = api.build_client(raise_server_exceptions=False)
+    client = app.build_client(raise_server_exceptions=False)
 
     if exception_cls == KeyError:
         response = client.get("/")
@@ -104,15 +104,14 @@ def detail(request):
         ),
     ],
 )
-def test_builtin_handlers(api: API, detail, handler, content, expected):
-    api.add_error_handler(HTTPError, handler)
+def test_builtin_handlers(app: App, detail, handler, content, expected):
+    app.add_error_handler(HTTPError, handler)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         raise HTTPError(403, detail=detail)
-        pass
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == 403
     assert content(response) == expected(detail)
 

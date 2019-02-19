@@ -2,17 +2,17 @@ import os
 from contextlib import contextmanager
 from typing import Any
 
-from bocadillo import API
+from bocadillo import App
 
 
 class RouteBuilder:
     """Builder of simple testing routes."""
 
-    def __init__(self, api: API = None):
-        self._api = api
+    def __init__(self, app: App = None):
+        self._api = app
 
     @property
-    def api(self):
+    def app(self):
         return self._api
 
     def function_based(self, pattern: str, *args, res: dict = None, **kwargs):

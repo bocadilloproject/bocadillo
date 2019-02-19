@@ -1,30 +1,30 @@
 import pytest
 
-from bocadillo import API, Recipe
+from bocadillo import App, Recipe
 
 
-def test_if_prefix_not_given_then_routes_mounted_at_slash_name(api: API):
+def test_if_prefix_not_given_then_routes_mounted_at_slash_name(app: App):
     numbers = Recipe("numbers")
 
     @numbers.route("/real")
     async def real(req, res):
         pass
 
-    api.recipe(numbers)
+    app.recipe(numbers)
 
-    assert api.url_for("numbers:real") == "/numbers/real"
+    assert app.url_for("numbers:real") == "/numbers/real"
 
 
-def test_if_prefix_then_routes_mounted_at_prefix(api: API):
+def test_if_prefix_then_routes_mounted_at_prefix(app: App):
     numbers = Recipe("numbers", prefix="/numbers-yo")
 
     @numbers.route("/real")
     async def real(req, res):
         pass
 
-    api.recipe(numbers)
+    app.recipe(numbers)
 
-    assert api.url_for("numbers:real") == "/numbers-yo/real"
+    assert app.url_for("numbers:real") == "/numbers-yo/real"
 
 
 def test_if_prefix_does_not_start_with_slash_then_error_raised():
@@ -42,7 +42,7 @@ def test_url_for():
     assert numbers.url_for("numbers:real") == "/numbers/real"
 
 
-def test_redirect(api: API):
+def test_redirect(app: App):
     numbers = Recipe("numbers")
 
     @numbers.route("/R")
@@ -53,8 +53,8 @@ def test_redirect(api: API):
     async def real(req, res):
         res.text = "inf"
 
-    api.recipe(numbers)
+    app.recipe(numbers)
 
-    response = api.client.get("/numbers/R")
+    response = app.client.get("/numbers/R")
     assert response.status_code == 200
     assert response.text == "inf"

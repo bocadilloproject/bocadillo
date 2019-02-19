@@ -10,7 +10,7 @@ from .utils import RouteBuilder
 
 
 @pytest.fixture(params=[App, API])
-def api(request):
+def app(request):
     cls = request.param
     _app = cls()
     _websocket_connect = _app.client.websocket_connect
@@ -28,13 +28,13 @@ def api(request):
 
 
 @pytest.fixture
-def builder(api: API):
-    return RouteBuilder(api)
+def builder(app: App):
+    return RouteBuilder(app)
 
 
 @pytest.fixture
-def templates(api: API):
-    return Templates(api)
+def templates(app: App):
+    return Templates(app)
 
 
 class TemplateWrapper(NamedTuple):

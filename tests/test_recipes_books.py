@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import API, Recipe
+from bocadillo import App, Recipe
 
 
 @pytest.fixture
@@ -20,13 +20,13 @@ def numbers():
     return Recipe.book(integers, floats, prefix="/numbers")
 
 
-def test_recipe_book(api: API, numbers):
-    api.recipe(numbers)
+def test_recipe_book(app: App, numbers):
+    app.recipe(numbers)
 
-    response = api.client.get("/numbers/integers/3.5")
+    response = app.client.get("/numbers/integers/3.5")
     assert response.status_code == 200
     assert response.json() == {"value": 3}
 
-    response = api.client.get("/numbers/floats/1")
+    response = app.client.get("/numbers/floats/1")
     assert response.status_code == 200
     assert response.json() == {"value": 1.0}

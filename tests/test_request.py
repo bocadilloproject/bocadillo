@@ -1,23 +1,23 @@
 import pytest
 
-from bocadillo import API
+from bocadillo import App
 
 
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
-def test_parse_json(api: API, data: str, status: int):
-    @api.route("/")
+def test_parse_json(app: App, data: str, status: int):
+    @app.route("/")
     class Index:
         async def post(self, req, res):
             res.media = await req.json()
 
-    assert api.client.post("/", data=data).status_code == status
+    assert app.client.post("/", data=data).status_code == status
 
 
 @pytest.mark.parametrize(
     "get_stream", [lambda req: req, lambda req: req.stream()]
 )
-def test_stream_request(api: API, get_stream):
-    @api.route("/")
+def test_stream_request(app: App, get_stream):
+    @app.route("/")
     class Index:
         async def get(self, req, res):
             chunks = [
@@ -34,5 +34,5 @@ def test_stream_request(api: API, get_stream):
         for _ in range(3):
             yield message
 
-    response = api.client.get("/", data=stream())
+    response = app.client.get("/", data=stream())
     assert response.json() == [message] * 3

@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import API, Recipe
+from bocadillo import App, Recipe
 from tests.conftest import TemplateWrapper
 
 
@@ -11,23 +11,23 @@ def test_use_template_string():
     assert html == "<h1>Numbers</h1>"
 
 
-def test_if_templates_dir_is_that_of_api_by_default(api: API):
+def test_if_templates_dir_is_that_of_api_by_default(app: App):
     numbers = Recipe("numbers")
-    api.recipe(numbers)
+    app.recipe(numbers)
     with pytest.deprecated_call():
-        assert numbers.templates_dir == api.templates_dir
+        assert numbers.templates_dir == app.templates_dir
 
 
-def test_if_templates_dir_given_then_it_is_used(api: API):
+def test_if_templates_dir_given_then_it_is_used(app: App):
     other_dir = "my_recipe/templates"
     numbers = Recipe("numbers", templates_dir=other_dir)
-    api.recipe(numbers)
+    app.recipe(numbers)
     with pytest.deprecated_call():
-        assert numbers.templates_dir == other_dir != api.templates_dir
+        assert numbers.templates_dir == other_dir != app.templates_dir
 
 
 def test_render_template_in_recipe_route(
-    template_file: TemplateWrapper, api: API
+    template_file: TemplateWrapper, app: App
 ):
     numbers = Recipe("numbers")
 
@@ -38,15 +38,15 @@ def test_render_template_in_recipe_route(
                 template_file.name, **template_file.context
             )
 
-    api.recipe(numbers)
+    app.recipe(numbers)
 
-    response = api.client.get("/numbers/")
+    response = app.client.get("/numbers/")
     assert response.status_code == 200
     assert response.text == template_file.rendered
 
 
 def test_render_sync_template_in_recipe_route(
-    template_file: TemplateWrapper, api: API
+    template_file: TemplateWrapper, app: App
 ):
     numbers = Recipe("numbers")
 
@@ -57,14 +57,14 @@ def test_render_sync_template_in_recipe_route(
                 template_file.name, **template_file.context
             )
 
-    api.recipe(numbers)
+    app.recipe(numbers)
 
-    response = api.client.get("/numbers/sync")
+    response = app.client.get("/numbers/sync")
     assert response.status_code == 200
     assert response.text == template_file.rendered
 
 
-def test_use_url_for(api: API):
+def test_use_url_for(app: App):
     foo = Recipe("foo")
 
     @foo.route("/bar")
@@ -78,8 +78,8 @@ def test_use_url_for(api: API):
                 "<a href=\"{{ url_for('foo:bar') }}\">To bar</a>"
             )
 
-    api.recipe(foo)
+    app.recipe(foo)
 
-    response = api.client.get("/foo/fez")
+    response = app.client.get("/foo/fez")
     assert response.status_code == 200
     assert response.text == '<a href="/foo/bar">To bar</a>'
