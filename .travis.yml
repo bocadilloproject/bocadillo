@@ -35,7 +35,7 @@ jobs:
       install:
         - pip install .
         - pip install pydoc-markdown
-        - npm install
+        - npm install --only=dev
       script:
         - pydocmd generate
         - npm run docs:build
