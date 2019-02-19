@@ -51,10 +51,6 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     # Parameters
 
-    templates_dir (str):
-        The name of the directory where templates are searched for,
-        relative to the application entry point.
-        Defaults to `"templates"`.
     static_dir (str):
         The name of the directory containing static files, relative to
         the application entry point. Set to `None` to not serve any static
@@ -102,7 +98,6 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     def __init__(
         self,
-        templates_dir: str = "templates",
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
@@ -112,8 +107,9 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         enable_gzip: bool = False,
         gzip_min_size: int = 1024,
         media_type: str = CONTENT_TYPE.JSON,
+        **kwargs,
     ):
-        super().__init__(templates_dir=templates_dir)
+        super().__init__(**kwargs)
 
         # Debug mode defaults to `False` but it can be set in `.run()`.
         self._debug = False
@@ -178,11 +174,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         return TestClient(self, **kwargs)
 
     def get_template_globals(self):
-        """Return global variables available to all templates.
-
-        # Returns
-        variables (dict): a mapping of variable names to their values.
-        """
+        # DEPRECATED: 0.13.0
         return {"url_for": self.url_for}
 
     def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):

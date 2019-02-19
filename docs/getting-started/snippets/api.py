@@ -2,10 +2,18 @@
 import re
 from asyncio import sleep
 from json import JSONDecodeError
-from typing import List, NamedTuple, Optional, Dict
+from typing import Dict, List, NamedTuple, Optional
 
-from bocadillo import API, Middleware, Recipe, HTTPError, hooks, Response, Request
-
+from bocadillo import (
+    API,
+    HTTPError,
+    Middleware,
+    Recipe,
+    Request,
+    Response,
+    Templates,
+    hooks,
+)
 
 # We'll start by defining a few helper classes and functions.
 
@@ -47,7 +55,7 @@ class Analytics:
     """In-memory analytics backend."""
 
     def __init__(self):
-        self._counts: Dict[int] = {}
+        self._counts: Dict[int, int] = {}
 
     async def mark_seen(self, id: int):
         # NOTE: `async` is not that helpful here, but
@@ -75,7 +83,7 @@ class Analytics:
 class TokenMiddleware(Middleware):
     """Token-based authorization middleware."""
 
-    _regex = re.compile("^Token: (\w+)$")
+    _regex = re.compile(r"^Token: (\w+)$")
 
     def before_dispatch(self, req: Request, res: Response):
         """Attach API token to req, if provided in header."""
@@ -135,7 +143,11 @@ storage = Storage()
 analytics = Analytics()
 
 
-# Routes! Views! Jinja templates! Static files!
+# Jinja templates!
+templates = Templates(api)
+
+
+# Routes! Views! Static files!
 @api.route("/")
 async def index(req, res):
     courses = storage.list()
@@ -147,7 +159,7 @@ async def index(req, res):
     # `./static` directory.
     # - This means the HTML template can use a reference
     # to `/static/styles.css`.
-    res.html = await api.template("index.html", courses=courses)
+    res.html = await templates.render("index.html", courses=courses)
 
 
 # Recipes!

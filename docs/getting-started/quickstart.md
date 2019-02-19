@@ -110,7 +110,7 @@ Cheers. :burrito:
 
 ## Next steps
 
-Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer. 
+Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer.
 
 Of course, we haven't dived into the details just yet.
 You should now head to our [Guides] section to learn more.
@@ -132,24 +132,23 @@ the courses app example:
 
 Happy coding!
 
-[Installation]: ./installation.md
-[Guides]: ../guides/
-[Uvicorn]: https://www.uvicorn.org
-[Flask]: http://flask.pocoo.org
-[Falcon]: https://falconframework.org
-[Requests]: http://docs.python-requests.org
-[Routes]: ../guides/http/routing.md
-[Views]: ../guides/http/views.md
-[Templates]: ../guides/agnostic/templates.md
-[CORS]: ../guides/http/middleware.md#cors
-[HSTS]: ../guides/http/middleware.md#hsts
-[GZip]: ../guides/http/middleware.md#gzip
-[Static files]: ../guides/http/static-files.md
-[Media]: ../guides/http/media.md
-[Error handling]: ../guides/http/views.md#returning-errors
-[Hooks]: ../guides/http/hooks.md
-[WebSockets]: ../guides/websockets
-[Middleware]: ../guides/http/middleware.md
-[Recipes]: ../guides/agnostic/recipes.md
-
-[The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
+[installation]: ./installation.md
+[guides]: ../guides/
+[uvicorn]: https://www.uvicorn.org
+[flask]: http://flask.pocoo.org
+[falcon]: https://falconframework.org
+[requests]: http://docs.python-requests.org
+[routes]: ../guides/http/routing.md
+[views]: ../guides/http/views.md
+[templates]: ../guides/agnostic/templates.md
+[cors]: ../guides/http/middleware.md#cors
+[hsts]: ../guides/http/middleware.md#hsts
+[gzip]: ../guides/http/middleware.md#gzip
+[static files]: ../guides/http/static-files.md
+[media]: ../guides/http/media.md
+[error handling]: ../guides/http/views.md#returning-errors
+[hooks]: ../guides/http/hooks.md
+[websockets]: ../guides/websockets
+[middleware]: ../guides/http/middleware.md
+[recipes]: ../guides/agnostic/recipes.md
+[the other (great) benefit of python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b

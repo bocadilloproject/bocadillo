@@ -1,24 +1,29 @@
+import pytest
+
 from bocadillo import API, Recipe
 from tests.conftest import TemplateWrapper
 
 
 def test_use_template_string():
     numbers = Recipe("numbers")
-    html = numbers.template_string("<h1>{{ title }}</h1>", title="Numbers")
+    with pytest.deprecated_call():
+        html = numbers.template_string("<h1>{{ title }}</h1>", title="Numbers")
     assert html == "<h1>Numbers</h1>"
 
 
 def test_if_templates_dir_is_that_of_api_by_default(api: API):
     numbers = Recipe("numbers")
     api.recipe(numbers)
-    assert numbers.templates_dir == api.templates_dir
+    with pytest.deprecated_call():
+        assert numbers.templates_dir == api.templates_dir
 
 
 def test_if_templates_dir_given_then_it_is_used(api: API):
     other_dir = "my_recipe/templates"
     numbers = Recipe("numbers", templates_dir=other_dir)
     api.recipe(numbers)
-    assert numbers.templates_dir == other_dir != api.templates_dir
+    with pytest.deprecated_call():
+        assert numbers.templates_dir == other_dir != api.templates_dir
 
 
 def test_render_template_in_recipe_route(
@@ -28,9 +33,10 @@ def test_render_template_in_recipe_route(
 
     @numbers.route("/")
     async def get_numbers(req, res):
-        res.html = await numbers.template(
-            template_file.name, **template_file.context
-        )
+        with pytest.deprecated_call():
+            res.html = await numbers.template(
+                template_file.name, **template_file.context
+            )
 
     api.recipe(numbers)
 
@@ -46,9 +52,10 @@ def test_render_sync_template_in_recipe_route(
 
     @numbers.route("/sync")
     def get_numbers_sync(req, res):
-        res.html = numbers.template_sync(
-            template_file.name, **template_file.context
-        )
+        with pytest.deprecated_call():
+            res.html = numbers.template_sync(
+                template_file.name, **template_file.context
+            )
 
     api.recipe(numbers)
 
@@ -66,9 +73,10 @@ def test_use_url_for(api: API):
 
     @foo.route("/fez")
     async def fez(req, res):
-        res.html = foo.template_string(
-            "<a href=\"{{ url_for('foo:bar') }}\">To bar</a>"
-        )
+        with pytest.deprecated_call():
+            res.html = foo.template_string(
+                "<a href=\"{{ url_for('foo:bar') }}\">To bar</a>"
+            )
 
     api.recipe(foo)
 

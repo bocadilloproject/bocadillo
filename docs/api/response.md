@@ -43,8 +43,6 @@ Response.file(self, path: str, attach: bool = True)
 ```
 Send a file asynchronously using [aiofiles].
 
-This is typically used when the file should be downloaded by the client.
-
 [aiofiles]: https://github.com/Tinche/aiofiles
 
 __Parameters__

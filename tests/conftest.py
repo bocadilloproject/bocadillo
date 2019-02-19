@@ -4,7 +4,8 @@ from typing import NamedTuple
 import pytest
 from click.testing import CliRunner
 
-from bocadillo import API
+from bocadillo import API, Templates
+
 from .utils import RouteBuilder
 
 
@@ -30,34 +31,39 @@ def builder(api: API):
     return RouteBuilder(api)
 
 
+@pytest.fixture
+def templates(api: API):
+    return Templates(api)
+
+
 class TemplateWrapper(NamedTuple):
     name: str
     context: dict
     rendered: str
-    source_directory: str
+    root: str
 
 
-def _create_template(api, tmpdir_factory, dirname):
+def create_template(
+    templates: Templates, tmpdir_factory, dirname: str
+) -> TemplateWrapper:
     templates_dir = tmpdir_factory.mktemp(dirname)
-    template_file = templates_dir.join("hello.html")
-    template_file.write("<h1>Hello, {{ name }}!</h1>")
-    api.templates_dir = str(templates_dir)
+
+    template = templates_dir.join("hello.html")
+    template.write("<h1>Hello, {{ name }}!</h1>")
+
+    templates.directory = str(templates_dir)
+
     return TemplateWrapper(
         name="hello.html",
         context={"name": "Bocadillo"},
         rendered="<h1>Hello, Bocadillo!</h1>",
-        source_directory=dirname,
+        root=str(templates_dir),
     )
 
 
 @pytest.fixture
-def template_file(api: API, tmpdir_factory):
-    return _create_template(api, tmpdir_factory, dirname="templates")
-
-
-@pytest.fixture
-def template_file_elsewhere(api: API, tmpdir_factory):
-    return _create_template(api, tmpdir_factory, dirname="templates_elsewhere")
+def template_file(templates: Templates, tmpdir_factory) -> TemplateWrapper:
+    return create_template(templates, tmpdir_factory, dirname="templates")
 
 
 @pytest.fixture

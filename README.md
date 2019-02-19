@@ -33,14 +33,15 @@ Build something:
 
 ```python
 # api.py
-import bocadillo
+from bocadillo import API, Templates
 
-api = bocadillo.API()
+api = API()
+templates = Templates(api)
 
 @api.route("/")
 async def index(req, res):
     # Use a template from the ./templates directory
-    res.html = await api.template("index.html")
+    res.html = await templates.render("index.html")
 
 @api.route("/greet/{person}")
 async def greet(req, res, person):

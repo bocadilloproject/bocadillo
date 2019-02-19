@@ -2,7 +2,7 @@
 
 ## API
 ```python
-API(self, templates_dir: str = 'templates', static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json')
+API(self, static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json', **kwargs)
 ```
 The all-mighty API class.
 
@@ -19,10 +19,6 @@ __Example__
 __Parameters__
 
 
-- __templates_dir (str)__:
-    The name of the directory where templates are searched for,
-    relative to the application entry point.
-    Defaults to `"templates"`.
 - __static_dir (str)__:
     The name of the directory containing static files, relative to
     the application entry point. Set to `None` to not serve any static
@@ -73,58 +69,35 @@ The media type configured when instanciating the application.
 ### templates_dir
 The path where templates are searched for, or `None` if not set.
 
-This is built from the `templates_dir` parameter.
+::: warning DEPRECATED
+`templates_dir` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.directory`](./templates.md#templates) instead.
+:::
 
+
+This is built from the `templates_dir` parameter.
 ### template
 ```python
-API.template(self, name_: str, context: dict = None, **kwargs) -> str
+API.template(self, name_: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template asynchronously.
+
+::: warning DEPRECATED
+`template` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render`](./templates.md#render) instead.
+:::
+
 
 Can only be used within `async` functions.
 
 __Parameters__
 
-
 - __name (str)__:
     Name of the template, located inside `templates_dir`.
     The trailing underscore avoids collisions with a potential
     context variable named `name`.
-- __context (dict)__:
+- __*args (dict)__:
     Context variables to inject in the template.
-- __kwargs (dict)__:
+- __**kwargs (any)__:
     Context variables to inject in the template.
-
-### template_sync
-```python
-API.template_sync(self, name_: str, context: dict = None, **kwargs) -> str
-```
-Render a template synchronously.
-
-See also: `API.template()`.
-
-### template_string
-```python
-API.template_string(self, source: str, context: dict = None, **kwargs) -> str
-```
-Render a template from a string (synchronous).
-
-__Parameters__
-
-- __source (str)__: a template given as a string.
-
-For other parameters, see `API.template()`.
-
-### get_template_globals
-```python
-API.get_template_globals(self)
-```
-Return global variables available to all templates.
-
-__Returns__
-
-`variables (dict)`: a mapping of variable names to their values.
-
 ### mount
 ```python
 API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
@@ -136,6 +109,18 @@ __Parameters__
 - __prefix (str)__: A path prefix where the app should be mounted, e.g. `"/myapp"`.
 - __app__: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
 
+### template_sync
+```python
+API.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template synchronously.
+
+::: warning DEPRECATED
+`template_sync` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render_sync`](./templates.md#render-sync) instead.
+:::
+
+
+For parameters, see [.template()](#template).
 ### recipe
 ```python
 API.recipe(self, recipe: bocadillo.recipes.RecipeBase)
@@ -150,6 +135,22 @@ __See Also__
 
 - [Recipes](../guides/agnostic/recipes.md)
 
+### template_string
+```python
+API.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
+```
+Render a template from a string (synchronous).
+
+::: warning DEPRECATED
+`template_string` was **deprecated** in v0.12, and will be **removed** in v0.13. Please use [`bocadillo.templates.Templates.render_string`](./templates.md#render-string) instead.
+:::
+
+
+__Parameters__
+
+- __source (str)__: a template given as a string.
+
+For other parameters, see [.template()](#template).
 ### add_error_handler
 ```python
 API.add_error_handler(self, exception_cls: Type[~_E], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])
