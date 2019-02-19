@@ -34,29 +34,29 @@ async def echo(ws: WebSocket):
 
 Messages are decoded or encoded as text messages by default: calling `receive()` and `send()` will return or expect `str` objects.
 
-It is possible to specify how messages should be decoded (resp. encoded) by passing the `receive_type` (resp. `send_type`) argument to the `@api.websocket_route()` decorator.
- 
- ::: tip
- For convenience, `value_type` can be used to set `receive_type` and `send_type` to the same value.
+It is possible to specify how messages should be decoded (resp. encoded) by passing the `receive_type` (resp. `send_type`) argument to the `@app.websocket_route()` decorator.
+
+::: tip
+For convenience, `value_type` can be used to set `receive_type` and `send_type` to the same value.
 :::
 
 The possible values for `receive_type`, `send_type` and `value_type` are:
 
-| Type | Description | Returned by `receive()` | Expected by `send()` |
-|--------------|-------------|-------------------------|----------------------|
-| `"text"` | Plain text | `str` | `str` |
-| `"bytes"` | Plain bytes | `bytes` | `bytes` |
-| `"json"` | JSON, encoded to / decoded from text | `dict` or `list` | `dict` or `list` |
-| `"event"` | [ASGI event](#using-asgi-events) | `dict` | `dict` 
+| Type      | Description                          | Returned by `receive()` | Expected by `send()` |
+| --------- | ------------------------------------ | ----------------------- | -------------------- |
+| `"text"`  | Plain text                           | `str`                   | `str`                |
+| `"bytes"` | Plain bytes                          | `bytes`                 | `bytes`              |
+| `"json"`  | JSON, encoded to / decoded from text | `dict` or `list`        | `dict` or `list`     |
+| `"event"` | [ASGI event](#using-asgi-events)     | `dict`                  | `dict`               |
 
 For example, here's a WebSocket server that exchanges JSON messages with its clients:
 
 ```python
-from bocadillo import API, WebSocket
+from bocadillo import App, WebSocket
 
-api = API()
+app = App()
 
-@api.websocket_route("/ping-pong", value_type="json")
+@app.websocket_route("/ping-pong", value_type="json")
 async def ping_pong(ws: WebSocket):
     async with ws:
         async for message in ws:
@@ -64,32 +64,32 @@ async def ping_pong(ws: WebSocket):
             await ws.send({"text": resp})
 
 if __name__ == '__main__':
-    api.run()
+    app.run()
 ```
 
 A JavaScript client for this would be:
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8000/ping-pong');
+const ws = new WebSocket("ws://localhost:8000/ping-pong");
 
-ws.onopen = (event) => {
-    console.log("Connected:", event);
-}
+ws.onopen = event => {
+  console.log("Connected:", event);
+};
 
-ws.onclose = (event) => {
-    console.log("Connection lost:", event);
-}
+ws.onclose = event => {
+  console.log("Connection lost:", event);
+};
 
-ws.onmessage = (event) => {
-    console.log("Received:", JSON.parse(event.data));
-}
+ws.onmessage = event => {
+  console.log("Received:", JSON.parse(event.data));
+};
 
 setInterval(() => {
-    const message = {
-        text: (Math.random() > 0.5) ? "ping" : "pong"
-    };
-    ws.send(JSON.stringify(message));
-    console.log("Sent: ", message);
+  const message = {
+    text: Math.random() > 0.5 ? "ping" : "pong"
+  };
+  ws.send(JSON.stringify(message));
+  console.log("Sent: ", message);
 }, 1000);
 ```
 
@@ -103,14 +103,14 @@ See also the API reference for the [WebSocket] class.
 
 ## Using ASGI events
 
-It is possible to receive or send raw [ASGI events][ASGI Event] using the low-level `receive_event()` and `send_event()` methods.
+It is possible to receive or send raw [ASGI events][asgi event] using the low-level `receive_event()` and `send_event()` methods.
 
 For example, this is a rough equivalent of the [introduction example](./README.md#a-basic-example) that uses ASGI events only:
 
 ```python
-from bocadillo import API, WebSocket
+from bocadillo import App, WebSocket
 
-@api.websocket_route("/echo")
+@app.websocket_route("/echo")
 async def echo(ws: WebSocket):
     await ws.send_event({"type": "websocket.accept"})
     event: dict = await ws.receive_event()
@@ -120,5 +120,5 @@ async def echo(ws: WebSocket):
 ```
 
 [asynchronous iterator]: https://www.python.org/dev/peps/pep-0492/#asynchronous-iterators-and-async-for
-[WebSocket]: ../../api/websockets.md#websocket
-[ASGI Event]: https://asgi.readthedocs.io/en/latest/specs/main.html#events
+[websocket]: ../../api/websockets.md#websocket
+[asgi event]: https://asgi.readthedocs.io/en/latest/specs/main.html#events

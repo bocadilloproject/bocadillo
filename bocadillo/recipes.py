@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Any, Sequence
 
 
 from .meta import DocsMeta
@@ -14,20 +14,20 @@ class RecipeBase:
         assert prefix.startswith("/"), "recipe prefix must start with '/'"
         self.prefix = prefix
 
-    def __call__(self, api, root: str = ""):
-        """Apply the recipe to an API object.
+    def __call__(self, app, root: str = ""):
+        """Apply the recipe to an application.
 
         Should be implemented by subclasses.
 
         # Parameters
-        api (API): an API object.
+        app (App): an application instance.
         root (str): a root URL path.
         """
         raise NotImplementedError
 
 
 class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
-    """A grouping of capabilities that can be merged back into an API.
+    """A grouping of capabilities that can be merged back into an application.
 
     # Parameters
 
@@ -59,7 +59,7 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     def websocket_route(self, pattern: str, **kwargs) -> WebSocketRoute:
         return super().websocket_route(self.prefix + pattern, **kwargs)
 
-    def __call__(self, obj, root: str = ""):
+    def __call__(self, obj: Any, root: str = ""):
         """Apply the recipe to an object.
         
         Said object must be a subclass `RoutingMixin` and `TemplateMixin`.
@@ -68,7 +68,7 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
         obj.websocket_router.mount(self.websocket_router, root=root)
 
         # DEPRECATED: 0.13.0
-        # Look for templates where the API does, if not specified
+        # Look for templates where the app does, if not specified
         if not self._templates_dir_given:
             self.templates_dir = obj.templates_dir
 
@@ -94,7 +94,7 @@ class RecipeBook(RecipeBase):
         super().__init__(prefix)
         self.recipes = recipes
 
-    def __call__(self, api: RoutingMixin, root: str = ""):
-        """Apply the recipe book to an API object."""
+    def __call__(self, obj: Any, root: str = ""):
+        """Apply the recipe book to an object."""
         for recipe in self.recipes:
-            recipe(api, root=root + self.prefix)
+            recipe(obj, root=root + self.prefix)

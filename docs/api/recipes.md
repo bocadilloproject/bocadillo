@@ -9,7 +9,7 @@ Definition of the recipe interface.
 ```python
 Recipe(self, name: str, prefix: str = None, **kwargs)
 ```
-A grouping of capabilities that can be merged back into an API.
+A grouping of capabilities that can be merged back into an application.
 
 __Parameters__
 

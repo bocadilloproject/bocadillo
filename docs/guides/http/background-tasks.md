@@ -27,11 +27,11 @@ Here's an example that simulates sending a confirmation email:
 
 ```python{9-12}
 from asyncio import sleep
-from bocadillo import API, view
+from bocadillo import App, view
 
-api = API()
+app = App()
 
-@api.route("/orders")
+@app.route("/orders")
 @view(methods=["post"])
 async def create_order(req, res):
     @res.background
@@ -48,15 +48,15 @@ You can also use `res.background()` as a regular function. This is useful to def
 
 ```python{6-8,13}
 from asyncio import sleep
-from bocadillo import API, view
+from bocadillo import App, view
 
-api = API()
+app = App()
 
 async def send_confirmation(who: str):
     # TODO: send an email here
     await sleep(1)
 
-@api.route("/orders")
+@app.route("/orders")
 @view(methods=["post"])
 async def create_order(req, res):
     res.background(send_confirmation, "user@example.net")

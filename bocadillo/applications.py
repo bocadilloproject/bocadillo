@@ -45,8 +45,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     # Example
 
     ```python
-    >>> import bocadillo
-    >>> api = bocadillo.API()
+    >>> from bocadillo import App
+    >>> app = App()
     ```
 
     # Parameters
@@ -192,7 +192,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         """Apply a recipe.
 
         # Parameters
-        recipe (Recipe or RecipeBook): a recipe to be applied to the API.
+        recipe (Recipe or RecipeBook):
+            a recipe to be applied to the application.
 
         # See Also
         - [Recipes](../guides/agnostic/recipes.md)
@@ -278,14 +279,14 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         # Example
 
         ```python
-        @api.on("startup")
+        @app.on("startup")
         async def startup():
             pass
 
         async def shutdown():
             pass
 
-        api.on("shutdown", shutdown)
+        app.on("shutdown", shutdown)
         ```
         """
         if handler is None:
@@ -360,6 +361,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
+
         # Parameters
 
         host (str):
@@ -380,8 +382,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             Extra keyword arguments that will be passed to the Uvicorn runner.
 
         # See Also
-        - [Configuring host and port](../guides/api.md#configuring-host-and-port)
-        - [Debug mode](../guides/api.md#debug-mode)
+        - [Configuring host and port](../guides/app.md#configuring-host-and-port)
+        - [Debug mode](../guides/app.md#debug-mode)
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """

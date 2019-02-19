@@ -18,8 +18,8 @@ If you've ever worked with [Flask], the API should look familiar.
 Still, let's break this code down:
 
 1. First, we import the `bocadillo` package.
-2. Then, we create an `API` instance.
-3. Next, we use the `@api.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
+2. Then, we create an `App` instance.
+3. Next, we use the `@app.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
 4. The `index()` function is a **view** — it takes a request and a response as arguments, and mutates the response as required (here, setting a `text` to be sent with it). This pattern is borrowed from [Falcon].
 5. The last lines run the application server when the file is run as a script.
 
@@ -56,7 +56,7 @@ yet, we recommend you read this article:
 [The other (great) benefit of Python type annotations].
 :::
 
-<<<@/docs/getting-started/snippets/api.py
+<<<@/docs/getting-started/snippets/app.py
 
 This is what `index.html` and `style.css` files look like:
 
@@ -64,7 +64,7 @@ This is what `index.html` and `style.css` files look like:
 
 <<<@/docs/getting-started/snippets/static/styles.css
 
-To test this example, run the `api.py` script and access it in the browser.
+To test this example, run the `app.py` script and access it in the browser.
 
 You can also make some calls to the API endpoints.
 We'll use the popular [Requests] library here.

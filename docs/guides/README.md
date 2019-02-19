@@ -8,4 +8,4 @@ If you're willing to get to know what Bocadillo has to offer, this is the place!
 
 Start with [The application class] or any of the other items in the sidebar.
 
-[The application class]: ./api.md
+[The application class]: ./app.md

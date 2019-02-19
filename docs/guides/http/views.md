@@ -51,7 +51,7 @@ As an example, consider the following route:
 ```python
 from bocadillo import HTTPError
 
-@api.route('/fail/{status_code:d}')
+@app.route('/fail/{status_code:d}')
 def fail(req, res, status_code: int):
     raise HTTPError(status_code, detail="You asked for it!")
 ```
@@ -106,7 +106,7 @@ TL;DR: **no**.
 
 The role of the `view()` decorator is to build a class-based view out of a function-based view. This is because internally, Bocadillo only deals with class-based views.
 
-Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@api.route()`.
+Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@app.route()`.
 :::
 
 ### Synchronous views

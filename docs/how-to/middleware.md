@@ -55,7 +55,7 @@ Note: returning a response in `after_dispatch` has no effect.
 
 ### Configuration
 
-Keyword arguments passed to `api.add_middleware()` as passed down to the
+Keyword arguments passed to `app.add_middleware()` as passed down to the
 middleware's `__init__()` method. This means that you can grab them there to
 perform extra initialisation logic.
 
@@ -71,11 +71,11 @@ class MaybeMiddleware(Middleware):
             pass
 ```
 
-Users will be able to register the middleware using `api.add_middleware()`:
+Users will be able to register the middleware using `app.add_middleware()`:
 
 ```python
-api = API()
-api.add_middleware(MaybeMiddleware, flag=True)
+app = App()
+app.add_middleware(MaybeMiddleware, flag=True)
 ```
 
 ### Middleware from scratch
@@ -106,8 +106,8 @@ middleware class that implements the [ASGI] interface directly.
 ```python
 class SpecialPathMiddleware:
 
-    def __init__(self, api, special_path: str = "special"):
-        self.api = api
+    def __init__(self, app, special_path: str = "special"):
+        self.app = app
         self.path = special_path
     
     def special(self, scope: dict):
@@ -119,7 +119,7 @@ class SpecialPathMiddleware:
     def __call__(self, scope: dict):
         if scope["path"] == self.path:
             return self.special(scope)
-        return self.api(scope)
+        return self.app(scope)
 ```
 
 ::: warning

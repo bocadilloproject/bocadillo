@@ -38,13 +38,13 @@ For example:
 You can modify the static files directory using the `static_dir` option:
 
 ```python
-api = bocadillo.API(static_dir='staticfiles')
+app = bocadillo.App(static_dir='staticfiles')
 ```
 
 To modify the root URL path, use `static_root`:
 
 ```python
-api = bocadillo.API(static_root='assets')
+app = bocadillo.App(static_root='assets')
 ```
 
 ::: tip
@@ -60,10 +60,10 @@ You can serve other static directories using `app.mount()` and the
 ```python
 import bocadillo
 
-api = bocadillo.API()
+app = bocadillo.App()
 
 # Serve more static files located in the assets/ directory
-api.mount(prefix='assets', app=bocadillo.static('assets'))
+app.mount(prefix='assets', app=bocadillo.static('assets'))
 ```
 
 ## Disabling static files
@@ -72,5 +72,5 @@ To prevent Bocadillo from serving static files altogether,
 you can use:
 
 ```python
-api = bocadillo.API(static_dir=None)
+app = bocadillo.App(static_dir=None)
 ```

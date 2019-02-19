@@ -150,7 +150,7 @@ module.exports = {
         }
       ],
       "/guides/": [
-        "/guides/api",
+        "/guides/app",
         "/guides/cli",
         {
           title: "HTTP",

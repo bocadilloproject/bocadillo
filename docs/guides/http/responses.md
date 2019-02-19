@@ -25,7 +25,7 @@ Setting one of the above attributes automatically sets the
 appropriate `Content-Type` header (shown in comments above).
 
 ::: tip
-The `res.media` attribute serializes values based on the `media_type` configured on the API, which is `application/json` by default. Refer to [Media] for more information.
+The `res.media` attribute serializes values based on the `media_type` configured on the application, which is `application/json` by default. Refer to [Media] for more information.
 :::
 
 [media]: media.md
@@ -45,11 +45,11 @@ or, alternatively, create a [custom media handler](./media.md#custom-media-types
 You can set the numeric status code on the response using `res.status_code`:
 
 ```python{8}
-from bocadillo import API
+from bocadillo import App
 
-api = API()
+app = App()
 
-@api.route("/jobs")
+@app.route("/jobs")
 class Jobs:
     async def post(self, req, res):
         res.status_code = 201
@@ -85,11 +85,11 @@ A stream response can be defined by decorating a no-argument [asynchronous gener
 [async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
 
 ```python{7,8,9,10}
-from bocadillo import API
+from bocadillo import App
 
-api = API()
+app = App()
 
-@api.route("/range/{n}")
+@app.route("/range/{n}")
 async def number_range(req, res, n):
     @res.stream
     async def large_response():
@@ -124,7 +124,7 @@ If you want to tell the client's browser that the response should be downloaded 
 [content-disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
 ```python
-@api.route("/hello.txt")
+@app.route("/hello.txt")
 async def send_hello(req, res):
     res.text = "Hi, there!"
     res.attachment = "hello.txt"
@@ -169,7 +169,7 @@ with open("random.csv", "w") as f:
 Here's how we could populate the response with `random.csv`:
 
 ```python
-@api.route("/random.csv")
+@app.route("/random.csv")
 async def send_csv(req, res):
     res.file("random.csv")
 ```
@@ -180,7 +180,7 @@ Most of the time, files sent like this are meant to be downloaded. For this reas
 To disable this, pass `attach=False`:
 
 ```python
-@api.route("/random.csv")
+@app.route("/random.csv")
 async def send_csv(req, res):
     # The file will be sent "inline", i.e. displayed in the browser
     # instead of triggering a download.

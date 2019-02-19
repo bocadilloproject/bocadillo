@@ -45,7 +45,7 @@ instead of
 Besides, Jinja2 cannot protect you against someone injecting malicious codes in the `href` attribute of a link tag. To prevent this, you need to set the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) header, which can be achieved via a middleware:
 
 ```python
-from bocadillo import API, Middleware
+from bocadillo import App, Middleware
 
 class CSPMiddleware(Middleware):
 
@@ -54,11 +54,11 @@ class CSPMiddleware(Middleware):
         # is served.
         res.headers["content-security-policy"] = "default-src 'self'"
 
-api = API()
-api.add_middleware(CSPMiddleware)
+app = App()
+app.add_middleware(CSPMiddleware)
 ```
 
-For reference, see [Jinja2 autoescaping](http://jinja.pocoo.org/docs/2.10/api/#autoescaping).
+For reference, see [Jinja2 autoescaping](http://jinja.pocoo.org/docs/2.10/app/#autoescaping).
 
 ## Cross-Site Request Forgery (CSRF)
 
@@ -70,7 +70,7 @@ A Token-based method is a popular way to mitigate CSRF attacks.
 
 Bocadillo does not provide any such CSRF mitigation mechanism at the moment — but session cookies are not supported yet either.
 
-For more information on CSRF, see the OWASP [CSRF guide](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) and [Prevention Cheatsheet](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Token_Based_Mitigation).
+For more information on CSRF, see the OWASP [CSRF guide](<https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)>) and [Prevention Cheatsheet](<https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Token_Based_Mitigation>).
 
 ## SQL Injection
 
@@ -105,9 +105,9 @@ An HTTP Host Header attack consists in a malicious user providing a fake `Host` 
 
 In order to prevent this type of attack, every Bocadillo applications has a whitelist of hosts which the `Host` header is validated against. An invalid `Host` will result in Bocadillo sending a `400 Bad Request` response.
 
-By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `API` — see [allowed hosts].
+By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `App` — see [allowed hosts].
 
-[Deployment]: ./deployment.md
+[deployment]: ./deployment.md
 [templates]: ../guides/agnostic/templates.md
-[HSTS]: ../guides/http/middleware.md#hsts
-[Allowed hosts]: ../guides/api.md#allowed-hosts
+[hsts]: ../guides/http/middleware.md#hsts
+[allowed hosts]: ../guides/app.md#allowed-hosts

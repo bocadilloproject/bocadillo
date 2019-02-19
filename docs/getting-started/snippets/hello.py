@@ -1,12 +1,12 @@
 import bocadillo
 
-api = bocadillo.API()
+app = bocadillo.App()
 
 
-@api.route("/")
+@app.route("/")
 async def index(req, res):
     res.text = "Hello, world!"
 
 
 if __name__ == "__main__":
-    api.run()
+    app.run()

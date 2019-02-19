@@ -1,11 +1,11 @@
-# api.py
+# app.py
 import re
 from asyncio import sleep
 from json import JSONDecodeError
 from typing import Dict, List, NamedTuple, Optional
 
 from bocadillo import (
-    API,
+    App,
     HTTPError,
     Middleware,
     Recipe,
@@ -34,7 +34,7 @@ class Storage:
     def __init__(self):
         self._courses: List[Course] = []
 
-    def list(self) -> List[dict]:
+    def all(self) -> List[dict]:
         return [course._asdict() for course in self._courses]
 
     def get(self, id: int) -> Optional[Course]:
@@ -127,7 +127,7 @@ async def validate_course(req, res, params):
 
 # Now, let's assemble the actual application, shall we?
 
-api = API(
+app = App(
     # Built-in CORS, HSTS and GZip!
     enable_cors=True,
     enable_hsts=False,  # the default
@@ -136,7 +136,7 @@ api = API(
 )
 
 # Register the token middleware.
-api.add_middleware(TokenMiddleware)
+app.add_middleware(TokenMiddleware)
 
 # Instanciate helper backends.
 storage = Storage()
@@ -144,13 +144,13 @@ analytics = Analytics()
 
 
 # Jinja templates!
-templates = Templates(api)
+templates = Templates(app)
 
 
 # Routes! Views! Static files!
-@api.route("/")
+@app.route("/")
 async def index(req, res):
-    courses = storage.list()
+    courses = storage.all()
     # Notes:
     # - Templates are loaded from the `./templates`
     # directory by default.
@@ -163,7 +163,7 @@ async def index(req, res):
 
 
 # Recipes!
-# (API-like group of stuff, good for cutting
+# (App-like group of stuff, good for cutting
 # an app into manageable, bite-sized components.)
 courses = Recipe("courses")
 
@@ -175,7 +175,7 @@ class CoursesList:
 
     async def get(self, req, res):
         # Media responses! (JSON by default)
-        res.media = storage.list()
+        res.media = storage.all()
 
     @hooks.before(validate_course)  # Hooks again!
     async def post(self, req, res):
@@ -217,12 +217,12 @@ async def get_top_courses(req, res):
     res.media = courses
 
 
-# Mounts the routes of `courses` at `/courses` on `api`
-api.recipe(courses)
+# Mounts the routes of `courses` at `/courses` on `app`
+app.recipe(courses)
 
 
 # Custom error handlers!
-@api.error_handler(HTTPError)
+@app.error_handler(HTTPError)
 def handle_json(req, res, exc):
     res.media = {
         "error": exc.status_phrase,
@@ -233,4 +233,4 @@ def handle_json(req, res, exc):
 
 
 if __name__ == "__main__":
-    api.run()
+    app.run()

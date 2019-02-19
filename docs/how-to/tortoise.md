@@ -25,13 +25,13 @@ pip install asyncpg
 3. Register startup and shutdown [event handlers][events] to initialize and clean up database connection (see also [Set up (Tortoise)][tortoise-setup]):
 
 ```python
-from bocadillo import API
+from bocadillo import App
 from tortoise import Tortoise
 
-api = API()
+app = App()
 
 
-@api.on("startup")
+@app.on("startup")
 async def db_init():
     await Tortoise.init(
         # Connect to a database located at `$DATABASE_URL`,
@@ -45,7 +45,7 @@ async def db_init():
     await Tortoise.generate_schemas()
 
 
-@api.on("shutdown")
+@app.on("shutdown")
 async def db_cleanup():
     await Tortoise.close_connections()
 ```
@@ -105,25 +105,25 @@ For a thorough description of the foreign key field and many others, see the [To
 Now that these models are defined in the `models.py` file, we can create the main application script, e.g. `blog.py`, add the Tortoise integration script there and start writing views:
 
 ```python
-from bocadillo import API
+from bocadillo import App
 from tortoise import Tortoise
 from models import Post
 
-api = API()
+app = App()
 
 # << Tortoise integration code >>
 
-@api.route("/")
+@app.route("/")
 async def home(req, res):
     # Fetch all posts along with their categories
     posts = await Post.all().prefetch_related("category")
     # Render a template that lists all posts
-    res.html = await api.template("home.html", posts=posts)
+    res.html = await app.template("home.html", posts=posts)
 
 # << More routes >>
 
 if __name__ == "__main__":
-    api.run()
+    app.run()
 ```
 
 Again, feel free to read through Bloguero's source code [on GitHub][bloguero] to understand the finer details and see the complete CRUD implementation.

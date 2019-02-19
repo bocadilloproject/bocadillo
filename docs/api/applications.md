@@ -1,10 +1,10 @@
-# bocadillo.api
+# bocadillo.applications
 
-## API
+## App
 ```python
-API(self, static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json', **kwargs)
+App(self, static_dir: Union[str, NoneType] = 'static', static_root: Union[str, NoneType] = 'static', allowed_hosts: List[str] = None, enable_cors: bool = False, cors_config: dict = None, enable_hsts: bool = False, enable_gzip: bool = False, gzip_min_size: int = 1024, media_type: str = 'application/json', **kwargs)
 ```
-The all-mighty API class.
+The all-mighty application class.
 
 This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
 
@@ -12,8 +12,8 @@ __Example__
 
 
 ```python
->>> import bocadillo
->>> api = bocadillo.API()
+>>> from bocadillo import App
+>>> app = App()
 ```
 
 __Parameters__
@@ -77,7 +77,7 @@ The path where templates are searched for, or `None` if not set.
 This is built from the `templates_dir` parameter.
 ### template
 ```python
-API.template(self, name_: str, *args: dict, **kwargs: Any) -> str
+App.template(self, name_: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template asynchronously.
 
@@ -100,7 +100,7 @@ __Parameters__
     Context variables to inject in the template.
 ### mount
 ```python
-API.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
+App.mount(self, prefix: str, app: Union[Callable[[dict], Callable[[Callable[[], Awaitable[MutableMapping[str, Any]]], Callable[[MutableMapping[str, Any]], NoneType]], Awaitable[NoneType]]], Callable[[dict, Callable[[str, List[str]], NoneType]], List[bytes]]])
 ```
 Mount another WSGI or ASGI app at the given prefix.
 
@@ -111,7 +111,7 @@ __Parameters__
 
 ### template_sync
 ```python
-API.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
+App.template_sync(self, name_: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template synchronously.
 
@@ -123,13 +123,14 @@ Render a template synchronously.
 For parameters, see [.template()](#template).
 ### recipe
 ```python
-API.recipe(self, recipe: bocadillo.recipes.RecipeBase)
+App.recipe(self, recipe: bocadillo.recipes.RecipeBase)
 ```
 Apply a recipe.
 
 __Parameters__
 
-- __recipe (Recipe or RecipeBook)__: a recipe to be applied to the API.
+- __recipe (Recipe or RecipeBook)__:
+    a recipe to be applied to the application.
 
 __See Also__
 
@@ -137,7 +138,7 @@ __See Also__
 
 ### template_string
 ```python
-API.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
+App.template_string(self, source: str, *args: dict, **kwargs: Any) -> str
 ```
 Render a template from a string (synchronous).
 
@@ -153,7 +154,7 @@ __Parameters__
 For other parameters, see [.template()](#template).
 ### add_error_handler
 ```python
-API.add_error_handler(self, exception_cls: Type[~_E], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])
+App.add_error_handler(self, exception_cls: Type[~_E], handler: Callable[[bocadillo.request.Request, bocadillo.response.Response, ~_E], Awaitable[NoneType]])
 ```
 Register a new error handler.
 
@@ -168,7 +169,7 @@ __Parameters__
 
 ### error_handler
 ```python
-API.error_handler(self, exception_cls: Type[Exception])
+App.error_handler(self, exception_cls: Type[Exception])
 ```
 Register a new error handler (decorator syntax).
 
@@ -178,7 +179,7 @@ __See Also__
 
 ### add_middleware
 ```python
-API.add_middleware(self, middleware_cls, **kwargs)
+App.add_middleware(self, middleware_cls, **kwargs)
 ```
 Register a middleware class.
 
@@ -194,7 +195,7 @@ __See Also__
 
 ### add_asgi_middleware
 ```python
-API.add_asgi_middleware(self, middleware_cls, *args, **kwargs)
+App.add_asgi_middleware(self, middleware_cls, *args, **kwargs)
 ```
 Register an ASGI middleware class.
 
@@ -210,7 +211,7 @@ __See Also__
 
 ### on
 ```python
-API.on(self, event: str, handler: Union[Callable[[], Awaitable[NoneType]], NoneType] = None)
+App.on(self, event: str, handler: Union[Callable[[], Awaitable[NoneType]], NoneType] = None)
 ```
 Register an event handler.
 
@@ -227,21 +228,22 @@ __Example__
 
 
 ```python
-@api.on("startup")
+@app.on("startup")
 async def startup():
     pass
 
 async def shutdown():
     pass
 
-api.on("shutdown", shutdown)
+app.on("shutdown", shutdown)
 ```
 
 ### run
 ```python
-API.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
+App.run(self, host: str = None, port: int = None, debug: bool = False, log_level: str = 'info', _run: Callable = None, **kwargs)
 ```
 Serve the application using [uvicorn](https://www.uvicorn.org).
+
 
 __Parameters__
 
@@ -265,14 +267,14 @@ __Parameters__
 
 __See Also__
 
-- [Configuring host and port](../guides/api.md#configuring-host-and-port)
-- [Debug mode](../guides/api.md#debug-mode)
+- [Configuring host and port](../guides/app.md#configuring-host-and-port)
+- [Debug mode](../guides/app.md#debug-mode)
 - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
 available keyword arguments.
 
 ### route
 ```python
-API.route(self, pattern: str, *, name: str = None, namespace: str = None)
+App.route(self, pattern: str, *, name: str = None, namespace: str = None)
 ```
 Register a new route by decorating a view.
 
@@ -293,7 +295,7 @@ __Parameters__
 
 ### websocket_route
 ```python
-API.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
+App.websocket_route(self, pattern: str, *, value_type: Union[str, NoneType] = None, receive_type: Union[str, NoneType] = None, send_type: Union[str, NoneType] = None, caught_close_codes: Union[Tuple[int], NoneType] = None)
 ```
 Register a WebSocket route by decorating a view.
 
@@ -308,7 +310,7 @@ arguments.
 
 ### url_for
 ```python
-API.url_for(self, name: str, **kwargs) -> str
+App.url_for(self, name: str, **kwargs) -> str
 ```
 Build the full URL path for a named route.
 
@@ -327,7 +329,7 @@ __Raises__
 
 ### redirect
 ```python
-API.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
+App.redirect(self, *, name: str = None, url: str = None, permanent: bool = False, **kwargs) -> NoReturn
 ```
 Redirect to another HTTP route.
 

@@ -8,9 +8,10 @@ Base class for middleware classes.
 
 __Parameters__
 
-- __app__: a function that may as well be another `Middleware` instance.
+- __app__: a callable that may as well be another `Middleware` instance.
 - __kwargs (any)__:
-    Keyword arguments passed when registering the middleware on the API.
+    Keyword arguments passed when registering the
+    middleware on the application.
 
 ### before_dispatch
 ```python

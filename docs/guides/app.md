@@ -1,6 +1,6 @@
 # The application class
 
-The main object you'll manipulate in Bocadillo is the `API` object, an
+The main object you'll manipulate in Bocadillo is the `App` object, an
 ASGI-compliant application.
 
 ## Running a Bocadillo app
@@ -11,10 +11,10 @@ To run a Bocadillo app, either run the application directly:
 # myapp.py
 import bocadillo
 
-api = bocadillo.API()
+app = bocadillo.App()
 
 if __name__ == '__main__':
-    api.run()
+    app.run()
 ```
 
 ```bash
@@ -25,7 +25,7 @@ Or give it to [uvicorn](https://www.uvicorn.org)
 (an ASGI server installed with Bocadillo):
 
 ```bash
-uvicorn myapp:api
+uvicorn myapp:app
 ```
 
 ## Configuring host and port
@@ -35,39 +35,39 @@ i.e. `localhost` on port 8000.
 
 To customize the host and port, you can:
 
-- Specify them on `api.run()`:
+- Specify them on `app.run()`:
 
 ```python
-api.run(host='mydomain.org', port=5045)
+app.run(host='mydomain.org', port=5045)
 ```
 
 - Set the `PORT` environment variable. Bocadillo will pick
-it up and automatically use the host `0.0.0.0` to accept all existing hosts
-on the machine. This is especially useful when running the app in a
-container or on a cloud hosting service. If needed, you can still specify
-the `host` on `api.run()`.
+  it up and automatically use the host `0.0.0.0` to accept all existing hosts
+  on the machine. This is especially useful when running the app in a
+  container or on a cloud hosting service. If needed, you can still specify
+  the `host` on `app.run()`.
 
 ## Debug mode
 
 You can toggle debug mode (full display of traceback in responses + hot reload)
-by passing `debug=True` to `api.run()`:
+by passing `debug=True` to `app.run()`:
 
 ```python
-api.run(debug=True)
+app.run(debug=True)
 ```
 
 or passing the --debug flag to uvicorn:
 
 ```bash
-uvicorn myapp:api --debug
+uvicorn myapp:app --debug
 ```
 
 ## Allowed hosts
 
-By default, a Bocadillo API can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
+By default, a Bocadillo `App` can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
 
 ```python
-api = bocadillo.API(allowed_hosts=['mysite.com'])
+app = bocadillo.App(allowed_hosts=['mysite.com'])
 ```
 
 If a non-allowed host is used, all requests will return a 400 error.

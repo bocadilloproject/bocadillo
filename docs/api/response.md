@@ -14,8 +14,8 @@ spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 __Parameters__
 
 - __request (Request)__: the currently processed request.
-- __media_type (str)__: the configured media type (given by the `API`).
-- __media_handler (callable)__: the configured media handler (given by the `API`).
+- __media_type (str)__: the configured media type (given by the `App`).
+- __media_handler (callable)__: the configured media handler (given by the `App`).
 
 __Attributes__
 

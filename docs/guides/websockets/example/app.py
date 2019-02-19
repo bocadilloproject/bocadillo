@@ -1,13 +1,13 @@
-# api.py
-from bocadillo import API
+# app.py
+from bocadillo import App
 
-api = API()
+app = App()
 
 clients = set()
 history = []
 
 
-@api.websocket_route("/chat", value_type="json")
+@app.websocket_route("/chat", value_type="json")
 async def chat(ws):
     async with ws:
         # Register new client
@@ -34,10 +34,10 @@ async def chat(ws):
             clients.remove(ws)
 
 
-@api.route("/")
+@app.route("/")
 async def index(req, res):
-    res.html = await api.template("index.html")
+    res.html = await app.template("index.html")
 
 
 if __name__ == "__main__":
-    api.run()
+    app.run()

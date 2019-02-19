@@ -5,13 +5,13 @@ You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
 ::: tip CHANGED IN v0.12.0
-Template rendering is now performed via a `Templates` helper, separate from the `API` class, which allows to use templates outside the context of an application.
+Template rendering is now performed via a `Templates` helper, separate from the `App` class, which allows to use templates outside the context of an application.
 
-As migration hints, here's where the previous `API` template rendering methods went (suppose that `api = API()` and `templates = Templates(api)`):
+As migration hints, here's where the previous `App` template rendering methods went (suppose that `app = App()` and `templates = Templates(app)`):
 
-- `api.template()` -> `templates.render()`
-- `api.template_sync()` -> `templates.render_sync()`
-- `api.template_string()` -> `templates.render_string()`
+- `app.template()` -> `templates.render()`
+- `app.template_sync()` -> `templates.render_sync()`
+- `app.template_string()` -> `templates.render_string()`
 
 :::
 
@@ -57,10 +57,10 @@ You can render templates using the [Templates] helper. A typical use case is to 
 1. Create an instance of `Templates`:
 
 ```python
-from bocadillo import API, Templates
+from bocadillo import App, Templates
 
-api = API()
-templates = Templates(api)
+app = App()
+templates = Templates(app)
 ```
 
 2. Render a template using `await templates.render()`. You can pass context variables as keyword arguments:
@@ -99,7 +99,7 @@ to where the application is run. For example:
 
 ```
 .
-├── api.py
+├── app.py
 └── templates
     └── index.html
 ```
@@ -116,7 +116,7 @@ templates = Templates(directory='path/to/templates')
 
 ## Using templates outside an application
 
-It is not mendatory that you pass an `API` instance when creating a `Templates` helper. All it does is try to configure some global variables for you, such as `url_for()` in order to reference absolute URLs.
+It is not mendatory that you pass an `App` instance when creating a `Templates` helper. All it does is try to configure some global variables for you, such as `url_for()` in order to reference absolute URLs.
 
 This means that `Templates` can be used to perform _any_ templating task.
 
