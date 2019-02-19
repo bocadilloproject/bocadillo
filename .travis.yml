@@ -33,7 +33,9 @@ jobs:
         - nvm install 8
         - nvm use 8
       install: npm install --only=dev
-      script: npm run docs:build
+      script:
+        - pydocmd generate
+        - npm run docs:build
       deploy:
         provider: pages
         skip_cleanup: true
