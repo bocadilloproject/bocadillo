@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.11.1] - 2019-02-19
+
 ### Fixed
 
 - Fixed a bug that caused import errors when using Starlette < 0.11.
@@ -402,7 +404,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...HEAD
+[v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
 [v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
 [v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
