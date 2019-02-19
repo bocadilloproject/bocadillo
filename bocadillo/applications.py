@@ -421,7 +421,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     since="0.12",
     removal="0.13",
     alternative=("bocadillo.App", "/api/applications.md#App"),
-    wrap_class=True,
+    warn_on_instanciate=True,
 )
 class API(App):
     """The all-mighty API class. An alias to `App`, nothing more."""

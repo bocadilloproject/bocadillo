@@ -13,7 +13,7 @@ def deprecated(
     removal: str,
     alternative: Union[str, Tuple[str, str]],
     update_doc: bool = True,
-    wrap_class: bool = False,
+    warn_on_instanciate: bool = False,
 ) -> Callable:
     """Mark a function or a class as deprecated.
 
@@ -29,6 +29,9 @@ def deprecated(
         or a tuple of two strings (name and a link to the API reference).
     link (str): a link to the API reference for the alternative.
     update_doc (bool): whether the object's docstring should be updated.
+    warn_on_instanciate (bool):
+        if the object is a class, whether a deprecation warning should be
+        sent when instanciating it.    
     """
 
     if isinstance(alternative, tuple):
@@ -62,14 +65,16 @@ def deprecated(
         if isclass(obj):
             cls = cast(Type, obj)
 
-            if wrap_class:
+            if warn_on_instanciate:
 
                 class wrapped(cls):  # type: ignore
                     def __init__(self, *args, **kwargs):
                         show_warning(obj)
                         super().__init__(*args, **kwargs)
 
+                # No equivalent for @wraps for classes? Update name and docs.
                 wrapped.__name__ = cls.__name__
+                wrapped.__doc__ = cls.__doc__
 
             else:
                 wrapped = cls  # type: ignore
