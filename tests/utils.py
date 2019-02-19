@@ -2,33 +2,6 @@ import os
 from contextlib import contextmanager
 from typing import Any
 
-from bocadillo import App
-
-
-class RouteBuilder:
-    """Builder of simple testing routes."""
-
-    def __init__(self, app: App = None):
-        self._api = app
-
-    @property
-    def app(self):
-        return self._api
-
-    def function_based(self, pattern: str, *args, res: dict = None, **kwargs):
-        if res is None:
-            res = {}
-
-        @self._api.route(pattern, *args, **kwargs)
-        def view(request, response):
-            for key, value in res.items():
-                setattr(response, key, value)
-
-    def class_based(self, pattern: str, *args, **kwargs):
-        @self._api.route(pattern, *args, **kwargs)
-        class View:
-            pass
-
 
 @contextmanager
 def function_hooks(before_value: Any = True, after_value: Any = True):

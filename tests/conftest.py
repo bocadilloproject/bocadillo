@@ -6,8 +6,6 @@ from click.testing import CliRunner
 
 from bocadillo import App, API, Templates
 
-from .utils import RouteBuilder
-
 
 @pytest.fixture(params=[App, API])
 def app(request):
@@ -25,11 +23,6 @@ def app(request):
 
     _app.client.websocket_connect = websocket_connect
     return _app
-
-
-@pytest.fixture
-def builder(app: App):
-    return RouteBuilder(app)
 
 
 @pytest.fixture
