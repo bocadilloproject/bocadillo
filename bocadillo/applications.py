@@ -362,7 +362,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     ):
         """Serve the application using [uvicorn](https://www.uvicorn.org).
 
-
         # Parameters
 
         host (str):
@@ -418,7 +417,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             _run(self, host=host, port=port, **kwargs)
 
 
-# DEPRECATED: 0.13
 @deprecated(
     since="0.12",
     removal="0.13",

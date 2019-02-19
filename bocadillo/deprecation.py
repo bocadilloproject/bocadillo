@@ -1,7 +1,7 @@
 import warnings
-from functools import wraps, partial, update_wrapper
+from functools import partial, wraps
 from inspect import cleandoc, isclass
-from typing import Callable, cast, TypeVar, Union, Type, Tuple
+from typing import Callable, Tuple, Type, TypeVar, Union, cast
 
 _F = TypeVar("_F", bound=Callable)
 _T = TypeVar("_T")
