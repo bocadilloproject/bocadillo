@@ -37,8 +37,8 @@ from .staticfiles import static
 from .templates import TemplatesMixin
 
 
-class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
-    """The all-mighty API class.
+class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
+    """The all-mighty application class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
 
@@ -413,3 +413,7 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             reloader.run(run, kwargs)
         else:
             _run(self, host=host, port=port, **kwargs)
+
+
+# DEPRECATED: 0.13
+API = App
