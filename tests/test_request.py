@@ -18,6 +18,34 @@ def test_method(app: App, method: str):
     assert req_method == method
 
 
+@pytest.mark.parametrize(
+    "attr, value",
+    [
+        (None, "http://testserver/foo?bar=err"),
+        ("path", "/foo"),
+        ("scheme", "http"),
+        ("hostname", "testserver"),
+        ("query", "bar=err"),
+        ("is_secure", False),
+    ],
+)
+def test_url(app: App, attr, value):
+    url = None
+
+    @app.route("/foo")
+    async def index(req, res):
+        nonlocal url
+        url = req.url
+
+    app.client.get("/foo", params={"bar": "err"})
+    assert url is not None
+
+    if attr is None:
+        assert url == value
+    else:
+        assert getattr(url, attr) == value
+
+
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
 def test_parse_json(app: App, data: str, status: int):
     @app.route("/")
