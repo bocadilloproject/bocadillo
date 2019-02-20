@@ -49,7 +49,16 @@ def test_url(app: App, attr, value):
 def test_headers(app: App):
     @app.route("/")
     async def index(req, res):
+        # Key access
+        assert req.headers["x-foo"] == "foo"
+        with pytest.raises(KeyError):
+            req.headers["x-bar"]
+
+        # Case insensitivity.
         assert req.headers["x-foo"] == req.headers["X-Foo"] == "foo"
+
+        # Defaults.
+        assert req.headers.get("x-bar", 1) == 1
 
     r = app.client.get("/", headers={"X-Foo": "foo"})
     assert r.status_code == 200
