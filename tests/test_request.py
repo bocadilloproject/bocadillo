@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import App
+from bocadillo import App, view
 from bocadillo.constants import ALL_HTTP_METHODS
 
 
@@ -89,8 +89,34 @@ def test_query_params(app: App):
     assert r.status_code == 200
 
 
+def test_raw_body(app: App):
+    @app.route("/")
+    async def index(req, res):
+        body = await req.body()
+        assert isinstance(body, bytes)
+        res.content = body
+
+    r = app.client.get("/", data="hello")
+    assert r.status_code == 200
+    assert r.content == b"hello"
+
+
+@pytest.mark.xfail(reason="needs python-multipart installed")
+def test_form_body(app: App):
+    @app.route("/")
+    @view(methods=["post"])
+    async def index(req, res):
+        form = await req.form()
+        assert isinstance(form, dict)
+        assert form == {"foo": "bar"}
+        res.status_code = 201
+
+    r = app.client.post("/", data={"foo": "bar"})
+    assert r.status_code == 201
+
+
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
-def test_parse_json(app: App, data: str, status: int):
+def test_json_body(app: App, data: str, status: int):
     @app.route("/")
     class Index:
         async def post(self, req, res):
