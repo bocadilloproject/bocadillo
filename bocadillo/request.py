@@ -1,12 +1,25 @@
 from json import JSONDecodeError
+from typing import Any, AsyncGenerator
 
 from starlette.requests import Request as _Request
 
 
 class Request(_Request):
-    """The succulent request object."""
+    """The request object, passed to HTTP views and typically named `req`.
 
-    async def json(self):
+    This is a subclass of [`Starlette.requests.Request`][starlette-request]. As a result, all methods and attributes on Starlette's `Request` are available on this class. Additional or redefined members are documented here.
+
+    For usage tips, see [Requests (Guide)](../guides/http/requests.md).
+
+    [starlette-request]: https://www.starlette.io/requests/
+
+    # Methods
+    `__aiter__`:
+        shortcut for `.stream()`. Allows to process the request body in
+        byte chunks using `async for chunk in req: ...`.
+    """
+
+    async def json(self) -> Any:
         """Parse the request body as JSON.
 
         # Returns
@@ -22,6 +35,6 @@ class Request(_Request):
 
             raise HTTPError(400, detail="JSON is malformed.")
 
-    async def __aiter__(self):
+    async def __aiter__(self) -> AsyncGenerator[bytes, None]:
         async for chunk in self.stream():
             yield chunk
