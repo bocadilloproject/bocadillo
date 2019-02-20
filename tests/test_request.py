@@ -49,7 +49,7 @@ def test_url(app: App, attr, value):
 def test_headers(app: App):
     @app.route("/")
     async def index(req, res):
-        # Key access
+        # Key access.
         assert req.headers["x-foo"] == "foo"
         with pytest.raises(KeyError):
             req.headers["x-bar"]
@@ -61,6 +61,31 @@ def test_headers(app: App):
         assert req.headers.get("x-bar", 1) == 1
 
     r = app.client.get("/", headers={"X-Foo": "foo"})
+    assert r.status_code == 200
+
+
+def test_query_params(app: App):
+    @app.route("/")
+    async def index(req, res):
+        assert req.url.query == "a=alpha&b=beta&b=BETA&b=Beta"
+
+        # Key access.
+        assert req.query_params["a"] == "alpha"
+        with pytest.raises(KeyError):
+            req.query_params["c"]
+
+        # Defaults
+        assert req.query_params.get("a") == "alpha"
+        assert req.query_params.get("c") is None
+
+        # Multiple values
+        last_item = "Beta"
+        assert req.query_params["b"] == last_item
+        assert req.query_params.getlist("b") == ["beta", "BETA", "Beta"]
+
+    r = app.client.get(
+        "/", params={"a": "alpha", "b": ["beta", "BETA", "Beta"]}
+    )
     assert r.status_code == 200
 
 
