@@ -122,7 +122,7 @@ All documentation lives in the `docs/` directory. It is structured as follows:
 - `guides`: discussions about key topics and concepts, including background, information and usage hints.
 - `how-to`: recipes for solving key problems or addressing specific use cases.
 - `discussions`: these give more in-depth background about important topics or activities related to application development.
-- `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
+- `api`: technical reference for Bocadillo's machinery, a majority of which is generated from the docstrings of Python modules, classes and functions.
 - `faq`: frequently asked questions.
 
 #### Running the docs site
@@ -135,7 +135,9 @@ npm start
 
 It will be accessible at http://localhost:8080.
 
-The docs site is hot-reloaded on any changes to the contents of the `docs/` directory. The only exception to this is the API Reference (see [Generating the API Reference](#generating-the-api-reference)).
+The docs site is hot-reloaded on any changes to the contents of the `docs/` directory.
+
+The only exception to this is the generated API Reference. You'll need to generate it to visualise it locally — see [Generating the API Reference](#generating-the-api-reference).
 
 #### Creating documentation pages
 
@@ -145,17 +147,17 @@ Feel free to refer to the [VuePress] docs if needed.
 
 #### Generating the API Reference
 
-Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstring. The generated `.md` file are then wired up in the `config.js` file.
+Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstrings. The generated `.md` files are then wired up in the `config.js` file.
 
-In order to view the changes you've made to Python dosctrings in the docs site, you'll need to regenerate the API reference:
+In order to view the changes you've made to Python dosctrings in the docs site, or after your first install, you'll need to regenerate the API reference:
 
 ```bash
 pymdoc generate
 ```
 
-The `docs/api` will be hot-reloaded and the docs site will display the updated API Reference docs.
+The docs site will reload and display the updated API Reference docs.
 
-See `pymdoc.yml` for the configuration details and [Pydoc-Markdown] documentation for usage reference.
+See [`pydocmd.yml`](./pydocmd.yml) for the configuration details and the [Pydoc-Markdown] documentation for usage reference.
 
 #### Debugging the docs site
 
