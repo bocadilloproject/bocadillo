@@ -35,8 +35,13 @@ jobs:
       before_install:
         - nvm install 8
         - nvm use 8
-      install: npm install --only=dev
-      script: npm run docs:build
+      install:
+        - pip install .
+        - pip install pydoc-markdown
+        - npm install --only=dev
+      script:
+        - pydocmd generate
+        - npm run docs:build
       deploy:
         provider: pages
         skip_cleanup: true
