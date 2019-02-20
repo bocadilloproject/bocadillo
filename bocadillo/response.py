@@ -52,8 +52,8 @@ class Response:
 
     # Parameters
     request (Request): the currently processed request.
-    media_type (str): the configured media type (given by the `API`).
-    media_handler (callable): the configured media handler (given by the `API`).
+    media_type (str): the configured media type (given by the `App`).
+    media_handler (callable): the configured media handler (given by the `App`).
 
     # Attributes
     content (bytes or str): the raw response content.

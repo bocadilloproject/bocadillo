@@ -24,11 +24,11 @@ Having to manually `accept` and `close` the connection can be cumbersome and err
 To address this issue, the `ws` object can be used as an [asynchronous context manager] to `accept()` the connection on enter and `close()` it on exit.
 
 ```python
-from bocadillo import API, WebSocket
+from bocadillo import App, WebSocket
 
-api = API()
+app = App()
 
-@api.websocket_route("/hello")
+@app.websocket_route("/hello")
 async def hello(ws: WebSocket):
     async with ws:
         print("Connected:", ws)
@@ -56,15 +56,15 @@ If something goes wrong either on any peer's side, it is *your* responsibility t
 For example:
 
 ```python
-from bocadillo import API, WebSocket
+from bocadillo import App, WebSocket
 
 class Oops(Exception):
     pass
 
-api = API()
+app = App()
 connected = set()
 
-@api.websocket_route("/hello")
+@app.websocket_route("/hello")
 async def hello(ws: WebSocket):
     try:
         async with ws:
@@ -91,9 +91,9 @@ A typical usage may be to perform extra checks on the connection request and rej
 The following example demonstrates implementing a decorator that rejects the connection request if a (very) naive API key check fails:
 
 ```python
-from bocadillo import API
+from bocadillo import App
 
-api = API()
+app = App()
 
 def has_valid_api_key(view):
     async def with_permission_check(ws, **kwargs):
@@ -103,7 +103,7 @@ def has_valid_api_key(view):
             await view(ws, **kwargs)
     return with_permission_check
 
-@api.websocket_route("/secret")
+@app.websocket_route("/secret")
 @has_valid_api_key
 async def secret(ws):
     async with ws:

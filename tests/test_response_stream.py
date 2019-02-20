@@ -1,13 +1,13 @@
 from asyncio import sleep
 
 import pytest
-from bocadillo import API
+from bocadillo import App
 
 
-def test_stream_response(api: API):
+def test_stream_response(app: App):
     background_called = False
 
-    @api.route("/{word}")
+    @app.route("/{word}")
     async def index(req, res, word: str):
         @res.stream
         async def stream_word():
@@ -25,7 +25,7 @@ def test_stream_response(api: API):
             nonlocal background_called
             background_called = True
 
-    r = api.client.get("/hello")
+    r = app.client.get("/hello")
     assert r.text == "hello"
     assert r.headers["x-foo"] == "foo"
     assert r.status_code == 202
@@ -34,8 +34,8 @@ def test_stream_response(api: API):
     assert "transfer-encoding" not in r.headers
 
 
-def test_stream_func_must_be_async_generator_function(api: API):
-    @api.route("/")
+def test_stream_func_must_be_async_generator_function(app: App):
+    @app.route("/")
     async def index(req, res):
         with pytest.raises(AssertionError):
             # Regular function

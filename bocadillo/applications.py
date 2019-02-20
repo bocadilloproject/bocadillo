@@ -25,6 +25,7 @@ from .app_types import (
 )
 from .compat import WSGIApp
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
+from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
@@ -37,16 +38,16 @@ from .staticfiles import static
 from .templates import TemplatesMixin
 
 
-class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
-    """The all-mighty API class.
+class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
+    """The all-mighty application class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
 
     # Example
 
     ```python
-    >>> import bocadillo
-    >>> api = bocadillo.API()
+    >>> from bocadillo import App
+    >>> app = App()
     ```
 
     # Parameters
@@ -192,7 +193,8 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         """Apply a recipe.
 
         # Parameters
-        recipe (Recipe or RecipeBook): a recipe to be applied to the API.
+        recipe (Recipe or RecipeBook):
+            a recipe to be applied to the application.
 
         # See Also
         - [Recipes](../guides/agnostic/recipes.md)
@@ -278,14 +280,14 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         # Example
 
         ```python
-        @api.on("startup")
+        @app.on("startup")
         async def startup():
             pass
 
         async def shutdown():
             pass
 
-        api.on("shutdown", shutdown)
+        app.on("shutdown", shutdown)
         ```
         """
         if handler is None:
@@ -380,8 +382,8 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             Extra keyword arguments that will be passed to the Uvicorn runner.
 
         # See Also
-        - [Configuring host and port](../guides/api.md#configuring-host-and-port)
-        - [Debug mode](../guides/api.md#debug-mode)
+        - [Configuring host and port](../guides/app.md#configuring-host-and-port)
+        - [Debug mode](../guides/app.md#debug-mode)
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """
@@ -413,3 +415,13 @@ class API(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             reloader.run(run, kwargs)
         else:
             _run(self, host=host, port=port, **kwargs)
+
+
+@deprecated(
+    since="0.12",
+    removal="0.13",
+    alternative=("bocadillo.App", "/api/applications.md#App"),
+    warn_on_instanciate=True,
+)
+class API(App):
+    """The all-mighty API class. An alias to `App`, nothing more."""

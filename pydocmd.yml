@@ -1,9 +1,10 @@
 site_name: "" # Irrelevant to us.
 
 generate:
-  - api.md:
-      - bocadillo.api:
-          - bocadillo.api.API+
+  - applications.md:
+      - bocadillo.applications:
+          - bocadillo.applications.App+
+          - bocadillo.applications.API
   - compat.md:
       - bocadillo.compat+
   - error_handlers.md:

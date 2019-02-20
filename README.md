@@ -32,29 +32,29 @@ pip install bocadillo
 Build something:
 
 ```python
-# api.py
-from bocadillo import API, Templates
+# app.py
+from bocadillo import App, Templates
 
-api = API()
-templates = Templates(api)
+app = App()
+templates = Templates(app)
 
-@api.route("/")
+@app.route("/")
 async def index(req, res):
     # Use a template from the ./templates directory
     res.html = await templates.render("index.html")
 
-@api.route("/greet/{person}")
+@app.route("/greet/{person}")
 async def greet(req, res, person):
     res.media = {"message": f"Hi, {person}!"}
 
 if __name__ == "__main__":
-    api.run()
+    app.run()
 ```
 
 Launch:
 
 ```bash
-python api.py
+python app.py
 ```
 
 Make requests!

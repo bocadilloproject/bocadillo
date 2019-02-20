@@ -1,52 +1,52 @@
-from bocadillo import API
+from bocadillo import App
 
 
-def test_startup_and_shutdown(api: API):
+def test_startup_and_shutdown(app: App):
     message = None
 
-    @api.on("startup")
+    @app.on("startup")
     async def setup():
         nonlocal message
         message = "hi"
 
-    @api.on("shutdown")
+    @app.on("shutdown")
     async def cleanup():
         nonlocal message
         message = None
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         res.text = message
 
     # The Starlette TestClient calls startup and shutdown events when
     # used as a context manager.
-    with api.client:
+    with app.client:
         assert message == "hi"
-        response = api.client.get("/")
+        response = app.client.get("/")
         assert response.text == "hi"
     assert message is None
 
 
-def test_sync_handler(api: API):
+def test_sync_handler(app: App):
     message = None
 
-    @api.on("startup")
+    @app.on("startup")
     def setup():
         nonlocal message
         message = "hi"
 
-    with api.client:
+    with app.client:
         assert message == "hi"
 
 
-def test_non_decorator_syntax(api: API):
+def test_non_decorator_syntax(app: App):
     message = None
 
     async def setup():
         nonlocal message
         message = "hi"
 
-    api.on("startup", setup)
+    app.on("startup", setup)
 
-    with api.client:
+    with app.client:
         assert message == "hi"

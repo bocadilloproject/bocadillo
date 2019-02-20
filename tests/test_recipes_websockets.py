@@ -1,7 +1,7 @@
-from bocadillo import API, Recipe, WebSocket
+from bocadillo import App, Recipe, WebSocket
 
 
-def test_websocket_recipe_route(api: API):
+def test_websocket_recipe_route(app: App):
     chat = Recipe("chat")
 
     @chat.websocket_route("/room/{name}", receive_type="json", send_type="text")
@@ -10,8 +10,8 @@ def test_websocket_recipe_route(api: API):
             message = await ws.receive()
             await ws.send(f"[{name}]: {message['text']}")
 
-    api.recipe(chat)
+    app.recipe(chat)
 
-    with api.client.websocket_connect("/chat/room/test") as client:
+    with app.client.websocket_connect("/chat/room/test") as client:
         client.send_json({"text": "Hello"})
         assert client.receive_text() == "[test]: Hello"

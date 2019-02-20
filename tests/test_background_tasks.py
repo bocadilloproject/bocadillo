@@ -1,10 +1,10 @@
-from bocadillo import API
+from bocadillo import App
 
 
-def test_background_task_is_executed(api: API):
+def test_background_task_is_executed(app: App):
     executed = False
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         @res.background
         async def notify_executed():
@@ -13,14 +13,14 @@ def test_background_task_is_executed(api: API):
 
         res.text = "OK"
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == 200
     assert response.text == "OK"
     assert executed
 
 
-def test_background_task_is_executed_after_response_is_sent(api: API):
-    @api.route("/")
+def test_background_task_is_executed_after_response_is_sent(app: App):
+    @app.route("/")
     async def index(req, res):
         @res.background
         async def send_bar():
@@ -28,21 +28,21 @@ def test_background_task_is_executed_after_response_is_sent(api: API):
 
         res.text = "FOO"
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.text == "FOO"
 
 
-def test_can_pass_extra_kwargs(api: API):
+def test_can_pass_extra_kwargs(app: App):
     called = False
 
     async def set_called(what):
         nonlocal called
         called = what
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         res.background(set_called, "true")
 
-    response = api.client.get("/")
+    response = app.client.get("/")
     assert response.status_code == 200
     assert called == "true"

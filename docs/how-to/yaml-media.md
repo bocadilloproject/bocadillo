@@ -14,11 +14,11 @@ import yaml
 def handle_yaml(value: dict) -> str:
     return yaml.dump(value)
 
-api = bocadillo.API()
-api.media_handlers['application/x-yaml'] = handle_yaml
+app = bocadillo.App()
+app.media_handlers['application/x-yaml'] = handle_yaml
 ```
 
-3. Use the YAML media handler, you need to configure the API's media type to `"application/x-yaml"`. See [Configuring the media type](../guides/http/media.md#configuring-the-media-type).
+3. Use the YAML media handler, you need to configure the applications's media type to `"application/x-yaml"`. See [Configuring the media type](../guides/http/media.md#configuring-the-media-type).
 
 [yaml]: http://yaml.org
 [pyyaml]: https://pyyaml.org

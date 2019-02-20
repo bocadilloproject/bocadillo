@@ -10,9 +10,10 @@ class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    app: a function that may as well be another `Middleware` instance.
+    app: a callable that may as well be another `Middleware` instance.
     kwargs (any):
-        Keyword arguments passed when registering the middleware on the API.
+        Keyword arguments passed when registering the
+        middleware on the application.
     """
 
     def __init__(self, app: HTTPApp, **kwargs):

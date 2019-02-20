@@ -1,9 +1,11 @@
 import warnings
-from functools import wraps, partial
+from functools import partial, wraps
 from inspect import cleandoc, isclass
-from typing import Callable, cast, TypeVar, Union, Type, Tuple
+from typing import Callable, Tuple, Type, TypeVar, Union, cast
 
-_T = TypeVar("_T", bound=Union[Type, Callable])
+_F = TypeVar("_F", bound=Callable)
+_T = TypeVar("_T")
+_FT = Union[_F, Type[_T]]
 
 
 def deprecated(
@@ -11,6 +13,7 @@ def deprecated(
     removal: str,
     alternative: Union[str, Tuple[str, str]],
     update_doc: bool = True,
+    warn_on_instanciate: bool = False,
 ) -> Callable:
     """Mark a function or a class as deprecated.
 
@@ -26,6 +29,9 @@ def deprecated(
         or a tuple of two strings (name and a link to the API reference).
     link (str): a link to the API reference for the alternative.
     update_doc (bool): whether the object's docstring should be updated.
+    warn_on_instanciate (bool):
+        if the object is a class, whether a deprecation warning should be
+        sent when instanciating it.    
     """
 
     if isinstance(alternative, tuple):
@@ -35,7 +41,7 @@ def deprecated(
     else:
         alternative_formatted = f"`{alternative}`"
 
-    def get_message(obj: _T, strip: bool = False) -> str:
+    def get_message(obj: _FT, strip: bool = False) -> str:
         obj_name = obj.__name__ if strip else f"`{obj.__name__}`"
         alt = alternative if strip else alternative_formatted
         return (
@@ -43,24 +49,42 @@ def deprecated(
             f"be **removed** in v{removal}. Please use {alt} instead."
         )
 
-    def get_doc_warning(obj: _T) -> str:
+    def show_warning(obj: _FT):
+        warnings.simplefilter("always", DeprecationWarning)
+        warnings.warn(
+            get_message(obj, strip=True),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        warnings.simplefilter("default", DeprecationWarning)
+
+    def get_doc_warning(obj: _FT) -> str:
         return f"::: warning DEPRECATED\n{get_message(obj)}\n:::"
 
-    def add_warning(obj: _T) -> _T:
+    def add_warning(obj: _FT) -> _FT:
         if isclass(obj):
-            wrapped = obj
+            cls = cast(Type, obj)
+
+            if warn_on_instanciate:
+
+                class wrapped(cls):  # type: ignore
+                    def __init__(self, *args, **kwargs):
+                        show_warning(obj)
+                        super().__init__(*args, **kwargs)
+
+                # No equivalent for @wraps for classes? Update name and docs.
+                wrapped.__name__ = cls.__name__
+                wrapped.__doc__ = cls.__doc__
+
+            else:
+                wrapped = cls  # type: ignore
+
         else:
             func = cast(Callable, obj)
 
             @wraps(func)  # type: ignore
             def wrapped(*args, **kwargs):
-                warnings.simplefilter("always", DeprecationWarning)
-                warnings.warn(
-                    get_message(func, strip=True),
-                    category=DeprecationWarning,
-                    stacklevel=2,
-                )
-                warnings.simplefilter("default", DeprecationWarning)
+                show_warning(func)
                 return func(*args, **kwargs)
 
         if update_doc:
