@@ -46,6 +46,15 @@ def test_url(app: App, attr, value):
         assert getattr(url, attr) == value
 
 
+def test_headers(app: App):
+    @app.route("/")
+    async def index(req, res):
+        assert req.headers["x-foo"] == req.headers["X-Foo"] == "foo"
+
+    r = app.client.get("/", headers={"X-Foo": "foo"})
+    assert r.status_code == 200
+
+
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
 def test_parse_json(app: App, data: str, status: int):
     @app.route("/")
