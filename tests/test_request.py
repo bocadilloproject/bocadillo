@@ -1,6 +1,21 @@
 import pytest
 
 from bocadillo import App
+from bocadillo.constants import ALL_HTTP_METHODS
+
+
+@pytest.mark.parametrize("method", ALL_HTTP_METHODS)
+def test_method(app: App, method: str):
+    req_method = None
+
+    @app.route("/")
+    class Index:
+        async def handle(self, req, res):
+            nonlocal req_method
+            req_method = req.method
+
+    r = getattr(app.client, method.lower())("/")
+    assert req_method == method
 
 
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
