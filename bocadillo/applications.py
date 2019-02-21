@@ -136,7 +136,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         # Base ASGI app
         self.asgi = self.dispatch
 
-        # Mounted apps
+        # Mounted (children) apps
         self._prefix_to_app: Dict[str, Any] = {}
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
 
