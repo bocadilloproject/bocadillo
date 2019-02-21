@@ -46,7 +46,7 @@ from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
 
 
@@ -215,7 +215,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         except HTTPError as exc:
             app_name, _, name = name.partition(":")
 
-            if not app_name:
+            if not name:
+                # No app name given.
                 raise exc from None
 
             return self._url_for_app(app_name, name, **kwargs)

@@ -141,6 +141,7 @@ _REPLACED_BY = ReplacedBy(
 )
 
 
+@_REPLACED_BY("Templates", "#templates")
 class TemplatesMixin:
     """Provide templating capabilities to an application class."""
 
