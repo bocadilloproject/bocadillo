@@ -34,7 +34,7 @@ class Recipe(App):
         Defaults to `"/" + name`.
     """
 
-    def __init__(self, name: str = None, prefix: str = None, **kwargs):
+    def __init__(self, name: str, prefix: str = None, **kwargs):
         super().__init__(name=name, **kwargs)
 
         if prefix is None:
