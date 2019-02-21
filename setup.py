@@ -28,6 +28,7 @@ setuptools.setup(
         "whitenoise",
         "requests",
         "parse",
+        "python-multipart",
         "websockets>=6.0",
     ],
     url=DOCS,
