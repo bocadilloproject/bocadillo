@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Using `await req.form()` previously required to install a third-party library, `python-multipart`, which is now bundled by default.
+
 ## [v0.11.1] - 2019-02-19
 
 ### Fixed
