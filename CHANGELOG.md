@@ -16,7 +16,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Added
 
-- API reference for the `Response` class.
+- API reference for the `Response` and `Request` classes.
 - Browser-downloadable responses (aka attachments) with `res.attachment`.
 - File responses with `res.file()`.
 - Generic templating with `bocadillo.templates.Templates`.
