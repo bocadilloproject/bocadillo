@@ -1,6 +1,8 @@
 import pytest
 
-from bocadillo import App, view
+from starlette.datastructures import FormData
+
+from bocadillo import App
 from bocadillo.constants import ALL_HTTP_METHODS
 
 
@@ -101,18 +103,17 @@ def test_raw_body(app: App):
     assert r.content == b"hello"
 
 
-@pytest.mark.xfail(reason="needs python-multipart installed")
 def test_form_body(app: App):
     @app.route("/")
-    @view(methods=["post"])
     async def index(req, res):
         form = await req.form()
-        assert isinstance(form, dict)
-        assert form == {"foo": "bar"}
-        res.status_code = 201
+        assert isinstance(form, FormData)
+        # not actually a dict, so not immediately JSON-serializable
+        res.media = dict(form)
 
-    r = app.client.post("/", data={"foo": "bar"})
-    assert r.status_code == 201
+    r = app.client.get("/", data={"foo": "bar"})
+    assert r.status_code == 200
+    assert r.json() == {"foo": "bar"}
 
 
 @pytest.mark.parametrize("data, status", [("{", 400), ("{}", 200)])
