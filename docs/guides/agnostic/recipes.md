@@ -59,7 +59,10 @@ This includes, but is not limited to:
 - [Redirecting](../http/redirecting.md), e.g. `recipe.redirect(...)`
 - [Middleware](../http/middleware.md), e.g. `recipe.add_middleware(...)`.
 
-Note, however, that [lifespan event handlers](./events.md) only get called on the root application.
+Note, however, that:
+
+- [Lifespan event handlers](./events.md) only get called on the root application.
+- Recipes cannot be nested.
 
 **Caveat: root routes on recipes**
 
