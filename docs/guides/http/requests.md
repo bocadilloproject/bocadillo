@@ -55,8 +55,7 @@ req.headers['X-App']  # 'Bocadillo'
 
 ## Query parameters
 
-Query parameters are available at `req.query_params`, an immutable Python
-dictionary-like object.
+Query parameters are available at `req.query_params`, an immutable `MultiDict`, i.e. a dictionary-like object that supports having multiple elements per key.
 
 ```bash
 curl "http://localhost:8000?add=1&sub=2&sub=3"
@@ -87,9 +86,13 @@ only be used inside **asynchronous** views.
 
 You can retrieve it in several ways, depending on the expected encoding:
 
-- Bytes: `await req.body()`
-- Form data: `await req.form()`
-- JSON: `await req.json()`
+| Body type | Invocation         | Return type      |
+| --------- | ------------------ | ---------------- |
+| Raw       | `await req.body()` | `bytes`          |
+| Form data | `await req.form()` | `MultiDict`\*    |
+| JSON      | `await req.json()` | `list` or `dict` |
+
+\*This is a dictionary-like object that behaves like [`query_params`](#query-parameters). It contains both form data and multipart (upload) data.
 
 ::: tip How is malformed JSON handled?
 If the request body is not proper JSON, a `400 Bad Request` error response is returned.
