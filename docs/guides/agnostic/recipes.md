@@ -92,10 +92,10 @@ python app.py
 
 ```bash
 $ curl http://localhost:8000/tacos
-404 Not Found
+"404 Not Found"
 
 $ curl http://localhost:8000/tacos/
-404 Not Found
+"Hello, tacos!"
 ```
 
 ## Recipe books
