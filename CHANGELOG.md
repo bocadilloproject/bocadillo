@@ -20,6 +20,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 - Browser-downloadable responses (aka attachments) with `res.attachment`.
 - File responses with `res.file()`.
 - Generic templating with `bocadillo.templates.Templates`.
+- Recipes are now just apps: they expose all the parameters, attributes and methods that an `App` exposes.
 
 ### Fixed
 
@@ -27,7 +28,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Changed
 
-- `App` is the main application class or which `API` is now an alias of.
+- `App` is the main application class of which `API` is now an alias of.
 - Content types are now available on the `bocadillo.constants.CONTENT_TYPE` enum, instead of `bocadillo.media.Media`.
 
 ### Removed
@@ -36,7 +37,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Deprecated
 
-- `API` has been deprecated in favor `App`, and will be removed in v0.13.0.
+- `API` has been deprecated in favor of `App`, and will be removed in v0.13.0.
 - The `.template[_sync | _string]` methods on `API` and `Recipe` have been deprecated in favor of `Templates`. They will be removed in v0.13.0.
 
 ## [v0.11.2] - 2019-02-21

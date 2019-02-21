@@ -46,10 +46,37 @@ def test_name_is_inferred_from_view_name(app: App):
     assert url == "/about/Godzilla"
 
 
-def test_use_namespace(app: App):
+def test_if_route_has_namespace_then_must_be_used_when_reversing(app: App):
     @app.route("/about", namespace="blog")
     async def about(req, res):
         pass
 
-    url = app.url_for("blog:about")
-    assert url == "/about"
+    assert app.url_for("blog:about") == "/about"
+
+    with pytest.raises(HTTPError):
+        app.url_for("about")
+
+
+def test_reverse_named_sub_app_route(app: App):
+    sub = App("sub")
+
+    @sub.route("/foo")
+    async def foo(req, res):
+        pass
+
+    app.mount("/sub", sub)
+
+    assert app.url_for("sub:foo") == "/sub/foo"
+
+
+def test_cannot_reverse_unnamed_sub_app_route(app: App):
+    sub = App()
+
+    @sub.route("/foo")
+    async def foo(req, res):
+        pass
+
+    app.mount("/sub", sub)
+
+    with pytest.raises(HTTPError):
+        app.url_for("sub:foo")

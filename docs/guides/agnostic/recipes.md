@@ -50,32 +50,53 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 ## Which features are available on recipes?
 
-Recipes expose the following features, which can be used just as you would on the `App` object:
+**You can use all the features that are normally available to a regular `App`.** In fact, the `Recipe` class is a subclass of `App`.
 
-- [HTTP routes](../http/routing.md), e.g. `@recipe.route()`.
-- [WebSocket routes](../websockets/routing.md), .e.g `@recipe.websocket_route()`.
-- [HTTP redirects](../http/redirecting.md), e.g. `recipe.redirect(name="recipe:foo")`.
-- [Templates](./templates.md), e.g. `await recipe.template()`.
+This includes, but is not limited to:
 
-::: tip
-The `url_for()` template global is also available from recipes, and works no differently than for the `App`.
+- [Routing](../http/routing.md), e.g. `@recipe.route(...)`, `@recipe.websocket_route(...)`, `.url_for()`, etc.
+- [Error handling](../http/error-handling.md), e.g. `@recipe.error_handler()`.
+- [Redirecting](../http/redirecting.md), e.g. `recipe.redirect(...)`
+- [Middleware](../http/middleware.md), e.g. `recipe.add_middleware(...)`.
 
-This means that you must use the namespaced name if the target route has been registered on the recipe, e.g. `url_for("recipe:foo")`.
+Note, however, that:
 
-See [Reversing named routes](../http/routing.md#reversing-named-routes) for more information on `url_for()`.
-:::
+- [Lifespan event handlers](./events.md) only get called on the root application.
+- Recipes cannot be nested.
 
-::: tip
-If your recipe needs to use its own templates, you can pass an adequate `templates_dir` to the `Recipe` constructor. Otherwise, the same `templates_dir` as the `App` will be used.
-:::
+**Caveat: root routes on recipes**
 
-::: tip
-You can decorate your recipe views with [hooks](../http/hooks.md) as usual.
-:::
+The fact that a `Recipe` behaves just like any other `App` also means that it applies the exact same [routing algorithm](../http/routing.md#how-are-requests-processed) than the `App`.
 
-::: warning CAVEAT
-Note that recipes apply the exact same [routing algorithm](../http/routing.md#how-are-requests-processed) than the `App`. In particular, the `/` route will be mounted on the `App` at `/{prefix}/`, _not_ `/{prefix}`. Accessing `/{prefix}` would return a 404 error, as per the routing algorithm.
-:::
+In particular, a root route `/` registered on a recipe will be mounted on the `App` at `/{recipe.prefix}/` — note the trailing slash!
+
+```python
+from bocadillo import App, Recipe
+
+tacos = Recipe("tacos")
+
+@tacos.route("/")
+async def index(req, res):
+    res.text = "Hello, tacos!"
+
+app = App()
+app.recipe(tacos)
+
+if __name__ == "__main__":
+    app.run()
+```
+
+```bash
+python app.py
+```
+
+```bash
+$ curl http://localhost:8000/tacos
+"404 Not Found"
+
+$ curl http://localhost:8000/tacos/
+"Hello, tacos!"
+```
 
 ## Recipe books
 

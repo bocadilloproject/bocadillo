@@ -1,6 +1,16 @@
 import os
 from functools import partial
-from typing import Any, Callable, Dict, List, Optional, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -30,12 +40,14 @@ from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
-from .recipes import RecipeBase
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import static
 from .templates import TemplatesMixin
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .recipes import Recipe
 
 
 class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
@@ -52,6 +64,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     # Parameters
 
+    name (str):
+        An optional name for the app.
     static_dir (str):
         The name of the directory containing static files, relative to
         the application entry point. Set to `None` to not serve any static
@@ -99,6 +113,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
     def __init__(
         self,
+        name: str = None,
+        *,
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
@@ -112,14 +128,17 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     ):
         super().__init__(**kwargs)
 
+        self.name = name
+
         # Debug mode defaults to `False` but it can be set in `.run()`.
         self._debug = False
 
         # Base ASGI app
         self.asgi = self.dispatch
 
-        # Mounted apps
-        self.apps: Dict[str, Any] = {}
+        # Mounted (children) apps
+        self._prefix_to_app: Dict[str, Any] = {}
+        self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
 
         # Test client
         self.client = self.build_client()
@@ -171,36 +190,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self.exception_middleware.debug = debug
         self.server_error_middleware.debug = debug
 
-    def build_client(self, **kwargs) -> TestClient:
-        return TestClient(self, **kwargs)
-
-    def get_template_globals(self):
-        # DEPRECATED: 0.13.0
-        return {"url_for": self.url_for}
-
-    def mount(self, prefix: str, app: Union[ASGIApp, WSGIApp]):
-        """Mount another WSGI or ASGI app at the given prefix.
-
-        # Parameters
-        prefix (str): A path prefix where the app should be mounted, e.g. `"/myapp"`.
-        app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
-        """
-        if not prefix.startswith("/"):
-            prefix = "/" + prefix
-        self.apps[prefix] = app
-
-    def recipe(self, recipe: RecipeBase):
-        """Apply a recipe.
-
-        # Parameters
-        recipe (Recipe or RecipeBook):
-            a recipe to be applied to the application.
-
-        # See Also
-        - [Recipes](../guides/agnostic/recipes.md)
-        """
-        recipe(self)
-
     @property
     def media_type(self) -> str:
         """The media type configured when instanciating the application."""
@@ -211,6 +200,71 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
+
+    def build_client(self, **kwargs) -> TestClient:
+        return TestClient(self, **kwargs)
+
+    def get_template_globals(self):
+        # DEPRECATED: 0.13.0
+        return {"url_for": self.url_for}
+
+    def url_for(self, name: str, **kwargs) -> str:
+        # Implement route name lookup accross sub-apps.
+        try:
+            return super().url_for(name, **kwargs)
+        except HTTPError as exc:
+            app_name, _, name = name.partition(":")
+
+            if not name:
+                # No app name given.
+                raise exc from None
+
+            return self._url_for_app(app_name, name, **kwargs)
+
+    def _url_for_app(self, app_name: str, name: str, **kwargs) -> str:
+        if app_name == self.name:
+            # NOTE: this allows to reference this app's routes in
+            # both with or without the namespace.
+            return self._get_own_url_for(name, **kwargs)
+
+        try:
+            prefix, app = self._name_to_prefix_and_app[app_name]
+        except KeyError as key_exc:
+            raise HTTPError(404) from key_exc
+        else:
+            return prefix + app.url_for(name, **kwargs)
+
+    def _get_own_url_for(self, name: str, **kwargs) -> str:
+        # NOTE: recipes hook into this method to prepend their
+        # prefix to the URL.
+        return super().url_for(name, **kwargs)
+
+    def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
+        """Mount another WSGI or ASGI app at the given prefix.
+
+        # Parameters
+        prefix (str): A path prefix where the app should be mounted, e.g. `"/myapp"`.
+        app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+        """
+        if not prefix.startswith("/"):
+            prefix = "/" + prefix
+
+        self._prefix_to_app[prefix] = app
+
+        if isinstance(app, App) and app.name is not None:
+            self._name_to_prefix_and_app[app.name] = (prefix, app)
+
+    def recipe(self, recipe: "Recipe"):
+        """Apply a recipe.
+
+        # Parameters
+        recipe (Recipe or RecipeBook):
+            a recipe to be applied to the application.
+
+        # See Also
+        - [Recipes](../guides/agnostic/recipes.md)
+        """
+        recipe.apply(self)
 
     def add_error_handler(self, exception_cls: Type[_E], handler: ErrorHandler):
         """Register a new error handler.
@@ -302,18 +356,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             return handler
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
-        assert scope["type"] == "http"
-
         req = Request(scope, receive)
-
         res = Response(
             req,
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        res = await self.server_error_middleware(req, res)
+        response = await self.server_error_middleware(req, res)
 
-        await res(receive, send)
+        await response(receive, send)
 
         # Re-raise the exception to allow the server to log the error
         # and for the test client to optionally re-raise it too.
@@ -327,9 +378,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "websocket":
             return partial(self.dispatch_websocket, scope=scope)
-        else:
-            assert scope["type"] == "http"
-            return partial(self.dispatch_http, scope=scope)
+        assert scope["type"] == "http"
+        return partial(self.dispatch_http, scope=scope)
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
@@ -338,7 +388,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
-        for prefix, app in self.apps.items():
+        for prefix, app in self._prefix_to_app.items():
             if not path.startswith(prefix):
                 continue
             # Remove prefix from path so that the request is made according

@@ -90,13 +90,6 @@ class BaseRoute(Generic[_V]):
         result = self._parser.parse(path)
         return result.named if result is not None else None
 
-    def _get_clone_kwargs(self) -> dict:
-        return {"pattern": self._pattern, "view": self.view}
-
-    def clone(self: _R, **kwargs: Any) -> _R:
-        kwargs = {**self._get_clone_kwargs(), **kwargs}
-        return type(self)(**kwargs)
-
 
 class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
@@ -176,19 +169,6 @@ class BaseRouter(Generic[_R, _V]):
                 return RouteMatch(route=route, params=params)
         return None
 
-    def mount(self, other: "BaseRouter", root: str = "") -> None:
-        """Mount the routes of another router onto this one.
-
-        # Parameters
-        other (BaseRouter):
-            should be the same type as this one, i.e.
-            [HTTPRouter](#httprouter) or [WebSocketRouter](#websocketrouter).
-        root (str, optional):
-            will be prefixed to each of `other`'s route pattern.
-        """
-        for route in other.routes.values():
-            self.add(route.clone(pattern=root + route.pattern))
-
 
 # HTTP.
 
@@ -209,9 +189,6 @@ class HTTPRoute(BaseRoute[View]):
     def __init__(self, pattern: str, view: View, name: str):
         super().__init__(pattern, view)
         self.name = name
-
-    def _get_clone_kwargs(self) -> dict:
-        return dict(super()._get_clone_kwargs(), name=self.name)
 
     async def __call__(self, req: Request, res: Response, **params):
         method: str = req.method.lower()
@@ -339,11 +316,6 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
     def __init__(self, pattern: str, view: WebSocketView, **kwargs):
         super().__init__(pattern, view)
         self._ws_kwargs = kwargs
-
-    def _get_clone_kwargs(self) -> dict:
-        kwargs = super()._get_clone_kwargs()
-        kwargs.update(self._ws_kwargs)
-        return kwargs
 
     async def __call__(
         self, scope: Scope, receive: Receive, send: Send, **params

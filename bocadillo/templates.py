@@ -1,5 +1,5 @@
 from contextlib import contextmanager, suppress
-from typing import Any, Optional, cast
+from typing import Any, Dict, Optional, cast
 
 from jinja2 import Environment, FileSystemLoader, Template
 
@@ -145,13 +145,13 @@ _REPLACED_BY = ReplacedBy(
 class TemplatesMixin:
     """Provide templating capabilities to an application class."""
 
-    def __init__(self, templates_dir: str = DEFAULT_TEMPLATES_DIR, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, templates_dir: str = DEFAULT_TEMPLATES_DIR):
+        super().__init__()
         self._templates = Templates(
             directory=templates_dir, context=self.get_template_globals()
         )
 
-    def get_template_globals(self) -> dict:
+    def get_template_globals(self) -> Dict[str, Any]:
         return {}
 
     @property  # type: ignore
