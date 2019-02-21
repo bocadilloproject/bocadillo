@@ -14,6 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.11.2] - 2019-02-21
+
+### Fixed
+
+- Using `await req.form()` previously required to install a third-party library, `python-multipart`, which is now bundled by default.
+
 ## [v0.11.1] - 2019-02-19
 
 ### Fixed
@@ -404,7 +410,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...HEAD
+[v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
 [v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
