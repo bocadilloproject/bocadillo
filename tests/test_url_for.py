@@ -53,3 +53,28 @@ def test_use_namespace(app: App):
 
     url = app.url_for("blog:about")
     assert url == "/about"
+
+
+def test_reverse_named_sub_app_route(app: App):
+    sub = App("sub")
+
+    @sub.route("/foo")
+    async def foo(req, res):
+        pass
+
+    app.mount("/sub", sub)
+
+    assert app.url_for("sub:foo") == "/sub/foo"
+
+
+def test_cannot_reverse_unnamed_sub_app_route(app: App):
+    sub = App()
+
+    @sub.route("/foo")
+    async def foo(req, res):
+        pass
+
+    app.mount("/sub", sub)
+
+    with pytest.raises(HTTPError):
+        app.url_for("sub:foo")
