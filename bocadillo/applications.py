@@ -7,6 +7,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    Tuple,
     Type,
     Union,
 )
@@ -113,6 +114,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     def __init__(
         self,
         name: str = None,
+        *,
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
         allowed_hosts: List[str] = None,
@@ -135,8 +137,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self.asgi = self.dispatch
 
         # Mounted apps
-        self._apps_by_prefix: Dict[str, Any] = {}
-        self._apps_by_name: Dict[str, App] = {}
+        self._prefix_to_app: Dict[str, Any] = {}
+        self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
 
         # Test client
         self.client = self.build_client()
@@ -222,14 +224,19 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if app_name == self.name:
             # NOTE: this allows to reference this app's routes in
             # both with or without the namespace.
-            return super().url_for(name, **kwargs)
+            return self._get_own_url_for(name, **kwargs)
 
         try:
-            app = self._apps_by_name[app_name]
+            prefix, app = self._name_to_prefix_and_app[app_name]
         except KeyError as key_exc:
             raise HTTPError(404) from key_exc
         else:
-            return app.url_for(name, **kwargs)
+            return prefix + app.url_for(name, **kwargs)
+
+    def _get_own_url_for(self, name: str, **kwargs) -> str:
+        # NOTE: recipes hook into this method to prepend their
+        # prefix to the URL.
+        return super().url_for(name, **kwargs)
 
     def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
@@ -241,10 +248,10 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if not prefix.startswith("/"):
             prefix = "/" + prefix
 
-        self._apps_by_prefix[prefix] = app
+        self._prefix_to_app[prefix] = app
 
         if isinstance(app, App) and app.name is not None:
-            self._apps_by_name[app.name] = app
+            self._name_to_prefix_and_app[app.name] = (prefix, app)
 
     def recipe(self, recipe: "Recipe"):
         """Apply a recipe.
@@ -380,7 +387,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
-        for prefix, app in self._apps_by_prefix.items():
+        for prefix, app in self._prefix_to_app.items():
             if not path.startswith(prefix):
                 continue
             # Remove prefix from path so that the request is made according

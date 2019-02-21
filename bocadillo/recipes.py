@@ -45,8 +45,8 @@ class Recipe(App):
         # DEPRECATED: 0.13.0
         self._templates_dir_given = "templates_dir" in kwargs
 
-    def url_for(self, name: str, **kwargs) -> str:
-        return self.prefix + super().url_for(name, **kwargs)
+    def _get_own_url_for(self, name: str, **kwargs) -> str:
+        return self.prefix + super()._get_own_url_for(name, **kwargs)
 
     def apply(self, app: App, root: str = ""):
         """Apply the recipe to an application."""
