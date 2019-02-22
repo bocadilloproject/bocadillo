@@ -18,8 +18,8 @@ If you've ever worked with [Flask], the API should look familiar.
 Still, let's break this code down:
 
 1. First, we import the `bocadillo` package.
-2. Then, we create an `API` instance.
-3. Next, we use the `@api.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
+2. Then, we create an `App` instance.
+3. Next, we use the `@app.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
 4. The `index()` function is a **view** — it takes a request and a response as arguments, and mutates the response as required (here, setting a `text` to be sent with it). This pattern is borrowed from [Falcon].
 5. The last lines run the application server when the file is run as a script.
 
@@ -56,7 +56,7 @@ yet, we recommend you read this article:
 [The other (great) benefit of Python type annotations].
 :::
 
-<<<@/docs/getting-started/snippets/api.py
+<<<@/docs/getting-started/snippets/app.py
 
 This is what `index.html` and `style.css` files look like:
 
@@ -64,7 +64,7 @@ This is what `index.html` and `style.css` files look like:
 
 <<<@/docs/getting-started/snippets/static/styles.css
 
-To test this example, run the `api.py` script and access it in the browser.
+To test this example, run the `app.py` script and access it in the browser.
 
 You can also make some calls to the API endpoints.
 We'll use the popular [Requests] library here.
@@ -110,7 +110,7 @@ Cheers. :burrito:
 
 ## Next steps
 
-Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer. 
+Hopefully this quickstart guide gave you a hint of what Bocadillo has to offer.
 
 Of course, we haven't dived into the details just yet.
 You should now head to our [Guides] section to learn more.
@@ -132,24 +132,23 @@ the courses app example:
 
 Happy coding!
 
-[Installation]: ./installation.md
-[Guides]: ../guides/
-[Uvicorn]: https://www.uvicorn.org
-[Flask]: http://flask.pocoo.org
-[Falcon]: https://falconframework.org
-[Requests]: http://docs.python-requests.org
-[Routes]: ../guides/http/routing.md
-[Views]: ../guides/http/views.md
-[Templates]: ../guides/agnostic/templates.md
-[CORS]: ../guides/http/middleware.md#cors
-[HSTS]: ../guides/http/middleware.md#hsts
-[GZip]: ../guides/http/middleware.md#gzip
-[Static files]: ../guides/http/static-files.md
-[Media]: ../guides/http/media.md
-[Error handling]: ../guides/http/views.md#returning-errors
-[Hooks]: ../guides/http/hooks.md
-[WebSockets]: ../guides/websockets
-[Middleware]: ../guides/http/middleware.md
-[Recipes]: ../guides/agnostic/recipes.md
-
-[The other (great) benefit of Python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
+[installation]: ./installation.md
+[guides]: ../guides/
+[uvicorn]: https://www.uvicorn.org
+[flask]: http://flask.pocoo.org
+[falcon]: https://falconframework.org
+[requests]: http://docs.python-requests.org
+[routes]: ../guides/http/routing.md
+[views]: ../guides/http/views.md
+[templates]: ../guides/agnostic/templates.md
+[cors]: ../guides/http/middleware.md#cors
+[hsts]: ../guides/http/middleware.md#hsts
+[gzip]: ../guides/http/middleware.md#gzip
+[static files]: ../guides/http/static-files.md
+[media]: ../guides/http/media.md
+[error handling]: ../guides/http/views.md#returning-errors
+[hooks]: ../guides/http/hooks.md
+[websockets]: ../guides/websockets
+[middleware]: ../guides/http/middleware.md
+[recipes]: ../guides/agnostic/recipes.md
+[the other (great) benefit of python type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b

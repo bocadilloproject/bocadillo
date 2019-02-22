@@ -1,4 +1,4 @@
-"""Tests for the API snippet.
+"""Tests for the application snippet.
 
 Run with the `test.sh` script.
 """

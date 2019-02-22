@@ -32,28 +32,29 @@ pip install bocadillo
 Build something:
 
 ```python
-# api.py
-import bocadillo
+# app.py
+from bocadillo import App, Templates
 
-api = bocadillo.API()
+app = App()
+templates = Templates(app)
 
-@api.route("/")
+@app.route("/")
 async def index(req, res):
-    # Use a template from the ./templates directory 
-    res.html = await api.template("index.html")
+    # Use a template from the ./templates directory
+    res.html = await templates.render("index.html")
 
-@api.route("/greet/{person}")
+@app.route("/greet/{person}")
 async def greet(req, res, person):
     res.media = {"message": f"Hi, {person}!"}
 
 if __name__ == "__main__":
-    api.run()
+    app.run()
 ```
 
 Launch:
 
 ```bash
-python api.py
+python app.py
 ```
 
 Make requests!
@@ -92,7 +93,6 @@ Logo:
 [travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
 [pepy-url]: https://pepy.tech/project/bocadillo
 [pypi-url]: https://pypi.org/project/bocadillo/
-[Orator]: https://orator-orm.com
 [docs]: https://bocadilloproject.github.io
 [black]: https://github.com/ambv/black
 [codecov]: https://codecov.io/gh/bocadilloproject/bocadillo

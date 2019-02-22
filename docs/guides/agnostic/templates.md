@@ -4,9 +4,24 @@ Bocadillo allows you to render [Jinja2] templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
+::: tip CHANGED IN v0.12.0
+Template rendering is now performed via a `Templates` helper, separate from the `App` class, which allows to use templates outside the context of an application.
+
+As migration hints, here's where the previous `App` template rendering methods went (suppose that `app = App()` and `templates = Templates(app)`):
+
+- `app.template()` -> `templates.render()`
+- `app.template_sync()` -> `templates.render_sync()`
+- `app.template_string()` -> `templates.render_string()`
+
+:::
+
 ## How templates work
 
 To begin with, templates (when loaded from the file system) are just regular files. For example, when writing HTML templates, the regular `.html` extension is used as for any other HTML file.
+
+::: tip
+Note that a template does not _have_ to be an HTML file. Any text file will do: `.txt`, `.md`, `.rst`, etc.
+:::
 
 The only difference with regular text-based formats is that templates use a **templating language** with a set of specific tags and keywords that allow to perform **programmatic manipulations**. These are performed on **context variables** that are passed to the template when it is rendered.
 
@@ -19,13 +34,13 @@ Here's an example HTML template:
 ```html
 <!-- index.html -->
 <html>
-<head>
+  <head>
     <title>{{ title }}</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>{{ title }}</h1>
     <p>Templates are great, aren't they?</p>
-</body>
+  </body>
 </html>
 ```
 
@@ -35,32 +50,43 @@ You may find Jinja2's [Template Designer Documentation] handy as a thorough desc
 
 ## Rendering templates
 
-Bocadillo provides a few shortcuts to render templates. You can typically use these in views to create and return HTML content.
+You can render templates using the [Templates] helper. A typical use case is to create and send HTML content in HTTP views.
 
-- Render a template using `await api.template()`. You can pass context variables as keyword arguments:
+[templates]: ../../api/templates.md#templates
+
+1. Create an instance of `Templates`:
+
+```python
+from bocadillo import App, Templates
+
+app = App()
+templates = Templates(app)
+```
+
+2. Render a template using `await templates.render()`. You can pass context variables as keyword arguments:
 
 ```python
 async def post_detail(req, res):
-    res.html = await api.template('index.html', title='Hello, Bocadillo!')
+    res.html = await templates.render('index.html', title='Hello, Bocadillo!')
 ```
 
-- In synchronous views, use `api.template_sync()` instead:
+- In synchronous views, use `templates.render_sync()` instead:
 
 ```python
 def post_detail(req, res):
-    res.html = api.template_sync('index.html', title='Hello, Bocadillo!')
+    res.html = templates.render_sync('index.html', title='Hello, Bocadillo!')
 ```
 
 - Context variables can also be given as a dictionary:
 
 ```python
-await api.template('index.html', {'title': 'Hello, Bocadillo!'})
+templates.render_sync('index.html', {'title': 'Hello, Bocadillo!'})
 ```
 
 - Lastly, you can render a template directly from a string:
 
 ```python
->>> api.template_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
+>>> templates.render_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
 '<h1>Hello, Bocadillo!</h1>'
 ```
 
@@ -73,20 +99,35 @@ to where the application is run. For example:
 
 ```
 .
-├── api.py
+├── app.py
 └── templates
     └── index.html
 ```
 
-Here, using `api.template('index.html')` would load and use the template defined in the `./templates/index.html` file.
+Here, using `await templates.render('index.html')` would load and use the template defined in the `./templates/index.html` file.
 
 ### Changing the templates location
 
-You can change the templates directory using the `templates_dir` option to `API()`:
+You can change the templates directory by passing the path to a `directory` to `Templates`:
 
 ```python
-api = bocadillo.API(templates_dir='path/to/templates')
+templates = Templates(directory='path/to/templates')
 ```
 
-[Jinja2]: http://jinja.pocoo.org
-[Template Designer Documentation]: http://jinja.pocoo.org/docs/latest/templates/
+## Using templates outside an application
+
+It is not mendatory that you pass an `App` instance when creating a `Templates` helper. All it does is try to configure some global variables for you, such as `url_for()` in order to reference absolute URLs.
+
+This means that `Templates` can be used to perform _any_ templating task.
+
+For example, let's render email! 📨
+
+```python
+from bocadillo.templates import Templates
+
+email = Templates(directory="email/templates")
+content = email.render_sync("welcome.md", username="lazydog")
+```
+
+[jinja2]: http://jinja.pocoo.org
+[template designer documentation]: http://jinja.pocoo.org/docs/latest/templates/

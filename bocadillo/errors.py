@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Type, Union
 import jinja2
 from starlette.responses import HTMLResponse, PlainTextResponse
 
-from .app_types import ErrorHandler, HTTPApp
+from .app_types import _E, ErrorHandler, HTTPApp
 from .compat import call_async
 from .misc import read_asset
 from .request import Request
@@ -31,7 +31,9 @@ class HTTPError(Exception):
 
     def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
-            status = HTTPStatus(status)
+            status = HTTPStatus(  # pylint: disable=no-value-for-parameter
+                status
+            )
         else:
             assert isinstance(
                 status, HTTPStatus
@@ -112,7 +114,9 @@ class ServerErrorMiddleware(HTTPApp):
             if self.debug:
                 # In debug mode, return traceback responses.
                 res = self.debug_response(req, exc)
-            await call_async(self.handler, req, res, HTTPError(500))
+            await call_async(  # type: ignore
+                self.handler, req, res, HTTPError(500)
+            )
             return res
         else:
             return res
@@ -130,14 +134,12 @@ class HTTPErrorMiddleware(HTTPApp):
         self._exception_handlers: Dict[Type[BaseException], ErrorHandler] = {}
 
     def add_exception_handler(
-        self, exception_class: Type[BaseException], handler: ErrorHandler
+        self, exception_class: Type[_E], handler: ErrorHandler
     ) -> None:
         assert issubclass(exception_class, BaseException)
         self._exception_handlers[exception_class] = handler
 
-    def _get_exception_handler(
-        self, exc: BaseException
-    ) -> Optional[ErrorHandler]:
+    def _get_exception_handler(self, exc: _E) -> Optional[ErrorHandler]:
         for cls, handler in self._exception_handlers.items():
             if issubclass(type(exc), cls):
                 return handler
@@ -146,11 +148,11 @@ class HTTPErrorMiddleware(HTTPApp):
     async def __call__(self, req: Request, res: Response) -> Response:
         try:
             res = await self.app(req, res)
-        except BaseException as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             handler = self._get_exception_handler(exc)
             if handler is None:
                 raise exc from None
-            await call_async(handler, req, res, exc)
+            await call_async(handler, req, res, exc)  # type: ignore
             return res
         else:
             return res

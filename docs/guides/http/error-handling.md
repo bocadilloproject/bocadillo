@@ -23,10 +23,10 @@ async def mute(req: Request, res: Response, exc: Exception):
 
 An error handler is associated to an exception class. This allows to know which error handler to call when a particular exception is raised (see next section).
 
-To register an error handler, use the `@api.error_handler()` decorator:
+To register an error handler, use the `@app.error_handler()` decorator:
 
 ```python
-@api.error_handler(AttributeError)
+@app.error_handler(AttributeError)
 def on_attribute_error(req, res, exc: AttributeError):
     res.status = 500
     res.media = {'error': {'attribute_not_found': exc.args[0]}}
@@ -39,7 +39,7 @@ def on_attribute_error(req, res, exc: AttributeError):
     res.status = 500
     res.media = {'error': {'attribute_not_found': exc.args[0]}}
 
-api.add_error_handler(AttributeError, on_attribute_error)
+app.add_error_handler(AttributeError, on_attribute_error)
 ```
 
 ## What happens when an error is raised?
@@ -73,7 +73,7 @@ Consider the following application that simulates a game of chance:
 ```python
 import os
 from random import random
-from bocadillo import API, HTTPError
+from bocadillo import App, HTTPError
 
 class GameException(Exception):
     pass
@@ -84,19 +84,19 @@ class Lose(GameException):
 class Win(GameException):
     pass
 
-api = API()
+app = App()
 
-@api.error_handler(GameException)
+@app.error_handler(GameException)
 def on_game_exception(req, res, exc):
     res.text = "Something went wrong…"
     res.status_code = 500
 
-@api.error_handler(Win)
+@app.error_handler(Win)
 def on_success(req, res, exc):
     res.text = "You win!"
     res.status_code = 200
 
-@api.route("/play")
+@app.route("/play")
 async def play(req, res):
     coin = random()
     if coin < 0.1:
@@ -107,11 +107,11 @@ async def play(req, res):
         raise RuntimeError("We did not expect that.")
 
 if __name__ == "__main__":
-    api.run(debug=os.getenv("DEBUG"))
+    app.run(debug=os.getenv("DEBUG"))
 ```
 
 - 10% of the time, a `Win` exception is raised. We do have registered an error handler for it, so it will be called and, since it does not re-raise it, the exception won't propagate.
 - 89.9% of the time, a `Lose` exception is raised. We do not have any error handler registered for it, but we do have one for its parent class `GameException`, so it will be used.
 - 0.1% of the time, a `RuntimeError` is raised. There is no error handler registered for this exception, so a standard 500 error response will be returned and the exception will be raised for server-side logging.
 
-[debug mode]: ../api.md#debug-mode
+[debug mode]: ../app.md#debug-mode

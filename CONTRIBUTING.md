@@ -61,18 +61,28 @@ To verify Python dependencies have been correctly installed, first [run the test
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.11.2'
+'0.12.0'
+```
+
+### Installing pre-commit hooks
+
+This repo has a pre-commit hooks that runs Black (see [Black formatting](#black-formatting)) against your code before every commit.
+
+After installing dependencies, you should install the hooks using the following command:
+
+```shell
+pre-commit install
 ```
 
 #### Installing the documentation packages
 
-If you're planning to contribute documentation, you should also install the NPM dependencies. Make sure you have [Node] and [NPM] installed, then run:
+If you're planning to contribute documentation, you should also install the npm dependencies. Make sure you have [Node] and [npm] installed, then run:
 
 ```bash
 npm install
 ```
 
-To verify the NPM packages are correctly installed, you can fire up the docs site:
+To verify the npm packages are correctly installed, you can fire up the docs site:
 
 ```bash
 npm start
@@ -112,7 +122,7 @@ All documentation lives in the `docs/` directory. It is structured as follows:
 - `guides`: discussions about key topics and concepts, including background, information and usage hints.
 - `how-to`: recipes for solving key problems or addressing specific use cases.
 - `discussions`: these give more in-depth background about important topics or activities related to application development.
-- `api`: technical reference for Bocadillo's machinery; generated from the modules', classes' and functions' docstrings.
+- `api`: technical reference for Bocadillo's machinery, a majority of which is generated from the docstrings of Python modules, classes and functions.
 - `faq`: frequently asked questions.
 
 #### Running the docs site
@@ -125,7 +135,9 @@ npm start
 
 It will be accessible at http://localhost:8080.
 
-The docs site is hot-reloaded on any changes to the contents of the `docs/` directory. The only exception to this is the API Reference (see [Generating the API Reference](#generating-the-api-reference)).
+The docs site is hot-reloaded on any changes to the contents of the `docs/` directory.
+
+The only exception to this is the generated API Reference. You'll need to generate it to visualise it locally — see [Generating the API Reference](#generating-the-api-reference).
 
 #### Creating documentation pages
 
@@ -135,17 +147,17 @@ Feel free to refer to the [VuePress] docs if needed.
 
 #### Generating the API Reference
 
-Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstring. The generated `.md` file are then wired up in the `config.js` file.
+Bocadillo uses [Pydoc-Markdown] to generate the API reference in Markdown format from Python docstrings. The generated `.md` files are then wired up in the `config.js` file.
 
-In order to view the changes you've made to Python dosctrings in the docs site, you'll need to regenerate the API reference:
+In order to view the changes you've made to Python dosctrings in the docs site, or after your first install, you'll need to regenerate the API reference:
 
 ```bash
 pymdoc generate
 ```
 
-The `docs/api` will be hot-reloaded and the docs site will display the updated API Reference docs.
+The docs site will reload and display the updated API Reference docs.
 
-See `pymdoc.yml` for the configuration details and [Pydoc-Markdown] documentation for usage reference.
+See [`pydocmd.yml`](./pydocmd.yml) for the configuration details and the [Pydoc-Markdown] documentation for usage reference.
 
 #### Debugging the docs site
 
@@ -153,23 +165,19 @@ It may happen that the documentation site does not seem to behave properly.
 
 You should first open your browser's dev tools and check for any errors. VuePress errors generally give enough clues as to what's wrong and how you can fix it.
 
-If there is an issue with VuePress' hot-reloading, you need to close the current tab and open a fresh copy of the docs site in a new tab.
+If there is an issue with VuePress' hot-reloading, you may need to close the current tab and open a fresh copy of the docs site in a new tab.
 
 ## Code style
 
 ### Black formatting
 
-In order to reduce format-related issues and make code reviews more efficient, this repo uses the [Black](https://github.com/ambv/black) auto-formatter to format your code on commit. This is implemented using a [pre-commit](https://pre-commit.com) hook.
-
-To make sure your code is formatted automatically before any commit, run this inside the repo after installing all dependencies:
-
-```shell
-pre-commit install
-```
+In order to reduce format-related issues and make code reviews more efficient, this repo uses the [Black](https://github.com/ambv/black) formatter to format your code on commit. This is implemented using a [pre-commit](https://pre-commit.com) hook.
 
 In practice, Black may intervene and reformat some of the Python files when committing to your local. When this happens, the commit will abort and you'll need to `git add` files edited by Black and `git commit` again.
 
 If you wish to manually apply Black before a commit, run `$ pre-commit`.
+
+Lastly, you can configure your IDE of choice to automatically format the code using Black (.e.g on save).
 
 ### Type annotations
 
@@ -191,7 +199,7 @@ def add(x, y):
     return x + y
 ```
 
-For background on the benefits of type annotations, I recommend Stav Shamir's [The other (great) benefit of Python type annotations](https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b).
+For background on the benefits of type annotations, we recommend Stav Shamir's [The other (great) benefit of Python type annotations](https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b).
 
 If you need help when writing type annotations, be sure to check out the official documentation of the [typing] module.
 
@@ -259,7 +267,33 @@ A comment is a line that starts with `#`. There are two use cases to comments:
 - To explain complex code that may not be easily understood by future developers.
 - To explain **why** a portion of code was implemented the way it was.
 
-As a rule of thumb, don't use comments to explain *what* your code is doing, but to explain *why* it's doing what it's doing. Again, code should be self-documenting. If you need to explain *what* your code is doing, try simplifying it into smaller components (functions, methods, objects) with descriptive names.
+As a rule of thumb, don't use comments to explain _what_ your code is doing, but to explain _why_ it's doing what it's doing. Again, code should be self-documenting. If you need to explain _what_ your code is doing, try simplifying it into smaller components (functions, methods, objects) with descriptive names.
+
+## Linting
+
+Linting refers to the process of running a program that will analyze the code base for potential errors. This repo uses two linters: Pylint and Mypy.
+
+### PyLint
+
+Pylint is used for general error checking. It has a lot of useful features which you can read about on the official website: [pylint.org](https://www.pylint.org).
+
+Pylint comes installed along with the development dependencies, and can be used to check for errors using:
+
+```
+pylint bocadillo
+```
+
+FYI, the Pylint configuration is located in `pylintrc`.
+
+### Static type checking with MyPy
+
+MyPy is installed along with the development dependencies, so you can manually type check the code base using:
+
+```bash
+mypy bocadillo
+```
+
+We also encourage you to configure your IDE of choice to automatically type check the code using MyPy for you (e.g. on save).
 
 ## Pull Request process
 
@@ -278,7 +312,7 @@ As a rule of thumb, don't use comments to explain *what* your code is doing, but
 
 Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion/).
 
-The utility script `scripts/bumpversion.sh` runs `bumpversion` with all the provided arguments*, bumps the changelog and creates a tagged commit for the new version.
+The utility script `scripts/bumpversion.sh` runs `bumpversion` with all the provided arguments\*, bumps the changelog and creates a tagged commit for the new version.
 
 Example usage:
 
@@ -327,14 +361,14 @@ When ready to release a new version to production:
 $ git push --tags
 ```
 
-[Open a pull request]: https://github.com/bocadilloproject/bocadillo/compare
+[open a pull request]: https://github.com/bocadilloproject/bocadillo/compare
 [type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
 [typing]: https://docs.python.org/3/library/typing.html
-[NumPyDoc]: https://numpydoc.readthedocs.io
-[Pydoc-Markdown]: https://niklasrosenstein.github.io/pydoc-markdown/
-[Node]: https://nodejs.org/en
-[NPM]: https://www.npmjs.com
-[Pipenv]: https://github.com/pypa/pipenv
+[numpydoc]: https://numpydoc.readthedocs.io
+[pydoc-markdown]: https://niklasrosenstein.github.io/pydoc-markdown/
+[node]: https://nodejs.org/en
+[npm]: https://www.npmjs.com
+[pipenv]: https://github.com/pypa/pipenv
 [pytest]: https://docs.pytest.org
-[VuePress]: https://vuepress.vuejs.org
+[vuepress]: https://vuepress.vuejs.org
 [coverage]: https://coverage.readthedocs.io

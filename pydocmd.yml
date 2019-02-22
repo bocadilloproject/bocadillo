@@ -1,9 +1,10 @@
 site_name: "" # Irrelevant to us.
 
 generate:
-  - api.md:
-      - bocadillo.api:
-          - bocadillo.api.API+
+  - applications.md:
+      - bocadillo.applications:
+          - bocadillo.applications.App+
+          - bocadillo.applications.API
   - compat.md:
       - bocadillo.compat+
   - error_handlers.md:
@@ -17,10 +18,8 @@ generate:
   - media.md:
       - bocadillo.media:
           - bocadillo.media.handle_json
-          - bocadillo.media.handle_text
-          - bocadillo.media.Media:
-              - bocadillo.media.Media.serialize
-              - bocadillo.media.Media.type
+          - bocadillo.media.get_default_handlers
+          - bocadillo.media.UnsupportedMediaType
   - middleware.md:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
@@ -31,10 +30,18 @@ generate:
           - bocadillo.recipes.RecipeBook+
   - routing.md:
       - bocadillo.routing++
+  - request.md:
+      - bocadillo.request:
+          - bocadillo.request.Request+
+  - response.md:
+      - bocadillo.response:
+          - bocadillo.response.Response+
   - staticfiles.md:
       - bocadillo.staticfiles+
   - templates.md:
-      - bocadillo.templates++
+      - bocadillo.templates:
+          - bocadillo.templates.Templates+
+          - bocadillo.templates.TemplatesMixin+
   - views.md:
       - bocadillo.views++
   - websockets.md:

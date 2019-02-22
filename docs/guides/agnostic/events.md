@@ -8,15 +8,15 @@ Events are especially helpful when you need to setup resources on server startup
 
 Event handlers are callbacks, i.e. functions with the signature `() -> None`.
 
-They can be registered using the `@api.on()` decorator:
+They can be registered using the `@app.on()` decorator:
 
 ```python
-@api.on("startup")
+@app.on("startup")
 async def setup():
     # Perform setup when server boots
     pass
 
-@api.on("shutdown")
+@app.on("shutdown")
 async def cleanup():
     # Perform cleanup when server shuts down
     pass
@@ -28,7 +28,7 @@ A non-decorator syntax is also available:
 async def setup():
     pass
 
-api.on("shutdown", setup)
+app.on("shutdown", setup)
 ```
 
 Only the `"startup"` and `"shutdown"` events are supported.

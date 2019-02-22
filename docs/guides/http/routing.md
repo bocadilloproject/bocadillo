@@ -25,17 +25,17 @@ Here are a few example routes:
 ```python
 import bocadillo
 
-api = bocadillo.API()
+app = bocadillo.App()
 
-@api.route('/')
+@app.route('/')
 async def index(req, res):
     pass
 
-@api.route('/listings/143/')
+@app.route('/listings/143/')
 async def get_listing_143(req, res):
     pass
 
-@api.route('/listings/{id:d}/')
+@app.route('/listings/{id:d}/')
 async def get_listing(req, res, id: int):
     pass
 ```
@@ -86,11 +86,11 @@ The basic syntax is `{param_name:specifier}`. Common format specifiers include `
 A typical use case is using the `d` specifier to require that an `id` is an integer:
 
 ```python
-from bocadillo import API
+from bocadillo import App
 
-api = API()
+app = App()
 
-@api.route("/items/{id:d}")
+@app.route("/items/{id:d}")
 async def get_item(req, res, id: int):
     pass
 ```
@@ -108,11 +108,11 @@ This is useful to implement routes that serve as defaults when no other route ma
 For example, the following snippet shows how to implement a "catch-all" route.
 
 ```python
-from bocadillo import API
+from bocadillo import App
 
-api = API()
+app = App()
 
-@api.route("{}")
+@app.route("{}")
 async def hello(req, res):
     res.text = "Hello, world!"
 ```
@@ -152,10 +152,10 @@ The inferred route name is always `snake_cased`, as shown in the table below.
 
 ### Explicit route names
 
-If you wish to specify an explicit name, use the `name` parameter to `@api.route()`:
+If you wish to specify an explicit name, use the `name` parameter to `@app.route()`:
 
 ```python
-@api.route('/about/{who}', name='about_page')
+@app.route('/about/{who}', name='about_page')
 async def about(req, res, who):
     res.html = f'<h1>About {who}</h1>'
 ```
@@ -165,7 +165,7 @@ async def about(req, res, who):
 You can specify a namespace in order to group route names together:
 
 ```python
-@api.route('/blog/', namespace='blog')
+@app.route('/blog/', namespace='blog')
 async def home(req, res):
     pass
 ```
@@ -178,12 +178,12 @@ If you find yourself namespacing a lot of routes under a common path prefix (lik
 
 ## Reversing named routes
 
-To get back the full URL path to a named route (including its optional namespace), use `api.url_for()`, passing required route parameters as keyword arguments:
+To get back the full URL path to a named route (including its optional namespace), use `app.url_for()`, passing required route parameters as keyword arguments:
 
 ```python
->>> api.url_for('about', who='them')
+>>> app.url_for('about', who='them')
 '/about/them'
->>> api.url_for('blog:home')
+>>> app.url_for('blog:home')
 '/blog/'
 ```
 
@@ -211,14 +211,14 @@ On function-based views, you can use the `@view()` decorator and its case-insens
 ```python
 from bocadillo import view
 
-@api.route("/posts/{pk}")
+@app.route("/posts/{pk}")
 @view(methods=["delete"])
 async def delete_blog_post(req, res, pk):
     res.status_code = 204
 ```
 
 ::: warning CHANGED IN v0.9.0
-The `methods` argument is no longer located on `api.route()`.
+The `methods` argument is no longer located on `app.route()`.
 :::
 
 #### How are unsupported methods handled?

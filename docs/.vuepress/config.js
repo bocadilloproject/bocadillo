@@ -150,7 +150,7 @@ module.exports = {
         }
       ],
       "/guides/": [
-        "/guides/api",
+        "/guides/app",
         "/guides/cli",
         {
           title: "HTTP",
@@ -196,11 +196,7 @@ module.exports = {
         {
           title: "How-To",
           collapsable: false,
-          children: listDir("how-to", [
-            "extra-media-handlers",
-            "middleware",
-            "tortoise"
-          ])
+          children: listDir("how-to", ["yaml-media", "middleware", "tortoise"])
         }
       ],
       "/discussions/": [

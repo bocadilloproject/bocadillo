@@ -1,11 +1,19 @@
-# api.py
+# app.py
 import re
 from asyncio import sleep
 from json import JSONDecodeError
-from typing import List, NamedTuple, Optional, Dict
+from typing import Dict, List, NamedTuple, Optional
 
-from bocadillo import API, Middleware, Recipe, HTTPError, hooks, Response, Request
-
+from bocadillo import (
+    App,
+    HTTPError,
+    Middleware,
+    Recipe,
+    Request,
+    Response,
+    Templates,
+    hooks,
+)
 
 # We'll start by defining a few helper classes and functions.
 
@@ -26,7 +34,7 @@ class Storage:
     def __init__(self):
         self._courses: List[Course] = []
 
-    def list(self) -> List[dict]:
+    def all(self) -> List[dict]:
         return [course._asdict() for course in self._courses]
 
     def get(self, id: int) -> Optional[Course]:
@@ -47,7 +55,7 @@ class Analytics:
     """In-memory analytics backend."""
 
     def __init__(self):
-        self._counts: Dict[int] = {}
+        self._counts: Dict[int, int] = {}
 
     async def mark_seen(self, id: int):
         # NOTE: `async` is not that helpful here, but
@@ -75,7 +83,7 @@ class Analytics:
 class TokenMiddleware(Middleware):
     """Token-based authorization middleware."""
 
-    _regex = re.compile("^Token: (\w+)$")
+    _regex = re.compile(r"^Token: (\w+)$")
 
     def before_dispatch(self, req: Request, res: Response):
         """Attach API token to req, if provided in header."""
@@ -119,7 +127,7 @@ async def validate_course(req, res, params):
 
 # Now, let's assemble the actual application, shall we?
 
-api = API(
+app = App(
     # Built-in CORS, HSTS and GZip!
     enable_cors=True,
     enable_hsts=False,  # the default
@@ -128,17 +136,21 @@ api = API(
 )
 
 # Register the token middleware.
-api.add_middleware(TokenMiddleware)
+app.add_middleware(TokenMiddleware)
 
 # Instanciate helper backends.
 storage = Storage()
 analytics = Analytics()
 
 
-# Routes! Views! Jinja templates! Static files!
-@api.route("/")
+# Jinja templates!
+templates = Templates(app)
+
+
+# Routes! Views! Static files!
+@app.route("/")
 async def index(req, res):
-    courses = storage.list()
+    courses = storage.all()
     # Notes:
     # - Templates are loaded from the `./templates`
     # directory by default.
@@ -147,11 +159,11 @@ async def index(req, res):
     # `./static` directory.
     # - This means the HTML template can use a reference
     # to `/static/styles.css`.
-    res.html = await api.template("index.html", courses=courses)
+    res.html = await templates.render("index.html", courses=courses)
 
 
 # Recipes!
-# (API-like group of stuff, good for cutting
+# (App-like group of stuff, good for cutting
 # an app into manageable, bite-sized components.)
 courses = Recipe("courses")
 
@@ -163,7 +175,7 @@ class CoursesList:
 
     async def get(self, req, res):
         # Media responses! (JSON by default)
-        res.media = storage.list()
+        res.media = storage.all()
 
     @hooks.before(validate_course)  # Hooks again!
     async def post(self, req, res):
@@ -205,12 +217,12 @@ async def get_top_courses(req, res):
     res.media = courses
 
 
-# Mounts the routes of `courses` at `/courses` on `api`
-api.recipe(courses)
+# Mounts the routes of `courses` at `/courses` on `app`
+app.recipe(courses)
 
 
 # Custom error handlers!
-@api.error_handler(HTTPError)
+@app.error_handler(HTTPError)
 def handle_json(req, res, exc):
     res.media = {
         "error": exc.status_phrase,
@@ -221,4 +233,4 @@ def handle_json(req, res, exc):
 
 
 if __name__ == "__main__":
-    api.run()
+    app.run()
