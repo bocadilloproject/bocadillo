@@ -470,7 +470,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 @deprecated(
     since="0.12",
     removal="0.13",
-    alternative=("bocadillo.App", "/api/applications.md#App"),
+    alternative=("bocadillo.App", "/api/applications.md#app"),
     warn_on_instanciate=True,
 )
 class API(App):
