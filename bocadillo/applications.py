@@ -40,6 +40,7 @@ from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
+from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
@@ -318,6 +319,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
+        if issubclass(middleware_cls, ASGIMiddleware):
+            args = (self, *args)
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
     def on(self, event: str, handler: Optional[EventHandler] = None):

@@ -1,9 +1,12 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from .app_types import HTTPApp
+from .app_types import ASGIApp, ASGIAppInstance, HTTPApp, Scope
 from .compat import call_async
 from .request import Request
 from .response import Response
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .applications import App
 
 
 class Middleware(HTTPApp):
@@ -84,3 +87,12 @@ class Middleware(HTTPApp):
         return res
 
     __call__ = process
+
+
+class ASGIMiddleware(ASGIApp):
+    def __init__(self, parent: ASGIApp, app: "App" = None, **kwargs):
+        self.parent = parent
+        self.app = app
+
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
+        return self.parent(scope)
