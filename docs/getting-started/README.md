@@ -16,7 +16,7 @@ Bocadillo is a Python web framework that provides **a sane toolkit for quickly b
 
 Bocadillo is **fitted for a range of applications** — from REST APIs and microservices to database-backed web apps. It was designed to be **beginner-friendly** while giving power-users the ability to implement more advanced or complex behaviors.
 
-Lastly, **Bocadillo is not exactly minimal**. It comes with a certain number of **included batteries** to help you solve common problems when building web apps: handling static files, providing API endpoints, rendering templates, and many more. It also has **extensions** for useful features that, however, not everyone might need, such as interacting with a database.
+Lastly, **Bocadillo is not exactly minimal**. It comes with a certain number of **included batteries** to help you solve common problems when building web apps: handling static files, providing API endpoints, rendering templates, and many more.
 
 ### Asynchronous-first
 
@@ -100,15 +100,13 @@ Here's a sneak peak into what you'll find in Bocadillo:
 - Full HTTP support
 - Decorator-based routing w/ parameter validation
 - Falcon-style request/response manipulation and hooks
-- Function-based and class-based views
+- Function- and class-based views
 - In-app background tasks
 - Efficient, zero-config static files handling powered by [WhiteNoise]
 - [Jinja] template rendering
 - Built-in CORS, GZip and HSTS support
 - Streaming requests and responses
-- Customizable CLI built with [Click]
-- (Soon) Third-party extensions framework
-- (Soon) Databases and async ORM
+- [Queso], a customizable CLI built on top of [Click]
 
 ## Getting more background
 
@@ -125,4 +123,5 @@ To learn more about the framework's history, design decisions or why it's even c
 [WhiteNoise]: http://whitenoise.evans.io
 [Jinja]: http://jinja.pocoo.org
 [Click]: https://click.palletsprojects.com
+[Queso]: https://bocadilloproject.github.io/queso
 [faq]: ../faq/
