@@ -293,7 +293,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
         return wrapper
 
-    def add_middleware(self, middleware_cls, **kwargs):
+    def add_middleware(self, middleware_cls, *args, **kwargs):
         """Register a middleware class.
 
         # Parameters
@@ -305,10 +305,10 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         """
         self.exception_middleware.app = middleware_cls(
-            self.exception_middleware.app, **kwargs
+            self.exception_middleware.app, self, **kwargs
         )
 
-    def add_asgi_middleware(self, middleware_cls, *args, **kwargs):
+    def add_asgi_middleware(self, middleware_cls, **kwargs):
         """Register an ASGI middleware class.
 
         # Parameters
@@ -319,8 +319,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
-        if issubclass(middleware_cls, ASGIMiddleware):
-            args = (self, *args)
+        args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
     def on(self, event: str, handler: Optional[EventHandler] = None):

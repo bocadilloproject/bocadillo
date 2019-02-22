@@ -13,13 +13,14 @@ class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    app: a callable that may as well be another `Middleware` instance.
+    parent (callable): the parent middleware.
+    app (App): the application instance.
     kwargs (any):
-        Keyword arguments passed when registering the
-        middleware on the application.
+        Keyword arguments passed when registering the middleware on `app`.
     """
 
-    def __init__(self, app: HTTPApp, **kwargs):
+    def __init__(self, parent: HTTPApp, app: "App", **kwargs):
+        self.parent = parent
         self.app = app
         self.kwargs = kwargs
 
@@ -77,7 +78,7 @@ class Middleware(HTTPApp):
         if before_res:
             return before_res
 
-        res = await self.app(req, res)
+        res = await self.parent(req, res)
 
         res = (
             await call_async(self.after_dispatch, req, res)  # type: ignore
@@ -90,9 +91,19 @@ class Middleware(HTTPApp):
 
 
 class ASGIMiddleware(ASGIApp):
+    """Base class for ASGI middleware classes.
+
+    # Parameters
+    parent (callable): the parent middleware.
+    app (App): the application instance.
+    kwargs (any):
+        Keyword arguments passed when registering the middleware on `app`.
+    """
+
     def __init__(self, parent: ASGIApp, app: "App" = None, **kwargs):
         self.parent = parent
         self.app = app
+        self.kwargs = kwargs
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         return self.parent(scope)

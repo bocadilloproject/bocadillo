@@ -12,10 +12,11 @@ def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
     kwargs = None
 
     class SetCalled(Middleware):
-        def __init__(self, app, **kw):
+        def __init__(self, parent, app: App, **kw):
+            super().__init__(parent, app, **kw)
             nonlocal kwargs
             kwargs = kw
-            super().__init__(app, **kw)
+            assert isinstance(app, App)
 
         if sync:
 
@@ -118,8 +119,7 @@ def test_errors_raised_in_callback_are_handled(app: App, when):
     async def index(req, res):
         pass
 
-    client = app.build_client(raise_server_exceptions=False)
-    r = client.get("/")
+    r = app.client.get("/")
     assert r.status_code == 200
     assert r.text == "gotcha!"
 
