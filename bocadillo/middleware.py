@@ -19,7 +19,8 @@ class Middleware(HTTPApp):
         Keyword arguments passed when registering the middleware on `app`.
     """
 
-    def __init__(self, inner: HTTPApp, app: "App", **kwargs):
+    def __init__(self, inner: HTTPApp, app: "App" = None, **kwargs):
+        # NOTE: app defaults to `None` to support old-style HTTP middleware.
         self.inner = inner
         self.app = app
         self.kwargs = kwargs

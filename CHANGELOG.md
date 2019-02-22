@@ -14,6 +14,16 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- New base class for ASGI middleware: `ASGIMiddleware`.
+  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
+  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+
+### Changed
+
+- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+
 ## [v0.12.0] - 2019-02-22
 
 This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
