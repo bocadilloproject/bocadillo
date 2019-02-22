@@ -10,8 +10,17 @@ Scope = dict
 Event = MutableMapping[str, Any]
 Receive = Callable[[], Awaitable[Event]]
 Send = Callable[[Event], None]
-ASGIAppInstance = Callable[[Receive, Send], Awaitable[None]]
-ASGIApp = Callable[[Scope], ASGIAppInstance]
+
+
+class ASGIAppInstance:
+    def __call__(self, receive: Receive, send: Send) -> None:
+        raise NotImplementedError
+
+
+class ASGIApp:
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
+        raise NotImplementedError
+
 
 # HTTP
 AsyncHandler = Callable[[Request, Response, Any], Awaitable[None]]

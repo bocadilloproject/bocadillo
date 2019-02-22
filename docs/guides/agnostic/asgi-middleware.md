@@ -11,7 +11,7 @@ Similarities:
 
 Differences:
 
-- ASGI middleware is **generic** works both in the context of HTTP _and_ WebSocket.
+- ASGI middleware is **generic**; it works both in the context of HTTP _and_ WebSocket.
 - ASGI middleware classes implement the [ASGI] interface directly, which means you can use any third-party ASGI middleware class without extra plumbing.
 - ASGI middleware operates before any HTTP middleware.
 
@@ -26,6 +26,10 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 app.add_asgi_middleware(HTTPSRedirectMiddleware)
 ```
+
+::: tip
+Extra keyword arguments passed to `.add_asgi_middleware()` are forwareded to the middleware class when it is instanciated.
+:::
 
 ## Built-in ASGI middleware
 
