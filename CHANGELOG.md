@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.12.0] - 2019-02-22
+
 This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
 
 This means that _there shouldn't be any breaking changes_. If you do experiment breaking changes, please report them to us!
@@ -440,7 +442,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...HEAD
+[v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
