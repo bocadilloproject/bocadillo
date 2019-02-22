@@ -35,8 +35,8 @@ def test_asgi_middleware():
     received_app = False
 
     class Middleware(ASGIMiddleware):
-        def __init__(self, parent, app: App, **kwargs):
-            super().__init__(parent, app)
+        def __init__(self, inner, app: App, **kwargs):
+            super().__init__(inner, app)
             nonlocal params, received_app
             params = kwargs
             received_app = isinstance(app, App)

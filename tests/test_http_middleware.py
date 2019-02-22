@@ -12,8 +12,8 @@ def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
     kwargs = None
 
     class SetCalled(Middleware):
-        def __init__(self, parent, app: App, **kw):
-            super().__init__(parent, app, **kw)
+        def __init__(self, inner, app: App, **kw):
+            super().__init__(inner, app, **kw)
             nonlocal kwargs
             kwargs = kw
             assert isinstance(app, App)

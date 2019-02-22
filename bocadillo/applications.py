@@ -364,9 +364,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        response = await self.server_error_middleware(req, res)
+        res: Response = await self.server_error_middleware(req, res)
 
-        await response(receive, send)
+        await res(receive, send)
 
         # Re-raise the exception to allow the server to log the error
         # and for the test client to optionally re-raise it too.

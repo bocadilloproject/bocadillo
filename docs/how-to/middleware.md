@@ -57,7 +57,7 @@ Note: returning a response in `after_dispatch` has no effect.
 
 Middleware configuaration and initialisation can be performed by overriding its `__init__()` method, which is given the following:
 
-- `parent`: this is the parent middleware.
+- `inner`: this is the inner middleware that this middleware wraps.
 - `app`: this is the application instance which this middleware is being registered on.
 - `**kwargs`: any keyword arguments passed to `app.add_middleware()`.
 
@@ -68,8 +68,8 @@ from bocadillo import App, Middleware
 
 class ExpensiveMiddleware(Middleware):
 
-    def __init__(self, parent, app: App, warmup=False, **kwargs):
-        super().__init__(parent, app, **kwargs)
+    def __init__(self, inner, app: App, warmup=False, **kwargs):
+        super().__init__(inner, app, **kwargs)
 
         if not warmup:
             return
@@ -84,9 +84,9 @@ class ExpensiveMiddleware(Middleware):
 As it turns out, the `before_dispatch()` and `after_dispatch()` hooks on
 `Middleware` are just helpers.
 
-If they don't fit your needs, you can also implement the asynchronous `.__call__()` method directly. Subclassing from `Middleware` will ensure that the parent, app and kwargs are available for use.
+If they don't fit your needs, you can also implement the asynchronous `.__call__()` method directly. Subclassing from `Middleware` will ensure that the inner middleware, app and kwargs are available for use.
 
-For example, here's a "no-op" middleware that forwards request processing to its parent:
+For example, here's a "no-op" middleware that forwards request processing to its inner middleware:
 
 ```python
 from bocadillo import Request, Response, Middleware
@@ -94,7 +94,7 @@ from bocadillo import Request, Response, Middleware
 class NoOpMiddleware(Middleware):
 
     async def __call__(self, req: Request, res: Response) -> Response:
-        return await self.parent(req, res)
+        return await self.inner(req, res)
 ```
 
 ## ASGI middleware
@@ -112,8 +112,8 @@ from bocadillo import App, ASGIMiddleware
 from db import Database
 
 class DatabaseMiddleware(ASGIMiddleware):
-    def __init__(self, parent, app: App, url: str):
-        super().__init__(parent, app)
+    def __init__(self, inner, app: App, url: str):
+        super().__init__(inner, app)
         self.db = Database(url)
         app.on("startup", self.db.connect)
         app.on("shutdown", self.db.disconnect)
@@ -127,7 +127,7 @@ class DatabaseMiddleware(ASGIMiddleware):
 
 ### Pure ASGI middleware
 
-Bocadillo also supports "pure" ASGI middleware, i.e. middleware that only expects their `parent` middleware to be given to their constructor.
+Bocadillo also supports "pure" ASGI middleware, i.e. middleware that only expects their `inner` middleware to be given to their constructor.
 
 ::: tip NOTE
 Third-party ASGI middleware classes are typically given in this form.
@@ -141,14 +141,14 @@ As an example, here's a pure ASGI middleware that injects a static value in the 
 from bocadillo import App
 
 class Inject:
-    def __init__(self, parent, value: str):
-        self.parent = parent
+    def __init__(self, inner, value: str):
+        self.inner = inner
         self.value = value
 
     # ASGI implementation
     def __call__(self, scope: dict):
         scope["x-value"] = self.value
-        return self.parent(scope)
+        return self.inner(scope)
 ```
 
 Example usage:
