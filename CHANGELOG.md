@@ -14,31 +14,37 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.12.0] - 2019-02-22
+
+This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
+
+This means that _there shouldn't be any breaking changes_. If you do experiment breaking changes, please report them to us!
+
 ### Added
 
 - API reference for the `Response` and `Request` classes.
-- Browser-downloadable responses (aka attachments) with `res.attachment`.
-- File responses with `res.file()`.
+- Browser-downloadable responses (a.k.a attachments) with `res.attachment`. This is a handy shortcut for setting the `Content-Disposition` header.
+- (Asynchronous) file responses with `res.file()`.
 - Generic templating with `bocadillo.templates.Templates`.
+
+### Changed
+
+- The main application class is now called `App`. `API` is still available as an alias.
+- Content types are now available on the `bocadillo.constants.CONTENT_TYPE` enum, instead of `bocadillo.media.Media`.
 - Recipes are now just apps: they expose all the parameters, attributes and methods that an `App` exposes.
 
 ### Fixed
 
 - `Response.text` and `Response.html` are now proper write-only Python properties, which should be more friendly with type checkers.
 
-### Changed
+### Deprecated
 
-- `App` is the main application class of which `API` is now an alias of.
-- Content types are now available on the `bocadillo.constants.CONTENT_TYPE` enum, instead of `bocadillo.media.Media`.
+- `API` has been deprecated in favor of `App`. It will be removed in v0.13.0.
+- The `.template`, `.template_sync` and `.template_string` methods on `App` and `Recipe` have been deprecated in favor of generic templating. They will be removed in v0.13.0.
 
 ### Removed
 
-- Removed the `handle_text` media handler. The only built-in media handler is now `handle_json`.
-
-### Deprecated
-
-- `API` has been deprecated in favor of `App`, and will be removed in v0.13.0.
-- The `.template[_sync | _string]` methods on `API` and `Recipe` have been deprecated in favor of `Templates`. They will be removed in v0.13.0.
+- The `handle_text` media handler has been removed due to how `Response.text` and `Response.html` now work.
 
 ## [v0.11.2] - 2019-02-21
 
@@ -436,7 +442,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...HEAD
+[v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1
 [v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
