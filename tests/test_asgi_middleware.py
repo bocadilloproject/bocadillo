@@ -1,34 +1,6 @@
 from bocadillo import App, ASGIMiddleware
 
 
-def test_raw_asgi_middleware():
-    initialized = False
-    called = False
-
-    class Middleware:
-        def __init__(self, app):
-            nonlocal initialized
-            self.app = app
-            initialized = True
-
-        def __call__(self, scope: dict):
-            nonlocal called
-            called = True
-            return self.app(scope)
-
-    app = App()
-    app.add_asgi_middleware(Middleware)
-
-    assert initialized
-
-    @app.route("/")
-    async def index(req, res):
-        pass
-
-    app.client.get("/")
-    assert called
-
-
 def test_asgi_middleware():
     app = App()
     params = None
@@ -44,3 +16,31 @@ def test_asgi_middleware():
     app.add_asgi_middleware(Middleware, hello="world")
     assert received_app
     assert params == {"hello": "world"}
+
+
+def test_pure_asgi_middleware():
+    initialized = False
+    called = False
+
+    class Middleware:
+        def __init__(self, inner):
+            nonlocal initialized
+            self.inner = inner
+            initialized = True
+
+        def __call__(self, scope: dict):
+            nonlocal called
+            called = True
+            return self.inner(scope)
+
+    app = App()
+    app.add_asgi_middleware(Middleware)
+
+    assert initialized
+
+    @app.route("/")
+    async def index(req, res):
+        pass
+
+    app.client.get("/")
+    assert called
