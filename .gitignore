@@ -12,3 +12,5 @@ node_modules/
 .coverage
 # Private debug scripts
 ./_*.py
+# LineCount output
+out/

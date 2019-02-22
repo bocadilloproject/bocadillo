@@ -40,6 +40,7 @@ from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
+from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
@@ -292,7 +293,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
         return wrapper
 
-    def add_middleware(self, middleware_cls, **kwargs):
+    def add_middleware(self, middleware_cls, *args, **kwargs):
         """Register a middleware class.
 
         # Parameters
@@ -304,10 +305,10 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         """
         self.exception_middleware.app = middleware_cls(
-            self.exception_middleware.app, **kwargs
+            self.exception_middleware.app, app=self, **kwargs
         )
 
-    def add_asgi_middleware(self, middleware_cls, *args, **kwargs):
+    def add_asgi_middleware(self, middleware_cls, **kwargs):
         """Register an ASGI middleware class.
 
         # Parameters
@@ -318,6 +319,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
+        args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
     def on(self, event: str, handler: Optional[EventHandler] = None):
@@ -362,9 +364,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        response = await self.server_error_middleware(req, res)
+        res: Response = await self.server_error_middleware(req, res)
 
-        await response(receive, send)
+        await res(receive, send)
 
         # Re-raise the exception to allow the server to log the error
         # and for the test client to optionally re-raise it too.

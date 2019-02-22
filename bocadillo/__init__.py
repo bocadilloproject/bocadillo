@@ -1,6 +1,6 @@
 from .applications import API, App
 from .errors import HTTPError
-from .middleware import Middleware
+from .middleware import ASGIMiddleware, Middleware
 from .recipes import Recipe
 from .response import Response
 from .request import Request

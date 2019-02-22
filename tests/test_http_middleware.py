@@ -7,15 +7,27 @@ from bocadillo import App, Middleware, HTTPError
 
 
 @contextmanager
-def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
+def build_middleware(
+    expect_kwargs=None, sync=False, expect_call_after=True, old_style=False
+):
     called = {"before": False, "after": False}
     kwargs = None
 
     class SetCalled(Middleware):
-        def __init__(self, app, **kw):
-            nonlocal kwargs
-            kwargs = kw
-            super().__init__(app, **kw)
+        if old_style:
+
+            def __init__(self, inner, app: App, **kw):
+                super().__init__(inner, app, **kw)
+                nonlocal kwargs
+                kwargs = kw
+                assert isinstance(app, App)
+
+        else:
+
+            def __init__(self, inner, **kw):
+                super().__init__(inner, **kw)
+                nonlocal kwargs
+                kwargs = kw
 
         if sync:
 
@@ -43,12 +55,25 @@ def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
 
     assert called["before"] is True
     assert called["after"] is expect_call_after
+
     if expect_kwargs is not None:
+        kwargs.pop("app", None)  # old-style compatibility
         assert kwargs == expect_kwargs
 
 
 def test_if_middleware_is_added_then_it_is_called(app: App):
     with build_middleware() as middleware:
+        app.add_middleware(middleware)
+
+        @app.route("/")
+        async def index(req, res):
+            pass
+
+        app.client.get("/")
+
+
+def test_old_style_middleware(app: App):
+    with build_middleware(old_style=True) as middleware:
         app.add_middleware(middleware)
 
         @app.route("/")
@@ -118,8 +143,7 @@ def test_errors_raised_in_callback_are_handled(app: App, when):
     async def index(req, res):
         pass
 
-    client = app.build_client(raise_server_exceptions=False)
-    r = client.get("/")
+    r = app.client.get("/")
     assert r.status_code == 200
     assert r.text == "gotcha!"
 

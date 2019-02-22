@@ -106,7 +106,7 @@ class ServerErrorMiddleware(HTTPApp):
         if self.exception is not None:
             raise self.exception from None
 
-    async def __call__(self, req: Request, res: Response):
+    async def __call__(self, req: Request, res: Response) -> Response:
         try:
             res = await self.app(req, res)
         except BaseException as exc:

@@ -6,14 +6,14 @@ ASGI middleware provides global behavior at the earliest stage in the processing
 
 Similarities:
 
-- The same [stack-style processing algorithm](../http/middleware.md#how-http-middleware-is-applied) is used.
+- The same [stack-like processing algorithm](../http/middleware.md#how-http-middleware-is-applied) is used.
 - ASGI middleware takes the form of middleware classes, too.
 
 Differences:
 
-- ASGI middleware is **generic** works both in the context of HTTP _and_ WebSocket.
+- ASGI middleware is **generic**; it works both in the context of HTTP _and_ WebSocket.
 - ASGI middleware classes implement the [ASGI] interface directly, which means you can use any third-party ASGI middleware class without extra plumbing.
-- ASGI middleware operates before any HTTP middleware.
+- ASGI middleware operates before any HTTP middleware (higher priority).
 
 ## Using ASGI middleware
 
@@ -26,6 +26,10 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 app.add_asgi_middleware(HTTPSRedirectMiddleware)
 ```
+
+::: tip
+Extra keyword arguments passed to `.add_asgi_middleware()` are forwarded to the middleware class when it is instanciated.
+:::
 
 ## Built-in ASGI middleware
 

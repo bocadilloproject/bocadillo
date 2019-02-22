@@ -1,22 +1,27 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from .app_types import HTTPApp
+from .app_types import ASGIApp, ASGIAppInstance, HTTPApp, Scope
 from .compat import call_async
 from .request import Request
 from .response import Response
+
+if TYPE_CHECKING:  # pragma: no cover
+    from .applications import App
 
 
 class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    app: a callable that may as well be another `Middleware` instance.
+    inner (callable): the inner middleware that this middleware wraps.
+    app (App): the application instance.
     kwargs (any):
-        Keyword arguments passed when registering the
-        middleware on the application.
+        Keyword arguments passed when registering the middleware on `app`.
     """
 
-    def __init__(self, app: HTTPApp, **kwargs):
+    def __init__(self, inner: HTTPApp, app: "App" = None, **kwargs):
+        # NOTE: app defaults to `None` to support old-style HTTP middleware.
+        self.inner = inner
         self.app = app
         self.kwargs = kwargs
 
@@ -74,7 +79,7 @@ class Middleware(HTTPApp):
         if before_res:
             return before_res
 
-        res = await self.app(req, res)
+        res = await self.inner(req, res)
 
         res = (
             await call_async(self.after_dispatch, req, res)  # type: ignore
@@ -84,3 +89,22 @@ class Middleware(HTTPApp):
         return res
 
     __call__ = process
+
+
+class ASGIMiddleware(ASGIApp):
+    """Base class for ASGI middleware classes.
+
+    # Parameters
+    inner (callable): the inner middleware.
+    app (App): the application instance.
+    kwargs (any):
+        Keyword arguments passed when registering the middleware on `app`.
+    """
+
+    def __init__(self, inner: ASGIApp, app: "App", **kwargs):
+        self.inner = inner
+        self.app = app
+        self.kwargs = kwargs
+
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
+        return self.inner(scope)
