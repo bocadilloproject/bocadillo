@@ -31,7 +31,7 @@ Bocadillo has a single repository for both the `bocadillo` package and its docum
 Here's how to get your copy of the repo ready for development:
 
 - Fork the `bocadilloproject/bocadillo` repo.
-- Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo`.
+- Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo.git`.
 - Checkout the `master` branch and grab its latest version: `git pull origin master`.
 - Install the project (see installation steps below).
 - Create a branch (e.g. `fix/some-bug`) and work on it.
