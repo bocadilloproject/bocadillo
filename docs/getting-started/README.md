@@ -47,7 +47,9 @@ As an introduction to asynchronous programming in Python, I strongly recommend y
 ::: warning DISCLAIMER
 All projects listed here are of great quality and absolutely deserve your attention.
 
-The sole purpose of this section is for you to understand how Bocadillo differs from existing Python web frameworks,.
+The sole purpose of this section is for you to understand how Bocadillo differs from existing Python web frameworks.
+
+Also, projects change and evolve. If you believe one of our claims has gone out of date, you are very welcome to tell us or submit a patch using the link at the bottom of this page.
 :::
 
 ### Django
@@ -78,17 +80,17 @@ Plus, again, Falcon does not support async/await by itself (it officially recomm
 
 ### Responder
 
-Kenneth Reitz presents [Responder] as "a mix between Flask/Falcon, but with ease of developer sanity kept in mind. Expect the Requests experience, but for building services" ([Oct. 2018](https://twitter.com/kennethreitz/status/1050723571004309505)).
+Kenneth Reitz says, "[Responder] is a mix between Flask/Falcon, but with ease of developer sanity kept in mind. Expect the Requests experience, but for building services" ([Oct. 2018](https://twitter.com/kennethreitz/status/1050723571004309505)).
 
-As a result, it borrows a lot of ideas from Flask and Falcon — and so does Bocadillo.
+Like Bocadillo, Responder borrows a lot of ideas from Flask and Falcon. It is also powered by the [Starlette] ASGI toolkit.
 
-Responder is also one of the very few Python web frameworks that supports async/await while providing a familiar API. Like Bocadillo, Responder is powered by the [Starlette] ASGI toolkit. It also has some original features such as built-in GraphQL support.
+That said, some key differences between Responder and Bocadillo are:
 
-The key differences between Responder and Bocadillo are that a) Responder is solely targeted at web services (APIs), b) it does not provide support for WebSockets while Bocadillo does, and c) its design is intentionally kept minimalistic, while Bocadillo takes a more progressive approach.
-
-### Tornado
-
-> TODO
+- Responder's scope is smaller: it targets at web services (i.e. REST APIs) only.
+- Its design is centered around the `API` class, while Bocadillo takes a more modular approach.
+- Responder does not support middleware (but it has built-in GraphQL support).
+- Bocadillo's documentation is, in our opinion, more thorough.
+- It doesn't have a [CLI][queso].
 
 ## Features
 
