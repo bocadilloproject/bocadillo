@@ -70,7 +70,7 @@ To verify Python dependencies have been correctly installed, first [run the test
 '0.12.0'
 ```
 
-### Installing pre-commit hooks
+#### Installing pre-commit hooks
 
 This repo has a pre-commit hooks that runs Black (see [Black formatting](#black-formatting)) against your code before every commit.
 
