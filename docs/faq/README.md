@@ -127,11 +127,14 @@ If you're willing to help fix the bug, detailed instructions can be found in our
 
 [contributing]: https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md
 
+::: warning
+If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
+:::
+
 ### How can I contact maintainers?
 
 If you've got anything else to tell us, you can reach out on Twitter. Our official account is [@bocadillopy].
 
 [@bocadillopy]: https://twitter.com/bocadillopy
-
 [contact-maintainers]: #how-can-i-contact-maintainers
 [github-issues]: https://github.com/bocadilloproject/bocadillo/issues/new/choose
