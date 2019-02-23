@@ -30,13 +30,19 @@ Bocadillo has a single repository for both the `bocadillo` package and its docum
 
 Here's how to get your copy of the repo ready for development:
 
-- Fork the `bocadilloproject/bocadillo` repo.
-- Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo.git`.
-- Checkout the `master` branch and grab its latest version: `git pull origin master`.
-- Install the project (see installation steps below).
-- Create a branch (e.g. `fix/some-bug`) and work on it.
-- Push to your remote: `git push origin fix/some-bug`.
-- [Open a pull request] and follow the [PR process](#pull-request-process) below.
+1. Fork the `bocadilloproject/bocadillo` repo.
+2. Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo.git`.
+3. Checkout the `master` branch and grab its latest version: `git pull origin master`.
+4. Install the project (see installation steps below).
+5. Create a branch (e.g. `fix/some-bug`) and work on it.
+6. Push to your remote: `git push origin fix/some-bug`.
+7. [Open a pull request] and follow the [PR process](#pull-request-process) below.
+
+If at some point you need to update your fork with commits from this repo (the _upstream_), here's how to proceed:
+
+1. Add this repo as an upstream: `git remote add upstream https://github.com/bocadilloproject/bocadillo.git`.
+2. Check out the target branch, e.g. `git checkout master`.
+3. Merge it with the upstream one, e.g. `git merge upstream master`.
 
 ### Installing Bocadillo for development
 
