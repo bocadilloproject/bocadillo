@@ -14,7 +14,7 @@ Bocadillo would probably not exist without [Starlette][starlette] and [Uvicorn][
 [uvicorn]: https://www.uvicorn.org
 
 ::: tip MAINTAINER'S NOTE
-I have written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer). If you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read.
+I've written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer). Some of the facts may be outdated by now, but if you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read. ~ Florimond
 :::
 
 ### Why "Bocadillo", and how do you pronounce it?
