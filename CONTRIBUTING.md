@@ -30,13 +30,19 @@ Bocadillo has a single repository for both the `bocadillo` package and its docum
 
 Here's how to get your copy of the repo ready for development:
 
-- Fork the `bocadilloproject/bocadillo` repo.
-- Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo`.
-- Checkout the `master` branch and grab its latest version: `git pull origin master`.
-- Install the project (see installation steps below).
-- Create a branch (e.g. `fix/some-bug`) and work on it.
-- Push to your remote: `git push origin fix/some-bug`.
-- [Open a pull request] and follow the [PR process](#pull-request-process) below.
+1. Fork the `bocadilloproject/bocadillo` repo.
+2. Clone the repo on your computer: `git clone https://github.com/<your-username>/bocadillo.git`.
+3. Checkout the `master` branch and grab its latest version: `git pull origin master`.
+4. Install the project (see installation steps below).
+5. Create a branch (e.g. `fix/some-bug`) and work on it.
+6. Push to your remote: `git push origin fix/some-bug`.
+7. [Open a pull request] and follow the [PR process](#pull-request-process) below.
+
+If at some point you need to update your fork with commits from this repo (the _upstream_), here's how to proceed:
+
+1. Add this repo as an upstream: `git remote add upstream https://github.com/bocadilloproject/bocadillo.git`.
+2. Check out the target branch, e.g. `git checkout master`.
+3. Merge it with the upstream one, e.g. `git merge upstream master`.
 
 ### Installing Bocadillo for development
 
@@ -64,7 +70,7 @@ To verify Python dependencies have been correctly installed, first [run the test
 '0.12.0'
 ```
 
-### Installing pre-commit hooks
+#### Installing pre-commit hooks
 
 This repo has a pre-commit hooks that runs Black (see [Black formatting](#black-formatting)) against your code before every commit.
 
@@ -106,13 +112,19 @@ To also generate a [coverage] report, run:
 pytest --cov=./
 ```
 
+It can also be useful to show which parts of the project are not covered:
+
+```bash
+pytest --cov=./ --cov-report term:skip-covered --cov-report term-missing
+```
+
 ### Contributing documentation
 
-There are a few extra things you need to known in order to contribute documentation for Bocadillo.
+There are a few extra things you need to know in order to contribute documentation for Bocadillo.
 
 This section supposes that you have already installed Bocadillo's [documentation dependencies](#installing-the-documentation-packages).
 
-**Note**: Bocadillo's documentation site is made with [VuePress]. You may need to refer to its documentation, although the main problems you'll encounter are listed here.
+**Note**: Bocadillo's documentation site is made with [VuePress]. You may need to refer to its documentation when writing docs, although some usage hints are listed here.
 
 #### How the documentation is structured
 
@@ -194,7 +206,7 @@ def add(x: int, y: int) -> int:
 
 Don't:
 
-```
+```python
 def add(x, y):
     return x + y
 ```
@@ -213,7 +225,7 @@ There are 3 types of code documentation you may find yourself using.
 
 #### Module docstrings
 
-All modules should have a descriptive docstring at their top. For example:
+A module can have a descriptive docstring at their top. For example:
 
 ```python
 """Exception classes."""
@@ -221,6 +233,8 @@ All modules should have a descriptive docstring at their top. For example:
 class MyException(Exception):
     pass
 ```
+
+Module docstrings are picked up by [Pycdoc-Markdown] and displayed at the top of a module's API reference page.
 
 #### Function, method or class docstrings
 
@@ -260,9 +274,11 @@ class Foo:
         return reduce(operator.mul, map(ord, self._bar))
 ```
 
+Pydoc Markdown is not as intuitive as it could be when it comes to knowing which items it picks up and which it doesn't. So feel free to play around with docstrings and switch to the docs site to see how they look!
+
 #### Comments
 
-A comment is a line that starts with `#`. There are two use cases to comments:
+A comment is a line that starts with `#`. We see two situations in which comments are helpful:
 
 - To explain complex code that may not be easily understood by future developers.
 - To explain **why** a portion of code was implemented the way it was.
@@ -283,7 +299,7 @@ Pylint comes installed along with the development dependencies, and can be used 
 pylint bocadillo
 ```
 
-FYI, the Pylint configuration is located in `pylintrc`.
+FYI, the Pylint configuration is located in [`pylintrc`](./pylintrc).
 
 ### Static type checking with MyPy
 
@@ -293,16 +309,16 @@ MyPy is installed along with the development dependencies, so you can manually t
 mypy bocadillo
 ```
 
-We also encourage you to configure your IDE of choice to automatically type check the code using MyPy for you (e.g. on save).
+We also encourage you to configure your editor or IDE of choice to automatically type-check the code using MyPy for you (e.g. on save).
 
 ## Pull Request process
 
-1. Make sure to **open an issue** before submitting a PR (see [Always discuss ideas](#always-discuss-ideas)). Note: not all features can be accepted, as some may be out-of-scope and would be better off as third-party packages. It would be sad if you worked on a PR for days but it gets rejected because of reasons that could have been quickly pointed at if you discussed it in an issue.
+1. Make sure to **open an issue** before submitting a PR (see [Always discuss ideas](#always-discuss-ideas)). Note: not all features can be accepted, as some may be out-of-scope and would be better off as third-party packages. You wouldn't want to have your PR rejected despite having worked on it for for days because of reasons that could have been quickly identified if you discussed it with others in an issue.
 2. Ensure your changes are well-commented and you haven't left any commented-out lines of code or debug `print` statements.
-3. If your changes imply additions or changes in interface, make sure to the documentation. This includes environment variables, file locations, extra keyword arguments, etc.
+3. If your changes imply additions or changes in interface, make sure to update the [documentation](#contributing-documentation). This includes environment variables, file locations, extra keyword arguments, etc.
 4. You must add [tests](#running-tests) for the feature or bug fix you are providing.
 5. Your PR must pass the Travis CI builds. It will not be merged if the tests fail.
-6. The PR can be merged once it has obtained approval from at least one collaborator or maintainer.
+6. Once the tests pass, your PR must be approved by a collaborator or maintainer before being merged in.
 
 ## Notes to maintainers
 
@@ -312,6 +328,8 @@ We also encourage you to configure your IDE of choice to automatically type chec
 
 Versioning is managed through [bumpversion](https://pypi.org/project/bumpversion/).
 
+**Note**: it is recommended to perform version bumping on a separate branch, e.g. `prepare/vX.Y.Z`, and submit a public PR before merging back into `master`.
+
 The utility script `scripts/bumpversion.sh` runs `bumpversion` with all the provided arguments\*, bumps the changelog and creates a tagged commit for the new version.
 
 Example usage:
@@ -320,7 +338,7 @@ Example usage:
 bash scripts/bumpversion.sh "patch | minor | major"
 ```
 
-> Tip: you may want to `chmod +x scripts/bumpversion.sh` to use `./scripts/bumpversion.sh` for convenience.
+> Tip: for convenience, you may want to run `chmod +x scripts/bumpversion.sh` to be able to use `./scripts/bumpversion.sh`.
 
 \*See [bumpversion official docs](https://pypi.org/project/bumpversion/) for all the available options and `.bumpversion.cfg` for the default configuration.
 
@@ -330,7 +348,7 @@ This section documents how to release new versions to PyPI.
 
 #### Testing
 
-It is recommended to make a test release to TestPyPI before releasing a new version to production.
+It is possible to make a test release to TestPyPI before releasing a new version to production.
 
 You can do so by pushing to the `release/test` branch.
 
@@ -349,17 +367,27 @@ git merge master
 git push
 ```
 
-#### Production
+#### New releases
 
-When ready to release a new version to production:
+When ready to release a new version:
 
 - Update the package version if necessary (see [versioning](#versioning)).
-
-- Push the tagged commit to remote:
+- Push the tagged commit to the remote repository:
 
 ```bash
 $ git push --tags
 ```
+
+A PyPI deploy will run at the end of the triggered Travis build.
+
+#### Hot fixes
+
+The `stable` branch must be kept up to date with the latest release. When you need to release a bug fix as soon as possible (a.k.a. hot fix), here's how to proceed:
+
+1. Checkout out the `stable` branch.
+2. Branch off from it to work on the hot fix.
+3. When ready, push a PR to GitHub, using `stable` as the base. Make sure tests pass and everything looks fine.
+4. Patch-bump the version (see [versioning](#versioning)) and follow the procedure for [new releases](#new-releases).
 
 [open a pull request]: https://github.com/bocadilloproject/bocadillo/compare
 [type annotations]: https://medium.com/@shamir.stav_83310/the-other-great-benefit-of-python-type-annotations-896c7d077c6b
