@@ -4,6 +4,10 @@ This page is a curated list of articles, newsletters, podcasts or other contents
 
 [[toc]]
 
+## February 2019
+
+- (Feb 23, 2019): [Consuming APIs in Angular: Displaying Data In Components](https://blog.florimondmanca.com/consuming-apis-in-angular-displaying-data-in-components) uses Bocadillo to build a API server accessible by a web browser.
+
 ## January 2019
 
 - (Jan 29, 2019): Bocadillo is added to [the official list of Starlette third-party frameworks](https://www.starlette.io/third-party-packages/#bocadillo).
