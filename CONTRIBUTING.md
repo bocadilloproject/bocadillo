@@ -4,7 +4,11 @@
 
 - [Introduction](#introduction)
 - [Getting started](#getting-started)
+    - [Setting up the repo](#setting-up-the-repo)
+    - [Installing Bocadillo for development](#installing-bocadillo-for-development)
+    - [Contributing documentation](#contributing-documentation)
 - [Code style](#code-style)
+- [Linting](#linting)
 - [Pull Request process](#pull-request-process)
 - [Notes to maintainers](#notes-to-maintainers)
 
