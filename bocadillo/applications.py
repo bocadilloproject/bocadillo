@@ -293,7 +293,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
         return wrapper
 
-    def add_middleware(self, middleware_cls, *args, **kwargs):
+    def add_middleware(self, middleware_cls, **kwargs):
         """Register a middleware class.
 
         # Parameters
