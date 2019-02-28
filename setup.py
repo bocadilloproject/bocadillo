@@ -13,7 +13,7 @@ CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 setuptools.setup(
     name="bocadillo",
-    version="0.12.0",
+    version="0.12.1",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     description=description,
@@ -32,6 +32,7 @@ setuptools.setup(
         "websockets>=6.0",
     ],
     extras_require={"files": ["aiofiles"]},
+    python_requires=">=3.6",
     url=DOCS,
     project_urls={
         "Source": GITHUB,
