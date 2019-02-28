@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Installing from `pip` now checks that Python 3.6+ is installed.
+
 ## [v0.12.0] - 2019-02-22
 
 This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
