@@ -32,6 +32,7 @@ setuptools.setup(
         "websockets>=6.0",
     ],
     extras_require={"files": ["aiofiles"]},
+    python_requires=">=3.6",
     url=DOCS,
     project_urls={
         "Source": GITHUB,
