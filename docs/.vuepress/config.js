@@ -152,6 +152,7 @@ module.exports = {
       "/guides/": [
         "/guides/app",
         "/guides/cli",
+        "/guides/testing",
         {
           title: "HTTP",
           collapsable: false,
