@@ -38,13 +38,13 @@ Bocadillo has built-in support for [Cross-Origin Resource Sharing](https://devel
 To enable CORS, simply use:
 
 ```python
-app = bocadillo.App(enable_cors=True)
+app = App(enable_cors=True)
 ```
 
 Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET` for `Allow-Methods`. To customize the CORS configuration, use `cors_config`, e.g.:
 
 ```python
-app = bocadillo.App(
+app = App(
     enable_cors=True,
     cors_config={
         'allow_origins': ['*'],
@@ -60,7 +60,7 @@ Please refer to Starlette's [CORSMiddleware](https://www.starlette.io/middleware
 If you want enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS (or WS to WSS), simply use:
 
 ```python
-app = bocadillo.App(enable_hsts=True)
+app = App(enable_hsts=True)
 ```
 
 You should only enable HSTS if you have HTTPS configured on your server. See also the [Security: HTTPS] guide.
@@ -70,13 +70,13 @@ You should only enable HSTS if you have HTTPS configured on your server. See als
 If you want to enable [GZip compression](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding#Directives) to compress HTTP responses when possible, simply use:
 
 ```python
-app = bocadillo.App(enable_gzip=True)
+app = App(enable_gzip=True)
 ```
 
 You can also specify the minimum bytes the response should have before compressing:
 
 ```python
-app = bocadillo.App(enable_gzip=True, gzip_min_size=2048)
+app = App(enable_gzip=True, gzip_min_size=2048)
 ```
 
 [http middleware]: ../http/middleware.md

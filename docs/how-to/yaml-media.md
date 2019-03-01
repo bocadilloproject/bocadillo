@@ -8,13 +8,13 @@ Here, we'll configure Bocadillo to serialize values set to `res.media` to [YAML]
 2. Write a new media handler and register it on the application:
 
 ```python
-import bocadillo
+from bocadillo import App
 import yaml
 
 def handle_yaml(value: dict) -> str:
     return yaml.dump(value)
 
-app = bocadillo.App()
+app = App()
 app.media_handlers['application/x-yaml'] = handle_yaml
 ```
 
