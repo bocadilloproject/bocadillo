@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Pass extra WhiteNoise configuration attributes using `App(static_config=...)`.
+
 ## [v0.12.1] - 2019-02-28
 
 ### Fixed
