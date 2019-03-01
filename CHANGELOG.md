@@ -24,6 +24,16 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
 
+## [v0.12.2] - 2019-03-01
+
+### Added
+
+- Pass extra WhiteNoise configuration attributes using `App(static_config=...)`.
+
+### Fixed
+
+- Changes to static files are now picked up in debug mode.
+
 ## [v0.12.1] - 2019-02-28
 
 ### Fixed
@@ -458,7 +468,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...HEAD
+[v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
 [v0.12.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...v0.12.1
 [v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
