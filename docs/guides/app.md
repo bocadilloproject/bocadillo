@@ -9,9 +9,9 @@ To run a Bocadillo app, either run the application directly:
 
 ```python
 # myapp.py
-import bocadillo
+from bocadillo import App
 
-app = bocadillo.App()
+app = App()
 
 if __name__ == '__main__':
     app.run()
@@ -67,7 +67,7 @@ uvicorn myapp:app --debug
 By default, a Bocadillo `App` can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
 
 ```python
-app = bocadillo.App(allowed_hosts=['mysite.com'])
+app = App(allowed_hosts=['mysite.com'])
 ```
 
 If a non-allowed host is used, all requests will return a 400 error.

@@ -13,9 +13,9 @@ When an inbound HTTP requests hits your Bocadillo application, the following alg
 1. Bocadillo runs through each URL pattern and stops at the first matching one, extracting the route parameters as well. If none can be found or any of the route parameters fails validation, an `HTTPError(404)` exception is raised.
 2. Bocadillo checks that the matching route supports the requested HTTP method and raises an `HTTPError(405)` exception if it does not.
 3. When this is done, Bocadillo calls the view attached to the route, converting it to an `async` function if necessary. The view is passed the following arguments:
-    - An instance of [`Request`][Request].
-    - An instance of [`Response`][Response].
-    - Keyword arguments representing the extracted keyword arguments.
+   - An instance of [`Request`][request].
+   - An instance of [`Response`][response].
+   - Keyword arguments representing the extracted keyword arguments.
 4. If no pattern matches, or if an exception is raised in the process, Bocadillo invokes an appropriate error handler (see [Route error handling](#route-error-handling) below).
 
 ## Examples
@@ -23,9 +23,9 @@ When an inbound HTTP requests hits your Bocadillo application, the following alg
 Here are a few example routes:
 
 ```python
-import bocadillo
+from bocadillo import App
 
-app = bocadillo.App()
+app = App()
 
 @app.route('/')
 async def index(req, res):
@@ -42,7 +42,7 @@ async def get_listing(req, res, id: int):
 
 Note that:
 
-- An URL pattern *should* start with a leading slash. If it doesn't, Bocadillo adds one for you (except for the catch-all pattern `{}`).
+- An URL pattern _should_ start with a leading slash. If it doesn't, Bocadillo adds one for you (except for the catch-all pattern `{}`).
 - Bocadillo honors the presence or absence of a trailing slash on the URL. It will not perform any redirection by default.
 - Route parameters are defined using the F-string notation.
 - Route parameters can optionally use format specifiers to perform validation and conversion. For instance, in `get_listing()`, `{id:d}` validates that `id` is an integer. By default, route parameters are extracted as strings.
@@ -55,7 +55,7 @@ Here's how a few example requests would be handled:
 
 ## What the router searches against
 
-The router searches against the requested *URL path* — which does not include the domain name nor GET or POST parameters.
+The router searches against the requested _URL path_ — which does not include the domain name nor GET or POST parameters.
 
 ## Route parameters
 
@@ -120,10 +120,11 @@ async def hello(req, res):
 As you can see, the value of an anonymous parameter is not passed to the view. If you need access to the value, you should use a regular named route parameter.
 
 ::: warning CAUTION
+
 - **Order matters**. If `/foo/{}` is defined before `/foo/bar`, making a request to `/foo/bar` will match the former.
-- The anonymous parameter `{}` expects a **non-empty string**. This means that, unlike the catch-all `{}`, the pattern `/{}` will *not* match the root URL `/` because it expects a non-empty value after the leading slash.
+- The anonymous parameter `{}` expects a **non-empty string**. This means that, unlike the catch-all `{}`, the pattern `/{}` will _not_ match the root URL `/` because it expects a non-empty value after the leading slash.
 - Wildcard routes should not be used to implement 404 pages — see the next section for how Bocadillo deals with URLs that don't match any route.
-:::
+  :::
 
 ## Route error handling
 
@@ -145,10 +146,10 @@ Bocadillo will assign a name to routes based on the name of their view function 
 
 The inferred route name is always `snake_cased`, as shown in the table below.
 
-| View declaration | Inferred route name |
-|------------------|---------------------|
-| `async def do_stuff(req, res):` (or `def do_stuff(req, res):`) | `"do_stuff"` |
-| `class DoStuff:` | `"do_stuff"` |
+| View declaration                                               | Inferred route name |
+| -------------------------------------------------------------- | ------------------- |
+| `async def do_stuff(req, res):` (or `def do_stuff(req, res):`) | `"do_stuff"`        |
+| `class DoStuff:`                                               | `"do_stuff"`        |
 
 ### Explicit route names
 
@@ -192,7 +193,7 @@ In templates, you can use the `url_for()` template global:
 ```html
 <h1>Hello, Bocadillo!</h1>
 <p>
-    <a href="{{ url_for('about', who='me') }}">About me</a>
+  <a href="{{ url_for('about', who='me') }}">About me</a>
 </p>
 ```
 
@@ -229,7 +230,7 @@ When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error re
 Bocadillo implements the `HEAD` method automatically if your route supports `GET`. It is safe and systems such as URL checkers may use it to access your application without transferring the full request body.
 :::
 
-[Request]: requests.md
-[Response]: responses.md
+[request]: requests.md
+[response]: responses.md
 [hooks]: ./hooks.md
 [middleware]: ./middleware.md

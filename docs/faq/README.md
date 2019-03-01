@@ -14,7 +14,11 @@ Bocadillo would probably not exist without [Starlette][starlette] and [Uvicorn][
 [uvicorn]: https://www.uvicorn.org
 
 ::: tip MAINTAINER'S NOTE
-I have written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer). If you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read.
+I've written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer).
+
+Some of the facts may be outdated by now, but if you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read.
+
+— [@FlorimondManca](https://twitter.com/FlorimondManca)
 :::
 
 ### Why "Bocadillo", and how do you pronounce it?
@@ -127,11 +131,14 @@ If you're willing to help fix the bug, detailed instructions can be found in our
 
 [contributing]: https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md
 
+::: warning
+If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
+:::
+
 ### How can I contact maintainers?
 
 If you've got anything else to tell us, you can reach out on Twitter. Our official account is [@bocadillopy].
 
 [@bocadillopy]: https://twitter.com/bocadillopy
-
 [contact-maintainers]: #how-can-i-contact-maintainers
 [github-issues]: https://github.com/bocadilloproject/bocadillo/issues/new/choose

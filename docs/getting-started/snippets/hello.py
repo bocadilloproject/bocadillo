@@ -1,6 +1,6 @@
-import bocadillo
+from bocadillo import App
 
-app = bocadillo.App()
+app = App()
 
 
 @app.route("/")
