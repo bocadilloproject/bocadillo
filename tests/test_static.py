@@ -75,3 +75,9 @@ def test_if_static_dir_does_not_exist_then_no_files_mounted():
     with pytest.warns(None) as record:
         App(static_dir="foo")
     assert len(record) == 0
+
+
+def test_whitenoise_config():
+    app = App(static_root="static", static_config={"max_age": 30})
+    whitenoise = app._prefix_to_app["/static"]
+    assert whitenoise.max_age == 30

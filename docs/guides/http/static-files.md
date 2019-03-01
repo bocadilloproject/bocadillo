@@ -10,7 +10,9 @@ and they will be available at the corresponding URL:
 
 ```css
 /* static/css/styles.css */
-h1 { color: red; }
+h1 {
+  color: red;
+}
 ```
 
 ```bash
@@ -64,6 +66,16 @@ app = bocadillo.App()
 
 # Serve more static files located in the assets/ directory
 app.mount(prefix='assets', app=bocadillo.static('assets'))
+```
+
+## WhiteNoise configuration
+
+You can pass any extra [WhiteNoise configuration attributes](http://whitenoise.evans.io/en/stable/base.html#configuration-attributes) via the `static_config` parameter.
+
+For example, to set the time browsers and proxies should cache files to 30 secondes, use:
+
+```python
+app = App(static_config={"max_age": 30})
 ```
 
 ## Disabling static files

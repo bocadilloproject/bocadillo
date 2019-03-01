@@ -74,6 +74,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     static_root (str):
         The path prefix for static assets.
         Defaults to `"static"`.
+    static_config (dict):
+        Extra static files configuration attributes.
+        See also [static](./staticfiles.md#static).
     allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
         If the list contains `"*"`, any host is allowed.
@@ -117,6 +120,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         *,
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
+        static_config: dict = None,
         allowed_hosts: List[str] = None,
         enable_cors: bool = False,
         cors_config: dict = None,
@@ -147,7 +151,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
-            self.mount(static_root, static(static_dir))
+            self.mount(static_root, static(static_dir, **(static_config or {})))
 
         # Media
         self.media_handlers = get_default_handlers()
