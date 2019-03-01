@@ -34,3 +34,11 @@ def test_port_is_8000_by_default(app: App):
         assert port == 8000
 
     app.run(_run=run)
+
+
+def test_if_debug_then_static_files_auto_refresh(app: App):
+    def run(app, **kwargs):
+        for static_app in app._static_apps.values():
+            assert static_app.autorefresh
+
+    app.run(debug=True, _run=run)
