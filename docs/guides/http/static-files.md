@@ -40,13 +40,13 @@ For example:
 You can modify the static files directory using the `static_dir` option:
 
 ```python
-app = bocadillo.App(static_dir='staticfiles')
+app = App(static_dir='staticfiles')
 ```
 
 To modify the root URL path, use `static_root`:
 
 ```python
-app = bocadillo.App(static_root='assets')
+app = App(static_root='assets')
 ```
 
 ::: tip
@@ -60,12 +60,12 @@ You can serve other static directories using `app.mount()` and the
 `static` helper:
 
 ```python
-import bocadillo
+from bocadillo import App, static
 
-app = bocadillo.App()
+app = App()
 
 # Serve more static files located in the assets/ directory
-app.mount(prefix='assets', app=bocadillo.static('assets'))
+app.mount(prefix='assets', app=static('assets'))
 ```
 
 ## WhiteNoise configuration
@@ -84,5 +84,5 @@ To prevent Bocadillo from serving static files altogether,
 you can use:
 
 ```python
-app = bocadillo.App(static_dir=None)
+app = App(static_dir=None)
 ```
