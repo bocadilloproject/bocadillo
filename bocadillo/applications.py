@@ -43,7 +43,7 @@ from .meta import DocsMeta
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .staticfiles import static
+from .staticfiles import static, WhiteNoise
 from .templates import TemplatesMixin
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -143,6 +143,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         # Mounted (children) apps
         self._prefix_to_app: Dict[str, Any] = {}
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
+        self._static_apps: Dict[str, WhiteNoise] = {}
 
         # Test client
         self.client = self.build_client()
@@ -257,6 +258,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
 
         if isinstance(app, App) and app.name is not None:
             self._name_to_prefix_and_app[app.name] = (prefix, app)
+
+        if isinstance(app, WhiteNoise):
+            self._static_apps[prefix] = app
 
     def recipe(self, recipe: "Recipe"):
         """Apply a recipe.
@@ -441,7 +445,10 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """
+        live_server = False
+
         if _run is None:  # pragma: no cover
+            live_server = True
             _run = run
 
         if "PORT" in os.environ:
@@ -455,9 +462,18 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if port is None:
             port = 8000
 
-        if debug:
-            self.debug = True
-            reloader = StatReload(get_logger(log_level))
+        if not debug:
+            _run(self, host=host, port=port, **kwargs)
+            return
+
+        self.debug = True
+
+        # Reload static files in development.
+        # See: http://whitenoise.evans.io/en/stable/base.html#autorefresh
+        for whitenoise in self._static_apps.values():
+            whitenoise.autorefresh = True
+
+        if live_server:
             kwargs = {
                 "app": self,
                 "host": host,
@@ -466,7 +482,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
                 "debug": self.debug,
                 **kwargs,
             }
-            reloader.run(run, kwargs)
+            reloader = StatReload(get_logger(log_level))
+            reloader.run(_run, kwargs)
         else:
             _run(self, host=host, port=port, **kwargs)
 

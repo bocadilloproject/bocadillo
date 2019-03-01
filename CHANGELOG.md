@@ -18,6 +18,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - Pass extra WhiteNoise configuration attributes using `App(static_config=...)`.
 
+### Fixed
+
+- Changes to static files are now picked up in debug mode.
+
 ## [v0.12.1] - 2019-02-28
 
 ### Fixed
