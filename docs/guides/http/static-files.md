@@ -68,7 +68,7 @@ app = App()
 app.mount(prefix='assets', app=static('assets'))
 ```
 
-## WhiteNoise configuration
+## WhiteNoise configuration <Badge text="0.12.2+"/>
 
 You can pass any extra [WhiteNoise configuration attributes](http://whitenoise.evans.io/en/stable/base.html#configuration-attributes) via the `static_config` parameter.
 
