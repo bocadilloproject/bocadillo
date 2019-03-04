@@ -85,20 +85,12 @@ class Oops(Exception):
 def stops_incrementing(
     counter: Value, response: requests.Response, tolerance: int = 10
 ) -> bool:
-    """Check that a counter stops incrementing after the response is closed.
-    
-    # Parameters
-    counter (multiprocessing.Value):
-        A counter of events.
-    response (requests.Response):
-        A streaming response.
-    tolerance (int):
-        Maximum number of events the server is allowed to send after the
-        connection has been closed.
-    """
+    # Check that a counter stops incrementing after the response is closed.
 
-    # Maximum number of events the server is allowed to send after the client
-    # closed the connection.
+    # tolerance (int):
+    # Maximum number of events the server is allowed to send after the
+    # connection has been closed.
+
     def wait_for_events(expect_many=False):
         nonlocal counter
         num_before = counter.value
