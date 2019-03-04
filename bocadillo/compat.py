@@ -1,20 +1,29 @@
 import asyncio
 import re
-from typing import Callable, List, TypeVar, Union, Optional, Any, Coroutine
+from typing import (
+    Callable,
+    cast,
+    List,
+    TypeVar,
+    Union,
+    Optional,
+    Any,
+    Awaitable,
+)
 
 from starlette.concurrency import run_in_threadpool
 
-_camel_regex = re.compile(r"(.)([A-Z][a-z]+)")
-_snake_regex = re.compile(r"([a-z0-9])([A-Z])")
+_CAMEL_REGEX = re.compile(r"(.)([A-Z][a-z]+)")
+_SNAKE_REGEX = re.compile(r"([a-z0-9])([A-Z])")
 
 _V = TypeVar("_V")
 
 
 async def call_async(
-    func: Union[Callable[..., Coroutine[Any, Any, _V]], Callable[..., _V]],
+    func: Union[Callable[..., _V], Callable[..., Awaitable[_V]]],
     *args: Any,
     sync: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> _V:
     """Call a function in an async manner.
 
@@ -31,13 +40,15 @@ async def call_async(
     """
     if sync or (sync is None and not asyncio.iscoroutinefunction(func)):
         return await run_in_threadpool(func, *args, **kwargs)
-    return await func(*args, **kwargs)
+
+    async_func = cast(Callable[..., Awaitable[_V]], func)
+    return await async_func(*args, **kwargs)
 
 
 def camel_to_snake(name: str) -> str:
     """Convert a `CamelCase` name to its `snake_case` version."""
-    s1 = _camel_regex.sub(r"\1_\2", name)
-    return _snake_regex.sub(r"\1_\2", s1).lower()
+    s1 = _CAMEL_REGEX.sub(r"\1_\2", name)
+    return _SNAKE_REGEX.sub(r"\1_\2", s1).lower()
 
 
 # WSGI

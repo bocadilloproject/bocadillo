@@ -1,14 +1,14 @@
-from bocadillo import API
+from bocadillo import App
 
 
 def test_no_allowed_origins_by_default():
-    api = API(enable_cors=True)
+    app = App(enable_cors=True)
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         pass
 
-    response = api.client.options(
+    response = app.client.options(
         "/",
         headers={
             "origin": "foobar.com",
@@ -19,13 +19,13 @@ def test_no_allowed_origins_by_default():
 
 
 def test_if_origin_not_in_allow_origins_then_400():
-    api = API(enable_cors=True, cors_config={"allow_origins": ["foobar.com"]})
+    app = App(enable_cors=True, cors_config={"allow_origins": ["foobar.com"]})
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         pass
 
-    response = api.client.options(
+    response = app.client.options(
         "/",
         headers={
             "origin": "foobar.com",
@@ -34,7 +34,7 @@ def test_if_origin_not_in_allow_origins_then_400():
     )
     assert response.status_code == 200
 
-    response = api.client.options(
+    response = app.client.options(
         "/",
         headers={
             "origin": "example.com",
@@ -45,7 +45,7 @@ def test_if_origin_not_in_allow_origins_then_400():
 
 
 def test_if_method_not_in_allow_methods_then_400():
-    api = API(
+    app = App(
         enable_cors=True,
         cors_config={
             "allow_origins": ["foobar.com"],
@@ -53,11 +53,11 @@ def test_if_method_not_in_allow_methods_then_400():
         },
     )
 
-    @api.route("/")
+    @app.route("/")
     async def index(req, res):
         pass
 
-    response = api.client.options(
+    response = app.client.options(
         "/",
         headers={
             "origin": "foobar.com",

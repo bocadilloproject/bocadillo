@@ -1,29 +1,27 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-
 ---
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+<!-- A clear and concise description of what you expected to happen. -->
 
 **Actual behavior**
-What actually happens.
+<!-- What actually happens. -->
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+<!-- Steps to reproduce the behavior. For example, a minimal application script exhibiting the bug. -->
 
 **Screenshots/Traceback**
-If applicable, add screenshots or a copy of the traceback to explain your problem.
+<!-- If applicable, add screenshots or a copy of the traceback to explain your problem. -->
+
+**Possible solutions**
+<!-- Any clues you might have on how to fix this bug. -->
 
 **Specs**
-- OS: [e.g. macOS 10.11]
-- Python Version: [e.g. v3.7]
-- Bocadillo Version: [e.g. v0.5.0]
+- OS + Version:
+- Python Version:
+- Bocadillo Version:
 
 **Additional context**
-Add any other context about the problem here.
+<!-- Add any other context about the problem here. -->

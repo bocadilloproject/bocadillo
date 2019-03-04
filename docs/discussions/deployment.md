@@ -1,6 +1,6 @@
 # Deployment
 
-In development, running the `api.py` application script has the effect of passing your ASGI application to [Uvicorn], a very fast ASGI server running on [uvloop], an event loop [up to 4x faster](https://github.com/MagicStack/uvloop#performance) than the standard [asyncio] event loop.
+In development, running the `app.py` application script has the effect of passing your ASGI application to [Uvicorn], a very fast ASGI server running on [uvloop], an event loop [up to 4x faster](https://github.com/MagicStack/uvloop#performance) than the standard [asyncio] event loop.
 
 In production you'll probably also want to use a process manager to be able to spin up multiple workers and increase throughput.
 
@@ -13,7 +13,7 @@ You'll also want to turn off [debug mode] to disable auto-reload and prevent dis
 The following will start a Gunicorn server for your application:
 
 ```bash
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b localhost:8000 api:api
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b localhost:8000 app:app
 ```
 
 Let's break down this command:
@@ -22,7 +22,7 @@ Let's break down this command:
 2. `-w 4`: Gunicorn will start and manage 4 application processes (a.k.a workers).
 3. `-k uvicorn.workers.UvicornWorker`: here we pass Uvicorn's worker class
 4. `-b localhost:8000`: specifies on which host and port the application should run.
-5. `api:api`: identifies the Bocadillo application in the `path.to.module:object` format.
+5. `app:app`: identifies the Bocadillo application in the `path.to.module:object` format.
 
 ## What about static files?
 
@@ -37,4 +37,4 @@ In practice, this means that **you won't need any extra steps to serve static fi
 [asyncio]: https://docs.python.org/3/library/asyncio.html
 [Gunicorn]: http://docs.gunicorn.org/en/stable/
 [Uvicorn Deployment]: https://www.uvicorn.org/deployment/
-[debug mode]: ../guides/api.md#debug-mode
+[debug mode]: ../guides/app.md#debug-mode

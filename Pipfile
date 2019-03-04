@@ -4,13 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-starlette = ">=0.10"
-uvicorn = ">=0.3.26"
-parse = "*"
-"jinja2" = "*"
-whitenoise = "*"
-requests = "*"
-websockets = "*"
+bocadillo = {editable = true,extras = ["files"],path = "."}
 
 [dev-packages]
 pytest = "*"
@@ -20,7 +14,7 @@ bumpversion = "*"
 pre-commit = "*"
 pydoc-markdown = "*"
 pylint = "*"
-bocadillo = {editable = true,path = "."}
+mypy = "*"
 
 [requires]
 python_version = "3.7"

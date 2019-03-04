@@ -13,23 +13,26 @@ CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 setuptools.setup(
     name="bocadillo",
-    version="0.10.2",
+    version="0.12.3",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo", "bocadillo.scaffold"],
+    packages=["bocadillo"],
     package_data={"bocadillo": ["assets/*"]},
     install_requires=[
-        "starlette>=0.10",
-        "uvicorn>=0.3.26",
-        "jinja2",
+        "starlette>=0.11, <0.12",
+        "uvicorn>=0.3, <0.5",
+        "jinja2>=2.10",
         "whitenoise",
         "requests",
         "parse",
+        "python-multipart",
         "websockets>=6.0",
     ],
+    extras_require={"files": ["aiofiles"]},
+    python_requires=">=3.6",
     url=DOCS,
     project_urls={
         "Source": GITHUB,
@@ -49,5 +52,4 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
-    entry_points={"console_scripts": ["boca=bocadillo.__main__:cli"]},
 )

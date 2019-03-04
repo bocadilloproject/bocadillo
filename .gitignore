@@ -3,6 +3,7 @@ __pycache__/
 .idea/
 .vscode/
 .pytest_cache/
+.mypy_cache/
 *.egg-info
 .env
 *.db
@@ -10,4 +11,6 @@ node_modules/
 # docs/.vuepress/dist
 .coverage
 # Private debug scripts
-_*.py
+./_*.py
+# LineCount output
+out/

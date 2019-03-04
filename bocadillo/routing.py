@@ -1,18 +1,28 @@
+"""This module defines classes (both abstract and concrete) that power routing.
+
+::: tip NOTATIONS
+This modules uses the following [generic types]:
+
+- `_R` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
+- `_V` refers to a view object.
+
+[generic types]: https://docs.python.org/3/library/typing.html#generics
+:::
+"""
+
 import inspect
-from functools import partial
 from typing import (
     Any,
     Callable,
     Dict,
     Generic,
+    NoReturn,
     Optional,
     Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
-from parse import parse
+from parse import Parser
 from starlette.websockets import WebSocketClose
 
 from . import views
@@ -21,26 +31,43 @@ from .errors import HTTPError
 from .redirection import Redirection
 from .request import Request
 from .response import Response
-from .views import HandlerDoesNotExist, View
+from .views import AsyncHandler, HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
 
-# Base classes
+WILDCARD = "{}"
+
+# Route generic types.
+_R = TypeVar("_R", bound="BaseRoute")  # route
+_V = TypeVar("_V")  # view
+
+# Base classes.
 
 
-class BaseRoute:
+class BaseRoute(Generic[_V]):
     """The base route class.
+
+    This is referenced as `_R` in the rest of this module.
 
     # Parameters
     pattern (str): an URL pattern.
+    view (_V):
+        a view function or object whose actual type is defined by concrete
+        routes.
     """
 
-    def __init__(self, pattern: str):
-        if not pattern.startswith("/"):
+    def __init__(self, pattern: str, view: _V):
+        if pattern != WILDCARD and not pattern.startswith("/"):
             pattern = f"/{pattern}"
-        self.pattern = pattern
+        self._pattern = pattern
+        self._parser = Parser(self._pattern)
+        self.view = view
+
+    @property
+    def pattern(self) -> str:
+        return self._pattern
 
     def url(self, **kwargs) -> str:
-        """Return full path for the given route parameters.
+        """Return the full URL path for the given route parameters.
 
         # Parameters
         kwargs (dict): route parameters.
@@ -50,29 +77,21 @@ class BaseRoute:
             A full URL path obtained by formatting the route pattern with
             the provided route parameters.
         """
-        return self.pattern.format(**kwargs)
+        return self._pattern.format(**kwargs)
 
     def parse(self, path: str) -> Optional[dict]:
         """Parse an URL path against the route's URL pattern.
 
         # Returns
-        result (dict or None):
+        params (dict or None):
             If the URL path matches the URL pattern, this is a dictionary
-            containing the route parameters, otherwise None.
+            containing the route parameters, otherwise it is `None`.
         """
-        result = parse(self.pattern, path)
-        if result is not None:
-            return result.named
-        return None
-
-    async def __call__(self, *args, **kwargs):
-        raise NotImplementedError
+        result = self._parser.parse(path)
+        return result.named if result is not None else None
 
 
-_R = TypeVar("_R")
-
-
-class RouteMatch(Generic[_R]):
+class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -85,30 +104,53 @@ class RouteMatch(Generic[_R]):
         self.params = params
 
 
-class BaseRouter(Generic[_R]):
+class BaseRouter(Generic[_R, _V]):
     """The base router class.
 
     # Attributes
     routes (dict):
-        A mapping of patterns to route objects.
+        A mapping of URL patterns to route objects.
     """
 
     def __init__(self):
         self.routes: Dict[str, _R] = {}
 
-    def _get_key(self, route: BaseRoute) -> str:
+    def _get_key(self, route: _R) -> str:
+        # Return the key at which `route` should be stored internally.
         raise NotImplementedError
 
-    def add_route(self, *args, **kwargs):
-        """Register a route. Not implemented."""
+    def normalize(self, view: Any) -> _V:
+        """Perform any conversion necessary to return a proper view object.
+
+        This is a no-op by default, i.e. it returns what it's given.
+        """
+        return view
+
+    def add_route(self, view: _V, pattern: str, **kwargs) -> _R:
+        """Register a route (to be implemented by concrete routers)."""
         raise NotImplementedError
 
-    def add(self, route: _R):
+    def add(self, route: _R) -> None:
         self.routes[self._get_key(route)] = route
 
-    def route(self, *args, **kwargs):
-        """Register a route by decorating a view."""
-        return partial(self.add_route, *args, **kwargs)
+    def route(self, *args, **kwargs) -> Callable[[Any], _R]:
+        """Register a route by decorating a view.
+
+        The decorated function or class will be converted to a proper view using
+        [`.normalize()`](#normalize), and then fed to
+        [`.add_route()`](#add-route).
+
+        # Parameters
+        *args, **kwargs:
+            passed to [`.add_route()`](#add-route)
+            along with the normalized view.
+        """
+
+        def decorate(view: Any) -> _R:
+            normalized_view: _V = self.normalize(view)
+            return self.add_route(normalized_view, *args, **kwargs)
+
+        return decorate
 
     def match(self, path: str) -> Optional[RouteMatch[_R]]:
         """Attempt to match an URL path against one of the registered routes.
@@ -118,8 +160,8 @@ class BaseRouter(Generic[_R]):
 
         # Returns
         match (RouteMatch or None):
-            a `RouteMatch` object if the path matched a registered route,
-            `None` otherwise.
+            a [`RouteMatch`](#routematch) object if the path matched
+            a registered route, `None` otherwise.
         """
         for route in self.routes.values():
             params = route.parse(path)
@@ -127,17 +169,14 @@ class BaseRouter(Generic[_R]):
                 return RouteMatch(route=route, params=params)
         return None
 
-    def mount(self, other: "BaseRouter[_R]", root: str = ""):
-        for route in other.routes.values():
-            route.pattern = root + route.pattern
-            self.add(route)
+
+# HTTP.
 
 
-# HTTP
-
-
-class HTTPRoute(BaseRoute):
+class HTTPRoute(BaseRoute[View]):
     """Represents the binding of an URL pattern to an HTTP view.
+
+    Subclass of [BaseRoute](#baseroute).
 
     # Parameters
     pattern (str): an URL pattern.
@@ -148,52 +187,83 @@ class HTTPRoute(BaseRoute):
     """
 
     def __init__(self, pattern: str, view: View, name: str):
-        super().__init__(pattern)
-        self.view = view
+        super().__init__(pattern, view)
         self.name = name
 
-    async def __call__(self, req: Request, res: Response, **params) -> None:
+    async def __call__(self, req: Request, res: Response, **params):
+        method: str = req.method.lower()
+
         try:
-            await self.view(req, res, **params)
+            handler: AsyncHandler = self.view.get_handler(method)
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 
+        await handler(req, res, **params)  # type: ignore
 
-class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
+
+class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
     """A router for HTTP routes.
 
-    Extends [BaseRouter](#baserouter).
+    Subclass of [BaseRouter](#baserouter).
 
     Note: routes are stored by `name` instead of `pattern`.
     """
 
     def _get_key(self, route: HTTPRoute) -> str:
+        # NOTE: this ensures that no two routes stored in this
+        # router have the same name.
         return route.name
+
+    def normalize(self, view: Any) -> View:
+        """Build a `View` object.
+
+        The input, free-form `view` object is converted using the following
+        rules:
+
+        - Classes are instanciated (without arguments) and converted with
+        [`from_obj()`][obj].
+        - Callables are converted with [`from_handler()`][handler].
+        - Any other object is interpreted as a view-like object, and converted
+        with [`from_obj()`][obj].
+
+        [handler]: ./views.md#from-handler
+        [obj]: ./views.md#from-obj
+
+        # Returns
+        view (View):
+            a `View` object, ready to be fed to [`.add_route()`](#add-route).
+        """
+
+        if isinstance(view, View):
+            return view
+
+        if inspect.isclass(view):
+            # View-like class.
+            return views.from_obj(view())
+
+        if callable(view):
+            # Function-based view.
+            # NOTE: here, we ensure backward-compatibility with the routing of
+            # function-based views pre-0.9.
+            return views.from_handler(view)
+
+        # Treat as a view-like object.
+        return views.from_obj(view)
 
     def add_route(
         self,
-        view: Union[View, Type[Any], Callable, Any],
+        view: View,
         pattern: str,
-        *,
         name: str = None,
         namespace: str = None,
+        **kwargs,
     ) -> HTTPRoute:
         """Register an HTTP route.
 
-        If the given `view` is not a `View` object, it is converted to one:
-
-        - Classes are instanciated (without arguments) and converted with
-        [from_obj].
-        - Callables are converted with [from_handler].
-        - Any other object is interpreted as a view-like object, and converted
-        with [from_obj].
-
-        [from_handler]: /api/views.md#from-handler
-        [from_obj]: /api/views.md#from-obj
-
         # Parameters
-        view (View, class, callable, or object):
-            convertible to `View` (see above).
+        view (View):
+            a `View` object. You may use [.normalize()](#normalize-2)
+            to get one from a function or class-based view before-hand.
         pattern (str): an URL pattern.
         name (str): a route name (inferred from the view if not given).
         namespace (str): an optional route namespace.
@@ -201,23 +271,6 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
         # Returns
         route (HTTPRoute): the registered route.
         """
-        if isinstance(view, View):
-            # View instance. No further conversion required.
-            pass
-        elif inspect.isclass(view):
-            # View-like class.
-            view = views.from_obj(view())
-        elif callable(view):
-            # Function-based view.
-            # NOTE: here, we ensure backward-compatibility with the routing of
-            # function-based views pre-0.9.
-            view = views.from_handler(view)
-        else:
-            # View-like object.
-            view = views.from_obj(view)
-
-        assert isinstance(view, View)
-
         if name is None:
             name = view.name
         if namespace is not None:
@@ -230,34 +283,38 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute]):
 
     async def __call__(self, req: Request, res: Response) -> Response:
         match = self.match(req.url.path)
+
         if match is None:
             raise HTTPError(status=404)
+
         try:
             await match.route(req, res, **match.params)
         except Redirection as redirection:
             res = redirection.response
+
         return res
 
 
-# WebSocket
+# WebSocket.
 
 
-class WebSocketRoute(BaseRoute):
-    """Represents the binding of an URL path to a WebSocket view.
+class WebSocketRoute(BaseRoute[WebSocketView]):
+    """Represents the binding of an URL pattern to a WebSocket view.
 
-    [WebSocket]: /api/websockets.md#websocket
+    Subclass of [BaseRoute](#baseroute).
+
+    [WebSocket]: ./websockets.md#websocket
 
     # Parameters
     pattern (str): an URL pattern.
     view (coroutine function):
-        Should take as parameter a `WebSocket` object and
+        Should take as parameters a `WebSocket` object and
         any extracted route parameters.
     kwargs (any): passed when building the [WebSocket] object.
     """
 
     def __init__(self, pattern: str, view: WebSocketView, **kwargs):
-        super().__init__(pattern)
-        self.view = view
+        super().__init__(pattern, view)
         self._ws_kwargs = kwargs
 
     async def __call__(
@@ -265,22 +322,24 @@ class WebSocketRoute(BaseRoute):
     ):
         ws = WebSocket(scope, receive=receive, send=send, **self._ws_kwargs)
         try:
-            await self.view(ws, **params)
+            await self.view(ws, **params)  # type: ignore
         except BaseException:
             await ws.ensure_closed(1011)
             raise
 
 
-class WebSocketRouter(BaseRouter[WebSocketRoute]):
+class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
     """A router for WebSocket routes.
 
-    Extends [BaseRouter](#baserouter).
+    Subclass of [BaseRouter](#baserouter).
     """
 
     def _get_key(self, route: WebSocketRoute) -> str:
         return route.pattern
 
-    def add_route(self, view: WebSocketView, pattern: str, **kwargs):
+    def add_route(
+        self, view: WebSocketView, pattern: str, **kwargs
+    ) -> WebSocketRoute:
         """Register a WebSocket route.
 
         # Parameters
@@ -329,9 +388,6 @@ class RoutingMixin:
         namespace (str):
             An optional namespace for the route. If given, it is prefixed to
             the name and separated by a colon.
-
-        # See Also
-        - [check_route](#check-route) for the route validation algorithm.
         """
         return self.http_router.route(
             pattern=pattern, name=name, namespace=namespace
@@ -366,14 +422,14 @@ class RoutingMixin:
         )
 
     def url_for(self, name: str, **kwargs) -> str:
-        """Build the URL path for a named route.
+        """Build the full URL path for a named route.
 
         # Parameters
         name (str): the name of the route.
         kwargs (dict): route parameters.
 
         # Returns
-        url (str): the URL path for a route.
+        url (str): an URL path.
 
         # Raises
         HTTPError(404) : if no route exists for the given `name`.
@@ -390,8 +446,10 @@ class RoutingMixin:
         url: str = None,
         permanent: bool = False,
         **kwargs,
-    ):
+    ) -> NoReturn:
         """Redirect to another HTTP route.
+
+        This is only meant to be used inside an HTTP view.
 
         # Parameters
         name (str): name of the route to redirect to.

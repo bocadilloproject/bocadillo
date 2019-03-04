@@ -11,7 +11,9 @@ jobs:
       language: python
       cache: pip
       python: "3.6"
-      install: pip install .
+      install:
+        - pip install ".[files]"
+        - pip install -U pytest pytest-asyncio
       script: pytest
 
     - stage: test
@@ -22,8 +24,8 @@ jobs:
       dist: xenial
       python: "3.7"
       install:
-        - pip install .
-        - pip install codecov pytest-cov
+        - pip install ".[files]"
+        - pip install -U pytest pytest-asyncio codecov pytest-cov
       script: pytest --cov=./
       after_success: codecov
 
@@ -32,8 +34,13 @@ jobs:
       before_install:
         - nvm install 8
         - nvm use 8
-      install: npm install --only=dev
-      script: npm run docs:build
+      install:
+        - pip install .
+        - pip install pydoc-markdown
+        - npm install --only=dev
+      script:
+        - pydocmd generate
+        - npm run docs:build
       deploy:
         provider: pages
         skip_cleanup: true

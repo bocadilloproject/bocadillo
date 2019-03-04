@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from typing import Callable, Dict, Union, Awaitable, Type
+from typing import Callable, cast, Dict, Union, Awaitable, Type
 
 from .compat import call_async
 from .request import Request
@@ -39,18 +39,22 @@ class Hooks:
     ):
         # Enclose args and kwargs
         async def hook_func(req: Request, res: Response, params: dict):
-            await call_async(hook, req, res, params, *args, **kwargs)
+            await call_async(  # type: ignore
+                hook, req, res, params, *args, **kwargs
+            )
 
         def decorator(handler: Union[Type[View], Handler]):
             """Attach the hook to the given handler."""
-            if inspect.isclass(handler):
-                # Handler is a view class. Apply hook to all handlers.
-                view_cls = handler
-                for method, handler in get_handlers(view_cls).items():
-                    setattr(view_cls, method, decorator(handler))
-                return view_cls
-            else:
-                return _with_hook(hook_type, hook_func, handler)
+            if not inspect.isclass(handler):
+                return _with_hook(hook_type, hook_func, cast(Handler, handler))
+
+            view_cls = cast(View, handler)
+
+            # Recursively apply hook to all handlers.
+            for method, _handler in get_handlers(view_cls).items():
+                setattr(view_cls, method, decorator(_handler))
+
+            return view_cls
 
         return decorator
 
@@ -69,19 +73,20 @@ def _with_hook(hook_type: str, func: HookFunction, handler: Handler):
     if hook_type == BEFORE:
 
         @wraps(handler)
-        async def with_hook(*args, **kwargs):
+        async def with_before_hook(*args, **kwargs):
             await call_hook(args, kwargs)
             await call_async(handler, *args, **kwargs)
 
-    else:
-        assert hook_type == AFTER
+        return with_before_hook
 
-        @wraps(handler)
-        async def with_hook(*args, **kwargs):
-            await call_async(handler, *args, **kwargs)
-            await call_hook(args, kwargs)
+    assert hook_type == AFTER
 
-    return with_hook
+    @wraps(handler)
+    async def with_after_hook(*args, **kwargs):
+        await call_async(handler, *args, **kwargs)
+        await call_hook(args, kwargs)
+
+    return with_after_hook
 
 
 # Pre-bind to module

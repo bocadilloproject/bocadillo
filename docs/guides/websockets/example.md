@@ -9,12 +9,12 @@ The server exposes:
 
 Usage:
 
-- Execute the `api.py` script: `python api.py`.
+- Execute the `app.py` script: `python app.py`.
 - Then, open a web browser at [http://localhost:8000](http://localhost:8000) to start chatting!
 
 ## Application script
 
-<<<@/docs/guides/websockets/example/api.py
+<<<@/docs/guides/websockets/example/app.py
 
 ## HTML template
 

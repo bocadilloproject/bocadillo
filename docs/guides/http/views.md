@@ -51,7 +51,7 @@ As an example, consider the following route:
 ```python
 from bocadillo import HTTPError
 
-@api.route('/fail/{status_code:d}')
+@app.route('/fail/{status_code:d}')
 def fail(req, res, status_code: int):
     raise HTTPError(status_code, detail="You asked for it!")
 ```
@@ -106,7 +106,7 @@ TL;DR: **no**.
 
 The role of the `view()` decorator is to build a class-based view out of a function-based view. This is because internally, Bocadillo only deals with class-based views.
 
-Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@api.route()`.
+Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@app.route()`.
 :::
 
 ### Synchronous views
@@ -155,6 +155,14 @@ class Index:
     async def handle(self, req, res):
         res.text = 'Post it, get it, put it, delete it.'
 ```
+
+## About type annotations
+
+You may have seen in the previous examples that we sometimes use type hints to annotate view arguments, such as the request, the response or route parameters.
+
+However, **type annotations are not used at all by Bocadillo**.
+
+Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
 
 [Routes and URL design]: routing.md
 [naming routes]: routing.md#naming-routes

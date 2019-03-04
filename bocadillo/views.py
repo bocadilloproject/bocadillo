@@ -1,12 +1,12 @@
 import inspect
 from functools import partial, wraps
-from typing import List, Union, Any, Dict
+from typing import Any, cast, Dict, List, Optional, Type, Union
 
-from .app_types import Handler
+from .app_types import AsyncHandler, Handler
 from .compat import call_async, camel_to_snake
 from .constants import ALL_HTTP_METHODS
 
-MethodsParam = Union[List[str], all]
+MethodsParam = Union[List[str], all]  # type: ignore
 
 
 class HandlerDoesNotExist(Exception):
@@ -44,50 +44,61 @@ class View:
     name (str): the name of the view.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, doc: str = None):
         self.name = name
+        if doc is not None:
+            self.__doc__ = doc
 
-    get: Handler
-    post: Handler
-    put: Handler
-    patch: Handler
-    delete: Handler
-    head: Handler
-    options: Handler
+    get: AsyncHandler
+    post: AsyncHandler
+    put: AsyncHandler
+    patch: AsyncHandler
+    delete: AsyncHandler
+    head: AsyncHandler
+    options: AsyncHandler
+    handle: AsyncHandler
 
-    @classmethod
-    def create(cls, name: str, docstring: str, handlers: dict) -> "View":
-        # Create a view object.
-        view = cls(name)
-        view.__doc__ = docstring
+    @staticmethod
+    def _to_all_async(handlers: Dict[str, Handler]) -> Dict[str, AsyncHandler]:
+        async_handlers: Dict[str, AsyncHandler] = {}
 
-        # Convert handlers to async if necessary
         for method, handler in handlers.items():
             if not inspect.iscoroutinefunction(handler):
                 handler = wraps(handler)(partial(call_async, handler))
-                handlers[method] = handler
+            async_handlers[method] = cast(AsyncHandler, handler)
 
-        # Set head handler if not given but get is given.
-        if "get" in handlers and "head" not in handlers:
-            handlers["head"] = handlers["get"]
+        return async_handlers
 
-        for method, handler in handlers.items():
-            setattr(view, method, handler)
+    @classmethod
+    def create(
+        cls: Type["View"],
+        name: str,
+        docstring: Optional[str],
+        handlers: Dict[str, Handler],
+    ) -> "View":
+        async_handlers: Dict[str, AsyncHandler] = cls._to_all_async(handlers)
 
-        return view
+        copy_get_to_head = (
+            "get" in async_handlers and "head" not in async_handlers
+        )
+        if copy_get_to_head:
+            async_handlers["head"] = async_handlers["get"]
 
-    def _get_handler(self, req):
-        if hasattr(self, "handle"):
-            return self.handle
-        return getattr(self, req.method.lower())
+        vue: View = cls(name, doc=docstring)
 
-    async def __call__(self, req, res, **kwargs):
+        for method, handler in async_handlers.items():
+            setattr(vue, method, handler)
+
+        return vue
+
+    def get_handler(self, method: str) -> AsyncHandler:
         try:
-            handler: Handler = self._get_handler(req)
-        except AttributeError as e:
-            raise HandlerDoesNotExist from e
-        else:
-            await handler(req, res, **kwargs)
+            return getattr(self, "handle")
+        except AttributeError:
+            try:
+                return getattr(self, method)
+            except AttributeError as exc:
+                raise HandlerDoesNotExist from exc
 
 
 def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
@@ -145,11 +156,17 @@ def get_handlers(obj: Any) -> Dict[str, Handler]:
     handlers (dict):
         A dict mapping an HTTP method to a handler.
     """
-    return {
-        method: getattr(obj, method)
-        for method in ("handle", *map(str.lower, ALL_HTTP_METHODS))
-        if hasattr(obj, method)
-    }
+    all_methods = map(str.lower, ALL_HTTP_METHODS)
+    try:
+        handle = obj.handle
+    except AttributeError:
+        return {
+            method: getattr(obj, method)
+            for method in all_methods
+            if hasattr(obj, method)
+        }
+    else:
+        return {method: handle for method in all_methods}
 
 
 def view(methods: MethodsParam = None):

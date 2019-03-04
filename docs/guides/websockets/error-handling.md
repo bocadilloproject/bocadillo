@@ -31,8 +31,8 @@ This exception is automatically caught (and silenced) if all these conditions ar
 In other cases, you will need to handle the exception yourself. A typical situation is expecting to receive a 1006 (Abnormal Closure) close code which may be sent by some web browsers when a user closes a page that maintains a WebSocket connection with your server.
 
 ::: tip
-You can customize which close codes are caught within the WebSocket context by passing a tuple of integers to the `caught_close_codes` parameter of `@api.websocket_route()`. The `all` Python built-in can be passed to catch all close codes. To not catch any close code, pass the empty tuple `()`.
+You can customize which close codes are caught within the WebSocket context by passing a tuple of integers to the `caught_close_codes` parameter of `@app.websocket_route()`. The `all` Python built-in can be passed to catch all close codes. To not catch any close code, pass the empty tuple `()`.
 :::
 
-[CloseEvent]: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
+[closeevent]: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
 [constants]: ../../api/constants.md

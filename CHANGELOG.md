@@ -14,6 +14,104 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- New base class for ASGI middleware: `ASGIMiddleware`.
+  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
+  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+
+### Changed
+
+- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+
+## [v0.12.3] - 2019-03-04
+
+### Fixed
+
+- Hot fix: pin Uvicorn to <0.5 while we investigate compatibility with 0.5+.
+
+## [v0.12.2] - 2019-03-01
+
+### Added
+
+- Pass extra WhiteNoise configuration attributes using `App(static_config=...)`.
+
+### Fixed
+
+- Changes to static files are now picked up in debug mode.
+
+## [v0.12.1] - 2019-02-28
+
+### Fixed
+
+- Installing from `pip` now checks that Python 3.6+ is installed.
+
+## [v0.12.0] - 2019-02-22
+
+This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
+
+This means that _there shouldn't be any breaking changes_. If you do experiment breaking changes, please report them to us!
+
+### Added
+
+- API reference for the `Response` and `Request` classes.
+- Browser-downloadable responses (a.k.a attachments) with `res.attachment`. This is a handy shortcut for setting the `Content-Disposition` header.
+- (Asynchronous) file responses with `res.file()`.
+- Generic templating with `bocadillo.templates.Templates`.
+
+### Changed
+
+- The main application class is now called `App`. `API` is still available as an alias.
+- Content types are now available on the `bocadillo.constants.CONTENT_TYPE` enum, instead of `bocadillo.media.Media`.
+- Recipes are now just apps: they expose all the parameters, attributes and methods that an `App` exposes.
+
+### Fixed
+
+- `Response.text` and `Response.html` are now proper write-only Python properties, which should be more friendly with type checkers.
+
+### Deprecated
+
+- `API` has been deprecated in favor of `App`. It will be removed in v0.13.0.
+- The `.template`, `.template_sync` and `.template_string` methods on `App` and `Recipe` have been deprecated in favor of generic templating. They will be removed in v0.13.0.
+
+### Removed
+
+- The `handle_text` media handler has been removed due to how `Response.text` and `Response.html` now work.
+
+## [v0.11.2] - 2019-02-21
+
+### Fixed
+
+- Using `await req.form()` previously required to install a third-party library, `python-multipart`, which is now bundled by default.
+
+## [v0.11.1] - 2019-02-19
+
+### Fixed
+
+- Fixed a bug that caused import errors when using Starlette < 0.11.
+
+## [v0.11.0] - 2019-02-11
+
+### Fixed
+
+- A parser for URL patterns used to be compiled on every call to a route. The parser is now compiled once and for all on startup. As a result, URL matching is slightly faster.
+
+### Changed
+
+- New colors and logo for the docs site.
+- Various documentation improvements.
+
+### Removed
+
+- **BREAKING**: Boca was moved to a separate package: [boca](https://bocadilloproject.github.io/boca/). It can be installed from PyPI using `pip install boca` and does not come installed with Bocadillo by default.
+
+## [v0.10.3] - 2019-02-02
+
+### Fixed
+
+- Better documentation about route parameters, including how to implement wildcard matching.
+- Previously, it was not possible to create a catch-all route using the pattern `{}` because a leading slash was automatically added, preventing the pattern from matching a request to the root URL `/`. This has been fixed!
+
 ## [v0.10.2] - 2019-01-27
 
 ### Added
@@ -33,7 +131,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Fixed
 
 - Fixed a bug that caused an `ImportError` when importing from
-`bocadillo.api` using `uvicorn<0.3.26`.
+  `bocadillo.api` using `uvicorn<0.3.26`.
 
 ## [v0.10.0] - 2019-01-17
 
@@ -82,7 +180,7 @@ If your application uses the features below, you are most likely affected and sh
 - Send a chunk-encoded response with `res.chunked = True`.
 - Support for request and response streaming with `async for chunk in req` and `@res.stream`.
 - View definition utilities: `from_handler()`, `from_obj()`, `@view()`.
-- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus,  passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
+- In particular, the `@view()` decorator (available as `from bocadillo import view`) accepts a `methods` argument originally used by `@api.route()` . Plus, passing the `all` built-in has the same effect as defining `.handle()` on the analogous class-based view — i.e. supporting all HTTP methods.
 - Function-based views are automatically decorated with `@view()` to ensure backwards compatibility.
 
 ```python
@@ -228,7 +326,7 @@ async def foo(req, res):
 
 ### Changed
 
-- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now *always* lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
+- Exceptions raised in `before_dispatch()` and `after_dispatch()` middleware callbacks will now _always_ lead to 500 error responses — they won't be handled by error handlers anymore, because these are registered on the `API` which middleware only wrap around. The only exception to this is, of course, `HTTPError`.
 - All routes now have an inferred `name` based on their function or class name. Explicit route naming is still possible.
 - Because of the above, names of routes in recipes now use the recipe's name as a namespace, i.e. `recipe_name:route_name` instead of `route_name`.
 - Unsafe HTTP verbs used to be supported by defaults on function-based routes. Only the safe ones, GET and HEAD, are supported by default now.
@@ -263,7 +361,7 @@ async def foo(req, res):
 
 - Route hooks via `@api.before()` and `@api.after()`.
 - Media types and media handlers: `API([media_type='application/json'])`, `api.media_type`,
-`api.media_handlers`.
+  `api.media_handlers`.
 - Support for async callbacks on `RoutingMiddleware`.
 - Documentation for the above.
 - (Development) Black auto-formatting with pre-commit.
@@ -276,10 +374,10 @@ async def foo(req, res):
 ### Fixed
 
 - Exceptions raised inside a middleware callback
-(`before_dispatch()` or `after_dispatch()`) are now properly handled by
-registered error handlers (they were previously left uncaught).
+  (`before_dispatch()` or `after_dispatch()`) are now properly handled by
+  registered error handlers (they were previously left uncaught).
 - Middleware callbacks (especially `before_dispatch()`)
-won't be called anymore if the HTTP method is not allowed.
+  won't be called anymore if the HTTP method is not allowed.
 
 ## [v0.5.0] - 2018-11-18
 
@@ -301,7 +399,7 @@ won't be called anymore if the HTTP method is not allowed.
 - Redirections using `api.redirect()`. Can be by route name, internal URL, or external URL. Make it permanent with `permanent=True`.
 - Template rendering from string using `api.template_string()`.
 - Add allowed hosts configuration through `allowed_host` argument to `API()`.
-- *Experimental* support for routing middleware through `bocadillo.RoutingMiddleware`.
+- _Experimental_ support for routing middleware through `bocadillo.RoutingMiddleware`.
 - Add CORS support with restrictive defaults. Enable using `enable_cors = True`, configure through `cors_config`.
 - Add HSTS support through `enable_hsts`.
 
@@ -376,8 +474,15 @@ won't be called anymore if the HTTP method is not allowed.
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-
-[Unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...HEAD
+[v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
+[v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
+[v0.12.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...v0.12.1
+[v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
+[v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
+[v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1
+[v0.11.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.3...v0.11.0
+[v0.10.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.2...v0.10.3
 [v0.10.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.1...v0.10.2
 [v0.10.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.10.0...v0.10.1
 [v0.10.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.9.1...v0.10.0

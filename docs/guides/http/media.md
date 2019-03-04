@@ -17,19 +17,19 @@ When setting `res.media`, Bocadillo does two things:
 
 You can configure an application's media type by:
 
-- Passing the `media_type` argument when building the `API` object:
+- Passing the `media_type` argument when building the `App` object:
 
 ```python
-import bocadillo
-api = bocadillo.API(media_type='application/json')
+from bocadillo import App
+app = App(media_type='application/json')
 ```
 
-- Setting the `media_type` attribute directly on the `API` object:
+- Setting the `media_type` attribute directly on the `App` object:
 
 ```python
-import bocadillo
-api = bocadillo.API()
-api.media_type = 'application/json'
+from bocadillo import App
+app = App()
+app.media_type = 'application/json'
 ```
 
 ::: warning
@@ -39,17 +39,13 @@ an `UnsupportedMediaType` exception is raised.
 
 ## Built-in media types
 
-| Format | `media_type` | Constant* | Handler |
-|------------|--------------|----------|---------|
-| Plain text | `text/plain` | `PLAIN_TEXT` | `str` |
-| HTML | `text/html` | `HTML` | `str` |
-| JSON | `application/json` | `JSON` | `json.dumps` |
-
-*Accessible on the `bocadillo.Media` object.
+| Format | Media type         | Handler      |
+| ------ | ------------------ | ------------ |
+| JSON   | `application/json` | `json.dumps` |
 
 ## Custom media types
 
-Bocadillo stores media handlers in the `api.media_handlers` dictionary, which maps a `media_type` to a **media handler**, i.e. a function with the following signature: `(Any) -> str`.
+Bocadillo stores media handlers in the `app.media_handlers` dictionary, which maps a `media_type` to a **media handler**, i.e. a function with the following signature: `(Any) -> str`.
 
 You can manipulate this dictionary to add, remove or replace media handlers.
 
@@ -58,17 +54,17 @@ def handle_foo(value):
     return f'foo: {value}'
 
 # Add or replace
-api.media_handlers['application/x-foo'] = handle_foo
+app.media_handlers['application/x-foo'] = handle_foo
 
 # Remove
-api.media_handlers.pop('application/json')
+app.media_handlers.pop('application/json')
 
 # Replace entirely (/!\ removes pre-existing media handlers)
-api.media_handlers = {
+app.media_handlers = {
     'application/x-foo': handle_foo,
 }
 ```
 
-For a practical example, read our [how to register extra media handlers](../../how-to/extra-media-handlers.md) guide.
+For a practical example, see [YAML media serialization](../../how-to/yaml-media.md).
 
-[MIME type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+[mime type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types

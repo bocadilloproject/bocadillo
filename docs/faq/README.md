@@ -14,7 +14,11 @@ Bocadillo would probably not exist without [Starlette][starlette] and [Uvicorn][
 [uvicorn]: https://www.uvicorn.org
 
 ::: tip MAINTAINER'S NOTE
-I have written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer). If you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read.
+I've written a blog post called [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-web-framework-and-became-an-open-source-maintainer).
+
+Some of the facts may be outdated by now, but if you're interested in the more personal story behind Bocadillo or seek tips on how to start your own open source project, I believe you'll enjoy the read.
+
+— [@FlorimondManca](https://twitter.com/FlorimondManca)
 :::
 
 ### Why "Bocadillo", and how do you pronounce it?
@@ -75,7 +79,15 @@ For example, instead of dealing with multiple types of responses (such as `Plain
 
 Lastly, without this approach we probably wouldn't have been able to implement a pleasant enough API for background tasks or streaming responses. In fact, this is true for any feature that relies on using an attribute, a method or a decorator attached to the `Response` object.
 
-## Into the wild
+### How fast is Bocadillo?
+
+Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
+
+[benchmarks]: https://github.com/bocadilloproject/benchmarks
+
+Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
+
+## Going live
 
 ### Is Bocadillo production-ready yet?
 
@@ -94,14 +106,6 @@ Other than that, a Bocadillo application can be scaled up and out as any other w
 ::: tip
 For hints on deploying Bocadillo applications, see our [Deployment](../discussions/deployment.md) guide.
 :::
-
-### How fast is Bocadillo?
-
-Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
-
-[benchmarks]: https://github.com/bocadilloproject/benchmarks
-
-Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
 
 ### Do I need to run Bocadillo behind a reverse proxy such as Nginx?
 
@@ -127,11 +131,14 @@ If you're willing to help fix the bug, detailed instructions can be found in our
 
 [contributing]: https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md
 
+::: warning
+If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
+:::
+
 ### How can I contact maintainers?
 
 If you've got anything else to tell us, you can reach out on Twitter. Our official account is [@bocadillopy].
 
 [@bocadillopy]: https://twitter.com/bocadillopy
-
 [contact-maintainers]: #how-can-i-contact-maintainers
 [github-issues]: https://github.com/bocadilloproject/bocadillo/issues/new/choose

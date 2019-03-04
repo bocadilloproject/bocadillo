@@ -7,9 +7,9 @@ Hooks allow you to call arbitrary code before and after a view is executed. They
 These decorators take a **hook function**, which is a synchronous or asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
 
 ::: tip CHANGED IN v0.9.0
-Hooks decorators are now located in a separate `hooks` module. Use `@hooks.<hook>` instead of `@api.<hook>`.
+Hooks decorators are now located in a separate `hooks` module. Use `@hooks.<hook>` instead of `@app.<hook>`.
 
-Plus, they must now be the first decorators of a view, instead of `@api.route()`.
+Plus, they must now be the first decorators of a view, instead of `@app.route()`.
 :::
 
 ## Example
@@ -26,7 +26,7 @@ async def validate_response_is_json(req, res, params):
     await sleep(1)  # for the sake of example
     assert res.headers['content-type'] == 'application/json'
 
-@api.route('/foo')
+@app.route('/foo')
 @hooks.before(validate_has_my_header)
 @hooks.after(validate_response_is_json)
 async def foo(req, res):
@@ -39,14 +39,14 @@ The ordering of decorators is important: **hooks should always be a view's first
 
 ## Hooks and reusability
 
-As a first level of reusability, you can pass extra positional or keyword arguments to `@api.before()` and `@api.after()`, and they will be handed over to the hook function:
+As a first level of reusability, you can pass extra positional or keyword arguments to `@app.before()` and `@app.after()`, and they will be handed over to the hook function:
 
 ```python
 def validate_has_header(req, res, params, header):
     if header not in req.headers:
         raise HTTPError(400)
 
-@api.route('/foo')
+@app.route('/foo')
 @hooks.before(validate_has_header, 'x-my-header')
 async def foo(req, res):
     pass
@@ -64,7 +64,7 @@ class RequestHasHeader:
         if self.header not in req.headers:
             raise HTTPError(400)
 
-@api.route('/foo')
+@app.route('/foo')
 @hooks.before(RequestHasHeader('x-my-header'))
 async def foo(req, res):
     pass
@@ -76,7 +76,7 @@ You can also use hooks on class-based views:
 def show_content_type(req, res, view, params):
     print(res.headers['content-type'])
 
-@api.route('/')
+@app.route('/')
 # applied on all method views
 @hooks.after(show_content_type)
 class Foo:

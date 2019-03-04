@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Type, Union
 import jinja2
 from starlette.responses import HTMLResponse, PlainTextResponse
 
-from .app_types import ErrorHandler, HTTPApp
+from .app_types import _E, ErrorHandler, HTTPApp
 from .compat import call_async
 from .misc import read_asset
 from .request import Request
@@ -31,7 +31,9 @@ class HTTPError(Exception):
 
     def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
-            status = HTTPStatus(status)
+            status = HTTPStatus(  # pylint: disable=no-value-for-parameter
+                status
+            )
         else:
             assert isinstance(
                 status, HTTPStatus
@@ -72,10 +74,10 @@ class ServerErrorMiddleware(HTTPApp):
         self.app = app
         self.handler = handler
         self.debug = debug
-        self.exception = None
+        self.exception: Optional[BaseException] = None
         self.jinja = jinja2.Environment()
 
-    def generate_html(self, req: Request, exc: Exception) -> str:
+    def generate_html(self, req: Request, exc: BaseException) -> str:
         template = self.jinja.from_string(read_asset(self._template_name))
         tb_exc = traceback.TracebackException.from_exception(
             exc, capture_locals=True
@@ -87,10 +89,10 @@ class ServerErrorMiddleware(HTTPApp):
             frames=tb_exc.stack,
         )
 
-    def generate_plain_text(self, exc: Exception) -> str:
+    def generate_plain_text(self, exc: BaseException) -> str:
         return "".join(traceback.format_tb(exc.__traceback__))
 
-    def debug_response(self, req: Request, exc: Exception) -> Response:
+    def debug_response(self, req: Request, exc: BaseException) -> Response:
         accept = req.headers.get("accept", "")
 
         if "text/html" in accept:
@@ -104,15 +106,17 @@ class ServerErrorMiddleware(HTTPApp):
         if self.exception is not None:
             raise self.exception from None
 
-    async def __call__(self, req: Request, res: Response):
+    async def __call__(self, req: Request, res: Response) -> Response:
         try:
             res = await self.app(req, res)
-        except Exception as exc:
+        except BaseException as exc:
             self.exception = exc
             if self.debug:
                 # In debug mode, return traceback responses.
                 res = self.debug_response(req, exc)
-            await call_async(self.handler, req, res, HTTPError(500))
+            await call_async(  # type: ignore
+                self.handler, req, res, HTTPError(500)
+            )
             return res
         else:
             return res
@@ -127,15 +131,15 @@ class HTTPErrorMiddleware(HTTPApp):
     def __init__(self, app: HTTPApp, debug: bool = False) -> None:
         self.app = app
         self.debug = debug
-        self._exception_handlers: Dict[Type[Exception], ErrorHandler] = {}
+        self._exception_handlers: Dict[Type[BaseException], ErrorHandler] = {}
 
     def add_exception_handler(
-        self, exception_class: Type[Exception], handler: ErrorHandler
+        self, exception_class: Type[_E], handler: ErrorHandler
     ) -> None:
-        assert issubclass(exception_class, Exception)
+        assert issubclass(exception_class, BaseException)
         self._exception_handlers[exception_class] = handler
 
-    def _get_exception_handler(self, exc: Exception) -> Optional[ErrorHandler]:
+    def _get_exception_handler(self, exc: _E) -> Optional[ErrorHandler]:
         for cls, handler in self._exception_handlers.items():
             if issubclass(type(exc), cls):
                 return handler
@@ -144,11 +148,11 @@ class HTTPErrorMiddleware(HTTPApp):
     async def __call__(self, req: Request, res: Response) -> Response:
         try:
             res = await self.app(req, res)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             handler = self._get_exception_handler(exc)
             if handler is None:
                 raise exc from None
-            await call_async(handler, req, res, exc)
+            await call_async(handler, req, res, exc)  # type: ignore
             return res
         else:
             return res

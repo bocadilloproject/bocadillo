@@ -1,10 +1,6 @@
 from typing import Sequence
 
-
-from .meta import DocsMeta
-from .misc import overrides
-from .routing import HTTPRoute, RoutingMixin, WebSocketRoute
-from .templates import TemplatesMixin
+from .applications import App
 
 
 class RecipeBase:
@@ -14,20 +10,20 @@ class RecipeBase:
         assert prefix.startswith("/"), "recipe prefix must start with '/'"
         self.prefix = prefix
 
-    def __call__(self, api, root: str = ""):
-        """Apply the recipe to an API object.
+    def apply(self, app: App, root: str = ""):
+        """Apply the recipe to an application.
 
         Should be implemented by subclasses.
 
         # Parameters
-        api (API): an API object.
+        app (App): an application instance.
         root (str): a root URL path.
         """
         raise NotImplementedError
 
 
-class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
-    """A grouping of capabilities that can be merged back into an API.
+class Recipe(App):
+    """A grouping of capabilities that can be merged back into an application.
 
     # Parameters
 
@@ -36,39 +32,30 @@ class Recipe(TemplatesMixin, RoutingMixin, RecipeBase, metaclass=DocsMeta):
     prefix (str):
         The path prefix where the recipe will be mounted.
         Defaults to `"/" + name`.
-    templates_dir (str):
-        See #API.
     """
 
     def __init__(self, name: str, prefix: str = None, **kwargs):
+        super().__init__(name=name, **kwargs)
+
         if prefix is None:
             prefix = f"/{name}"
-        super().__init__(prefix=prefix, **kwargs)
-        self.name = name
+        assert prefix.startswith("/"), "recipe prefix must start with '/'"
 
-    def get_template_globals(self):
-        return {"url_for": self.url_for}
+        self.prefix = prefix
+        # DEPRECATED: 0.13.0
+        self._templates_dir_given = "templates_dir" in kwargs
 
-    @overrides(RoutingMixin.route)
-    def route(self, pattern: str, **kwargs) -> HTTPRoute:
-        kwargs["namespace"] = self.name
-        return super().route(self.prefix + pattern, **kwargs)
+    def _get_own_url_for(self, name: str, **kwargs) -> str:
+        return self.prefix + super()._get_own_url_for(name, **kwargs)
 
-    @overrides(RoutingMixin.websocket_route)
-    def websocket_route(self, pattern: str, **kwargs) -> WebSocketRoute:
-        return super().websocket_route(self.prefix + pattern, **kwargs)
+    def apply(self, app: App, root: str = ""):
+        """Apply the recipe to an application."""
+        app.mount(prefix=root + self.prefix, app=self)
 
-    def __call__(self, obj, root: str = ""):
-        """Apply the recipe to an object.
-        
-        Said object must be a subclass `RoutingMixin` and `TemplateMixin`.
-        """
-        obj.http_router.mount(self.http_router, root=root)
-        obj.websocket_router.mount(self.websocket_router, root=root)
-
-        # Look for templates where the API does, if not specified
-        if self.templates_dir is None:
-            self.templates_dir = obj.templates_dir
+        # DEPRECATED: 0.13.0
+        # Look for templates where the app does, if not specified
+        if not self._templates_dir_given:
+            self.templates_dir = app.templates_dir  # type: ignore
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
@@ -92,7 +79,7 @@ class RecipeBook(RecipeBase):
         super().__init__(prefix)
         self.recipes = recipes
 
-    def __call__(self, api: RoutingMixin, root: str = ""):
-        """Apply the recipe book to an API object."""
+    def apply(self, app: App, root: str = ""):
+        """Apply the recipe book to an application."""
         for recipe in self.recipes:
-            recipe(api, root=root + self.prefix)
+            recipe.apply(app, root=root + self.prefix)
