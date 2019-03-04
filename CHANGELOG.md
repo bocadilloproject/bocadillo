@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.12.3] - 2019-03-04
+
 ### Fixed
 
 - Hot fix: pin Uvicorn to <0.5 while we investigate compatibility with 0.5+.
@@ -462,7 +464,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...HEAD
+[v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
 [v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
 [v0.12.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...v0.12.1
 [v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
