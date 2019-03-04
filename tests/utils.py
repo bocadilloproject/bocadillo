@@ -1,9 +1,7 @@
 import os
-import sys
 import time
 from contextlib import contextmanager
-from multiprocessing import Event, Process, Value
-from random import randint
+from multiprocessing import Value
 from typing import Any
 
 import requests
@@ -84,48 +82,6 @@ class Oops(Exception):
     pass
 
 
-class Server(Process):
-    # Run the API in a separate process.
-
-    def __init__(self, api, ready_timeout: int = 1, stop_timeout: int = 1):
-        super().__init__()
-        self.api = api
-        self.host = "127.0.0.1"
-        self.port = randint(3000, 9000)
-        self.ready = Event()
-        self.ready_timeout = ready_timeout
-        self.stop_timeout = stop_timeout
-
-    @property
-    def url(self) -> str:
-        return f"http://{self.host}:{self.port}"
-
-    def run(self):
-        async def callback_notify():
-            # Run periodically by the Uvicorn server.
-            self.ready.set()
-
-        self.api.run(
-            host=self.host, port=self.port, callback_notify=callback_notify
-        )
-
-    def __enter__(self):
-        self.start()
-        if not self.ready.wait(self.ready_timeout):
-            raise TimeoutError(
-                f"Live server not ready after {self.ready_timeout} seconds"
-            )
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        self.terminate()
-        self.join(self.stop_timeout)
-        if self.exitcode is None:
-            raise TimeoutError(
-                f"Live server still running after {self.stop_timeout} seconds."
-            )
-
-
 def stops_incrementing(
     counter: Value, response: requests.Response, tolerance: int = 10
 ) -> bool:
@@ -138,7 +94,7 @@ def stops_incrementing(
         A streaming response.
     tolerance (int):
         Maximum number of events the server is allowed to send after the
-        connection has been closed. Defaults to 0.
+        connection has been closed.
     """
 
     # Maximum number of events the server is allowed to send after the client
@@ -159,5 +115,5 @@ def stops_incrementing(
     sent_before_closing = wait_for_events(expect_many=True)
     response.close()
     sent_after_closing = wait_for_events() - sent_before_closing
-    assert sent_after_closing <= tolerance
+    assert sent_after_closing <= tolerance, (sent_after_closing, tolerance)
     return True

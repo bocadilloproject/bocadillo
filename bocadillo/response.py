@@ -20,11 +20,10 @@ from starlette.responses import (
 
 from .constants import CONTENT_TYPE
 from .media import MediaHandler
+from .streaming import stream_until_disconnect, Stream, StreamFunc
 
 AnyStr = Union[str, bytes]
 BackgroundFunc = Callable[..., Coroutine]
-Stream = AsyncIterable[AnyStr]
-StreamFunc = Callable[[], Stream]
 
 
 def _content_setter(content_type: str):
@@ -152,7 +151,7 @@ class Response:
         function that yields strings or bytes.
         """
         assert inspect.isasyncgenfunction(func)
-        self._stream = func()
+        self._stream = stream_until_disconnect(self.request, func())
         return func
 
     def event_stream(self, func: StreamFunc) -> StreamFunc:
