@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Hot fix: pin Uvicorn to <0.5 while we investigate compatibility with 0.5+.
+
 ## [v0.12.2] - 2019-03-01
 
 ### Added
