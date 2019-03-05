@@ -10,4 +10,4 @@ from .templates import Templates
 from .views import view
 from .websockets import WebSocket, WebSocketDisconnect
 
-__version__ = "0.12.3"
+__version__ = "0.12.4"
