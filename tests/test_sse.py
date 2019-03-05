@@ -92,5 +92,5 @@ def test_stop_on_client_disconnect(app: App, create_server):
     with create_server(app) as server:
         r = requests.get(f"{server.url}/events", stream=True)
         assert r.status_code == 200
-        assert stops_incrementing(counter=num_sent, response=r, tolerance=12)
+        assert stops_incrementing(counter=num_sent, response=r)
         assert caught.value
