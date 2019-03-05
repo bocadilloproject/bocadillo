@@ -166,7 +166,8 @@ module.exports = {
             "static-files",
             "hooks",
             "background-tasks",
-            "middleware"
+            "middleware",
+            "sse"
           ])
         },
         {

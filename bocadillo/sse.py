@@ -1,5 +1,5 @@
 from json import dumps
-from typing import Union, Optional, Any
+from typing import Any, Optional
 
 
 def _format_server_sent_event(**parts: Optional[Any]) -> str:
@@ -22,7 +22,7 @@ class server_event(str):
     id (int):
         The event ID, as defined in the SSE standard.
     name (str):
-        The event name, as defined biny the SSE standard.
+        The event name, as defined in the SSE standard.
     json (list or dict):
         A JSON-serializable value. If given, it is serialized and used as
         `data`.
@@ -35,7 +35,7 @@ class server_event(str):
         data: Optional[str] = None,
         id: Optional[int] = None,
         name: Optional[str] = None,
-        json: Optional[Union[list, dict]] = None,
+        json: Optional[Any] = None,
     ):
         if json is not None:
             data = dumps(json)
