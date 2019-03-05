@@ -435,7 +435,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self,
         host: str = None,
         port: int = None,
-        debug: bool = False,
+        debug: bool = None,
         declared_as: str = "app",
         _run: Callable = None,
         **kwargs,
@@ -454,7 +454,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             Defaults to `8000` or (if set) the value of the `$PORT` environment
             variable.
         debug (bool):
-            Whether to serve the application in debug mode. Defaults to `False`.
+            Whether to serve the application in debug mode. Defaults to `False`,
+            except if the `BOCADILLO_DEBUG` environment variable is set.
         log_level (str):
             A logging level for the debug logger. Must be a logging level
             from the `logging` module. Defaults to `"info"`.
@@ -472,10 +473,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """
-        live_server = False
-
         if _run is None:  # pragma: no cover
-            live_server = True
             _run = run
 
         if "PORT" in os.environ:
@@ -489,9 +487,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if port is None:
             port = 8000
 
-        if not debug:
-            _run(self, host=host, port=port, **kwargs)
-            return
+        if debug is None:
+            debug = os.environ.get("BOCADILLO_DEBUG", False)
 
         if debug:
             self.debug = kwargs["debug"] = True

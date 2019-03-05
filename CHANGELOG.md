@@ -17,6 +17,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Added
 
 - Add support for uvicorn 0.5.x.
+- Activate debug mode via the `BOCADILLO_DEBUG` environment variable.
 
 ### Fixed
 

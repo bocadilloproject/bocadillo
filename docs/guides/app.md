@@ -38,16 +38,18 @@ You can run an application in debug mode to enable in-browser tracebacks and hot
 Debug mode discloses sensitive information about your application runtime. We strongly recommend to disable it in production.
 :::
 
-Debug mode can be enabled:
+When running via the application script, debug mode can be enabled:
 
-- Programmatically:
+- By setting the `BOCADILLO_DEBUG` environment variable to a non-empty value.
+
+- By passing `debug=True` to `app.run`:
 
 ```python
 app.run(debug=True)
 ```
 
 ::: warning CAVEAT
-For uvicorn to be able to find the application object, you should declare it as `app` in the application script — like we do on this page.
+In debug mode, for uvicorn to be able to find the application object, you should declare it as `app` in the application script — like we do on this page.
 
 If you can't, you should tell uvicorn by passing the `declared_as` argument:
 
@@ -57,7 +59,7 @@ application.run(debug=True, declared_as="application")
 
 :::
 
-- From the command line by passing the `--debug` flag to uvicorn:
+Alternatively, you can still activate debug mode from the command line by passing the `--debug` flag to uvicorn:
 
 ```bash
 uvicorn app:app --debug
