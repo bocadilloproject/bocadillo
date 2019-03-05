@@ -1,15 +1,17 @@
 # The application class
 
 The main object you'll manipulate in Bocadillo is the `App` object, an
-ASGI-compliant application.
+ASGI-compliant application. This page will explain the basics of running and configuration an application.
 
 ## Running a Bocadillo app
 
-To run a Bocadillo app, either run the application directly:
+To run a Bocadillo app, either:
+
+- Run the application script:
 
 ```python
-# myapp.py
-from bocadillo import App
+# app.py
+import bocadillo
 
 app = App()
 
@@ -18,14 +20,49 @@ if __name__ == '__main__':
 ```
 
 ```bash
-python myapp.py
+python app.py
 ```
 
-Or give it to [uvicorn](https://www.uvicorn.org)
-(an ASGI server installed with Bocadillo):
+- Give it to [uvicorn](https://www.uvicorn.org)
+  (an ASGI server installed with Bocadillo) as `path.to.module:app_variable`:
 
 ```bash
-uvicorn myapp:app
+uvicorn app:app
+```
+
+## Debug mode
+
+You can run an application in debug mode to enable in-browser tracebacks and hot reloading.
+
+::: danger
+Debug mode discloses sensitive information about your application runtime. We strongly recommend to disable it in production.
+:::
+
+When running via the application script, debug mode can be enabled:
+
+- By setting the `BOCADILLO_DEBUG` environment variable to a non-empty value.
+
+- By passing `debug=True` to `app.run`:
+
+```python
+app.run(debug=True)
+```
+
+::: warning CAVEAT
+In debug mode, for uvicorn to be able to find the application object, you should declare it as `app` in the application script — like we do on this page.
+
+If you can't, you should tell uvicorn by passing the `declared_as` argument:
+
+```python
+application.run(debug=True, declared_as="application")
+```
+
+:::
+
+Alternatively, you can still activate debug mode from the command line by passing the `--debug` flag to uvicorn:
+
+```bash
+uvicorn app:app --debug
 ```
 
 ## Configuring host and port
@@ -47,24 +84,9 @@ app.run(host='mydomain.org', port=5045)
   container or on a cloud hosting service. If needed, you can still specify
   the `host` on `app.run()`.
 
-## Debug mode
-
-You can toggle debug mode (full display of traceback in responses + hot reload)
-by passing `debug=True` to `app.run()`:
-
-```python
-app.run(debug=True)
-```
-
-or passing the --debug flag to uvicorn:
-
-```bash
-uvicorn myapp:app --debug
-```
-
 ## Allowed hosts
 
-By default, a Bocadillo `App` can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
+By default, a Bocadillo application can run on any host. To specify which hosts are allowed, use `allowed_hosts`:
 
 ```python
 app = App(allowed_hosts=['mysite.com'])
