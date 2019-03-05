@@ -58,7 +58,7 @@ Let's break this code down:
 
 1. We import useful functions and classes, including the [server_event](/api/sse.md#server-event) helper (more on that shortly).
 2. We create an application instance and a `/temperature-feed` route.
-3. Inside the view, we define an **event stream** using the `@res.event_stream` decorator.
+3. Inside the view, we define an **event stream** using the [@res.event_stream](/api/response.md#event-stream) decorator, which sets the required HTTP headers on the response.
 4. The event stream returns an **asynchronous generator** that yields SSE messages indefinitely. In this case, message data is JSON-encoded.
 
 ## Message formatting
