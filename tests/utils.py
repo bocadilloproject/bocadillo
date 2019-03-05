@@ -83,7 +83,7 @@ class Oops(Exception):
 
 
 def stops_incrementing(
-    counter: Value, response: requests.Response, tolerance: int = 10
+    counter: Value, response: requests.Response, tolerance: int = 15
 ) -> bool:
     # Check that a counter stops incrementing after the response is closed.
 
