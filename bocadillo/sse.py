@@ -1,12 +1,22 @@
 from json import dumps
-from typing import Any, Optional
+from typing import Any, Union, Sequence, Optional
 
 
-def _format_server_sent_event(**parts: Optional[Any]) -> str:
+def _format_server_sent_event(
+    data: Union[str, Sequence] = None, **parts: Optional[Any]
+) -> str:
+    part_items = list(parts.items())
+
+    if isinstance(data, str):
+        part_items.append(("data", data))
+    elif data is not None:
+        for item in data:
+            part_items.append(("data", item))
+
     return (
         "\n".join(
             f"{name}: {value}"
-            for name, value in parts.items()
+            for name, value in part_items
             if value is not None
         )
         + "\n\n"
@@ -14,17 +24,35 @@ def _format_server_sent_event(**parts: Optional[Any]) -> str:
 
 
 class server_event(str):
-    """A string-like object that represents a Server-Sent Event.
+    """A string-like object that represents a [Server-Sent Event][sse].
+
+    [sse]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format
+
+    # Examples
+
+    ```python
+    # Empty event
+    >>> print(server_event())
+    '\n\n'
+    # Event with data
+    >>> server_event("hello, world")
+    'data: hello, world\n\n'
+    # Named event with JSON data
+    >>> server_event(name="userconnect", json={"username": "bobby"})
+    'event: userconnect\ndata: {"username": "bob"}\n\n'
+    >>>
+    ```
 
     # Parameters
-    data (str):
-        The event data line(s), as defined in the SSE standard.
-    id (int):
-        The event ID, as defined in the SSE standard.
+    data (str or sequence):
+        The event `data`. A sequence of strings can be given for
+        multi-line event data.
     name (str):
-        The event name, as defined in the SSE standard.
-    json (list or dict):
-        A JSON-serializable value. If given, it is serialized and used as
+        An optional `name` for the event.
+    id (int):
+        An optional `id` for the event.
+    json (any):
+        A JSON-serializable value which, if given, is serialized and used as
         `data`.
     """
 
@@ -32,7 +60,7 @@ class server_event(str):
 
     def __new__(
         cls,
-        data: Optional[str] = None,
+        data: Optional[Union[str, Sequence]] = None,
         id: Optional[int] = None,
         name: Optional[str] = None,
         json: Optional[Any] = None,

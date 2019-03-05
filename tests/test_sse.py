@@ -24,6 +24,7 @@ from .utils import stops_incrementing
             {"id": 1, "name": "foo", "json": {"message": "hello"}},
             ["id: 1", "event: foo", 'data: {"message": "hello"}', ""],
         ],
+        [(["hello", "world"],), {}, ["data: hello", "data: world", ""]],
     ],
 )
 def test_send_event(app: App, args: list, kwargs: dict, lines: list):
