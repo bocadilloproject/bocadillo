@@ -62,11 +62,11 @@ def test_sse_headers_are_set(app: App):
 def test_cache_control_header_not_replaced_if_manually_set(app: App):
     @app.route("/events")
     async def sse(req, res):
+        res.headers["cache-control"] = "foo"
+
         @res.event_stream
         async def generate_events():
             yield server_event("hello")
-
-        res.headers["cache-control"] = "foo"
 
     r = app.client.get("/events")
     assert r.status_code == 200

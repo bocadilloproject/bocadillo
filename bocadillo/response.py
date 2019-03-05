@@ -148,7 +148,7 @@ class Response:
         """Stream the response.
 
         The decorated function should be a no-argument asynchronous generator
-        function that yields strings or bytes.
+        function that yields chunks of the response (strings or bytes).
         """
         assert inspect.isasyncgenfunction(func)
         self._stream = stream_until_disconnect(self.request, func())
@@ -158,14 +158,15 @@ class Response:
         """Stream server-sent events.
 
         The decorated function should be a no-argument asynchronous generator
-        function that yields strings or bytes, formatted according to the
-        Server-Sent Event specification.
+        function that yields SSE messages (strings or bytes).
+        You can use the [server_event](./sse.md#server-event) helper to
+        ensure that messages are correctly formatted.
 
         This is nearly equivalent to `@stream()`. The only difference is that
         this decorator also sets SSE-specific HTTP headers:
 
         - `Cache-Control: no-cache`
-        - `Content-Type: text/event/stream`
+        - `Content-Type: text/event-stream`
         - `Connection: Keep-Alive`
 
         # See Also
