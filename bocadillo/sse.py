@@ -1,26 +1,5 @@
 from json import dumps
-from typing import Any, Union, Sequence, Optional
-
-
-def _format_server_sent_event(
-    data: Union[str, Sequence] = None, **parts: Optional[Any]
-) -> str:
-    part_items = list(parts.items())
-
-    if isinstance(data, str):
-        part_items.append(("data", data))
-    elif data is not None:
-        for item in data:
-            part_items.append(("data", item))
-
-    return (
-        "\n".join(
-            f"{name}: {value}"
-            for name, value in part_items
-            if value is not None
-        )
-        + "\n\n"
-    )
+from typing import Any, Union, Sequence
 
 
 class server_event(str):
@@ -31,16 +10,16 @@ class server_event(str):
     # Examples
 
     ```python
+    >>> from bocadillo import server_event
     # Empty event
-    >>> print(server_event())
-    '\n\n'
+    >>> server_event()
+    '\\n\\n'
     # Event with data
     >>> server_event("hello, world")
-    'data: hello, world\n\n'
+    'data: hello, world\\n\\n'
     # Named event with JSON data
     >>> server_event(name="userconnect", json={"username": "bobby"})
-    'event: userconnect\ndata: {"username": "bob"}\n\n'
-    >>>
+    'event: userconnect\\ndata: {"username": "bobby"}\\n\\n'
     ```
 
     # Parameters
@@ -56,24 +35,41 @@ class server_event(str):
         `data`.
     """
 
-    __slots__ = ("data", "id", "name")
-
     def __new__(
         cls,
-        data: Optional[Union[str, Sequence]] = None,
-        id: Optional[int] = None,
-        name: Optional[str] = None,
-        json: Optional[Any] = None,
+        data: Union[str, Sequence] = None,
+        id: int = None,
+        name: str = None,
+        json: Any = None,
     ):
         if json is not None:
             data = dumps(json)
 
-        message = _format_server_sent_event(id=id, event=name, data=data)
+        parts = [("id", id), ("event", name)]
 
-        self = super().__new__(cls, message)
+        if isinstance(data, str):
+            parts.append(("data", data))
+        elif data is not None:
+            for item in data:
+                parts.append(("data", item))
 
-        self.data = data
-        self.name = name
-        self.id = id
+        sse_message = (
+            "\n".join(
+                f"{field}: {value}"
+                for field, value in parts
+                if value is not None
+            )
+            + "\n\n"
+        )
 
-        return self
+        return super().__new__(cls, sse_message)
+
+    # For API reference docs and IDE discovery only.
+    def __init__(
+        self,
+        data: Union[str, Sequence] = None,
+        id: int = None,
+        name: str = None,
+        json: Any = None,
+    ):
+        pass
