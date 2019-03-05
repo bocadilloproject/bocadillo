@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.12.4] - 2019-03-05
+
 ### Added
 
 - Add support for uvicorn 0.5.x.
@@ -473,7 +475,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...HEAD
+[v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
 [v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
 [v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
 [v0.12.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...v0.12.1
