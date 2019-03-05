@@ -1,13 +1,13 @@
 from asyncio import Queue
 
-from bocadillo import API, server_event
+from bocadillo import App, server_event
 
-api = API()
+app = App()
 
 clients = set()
 
 
-@api.route("/events")
+@app.route("/events")
 class Events:
     async def get(self, req, res):
         client = Queue()
@@ -20,7 +20,7 @@ class Events:
             yield server_event(json=hello, name="hello")
             try:
                 while True:
-                    message = await client.get()
+                    message = client.get_nowait()
                     yield server_event(json=message, name="message")
                     print("Sent", message, "to client", id(client))
                     client.task_done()
@@ -29,16 +29,15 @@ class Events:
 
     async def post(self, req, res):
         json = await req.json()
-        print("Put:", json)
         for client in clients:
             await client.put(json)
         res.status_code = 201
 
 
-@api.route("/")
+@app.route("/")
 async def index(req, res):
-    res.html = await api.template("index.html")
+    res.html = await app.template("index.html")
 
 
 if __name__ == "__main__":
-    api.run()
+    app.run()
