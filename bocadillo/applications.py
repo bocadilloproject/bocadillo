@@ -1,4 +1,6 @@
+import inspect
 import os
+import re
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -21,7 +23,6 @@ from starlette.routing import Lifespan
 from starlette.testclient import TestClient
 from uvicorn.config import get_logger
 from uvicorn.main import run
-from uvicorn.reloaders.statreload import StatReload
 
 from .app_types import (
     _E,
@@ -43,11 +44,18 @@ from .meta import DocsMeta
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .staticfiles import static, WhiteNoise
+from .staticfiles import WhiteNoise, static
 from .templates import TemplatesMixin
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
+
+
+_SCRIPT_REGEX = re.compile(r"(.*)\.py")
+
+
+def _get_module(script_path: str) -> str:
+    return _SCRIPT_REGEX.match(script_path).group(1).replace(os.path.sep, ".")
 
 
 class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
@@ -113,6 +121,20 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         The dictionary of media handlers.
         You can access, edit or replace this at will.
     """
+
+    import_string: str
+
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+
+        # HACK: get the Python module path where this app was instanciated.
+        # This import string is passed to uvicorn in debug mode.
+        # See the `.run()` method.
+        _, *frames = inspect.stack()
+        frame = frames[0]
+        instance.import_string = _get_module(frame.filename)
+
+        return instance
 
     def __init__(
         self,
@@ -414,7 +436,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         host: str = None,
         port: int = None,
         debug: bool = False,
-        log_level: str = "info",
+        declared_as: str = "app",
         _run: Callable = None,
         **kwargs,
     ):
@@ -436,8 +458,13 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         log_level (str):
             A logging level for the debug logger. Must be a logging level
             from the `logging` module. Defaults to `"info"`.
+        declared_as (str):
+            The name under which the application is declared.
+            This is only used when `debug=True` to indicate to
+            uvicorn how to import the application object.
+            Defaults to `"app"`.
         kwargs (dict):
-            Extra keyword arguments that will be passed to the Uvicorn runner.
+            Extra keyword arguments passed to the uvicorn runner.
 
         # See Also
         - [Configuring host and port](../guides/app.md#configuring-host-and-port)
@@ -466,26 +493,19 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             _run(self, host=host, port=port, **kwargs)
             return
 
-        self.debug = True
+        if debug:
+            self.debug = kwargs["debug"] = True
 
-        # Reload static files in development.
-        # See: http://whitenoise.evans.io/en/stable/base.html#autorefresh
-        for whitenoise in self._static_apps.values():
-            whitenoise.autorefresh = True
+            # Reload static files in development.
+            # See: http://whitenoise.evans.io/en/stable/base.html#autorefresh
+            for whitenoise in self._static_apps.values():
+                whitenoise.autorefresh = True
 
-        if live_server:
-            kwargs = {
-                "app": self,
-                "host": host,
-                "port": port,
-                "log_level": log_level,
-                "debug": self.debug,
-                **kwargs,
-            }
-            reloader = StatReload(get_logger(log_level))
-            reloader.run(_run, kwargs)
+            target = f"{self.import_string}:{declared_as}"
         else:
-            _run(self, host=host, port=port, **kwargs)
+            target = self
+
+        _run(target, host=host, port=port, **kwargs)
 
 
 @deprecated(

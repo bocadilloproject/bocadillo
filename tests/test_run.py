@@ -36,9 +36,34 @@ def test_port_is_8000_by_default(app: App):
     app.run(_run=run)
 
 
-def test_if_debug_then_static_files_auto_refresh(app: App):
+def test_if_debug_then_debug_mode_activated(app: App):
     def run(app, **kwargs):
-        for static_app in app._static_apps.values():
-            assert static_app.autorefresh
+        pass
+
+    assert not app.debug
+    app.run(debug=True, _run=run)
+    assert app.debug
+
+
+def test_if_debug_then_app_given_as_import_string(app: App):
+    def run(app, **kwargs):
+        assert isinstance(app, str)
+        assert app.endswith(":app")
 
     app.run(debug=True, _run=run)
+
+
+def test_if_debug_then_static_files_auto_refresh(app: App):
+    def run(app, **kwargs):
+        pass
+
+    app.run(debug=True, _run=run)
+    for static_app in app._static_apps.values():
+        assert static_app.autorefresh
+
+
+def test_declared_as(app: App):
+    def run(app, **kwargs):
+        assert app.endswith(":application")
+
+    app.run(debug=True, declared_as="application", _run=run)

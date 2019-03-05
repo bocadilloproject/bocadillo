@@ -14,6 +14,14 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Add support for uvicorn 0.5.x.
+
+### Fixed
+
+- When launching the application script in debug mode, hot reload was activated but it did not actually reload the application in case of changes. This has been fixed. Caveat: the application should be declared as `app` in the application script, but this can be overridden via the `declared_as` parameter to `App.run`.
+
 ## [v0.12.3] - 2019-03-04
 
 ### Fixed
