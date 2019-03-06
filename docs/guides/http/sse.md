@@ -114,3 +114,34 @@ If your SSE endpoint sends events of various kinds, the client needs a way to di
 ```python
 server_event("greeting", data="Hello, SSE!")
 ```
+
+## Error handling
+
+Event streams are supposed to be long-lived, potentially infinite streams of messages. However, a client may disconnect (for example, the user closes the browser tab). This section describes how to handle such cases.
+
+### Default behavior
+
+If the event stream `yield`s a message while the client has disconnected, a `ClientDisconnect` exception is raised in the event stream generator.
+
+By default, Bocadillo will handle the exception by stopping the stream, and you don't have to do anything else.
+
+### Reacting to client disconnections
+
+For more advanced cases (i.e. to perform additional cleanup), you can pass `raise_on_disconnect=True` to the [@res.event_stream][res-event-stream] decorator, and handle client disconnections yourself:
+
+```python
+from bocadillo import App, ClientDisconnect
+
+app = App()
+
+@app.route("/temperature-feed")
+async def temperature_feed(req, res):
+    @res.event_stream(raise_on_disconnect=True)
+    async def send_temperature_data():
+        try:
+            while True:
+                ...
+        except ClientDisconnect:
+            print("Disconnecting from the temperature sensor…")
+            return
+```

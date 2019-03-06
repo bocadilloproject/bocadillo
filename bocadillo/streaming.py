@@ -7,9 +7,12 @@ Stream = AsyncIterable[AnyStr]
 StreamFunc = Callable[[], Stream]
 
 
-def stream_until_disconnect(req: Request, source: Stream) -> Stream:
+def stream_until_disconnect(
+    req: Request, source: Stream, raise_on_disconnect: bool
+) -> Stream:
     # Yield items from a stream until the client disconnects, then
-    # throw an exception into the stream.
+    # throw an exception into the stream (if told to do so).
+
     assert inspect.isasyncgen(source)
 
     async def stream():
@@ -18,14 +21,14 @@ def stream_until_disconnect(req: Request, source: Stream) -> Stream:
                 yield item
                 continue
 
-            try:
-                await source.athrow(ClientDisconnect)
-            except StopAsyncIteration:
-                # May be raised in Python 3.6 if the `source`'s error
-                # handling code did not `yield` anything.
-                break
+            if raise_on_disconnect:
+                try:
+                    await source.athrow(ClientDisconnect)
+                except StopAsyncIteration:
+                    # May be raised in Python 3.6 if the `source`'s error
+                    # handling code did not `yield` anything.
+                    break
             else:
-                # Paranoia. We really need to break out of this loop.
                 break
 
     return stream()

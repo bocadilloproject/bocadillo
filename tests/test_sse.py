@@ -1,3 +1,4 @@
+from time import sleep
 from multiprocessing import Value
 
 import pytest
@@ -75,22 +76,39 @@ def test_cache_control_header_not_replaced_if_manually_set(app: App):
 
 def test_stop_on_client_disconnect(app: App, create_server):
     num_sent = Value("i", 0)
-    caught = Value("i", 0)
 
     @app.route("/events")
     async def sse(req, res):
         @res.event_stream
         async def events():
-            nonlocal num_sent, caught
+            nonlocal num_sent
+            while True:
+                yield server_event("hello")
+                num_sent.value += 1
+
+    with create_server(app) as server:
+        r = requests.get(f"{server.url}/events", stream=True)
+        assert r.status_code == 200
+        assert stops_incrementing(counter=num_sent, response=r)
+
+
+def test_raise_client_disconnects(app: App, create_server):
+    caught = Value("i", 0)
+
+    @app.route("/events")
+    async def sse(req, res):
+        @res.event_stream(raise_on_disconnect=True)
+        async def events():
+            nonlocal caught
             try:
                 while True:
                     yield server_event("hello")
-                    num_sent.value += 1
             except ClientDisconnect:
                 caught.value = 1
 
     with create_server(app) as server:
         r = requests.get(f"{server.url}/events", stream=True)
         assert r.status_code == 200
-        assert stops_incrementing(counter=num_sent, response=r)
+        r.close()
+        sleep(0.1)
         assert caught.value
