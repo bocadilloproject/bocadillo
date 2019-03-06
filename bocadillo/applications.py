@@ -460,9 +460,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         debug (bool):
             Whether to serve the application in debug mode. Defaults to `False`,
             except if the `BOCADILLO_DEBUG` environment variable is set.
-        log_level (str):
-            A logging level for the debug logger. Must be a logging level
-            from the `logging` module. Defaults to `"info"`.
         declared_as (str):
             The name under which the application is declared.
             This is only used when `debug=True` to indicate to
