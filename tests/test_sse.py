@@ -4,8 +4,7 @@ from multiprocessing import Value
 import pytest
 import requests
 
-from bocadillo import App, server_event
-from bocadillo.request import ClientDisconnect
+from bocadillo import App, server_event, ClientDisconnect
 
 from .utils import stops_incrementing
 

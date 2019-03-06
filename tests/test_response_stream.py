@@ -5,8 +5,7 @@ from multiprocessing import Value
 import pytest
 import requests
 
-from bocadillo import App
-from bocadillo.request import ClientDisconnect
+from bocadillo import App, ClientDisconnect
 
 from .utils import stops_incrementing
 
