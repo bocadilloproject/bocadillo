@@ -1,7 +1,7 @@
 from bocadillo import App
 
 
-def test_access_sub_route(app: App):
+def test_access_sub_route(app: App, client):
     other = App()
 
     @other.route("/foo")
@@ -10,6 +10,6 @@ def test_access_sub_route(app: App):
 
     app.mount("/other", other)
 
-    r = app.client.get("/other/foo")
+    r = client.get("/other/foo")
     assert r.status_code == 200
     assert r.text == "OK"

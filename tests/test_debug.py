@@ -1,6 +1,7 @@
 import pytest
 
 from bocadillo import App
+from bocadillo.testing import create_client
 
 
 def test_false_by_default(app: App):
@@ -19,7 +20,7 @@ def test_if_not_debug_then_no_debug_info_returned(app: App):
     async def index(req, res):
         raise ValueError("Oops")
 
-    client = app.build_client(raise_server_exceptions=False)
+    client = create_client(app, raise_server_exceptions=False)
     r = client.get("/")
     assert r.status_code == 500
     assert r.text == "500 Internal Server Error"
@@ -39,7 +40,7 @@ def test_debug_response(app: App, accept: str, content_type: str):
     async def index(req, res):
         raise ValueError("Oops")
 
-    client = app.build_client(raise_server_exceptions=False)
+    client = create_client(app, raise_server_exceptions=False)
     r = client.get("/", headers={"accept": accept})
     assert r.status_code == 500
     assert r.headers["content-type"] == content_type

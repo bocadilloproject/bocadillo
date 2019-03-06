@@ -20,13 +20,13 @@ def numbers():
     return Recipe.book(integers, floats, prefix="/numbers")
 
 
-def test_recipe_book(app: App, numbers):
+def test_recipe_book(app: App, client, numbers):
     app.recipe(numbers)
 
-    response = app.client.get("/numbers/integers/3.5")
+    response = client.get("/numbers/integers/3.5")
     assert response.status_code == 200
     assert response.json() == {"value": 3}
 
-    response = app.client.get("/numbers/floats/1")
+    response = client.get("/numbers/floats/1")
     assert response.status_code == 200
     assert response.json() == {"value": 1.0}

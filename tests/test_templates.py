@@ -46,7 +46,7 @@ async def test_if_template_does_not_exist_then_not_found_raised(
         await templates.render("doesnotexist.html")
 
 
-def test_url_for(app: App, templates: Templates):
+def test_url_for(app: App, client, templates: Templates):
     @app.route("/about/{who}")
     async def about(req, res, who):
         pass
@@ -56,7 +56,7 @@ def test_url_for(app: App, templates: Templates):
         template = "{{ url_for('about', who=who) }}"
         res.html = templates.render_string(template, who="me")
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 200
     assert response.text == "/about/me"
 

@@ -4,6 +4,7 @@ import pytest
 from click.testing import CliRunner
 
 from bocadillo import App, API, Templates, Recipe
+from bocadillo.testing import create_client
 
 
 # Tests that use the `app` fixture will run once for each of these
@@ -15,6 +16,11 @@ APP_CLASSES = [App, API, lambda: Recipe("tacos")]
 def app(request):
     cls = request.param
     return cls()
+
+
+@pytest.fixture
+def client(app):
+    return create_client(app)
 
 
 @pytest.fixture

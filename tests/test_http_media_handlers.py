@@ -7,14 +7,14 @@ from bocadillo.constants import CONTENT_TYPE
 from bocadillo.media import UnsupportedMediaType
 
 
-def test_defaults_to_json(app: App):
+def test_defaults_to_json(app: App, client):
     data = {"message": "hello"}
 
     @app.route("/")
     async def index(req, res):
         res.media = data
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
     assert response.json() == data
@@ -31,7 +31,9 @@ def test_media_type_is_accessible_on_api(app: App):
 @pytest.mark.parametrize(
     "media_type, expected_text", [(CONTENT_TYPE.JSON, json.dumps)]
 )
-def test_use_builtin_media_handlers(app: App, media_type: str, expected_text):
+def test_use_builtin_media_handlers(
+    app: App, client, media_type: str, expected_text
+):
     app.media_type = media_type
     data = {"message": "hello"}
 
@@ -39,7 +41,7 @@ def test_use_builtin_media_handlers(app: App, media_type: str, expected_text):
     async def index(req, res):
         res.media = data
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 200
     assert response.headers["content-type"] == media_type
     assert response.text == expected_text(data)
@@ -55,7 +57,9 @@ def handle_foo():
     return lambda value: f"FOO: {value}"
 
 
-def test_add_and_use_custom_media_handler(app: App, foo_type, handle_foo):
+def test_add_and_use_custom_media_handler(
+    app: App, client, foo_type, handle_foo
+):
     app.media_handlers[foo_type] = handle_foo
     app.media_type = foo_type
 
@@ -63,13 +67,13 @@ def test_add_and_use_custom_media_handler(app: App, foo_type, handle_foo):
     async def index(req, res):
         res.media = "bar"
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 200
     assert response.headers["content-type"] == foo_type
     assert response.text == handle_foo("bar")
 
 
-def test_replace_media_handlers(app: App, foo_type, handle_foo):
+def test_replace_media_handlers(app: App, client, foo_type, handle_foo):
     app.media_handlers = {foo_type: handle_foo}
     app.media_type = foo_type
 
@@ -77,7 +81,7 @@ def test_replace_media_handlers(app: App, foo_type, handle_foo):
     async def index(req, res):
         res.media = "bar"
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 200
     assert response.headers["content-type"] == foo_type
     assert response.text == handle_foo("bar")

@@ -1,4 +1,5 @@
 from bocadillo import App
+from bocadillo.testing import create_client
 
 
 def test_no_allowed_origins_by_default():
@@ -8,7 +9,8 @@ def test_no_allowed_origins_by_default():
     async def index(req, res):
         pass
 
-    response = app.client.options(
+    client = create_client(app)
+    response = client.options(
         "/",
         headers={
             "origin": "foobar.com",
@@ -25,7 +27,8 @@ def test_if_origin_not_in_allow_origins_then_400():
     async def index(req, res):
         pass
 
-    response = app.client.options(
+    client = create_client(app)
+    response = client.options(
         "/",
         headers={
             "origin": "foobar.com",
@@ -34,7 +37,7 @@ def test_if_origin_not_in_allow_origins_then_400():
     )
     assert response.status_code == 200
 
-    response = app.client.options(
+    response = client.options(
         "/",
         headers={
             "origin": "example.com",
@@ -57,7 +60,8 @@ def test_if_method_not_in_allow_methods_then_400():
     async def index(req, res):
         pass
 
-    response = app.client.options(
+    client = create_client(app)
+    response = client.options(
         "/",
         headers={
             "origin": "foobar.com",

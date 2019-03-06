@@ -168,9 +168,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
 
-        # Test client
-        self.client = self.build_client()
-
         # Static files
         if static_dir is not None:
             if static_root is None:
@@ -228,9 +225,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
-
-    def build_client(self, **kwargs) -> TestClient:
-        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         # DEPRECATED: 0.13.0

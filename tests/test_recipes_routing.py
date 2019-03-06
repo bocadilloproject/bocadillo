@@ -42,7 +42,7 @@ def test_url_for():
     assert numbers.url_for("numbers:real") == "/numbers/real"
 
 
-def test_redirect(app: App):
+def test_redirect(app: App, client):
     numbers = Recipe("numbers")
 
     @numbers.route("/R")
@@ -55,6 +55,6 @@ def test_redirect(app: App):
 
     app.recipe(numbers)
 
-    response = app.client.get("/numbers/R")
+    response = client.get("/numbers/R")
     assert response.status_code == 200
     assert response.text == "inf"
