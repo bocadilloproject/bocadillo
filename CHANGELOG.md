@@ -45,6 +45,12 @@ def test_stuff(client):
     ...
 ```
 
+## [v0.12.5] - 2019-03-06
+
+### Fixed
+
+- A bug from v0.12.4 disallowed the creation of an application in a Python interpreter. This has been fixed.
+
 ## [v0.12.4] - 2019-03-05
 
 ### Added
@@ -506,7 +512,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...HEAD
+[v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
 [v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
 [v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
 [v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
