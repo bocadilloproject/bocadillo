@@ -21,7 +21,6 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
 from starlette.testclient import TestClient
-from uvicorn.config import get_logger
 from uvicorn.main import run
 
 from .app_types import (
