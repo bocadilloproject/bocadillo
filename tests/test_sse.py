@@ -12,19 +12,19 @@ from .utils import stops_incrementing
 @pytest.mark.parametrize(
     "args, kwargs, lines",
     [
-        [("hello",), {}, ["data: hello", ""]],
-        [("hello",), {"id": 1}, ["id: 1", "data: hello", ""]],
+        [(), {"data": "hello"}, ["data: hello", ""]],
+        [(), {"data": "hello", "id": 1}, ["id: 1", "data: hello", ""]],
         [
-            ("hello",),
-            {"id": 1, "name": "foo"},
+            ("foo",),
+            {"id": 1, "data": "hello"},
             ["id: 1", "event: foo", "data: hello", ""],
         ],
         [
-            (),
-            {"id": 1, "name": "foo", "json": {"message": "hello"}},
+            ("foo",),
+            {"id": 1, "json": {"message": "hello"}},
             ["id: 1", "event: foo", 'data: {"message": "hello"}', ""],
         ],
-        [(["hello", "world"],), {}, ["data: hello", "data: world", ""]],
+        [(), {"data": ["hello", "world"]}, ["data: hello", "data: world", ""]],
     ],
 )
 def test_send_event(app: App, args: list, kwargs: dict, lines: list):

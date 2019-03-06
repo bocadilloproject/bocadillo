@@ -23,24 +23,25 @@ class server_event(str):
     ```
 
     # Parameters
+    name (str):
+        An optional `name` for the event.
     data (str or sequence):
         The event `data`. A sequence of strings can be given for
         multi-line event data.
-    name (str):
-        An optional `name` for the event.
-    id (int):
-        An optional `id` for the event.
     json (any):
         A JSON-serializable value which, if given, is serialized and used as
         `data`.
+    id (int):
+        An optional `id` for the event.
     """
 
     def __new__(
         cls,
-        data: Union[str, Sequence] = None,
-        id: int = None,
         name: str = None,
+        *,
+        data: Union[str, Sequence] = None,
         json: Any = None,
+        id: int = None,
     ):
         if json is not None:
             data = dumps(json)
@@ -67,9 +68,10 @@ class server_event(str):
     # For API reference docs and IDE discovery only.
     def __init__(
         self,
-        data: Union[str, Sequence] = None,
-        id: int = None,
         name: str = None,
+        *,
+        data: Union[str, Sequence] = None,
         json: Any = None,
+        id: int = None,
     ):
         pass
