@@ -78,10 +78,6 @@ def override_env(var: str, value: str):
             os.environ[var] = initial
 
 
-class Oops(Exception):
-    pass
-
-
 def stops_incrementing(
     counter: Value, response: requests.Response, tolerance: int = 15
 ) -> bool:
