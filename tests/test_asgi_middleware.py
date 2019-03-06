@@ -1,7 +1,7 @@
 from bocadillo import App, ASGIMiddleware
 
 
-def test_asgi_middleware():
+def test_asgi_middleware(app: App, client):
     params = None
     received_app = False
     called = False
@@ -18,7 +18,6 @@ def test_asgi_middleware():
             called = True
             return super().__call__(scope)
 
-    app = App()
     app.add_asgi_middleware(Middleware, hello="world")
     assert received_app
     assert params == {"hello": "world"}
@@ -27,11 +26,11 @@ def test_asgi_middleware():
     async def index(req, res):
         pass
 
-    app.client.get("/")
+    client.get("/")
     assert called
 
 
-def test_pure_asgi_middleware():
+def test_pure_asgi_middleware(app: App, client):
     initialized = False
     called = False
 
@@ -46,7 +45,6 @@ def test_pure_asgi_middleware():
             called = True
             return self.inner(scope)
 
-    app = App()
     app.add_asgi_middleware(Middleware)
 
     assert initialized
@@ -55,5 +53,5 @@ def test_pure_asgi_middleware():
     async def index(req, res):
         pass
 
-    app.client.get("/")
+    client.get("/")
     assert called

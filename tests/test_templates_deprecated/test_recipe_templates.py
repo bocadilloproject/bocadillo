@@ -27,7 +27,7 @@ def test_if_templates_dir_given_then_it_is_used(app: App):
 
 
 def test_render_template_in_recipe_route(
-    template_file: TemplateWrapper, app: App
+    template_file: TemplateWrapper, app: App, client
 ):
     numbers = Recipe("numbers")
 
@@ -40,13 +40,13 @@ def test_render_template_in_recipe_route(
 
     app.recipe(numbers)
 
-    response = app.client.get("/numbers/")
+    response = client.get("/numbers/")
     assert response.status_code == 200
     assert response.text == template_file.rendered
 
 
 def test_render_sync_template_in_recipe_route(
-    template_file: TemplateWrapper, app: App
+    template_file: TemplateWrapper, app: App, client
 ):
     numbers = Recipe("numbers")
 
@@ -59,12 +59,12 @@ def test_render_sync_template_in_recipe_route(
 
     app.recipe(numbers)
 
-    response = app.client.get("/numbers/sync")
+    response = client.get("/numbers/sync")
     assert response.status_code == 200
     assert response.text == template_file.rendered
 
 
-def test_use_url_for(app: App):
+def test_use_url_for(app: App, client):
     foo = Recipe("foo")
 
     @foo.route("/bar")
@@ -80,6 +80,6 @@ def test_use_url_for(app: App):
 
     app.recipe(foo)
 
-    response = app.client.get("/foo/fez")
+    response = client.get("/foo/fez")
     assert response.status_code == 200
     assert response.text == '<a href="/foo/bar">To bar</a>'

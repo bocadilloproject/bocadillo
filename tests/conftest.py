@@ -1,21 +1,28 @@
-import json
 from typing import NamedTuple
 
 import pytest
 from click.testing import CliRunner
 
 from bocadillo import App, API, Templates, Recipe
+from bocadillo.testing import create_client
 
 
 # Tests that use the `app` fixture will run once for each of these
 # application classes.
 APP_CLASSES = [App, API, lambda: Recipe("tacos")]
+CLIENT_FACTORIES = [create_client, lambda app: app.client]
 
 
 @pytest.fixture(params=APP_CLASSES)
 def app(request):
     cls = request.param
     return cls()
+
+
+@pytest.fixture(params=CLIENT_FACTORIES)
+def client(app, request):
+    factory = request.param
+    return factory(app)
 
 
 @pytest.fixture

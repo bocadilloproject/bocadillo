@@ -21,7 +21,6 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
-from starlette.testclient import TestClient
 from uvicorn.main import run
 
 from .app_types import (
@@ -47,6 +46,7 @@ from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import WhiteNoise, static
 from .templates import TemplatesMixin
+from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -171,9 +171,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
 
-        # Test client
-        self.client = self.build_client()
-
         # Static files
         if static_dir is not None:
             if static_root is None:
@@ -212,6 +209,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
     @property
+    @deprecated(
+        since="0.13",
+        removal="0.14",
+        alternative=("create_client", "/api/testing.md#create-client"),
+    )
+    def client(self):
+        return create_client(self)
+
+    @property
     def debug(self) -> bool:
         return self._debug
 
@@ -231,9 +237,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
-
-    def build_client(self, **kwargs) -> TestClient:
-        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         # DEPRECATED: 0.13.0
