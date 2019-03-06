@@ -20,7 +20,6 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
-from starlette.testclient import TestClient
 from uvicorn.config import get_logger
 from uvicorn.main import run
 
@@ -47,6 +46,7 @@ from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import WhiteNoise, static
 from .templates import TemplatesMixin
+from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -204,6 +204,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(HTTPSRedirectMiddleware)
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
+
+    @property
+    @deprecated(
+        since="0.13",
+        removal="0.14",
+        alternative=("create_client", "/api/testing.md#create-client"),
+    )
+    def client(self):
+        return create_client(self)
 
     @property
     def debug(self) -> bool:
