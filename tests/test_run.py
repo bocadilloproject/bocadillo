@@ -1,11 +1,12 @@
 import os
 
 from bocadillo import App
-from tests.utils import env
+
+from .utils import override_env
 
 
 def test_if_port_env_var_is_set_then_host_is_any_and_port_is_env_var(app: App):
-    with env("PORT", "4242"):
+    with override_env("PORT", "4242"):
 
         def run(app, host, port, **kwargs):
             assert host == "0.0.0.0"
@@ -16,7 +17,7 @@ def test_if_port_env_var_is_set_then_host_is_any_and_port_is_env_var(app: App):
 
 
 def test_if_port_env_var_is_set_then_specified_host_is_used(app: App):
-    with env("PORT", "4242"):
+    with override_env("PORT", "4242"):
 
         def run(app, host, **kwargs):
             assert host == "example.com"
