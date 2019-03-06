@@ -19,10 +19,17 @@ As a result, we strongly recommend you read this document carefully before upgra
 - New base class for ASGI middleware: `ASGIMiddleware`.
   - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
   - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Server-Sent Event support:
+  - Define an event stream with `@res.event_stream`.
+  - Format SSE messages with `server_event`.
 
 ### Changed
 
 - HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+
+### Fixed
+
+- Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
 
 ## [v0.12.4] - 2019-03-05
 
