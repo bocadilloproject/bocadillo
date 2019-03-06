@@ -1,6 +1,7 @@
 import inspect
 import os
 import re
+import warnings
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -54,8 +55,11 @@ if TYPE_CHECKING:  # pragma: no cover
 _SCRIPT_REGEX = re.compile(r"(.*)\.py")
 
 
-def _get_module(script_path: str) -> str:
-    return _SCRIPT_REGEX.match(script_path).group(1).replace(os.path.sep, ".")
+def _get_module(script_path: str) -> Optional[str]:
+    match = _SCRIPT_REGEX.match(script_path)
+    if match is None:
+        return None
+    return match.group(1).replace(os.path.sep, ".")
 
 
 class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
@@ -122,7 +126,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         You can access, edit or replace this at will.
     """
 
-    import_string: str
+    import_string: Optional[str]
 
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
@@ -498,7 +502,16 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             for whitenoise in self._static_apps.values():
                 whitenoise.autorefresh = True
 
-            target = f"{self.import_string}:{declared_as}"
+            if self.import_string is None:
+                # The import string could not be inferred.
+                # We're probaby in the REPL.
+                target = self
+                warnings.warn(
+                    "Could not infer application module. "
+                    "uvicorn won't be able to hot reload on changes."
+                )
+            else:
+                target = f"{self.import_string}:{declared_as}"
         else:
             target = self
 
