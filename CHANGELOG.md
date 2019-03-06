@@ -19,10 +19,30 @@ As a result, we strongly recommend you read this document carefully before upgra
 - New base class for ASGI middleware: `ASGIMiddleware`.
   - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
   - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- The new `testing` module contains a `create_client` helper to build a test client out of an application.
 
 ### Changed
 
 - HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+
+### Deprecated
+
+- `app.client` has been deprecated in favor of the `create_client` helper, and will be removed in v0.14. For pytest users, consider building and using `client` fixture in your tests:
+
+```python
+# tests.py
+import pytest
+
+from myproject import app
+from bocadillo.testing import create_client
+
+@pytest.fixture
+def client():
+    return create_client(app)
+
+def test_stuff(client):
+    ...
+```
 
 ## [v0.12.4] - 2019-03-05
 
