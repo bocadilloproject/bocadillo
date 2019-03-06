@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- A bug from v0.12.4 disallowed the creation of an application in a Python interpreter. This has been fixed.
+
 ## [v0.12.4] - 2019-03-05
 
 ### Added
