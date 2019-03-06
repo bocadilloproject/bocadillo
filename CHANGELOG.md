@@ -20,6 +20,7 @@ As a result, we strongly recommend you read this document carefully before upgra
   - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
   - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
 - The new `testing` module contains a `create_client` helper to build a test client out of an application.
+- Add the `override_env` utility context manager, available under `bocadillo.utils`.
 
 ### Changed
 
