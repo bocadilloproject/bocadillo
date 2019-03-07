@@ -3,8 +3,7 @@ import os
 import pytest
 
 from bocadillo import App
-
-from .utils import override_env
+from bocadillo.utils import override_env
 
 
 @pytest.fixture(name="empty_run")
@@ -90,3 +89,12 @@ def test_declared_as(app: App):
         assert app_obj.endswith(":application")
 
     app.run(debug=True, declared_as="application", _run=run)
+
+
+def test_if_import_string_unknown_then_no_debug_warning_raised(app: App):
+    def run(app, **kwargs):
+        pass
+
+    app.import_string = None
+    with pytest.warns(UserWarning):
+        app.run(debug=True, _run=run)

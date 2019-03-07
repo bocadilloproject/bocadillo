@@ -3,17 +3,17 @@ import pytest
 from bocadillo import App
 
 
-def test_root_wildcard(app: App):
+def test_root_wildcard(app: App, client):
     @app.route("{}")
     async def root(req, res):
         res.text = "root"
 
-    r = app.client.get("/")
+    r = client.get("/")
     assert r.status_code == 200
     assert r.text == "root"
 
 
-def test_wildcard(app: App):
+def test_wildcard(app: App, client):
     @app.route("/foo/{}-bar")
     async def foo_bar(req, res):
         # Field has no name => not passed as a parameter to view.
@@ -21,11 +21,11 @@ def test_wildcard(app: App):
         # they must give it a name.
         pass
 
-    r = app.client.get("/foo/no-bar")
+    r = client.get("/foo/no-bar")
     assert r.status_code == 200
 
 
-def test_if_wildcard_first_then_other_routes_wont_match(app: App):
+def test_if_wildcard_first_then_other_routes_wont_match(app: App, client):
     @app.route("/foo/{}")
     async def foo_all(req, res):
         res.text = "all"
@@ -34,7 +34,7 @@ def test_if_wildcard_first_then_other_routes_wont_match(app: App):
     async def foo_bar(req, res):
         res.text = "bar"
 
-    r = app.client.get("/foo/bar")
+    r = client.get("/foo/bar")
     assert r.status_code == 200
     assert r.text == "all"
 
@@ -43,7 +43,7 @@ def test_if_wildcard_first_then_other_routes_wont_match(app: App):
     "path, text", [("/foo/bar", "bar"), ("/foo/jong", "all")]
 )
 def test_if_wildcard_last_then_matches_by_default(
-    app: App, path: str, text: str
+    app: App, client, path: str, text: str
 ):
     @app.route("/foo/bar")
     async def foo_bar(req, res):
@@ -53,6 +53,6 @@ def test_if_wildcard_last_then_matches_by_default(
     async def foo_all(req, res):
         res.text = "all"
 
-    r = app.client.get(path)
+    r = client.get(path)
     assert r.status_code == 200
     assert r.text == text

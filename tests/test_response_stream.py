@@ -10,7 +10,7 @@ from bocadillo import App, ClientDisconnect
 from .utils import stops_incrementing
 
 
-def test_stream_response(app: App):
+def test_stream_response(app: App, client):
     background_called = False
 
     @app.route("/{word}")
@@ -31,7 +31,7 @@ def test_stream_response(app: App):
             nonlocal background_called
             background_called = True
 
-    r = app.client.get("/hello")
+    r = client.get("/hello")
     assert r.text == "hello"
     assert r.headers["x-foo"] == "foo"
     assert r.status_code == 202

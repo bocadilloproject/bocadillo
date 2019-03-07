@@ -1,6 +1,7 @@
 import inspect
 import os
 import re
+import warnings
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -20,8 +21,6 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
-from starlette.testclient import TestClient
-from uvicorn.config import get_logger
 from uvicorn.main import run
 
 from .app_types import (
@@ -47,6 +46,7 @@ from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import WhiteNoise, static
 from .templates import TemplatesMixin
+from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -55,8 +55,11 @@ if TYPE_CHECKING:  # pragma: no cover
 _SCRIPT_REGEX = re.compile(r"(.*)\.py")
 
 
-def _get_module(script_path: str) -> str:
-    return _SCRIPT_REGEX.match(script_path).group(1).replace(os.path.sep, ".")
+def _get_module(script_path: str) -> Optional[str]:
+    match = _SCRIPT_REGEX.match(script_path)
+    if match is None:
+        return None
+    return match.group(1).replace(os.path.sep, ".")
 
 
 class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
@@ -123,7 +126,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         You can access, edit or replace this at will.
     """
 
-    import_string: str
+    import_string: Optional[str]
 
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
@@ -168,9 +171,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
 
-        # Test client
-        self.client = self.build_client()
-
         # Static files
         if static_dir is not None:
             if static_root is None:
@@ -209,6 +209,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
     @property
+    @deprecated(
+        since="0.13",
+        removal="0.14",
+        alternative=("create_client", "/api/testing.md#create-client"),
+    )
+    def client(self):
+        return create_client(self)
+
+    @property
     def debug(self) -> bool:
         return self._debug
 
@@ -228,9 +237,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
-
-    def build_client(self, **kwargs) -> TestClient:
-        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         # DEPRECATED: 0.13.0
@@ -458,9 +464,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         debug (bool):
             Whether to serve the application in debug mode. Defaults to `False`,
             except if the `BOCADILLO_DEBUG` environment variable is set.
-        log_level (str):
-            A logging level for the debug logger. Must be a logging level
-            from the `logging` module. Defaults to `"info"`.
         declared_as (str):
             The name under which the application is declared.
             This is only used when `debug=True` to indicate to
@@ -500,7 +503,16 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             for whitenoise in self._static_apps.values():
                 whitenoise.autorefresh = True
 
-            target = f"{self.import_string}:{declared_as}"
+            if self.import_string is None:
+                # The import string could not be inferred.
+                # We're probaby in the REPL.
+                target = self
+                warnings.warn(
+                    "Could not infer application module. "
+                    "uvicorn won't be able to hot reload on changes."
+                )
+            else:
+                target = f"{self.import_string}:{declared_as}"
         else:
             target = self
 

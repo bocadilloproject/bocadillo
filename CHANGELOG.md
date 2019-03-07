@@ -22,6 +22,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
+- The new `testing` module contains a `create_client` helper to build a test client out of an application.
+- Add the `override_env` utility context manager, available under `bocadillo.utils`.
 
 ### Changed
 
@@ -30,6 +32,31 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Fixed
 
 - Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
+
+### Deprecated
+
+- `app.client` has been deprecated in favor of the `create_client` helper, and will be removed in v0.14. For pytest users, consider building and using `client` fixture in your tests:
+
+```python
+# tests.py
+import pytest
+
+from myproject import app
+from bocadillo.testing import create_client
+
+@pytest.fixture
+def client():
+    return create_client(app)
+
+def test_stuff(client):
+    ...
+```
+
+## [v0.12.5] - 2019-03-06
+
+### Fixed
+
+- A bug from v0.12.4 disallowed the creation of an application in a Python interpreter. This has been fixed.
 
 ## [v0.12.4] - 2019-03-05
 
@@ -492,7 +519,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...HEAD
+[v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
 [v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
 [v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
 [v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2

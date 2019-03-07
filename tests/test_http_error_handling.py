@@ -8,6 +8,7 @@ from bocadillo.error_handlers import (
     error_to_media,
     error_to_text,
 )
+from bocadillo.testing import create_client
 
 
 @pytest.mark.parametrize(
@@ -26,7 +27,7 @@ from bocadillo.error_handlers import (
     ],
 )
 def test_if_http_error_is_raised_then_automatic_response_is_sent(
-    app: App, status: str
+    app: App, client, status: str
 ):
     status, phrase = status.split(" ", 1)
     status_code = int(status)
@@ -35,7 +36,7 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
     async def index(req, res):
         raise HTTPError(status_code)
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == status_code
     assert phrase in response.text
 
@@ -56,7 +57,7 @@ def test_custom_error_handler(app: App, exception_cls):
     async def index(req, res):
         raise exception_cls("foo")
 
-    client = app.build_client(raise_server_exceptions=False)
+    client = create_client(app, raise_server_exceptions=False)
 
     if exception_cls == KeyError:
         response = client.get("/")
@@ -104,14 +105,14 @@ def detail(request):
         ),
     ],
 )
-def test_builtin_handlers(app: App, detail, handler, content, expected):
+def test_builtin_handlers(app: App, client, detail, handler, content, expected):
     app.add_error_handler(HTTPError, handler)
 
     @app.route("/")
     async def index(req, res):
         raise HTTPError(403, detail=detail)
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 403
     assert content(response) == expected(detail)
 

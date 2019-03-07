@@ -1,4 +1,3 @@
-import os
 import time
 from contextlib import contextmanager
 from multiprocessing import Value
@@ -64,18 +63,6 @@ def class_hooks():
 
     assert flags["before"]
     assert flags["after"]
-
-
-@contextmanager
-def override_env(var: str, value: str):
-    initial = os.environ.get(var, None)
-    os.environ[var] = value
-    try:
-        yield
-    finally:
-        os.environ.pop(var)
-        if initial is not None:
-            os.environ[var] = initial
 
 
 def stops_incrementing(

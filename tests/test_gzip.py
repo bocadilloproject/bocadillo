@@ -1,4 +1,5 @@
 from bocadillo import App
+from bocadillo.testing import create_client
 
 
 def test_if_gzip_enabled_then_response_is_compressed():
@@ -8,6 +9,7 @@ def test_if_gzip_enabled_then_response_is_compressed():
     async def index(req, res):
         pass
 
-    response = app.client.get("/", headers={"Accept-Encoding": "gzip"})
+    client = create_client(app)
+    response = client.get("/", headers={"Accept-Encoding": "gzip"})
     assert response.status_code == 200
     assert response.headers["content-encoding"] == "gzip"
