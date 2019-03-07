@@ -3,7 +3,7 @@
 ::: tip NOTE
 Although this makes them perfect for intermediate to complex use cases, Bocadillo WebSockets are arguably low-level.
 
-To this extent, we wrote a guide on how to use the higher-level [socket.io](https://socket.io) framework: [Build a real-time application with socket.io](/how-to/socketio.md).
+To this extent, we wrote a guide on how to use the higher-level [socket.io](https://socket.io) framework in Bocadillo applications: [Build a real-time application with socket.io](/how-to/socketio.md).
 :::
 
 **WebSockets** allow a web browser and a web server to communicate in a bi-directional way via a long-held, low-latency TCP socket connection. They are typically used to build **event-driven** and **real-time** web applications that involve things like notifications, instant messaging or other real-time features.
