@@ -1,14 +1,20 @@
 # Introduction to WebSockets
 
-**WebSockets** allow a web browser and a web server to communicate in a bi-directional way via a long-held, low-latency TCP socket connection. They are typically used to build **event-driven** and **real-time** web applications that involve things like notifications, instant messaging or other real-time features.
+::: tip NOTE
+Although this makes them perfect for intermediate to complex use cases, Bocadillo WebSockets are arguably low-level.
 
-::: tip
-As an introduction to WebSockets, we recommend Dion Misic's talk [A Beginner's Guide to WebSockets](https://www.youtube.com/watch?v=PjiXkJ6P9pQ) (Pycon 2018).
+To this extent, we wrote a guide on how to use the higher-level [socket.io](https://socket.io) framework in Bocadillo applications: [Build a real-time application with socket.io](/how-to/socketio.md).
 :::
+
+**WebSockets** allow a web browser and a web server to communicate in a bi-directional way via a long-held, low-latency TCP socket connection. They are typically used to build **event-driven** and **real-time** web applications that involve things like notifications, instant messaging or other real-time features.
 
 Typically, WebSocket server applications are I/O-bound and need to deal with many concurrent client connections. This makes asynchronous programming a natural paradigm for implementing WebSocket servers.
 
 As such, Bocadillo provides an easy-to-use and friendly API for building WebSocket servers.
+
+::: tip
+As an introduction to WebSockets, we recommend Dion Misic's talk [A Beginner's Guide to WebSockets](https://www.youtube.com/watch?v=PjiXkJ6P9pQ) (Pycon 2018).
+:::
 
 ## Prerequisites
 
