@@ -36,10 +36,10 @@ tacos = Recipe('tacos', prefix='/tacos')
 Once you have a recipe, you can apply it to the `App` object.
 
 ```python{5}
-import bocadillo
+from bocadillo import App
 from tacos import tacos
 
-app = bocadillo.App()
+app = App()
 app.recipe(tacos)
 
 if __name__ == '__main__':
@@ -174,10 +174,10 @@ entities = Recipe.book(people, companies, prefix='/entities')
 Applying the `entities` book is straight-forward:
 
 ```python{5}
-import bocadillo
+from bocadillo import App
 from .entities import entities
 
-app = bocadillo.App()
+app = App()
 app.recipe(entities)
 
 if __name__ == '__main__':

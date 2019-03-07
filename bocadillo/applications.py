@@ -1,4 +1,7 @@
+import inspect
 import os
+import re
+import warnings
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -18,10 +21,7 @@ from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
-from starlette.testclient import TestClient
-from uvicorn.config import get_logger
 from uvicorn.main import run
-from uvicorn.reloaders.statreload import StatReload
 
 from .app_types import (
     _E,
@@ -40,14 +40,26 @@ from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
+from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .staticfiles import static
+from .staticfiles import WhiteNoise, static
 from .templates import TemplatesMixin
+from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
+
+
+_SCRIPT_REGEX = re.compile(r"(.*)\.py")
+
+
+def _get_module(script_path: str) -> Optional[str]:
+    match = _SCRIPT_REGEX.match(script_path)
+    if match is None:
+        return None
+    return match.group(1).replace(os.path.sep, ".")
 
 
 class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
@@ -74,6 +86,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
     static_root (str):
         The path prefix for static assets.
         Defaults to `"static"`.
+    static_config (dict):
+        Extra static files configuration attributes.
+        See also [static](./staticfiles.md#static).
     allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
         If the list contains `"*"`, any host is allowed.
@@ -111,12 +126,27 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         You can access, edit or replace this at will.
     """
 
+    import_string: Optional[str]
+
+    def __new__(cls, *args, **kwargs):
+        instance = super().__new__(cls)
+
+        # HACK: get the Python module path where this app was instanciated.
+        # This import string is passed to uvicorn in debug mode.
+        # See the `.run()` method.
+        _, *frames = inspect.stack()
+        frame = frames[0]
+        instance.import_string = _get_module(frame.filename)
+
+        return instance
+
     def __init__(
         self,
         name: str = None,
         *,
         static_dir: Optional[str] = "static",
         static_root: Optional[str] = "static",
+        static_config: dict = None,
         allowed_hosts: List[str] = None,
         enable_cors: bool = False,
         cors_config: dict = None,
@@ -139,15 +169,13 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         # Mounted (children) apps
         self._prefix_to_app: Dict[str, Any] = {}
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
-
-        # Test client
-        self.client = self.build_client()
+        self._static_apps: Dict[str, WhiteNoise] = {}
 
         # Static files
         if static_dir is not None:
             if static_root is None:
                 static_root = static_dir
-            self.mount(static_root, static(static_dir))
+            self.mount(static_root, static(static_dir, **(static_config or {})))
 
         # Media
         self.media_handlers = get_default_handlers()
@@ -181,6 +209,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
     @property
+    @deprecated(
+        since="0.13",
+        removal="0.14",
+        alternative=("create_client", "/api/testing.md#create-client"),
+    )
+    def client(self):
+        return create_client(self)
+
+    @property
     def debug(self) -> bool:
         return self._debug
 
@@ -200,9 +237,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
-
-    def build_client(self, **kwargs) -> TestClient:
-        return TestClient(self, **kwargs)
 
     def get_template_globals(self):
         # DEPRECATED: 0.13.0
@@ -254,6 +288,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if isinstance(app, App) and app.name is not None:
             self._name_to_prefix_and_app[app.name] = (prefix, app)
 
+        if isinstance(app, WhiteNoise):
+            self._static_apps[prefix] = app
+
     def recipe(self, recipe: "Recipe"):
         """Apply a recipe.
 
@@ -304,10 +341,10 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         """
         self.exception_middleware.app = middleware_cls(
-            self.exception_middleware.app, **kwargs
+            self.exception_middleware.app, app=self, **kwargs
         )
 
-    def add_asgi_middleware(self, middleware_cls, *args, **kwargs):
+    def add_asgi_middleware(self, middleware_cls, **kwargs):
         """Register an ASGI middleware class.
 
         # Parameters
@@ -318,6 +355,7 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
+        args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
     def on(self, event: str, handler: Optional[EventHandler] = None):
@@ -362,9 +400,9 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        response = await self.server_error_middleware(req, res)
+        res: Response = await self.server_error_middleware(req, res)
 
-        await response(receive, send)
+        await res(receive, send)
 
         # Re-raise the exception to allow the server to log the error
         # and for the test client to optionally re-raise it too.
@@ -405,8 +443,8 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         self,
         host: str = None,
         port: int = None,
-        debug: bool = False,
-        log_level: str = "info",
+        debug: bool = None,
+        declared_as: str = "app",
         _run: Callable = None,
         **kwargs,
     ):
@@ -424,12 +462,15 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             Defaults to `8000` or (if set) the value of the `$PORT` environment
             variable.
         debug (bool):
-            Whether to serve the application in debug mode. Defaults to `False`.
-        log_level (str):
-            A logging level for the debug logger. Must be a logging level
-            from the `logging` module. Defaults to `"info"`.
+            Whether to serve the application in debug mode. Defaults to `False`,
+            except if the `BOCADILLO_DEBUG` environment variable is set.
+        declared_as (str):
+            The name under which the application is declared.
+            This is only used when `debug=True` to indicate to
+            uvicorn how to import the application object.
+            Defaults to `"app"`.
         kwargs (dict):
-            Extra keyword arguments that will be passed to the Uvicorn runner.
+            Extra keyword arguments passed to the uvicorn runner.
 
         # See Also
         - [Configuring host and port](../guides/app.md#configuring-host-and-port)
@@ -451,20 +492,31 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if port is None:
             port = 8000
 
+        if debug is None:
+            debug = os.environ.get("BOCADILLO_DEBUG", False)
+
         if debug:
-            self.debug = True
-            reloader = StatReload(get_logger(log_level))
-            kwargs = {
-                "app": self,
-                "host": host,
-                "port": port,
-                "log_level": log_level,
-                "debug": self.debug,
-                **kwargs,
-            }
-            reloader.run(run, kwargs)
+            self.debug = kwargs["debug"] = True
+
+            # Reload static files in development.
+            # See: http://whitenoise.evans.io/en/stable/base.html#autorefresh
+            for whitenoise in self._static_apps.values():
+                whitenoise.autorefresh = True
+
+            if self.import_string is None:
+                # The import string could not be inferred.
+                # We're probaby in the REPL.
+                target = self
+                warnings.warn(
+                    "Could not infer application module. "
+                    "uvicorn won't be able to hot reload on changes."
+                )
+            else:
+                target = f"{self.import_string}:{declared_as}"
         else:
-            _run(self, host=host, port=port, **kwargs)
+            target = self
+
+        _run(target, host=host, port=port, **kwargs)
 
 
 @deprecated(

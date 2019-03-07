@@ -7,15 +7,27 @@ from bocadillo import App, Middleware, HTTPError
 
 
 @contextmanager
-def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
+def build_middleware(
+    expect_kwargs=None, sync=False, expect_call_after=True, old_style=False
+):
     called = {"before": False, "after": False}
     kwargs = None
 
     class SetCalled(Middleware):
-        def __init__(self, app, **kw):
-            nonlocal kwargs
-            kwargs = kw
-            super().__init__(app, **kw)
+        if old_style:
+
+            def __init__(self, inner, app: App, **kw):
+                super().__init__(inner, app, **kw)
+                nonlocal kwargs
+                kwargs = kw
+                assert isinstance(app, App)
+
+        else:
+
+            def __init__(self, inner, **kw):
+                super().__init__(inner, **kw)
+                nonlocal kwargs
+                kwargs = kw
 
         if sync:
 
@@ -43,11 +55,13 @@ def build_middleware(expect_kwargs=None, sync=False, expect_call_after=True):
 
     assert called["before"] is True
     assert called["after"] is expect_call_after
+
     if expect_kwargs is not None:
+        kwargs.pop("app", None)  # old-style compatibility
         assert kwargs == expect_kwargs
 
 
-def test_if_middleware_is_added_then_it_is_called(app: App):
+def test_if_middleware_is_added_then_it_is_called(app: App, client):
     with build_middleware() as middleware:
         app.add_middleware(middleware)
 
@@ -55,10 +69,21 @@ def test_if_middleware_is_added_then_it_is_called(app: App):
         async def index(req, res):
             pass
 
-        app.client.get("/")
+        client.get("/")
 
 
-def test_can_pass_extra_kwargs(app: App):
+def test_old_style_middleware(app: App, client):
+    with build_middleware(old_style=True) as middleware:
+        app.add_middleware(middleware)
+
+        @app.route("/")
+        async def index(req, res):
+            pass
+
+        client.get("/")
+
+
+def test_can_pass_extra_kwargs(app: App, client):
     kwargs = {"foo": "bar"}
     with build_middleware(expect_kwargs=kwargs) as middleware:
         app.add_middleware(middleware, **kwargs)
@@ -67,10 +92,10 @@ def test_can_pass_extra_kwargs(app: App):
         async def index(req, res):
             pass
 
-        app.client.get("/")
+        client.get("/")
 
 
-def test_only_before_dispatch_is_called_if_method_not_allowed(app: App):
+def test_only_before_dispatch_is_called_if_method_not_allowed(app: App, client):
     with build_middleware(expect_call_after=False) as middleware:
         app.add_middleware(middleware)
 
@@ -78,11 +103,11 @@ def test_only_before_dispatch_is_called_if_method_not_allowed(app: App):
         async def index(req, res):
             pass
 
-        response = app.client.put("/")
+        response = client.put("/")
         assert response.status_code == 405
 
 
-def test_callbacks_can_be_sync(app: App):
+def test_callbacks_can_be_sync(app: App, client):
     with build_middleware(sync=True) as middleware:
         app.add_middleware(middleware)
 
@@ -90,12 +115,12 @@ def test_callbacks_can_be_sync(app: App):
         async def index(req, res):
             pass
 
-        response = app.client.get("/")
+        response = client.get("/")
         assert response.status_code == 200
 
 
 @pytest.mark.parametrize("when", ["before", "after"])
-def test_errors_raised_in_callback_are_handled(app: App, when):
+def test_errors_raised_in_callback_are_handled(app: App, client, when):
     class CustomError(Exception):
         pass
 
@@ -118,13 +143,12 @@ def test_errors_raised_in_callback_are_handled(app: App, when):
     async def index(req, res):
         pass
 
-    client = app.build_client(raise_server_exceptions=False)
     r = client.get("/")
     assert r.status_code == 200
     assert r.text == "gotcha!"
 
 
-def test_middleware_uses_registered_http_error_handler(app: App):
+def test_middleware_uses_registered_http_error_handler(app: App, client):
     @app.error_handler(HTTPError)
     def custom(req, res, exc: HTTPError):
         res.status_code = exc.status_code
@@ -140,12 +164,12 @@ def test_middleware_uses_registered_http_error_handler(app: App):
     async def index(req, res):
         pass
 
-    response = app.client.get("/")
+    response = client.get("/")
     assert response.status_code == 401
     assert response.text == "Foo"
 
 
-def test_return_response_in_before_hook(app: App):
+def test_return_response_in_before_hook(app: App, client):
     class NopeMiddleware(Middleware):
         async def before_dispatch(self, req, res):
             res.text = "Foo"
@@ -158,6 +182,6 @@ def test_return_response_in_before_hook(app: App):
         # Should not be called
         assert False
 
-    r = app.client.get("/")
+    r = client.get("/")
     assert r.status_code == 200
     assert r.text == "Foo"

@@ -6,6 +6,4 @@ Guides provide a high-level overview of key topics and concepts, as well as usef
 
 If you're willing to get to know what Bocadillo has to offer, this is the place!
 
-Start with [The application class] or any of the other items in the sidebar.
-
-[The application class]: ./app.md
+Start with [Applications](./app.md) or any other item in the sidebar.

@@ -23,6 +23,7 @@ generate:
   - middleware.md:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
+          - bocadillo.middleware.ASGIMiddleware+
   - recipes.md:
       - bocadillo.recipes:
           - bocadillo.recipes.RecipeBase+
@@ -38,10 +39,16 @@ generate:
           - bocadillo.response.Response+
   - staticfiles.md:
       - bocadillo.staticfiles+
+  - sse.md:
+      - bocadillo.sse+
   - templates.md:
       - bocadillo.templates:
           - bocadillo.templates.Templates+
           - bocadillo.templates.TemplatesMixin+
+  - testing.md:
+      - bocadillo.testing+
+  - utils.md:
+      - bocadillo.utils+
   - views.md:
       - bocadillo.views++
   - websockets.md:

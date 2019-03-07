@@ -1,7 +1,7 @@
 from bocadillo import App
 
 
-def test_startup_and_shutdown(app: App):
+def test_startup_and_shutdown(app: App, client):
     message = None
 
     @app.on("startup")
@@ -20,14 +20,14 @@ def test_startup_and_shutdown(app: App):
 
     # The Starlette TestClient calls startup and shutdown events when
     # used as a context manager.
-    with app.client:
+    with client:
         assert message == "hi"
-        response = app.client.get("/")
+        response = client.get("/")
         assert response.text == "hi"
     assert message is None
 
 
-def test_sync_handler(app: App):
+def test_sync_handler(app: App, client):
     message = None
 
     @app.on("startup")
@@ -35,11 +35,11 @@ def test_sync_handler(app: App):
         nonlocal message
         message = "hi"
 
-    with app.client:
+    with client:
         assert message == "hi"
 
 
-def test_non_decorator_syntax(app: App):
+def test_non_decorator_syntax(app: App, client):
     message = None
 
     async def setup():
@@ -48,5 +48,5 @@ def test_non_decorator_syntax(app: App):
 
     app.on("startup", setup)
 
-    with app.client:
+    with client:
         assert message == "hi"

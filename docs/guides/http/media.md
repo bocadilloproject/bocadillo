@@ -20,15 +20,15 @@ You can configure an application's media type by:
 - Passing the `media_type` argument when building the `App` object:
 
 ```python
-import bocadillo
-app = bocadillo.App(media_type='application/json')
+from bocadillo import App
+app = App(media_type='application/json')
 ```
 
 - Setting the `media_type` attribute directly on the `App` object:
 
 ```python
-import bocadillo
-app = bocadillo.App()
+from bocadillo import App
+app = App()
 app.media_type = 'application/json'
 ```
 

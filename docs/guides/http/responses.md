@@ -80,11 +80,13 @@ res.headers['cache-control'] = 'no-cache'
 
 Similar to [request streaming](./requests.md#streaming), response content can be streamed to prevent loading the full (and potentially large) response body into memory. An example use case may be sending the results of a massive database query over the wire.
 
+### Basic usage
+
 A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][media] streaming is not supported).
 
 [async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
 
-```python{7,8,9,10}
+```python
 from bocadillo import App
 
 app = App()
@@ -100,6 +102,28 @@ async def number_range(req, res, n):
 ::: warning
 A stream response is not chunk-encoded by default, which means that clients will still receive the response in one piece. To send the response in chunks, see [Chunked responses](#chunked-responses).
 :::
+
+### Handling client disconnections
+
+By default, if the client disconnects and we `yield` another chunk, then the stream is stopped and no further action is taken.
+
+If you need to react to client disconnections (e.g. to perform extra cleanup), you can pass `raise_on_disconnect=True` to `@res.stream` and handle the `ClientDisconnect` exception:
+
+```python
+from bocadillo import App, ClientDisconnect
+
+app = App()
+
+@app.route("/range/{n}")
+async def number_range(req, res, n):
+    @res.stream(raise_on_disconnect=True)
+    async def large_response():
+        try
+            for num in range(n):
+                yield str(num)
+        except ClientDisconnect:
+            print("Cleaning up numbers…")
+```
 
 ## Chunked responses
 
@@ -117,7 +141,7 @@ res.headers["transfer-encoding"] = "chunked"
 
 [transfer-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
 
-## Attachments
+## Attachments <Badge text="0.12+"/>
 
 If you want to tell the client's browser that the response should be downloaded and saved locally into a file, set `res.attachment` and the [Content-Disposition] header will be set for you.
 
@@ -134,7 +158,7 @@ async def send_hello(req, res):
 The above example will _not_ perform any I/O nor try to read the `"hello.txt"` file. All it will do is set the `Content-Disposition` header to `attachment; filename='hello.txt'`.
 :::
 
-## File responses
+## File responses <Badge text="0.12+"/>
 
 ::: warning REQUIREMENTS
 This feature requires that you install Bocadillo with the `files` extra, e.g.

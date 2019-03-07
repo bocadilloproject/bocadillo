@@ -4,14 +4,16 @@
 
 ---
 
-[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=)][python-url]
+[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=)](https://www.python.org)
 [![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
-[![downloads](https://pepy.tech/badge/bocadillo)][pepy-url]
-[![travis](https://img.shields.io/travis/bocadilloproject/bocadillo.svg)][travis-url]
-[![black](https://img.shields.io/badge/code_style-black-000000.svg)][black]
-[![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)][codecov]
+[![downloads](https://pepy.tech/badge/bocadillo)](https://pepy.tech/project/bocadillo)
+[![travis](https://img.shields.io/travis/bocadilloproject/bocadillo.svg)](https://travis-ci.org/bocadilloproject/bocadillo)
+[![black](https://img.shields.io/badge/code_style-black-000000.svg)](https://github.com/ambv/black)
+[![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)](https://codecov.io/gh/bocadilloproject/bocadillo)
 [![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
-[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)][gitter-url]
+[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)](https://gitter.im/bocadilloproject/bocadillo)
+
+[pypi-url]: https://pypi.org/project/bocadillo/
 
 # Bocadillo
 
@@ -20,6 +22,8 @@ Bocadillo is a Python web framework that provides a sane toolkit for quickly bui
 Under the hood, it uses the [Starlette](https://www.starlette.io) ASGI toolkit and the lightning-fast [uvicorn](https://www.uvicorn.org) ASGI server.
 
 [Read the documentation][docs]
+
+[docs]: https://bocadilloproject.github.io
 
 ## Quick start
 
@@ -66,36 +70,26 @@ curl http://localhost:8000/greet/Bocadillo
 
 Hungry for more? Head to the [docs].
 
-## Contributing
-
-See [CONTRIBUTING](https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md) for contribution guidelines.
-
 ## Changelog
 
-See [CHANGELOG](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md) for a chronological log of changes to Bocadillo.
+Changes made to Bocadillo across releases are recorded in the [Changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). Be sure to check it out to see where we're coming from!
 
 ## Roadmap
 
-For a list of short, mid and long-term feature ideas currently in our scope, see the [Roadmap][roadmap].
+For a list of short, mid and long-term feature ideas currently in our scope, see the [Roadmap](https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md).
 
-To see what has already been implemented for the next release, see the [Unreleased][changelog-unreleased] section of our changelog.
+To see what has already been implemented for the next release, see the [Unreleased section of the changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased).
+
+## Contributing
+
+Found a bug? A typo? Want to build a new feature? We'd love to see your contributions! There are also many ways to contribute that don't include code: helping with issues, laying out new ideas, improving docs, etc.
+
+Check out our [Contributing guide](https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md) for more information.
+
+By the way, here's our Contributor Hall of Fame:
+
+[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/0)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/0)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/1)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/1)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/2)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/2)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/3)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/3)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/4)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/4)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/5)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/5)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/6)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/6)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/7)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/7)
 
 ## Credits
 
-Logo:
-
-- Designed by Florimond Manca.
-- Sandwich icon designed by [macrovector](http://macrovector.com).
-
-<!-- URLs -->
-
-[python-url]: https://www.python.org
-[travis-url]: https://travis-ci.org/bocadilloproject/bocadillo
-[pepy-url]: https://pepy.tech/project/bocadillo
-[pypi-url]: https://pypi.org/project/bocadillo/
-[docs]: https://bocadilloproject.github.io
-[black]: https://github.com/ambv/black
-[codecov]: https://codecov.io/gh/bocadilloproject/bocadillo
-[gitter-url]: https://gitter.im/bocadilloproject/bocadillo
-[roadmap]: https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md
-[changelog-unreleased]: https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased
+Logo designed by Florimond Manca. Sandwich icon designed by [macrovector](http://macrovector.com).

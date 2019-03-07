@@ -1,30 +1,19 @@
-import inspect
+from functools import partial
 from os.path import basename
-from typing import (
-    Any,
-    AsyncIterable,
-    Callable,
-    Coroutine,
-    Dict,
-    Optional,
-    Union,
-)
+from typing import Any, Callable, Coroutine, Dict, Optional, Union
 
 from starlette.background import BackgroundTask
 from starlette.requests import Request
-from starlette.responses import (
-    Response as _Response,
-    StreamingResponse as _StreamingResponse,
-    FileResponse as _FileResponse,
-)
+from starlette.responses import FileResponse as _FileResponse
+from starlette.responses import Response as _Response
+from starlette.responses import StreamingResponse as _StreamingResponse
 
 from .constants import CONTENT_TYPE
 from .media import MediaHandler
+from .streaming import Stream, StreamFunc, stream_until_disconnect
 
 AnyStr = Union[str, bytes]
 BackgroundFunc = Callable[..., Coroutine]
-Stream = AsyncIterable[AnyStr]
-StreamFunc = Callable[[], Stream]
 
 
 def _content_setter(content_type: str):
@@ -145,15 +134,53 @@ class Response:
             return BackgroundTask(self._background)
         return None
 
-    def stream(self, func: StreamFunc) -> StreamFunc:
+    def stream(
+        self, func: StreamFunc = None, raise_on_disconnect: bool = False
+    ) -> StreamFunc:
         """Stream the response.
 
-        Should be used to decorate a no-argument asynchronous generator
-        function.
+        The decorated function should be a no-argument asynchronous generator
+        function that yields chunks of the response (strings or bytes).
+
+        If `raise_on_disconnect` is `True`,  a `ClientDisconnect` exception
+        is raised in the generator when it `yield`s a chunk but the client
+        has disconnected. Otherwise, the exception is handled and the stream
+        stops.
         """
-        assert inspect.isasyncgenfunction(func)
-        self._stream = func()
+        if func is None:
+            return partial(self.stream, raise_on_disconnect=raise_on_disconnect)
+
+        self._stream = stream_until_disconnect(
+            self.request, func(), raise_on_disconnect=raise_on_disconnect
+        )
+
         return func
+
+    def event_stream(self, func: StreamFunc = None, **kwargs) -> StreamFunc:
+        """Stream server-sent events.
+
+        The decorated function should be a no-argument asynchronous generator
+        function that yields SSE messages (strings or bytes).
+        You can use the [server_event](./sse.md#server-event) helper to
+        ensure that messages are correctly formatted.
+
+        This is nearly equivalent to `@stream()`. The only difference is that
+        this decorator also sets SSE-specific HTTP headers:
+
+        - `Cache-Control: no-cache`
+        - `Content-Type: text/event-stream`
+        - `Connection: Keep-Alive`
+
+        # See Also
+        - [Using server-sent events (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)
+        """
+        self.headers = {
+            "cache-control": "no-cache",
+            **self.headers,
+            "content-type": "text/event-stream",
+            "connection": "keep-alive",
+        }
+        return self.stream(func, **kwargs)
 
     async def __call__(self, receive, send):
         """Build and send the response."""

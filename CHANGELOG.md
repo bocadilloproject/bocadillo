@@ -14,6 +14,83 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- New base class for ASGI middleware: `ASGIMiddleware`.
+  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
+  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Server-Sent Event support:
+  - Define an event stream with `@res.event_stream`.
+  - Format SSE messages with `server_event`.
+- The new `testing` module contains a `create_client` helper to build a test client out of an application.
+- Add the `override_env` utility context manager, available under `bocadillo.utils`.
+
+### Changed
+
+- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+
+### Fixed
+
+- Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
+
+### Deprecated
+
+- `app.client` has been deprecated in favor of the `create_client` helper, and will be removed in v0.14. For pytest users, consider building and using `client` fixture in your tests:
+
+```python
+# tests.py
+import pytest
+
+from myproject import app
+from bocadillo.testing import create_client
+
+@pytest.fixture
+def client():
+    return create_client(app)
+
+def test_stuff(client):
+    ...
+```
+
+## [v0.12.5] - 2019-03-06
+
+### Fixed
+
+- A bug from v0.12.4 disallowed the creation of an application in a Python interpreter. This has been fixed.
+
+## [v0.12.4] - 2019-03-05
+
+### Added
+
+- Add support for uvicorn 0.5.x.
+- Activate debug mode via the `BOCADILLO_DEBUG` environment variable.
+
+### Fixed
+
+- When launching the application script in debug mode, hot reload was activated but it did not actually reload the application in case of changes. This has been fixed. Caveat: the application should be declared as `app` in the application script, but this can be overridden via the `declared_as` parameter to `App.run`.
+
+## [v0.12.3] - 2019-03-04
+
+### Fixed
+
+- Hot fix: pin Uvicorn to <0.5 while we investigate compatibility with 0.5+.
+
+## [v0.12.2] - 2019-03-01
+
+### Added
+
+- Pass extra WhiteNoise configuration attributes using `App(static_config=...)`.
+
+### Fixed
+
+- Changes to static files are now picked up in debug mode.
+
+## [v0.12.1] - 2019-02-28
+
+### Fixed
+
+- Installing from `pip` now checks that Python 3.6+ is installed.
+
 ## [v0.12.0] - 2019-02-22
 
 This release contains replacements for important features (`API`, app-level template rendering). Their old usage has been deprecated but is still available until the next minor release.
@@ -442,7 +519,12 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...HEAD
+[v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
+[v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
+[v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
+[v0.12.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.1...v0.12.2
+[v0.12.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.0...v0.12.1
 [v0.12.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.2...v0.12.0
 [v0.11.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.1...v0.11.2
 [v0.11.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.11.0...v0.11.1

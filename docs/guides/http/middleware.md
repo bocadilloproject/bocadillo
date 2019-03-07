@@ -8,56 +8,52 @@ The HTTP middleware framework is a lightweight system to plug into the processin
 
 ## How middleware is applied
 
-HTTP middleware is applied in a stack-like manner. A middleware is given the request from the middleware above it, processes it (`before_dispatch()` hook), gets a response from the middleware beneath it, processes it too (`after_dispatch()` hook) and returns it (i.e. to the middleware above).
+When a middleware class is registered, it **wraps** the already registered middleware.
 
-Because of this, middleware classes effectively chain the responsibility of dispatching the request down to the router of the application object, resulting in a chain of callbacks illustrated below.
+Because of this, it is convenient to think of middleware as being organized in **layers**, and we'll refer to **outer middleware** and **inner middleware**.
 
-```
-M1.before_dispatch(req)
-    M2.before_dispatch(req)
+What this means is that middleware classes effectively chain the responsibility of dispatching the request down to the router of the application, resulting in a chain of callbacks illustrated below:
+
+```python
+await M1.before_dispatch(req, res)
+    await M2.before_dispatch(req, res)
         ...
-            Mn.before_dispatch(req)
-                res = app.dispatch(req)
-            Mn.after_dispatch(req, res)
+            await Mn.before_dispatch(req, res)
+                await http_router(req, res)
+            await Mn.after_dispatch(req, res)
         ...
-    M2.after_dispatch(res)
-M1.after_dispatch(res)
+    await M2.after_dispatch(req, res)
+await M1.after_dispatch(req, res)
 ```
+
+So, when processing an incoming HTTP request, HTTP middleware is applied in a stack-like manner.
+
+More specifically, each middleware:
+
+1. Is given the `Request` and `Response` from its _outer_ middleware.
+2. Processes them if needed (`.before_dispatch()` hook).
+3. Gets a `Response` from its _inner_ middleware (a.k.a delegation).
+4. Processes it if needed (`.after_dispatch()` hook).
+5. Returns it to its _outer_ middleware.
+
+## Default middleware
+
+Two HTTP middleware are registered on every application:
+
+- [`HTTPErrorMiddleware`](../../api/errors.md#httperrormiddleware) is responsible for calling a suitable [error handler](./error-handling.md) when an exception, if it can.
+- [`ServerErrorMiddleware`](../../api/errors.md#servererrormiddleware) is responsible for catching unhandled exceptions and returning 500 errors when one occurs.
 
 ## Using middleware
 
-HTTP middleware takes the form of middleware classes that subclass the `bocadillo.Middleware` class.
-
-You can register an HTTP middleware class with `app.add_middleware()`:
+When given a midleware class, you can register it on an application using `app.add_middleware()`:
 
 ```python
 app.add_middleware(SomeHTTPMiddleware, foo='bar')
 ```
 
-All keyword arguments passed to `add_middleware()` will be passed to the middleware constructor upon startup.
+All keyword arguments passed to `app.add_middleware()` will be passed to the middleware constructor upon startup.
 
-::: tip NOTE
-Registering a middleware effectively **wraps** it around the application and the already registered middleware.
-
-In practice, this means that the following registration:
-
-```python
-app.add_middleware(M1)
-app.add_middleware(M2)
-```
-
-will result in the following processing chain:
-
-```
-M2.before_dispatch(req)
-    M1.before_dispatch(req)
-        res = app.dispatch(req)
-    M1.after_dispatch(res)
-M2.after_dispatch(res)
-```
-
-Most of the times, though, this should not matter — middleware should be designed to be as independent form one another as possible.
-:::
+## Writing middleware
 
 If you're interested in writing your own HTTP middleware, see our [Writing middleware] how-to guide.
 
