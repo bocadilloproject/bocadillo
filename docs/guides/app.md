@@ -1,15 +1,17 @@
 # Applications
 
-The main object you'll manipulate in Bocadillo is the `App` object, an
+The main object you'll manipulate in Bocadillo is the [App] object, an
 [ASGI]-compatible application.
+
+[app]: /api/applications.md#app
 
 This page explains the basics of running and configurating an application.
 
 [asgi]: https://asgi.readthedocs.io
 
-## Usage
+## Running the application server
 
-### Running the application server
+### Basics
 
 The Bocadillo server is powered by [uvicorn], a Python ASGI web server installed along with Bocadillo.
 
