@@ -5,6 +5,7 @@ import pytest
 import requests
 
 from bocadillo import App, server_event, ClientDisconnect
+from bocadillo.testing import create_server
 
 from .utils import stops_incrementing
 
@@ -73,7 +74,7 @@ def test_cache_control_header_not_replaced_if_manually_set(app: App):
     assert r.headers["cache-control"] == "foo"
 
 
-def test_stop_on_client_disconnect(app: App, create_server):
+def test_stop_on_client_disconnect(app: App):
     num_sent = Value("i", 0)
 
     @app.route("/events")
@@ -91,7 +92,7 @@ def test_stop_on_client_disconnect(app: App, create_server):
         assert stops_incrementing(counter=num_sent, response=r)
 
 
-def test_raise_client_disconnects(app: App, create_server):
+def test_raise_client_disconnects(app: App):
     caught = Value("i", 0)
 
     @app.route("/events")

@@ -6,6 +6,7 @@ import pytest
 import requests
 
 from bocadillo import App, ClientDisconnect
+from bocadillo.testing import create_server
 
 from .utils import stops_incrementing
 
@@ -62,7 +63,7 @@ def test_stream_func_must_be_async_generator_function(app: App):
                 yield "nope"
 
 
-def test_stop_on_client_disconnect(app: App, create_server):
+def test_stop_on_client_disconnect(app: App):
     sent = Value("i", 0)
 
     @app.route("/inf")
@@ -80,7 +81,7 @@ def test_stop_on_client_disconnect(app: App, create_server):
         assert stops_incrementing(counter=sent, response=r)
 
 
-def test_raise_on_disconnect(app: App, create_server):
+def test_raise_on_disconnect(app: App):
     caught = Value("i", 0)
 
     @app.route("/inf")

@@ -1,6 +1,3 @@
-from contextlib import contextmanager
-from multiprocessing import Process, Event
-from random import randint
 from typing import NamedTuple
 
 import pytest
@@ -60,52 +57,3 @@ def create_template(
 @pytest.fixture
 def template_file(templates: Templates, tmpdir_factory) -> TemplateWrapper:
     return create_template(templates, tmpdir_factory, dirname="templates")
-
-
-# TODO: move to a public `testing` module.
-
-
-class Server(NamedTuple):
-    host: str
-    port: str
-
-    @property
-    def url(self):
-        return f"http://{self.host}:{self.port}"
-
-
-@pytest.fixture
-def create_server():
-    ready = Event()
-    ready_timeout = 1
-    stop_timeout = 1
-    host = "127.0.0.1"
-    port = randint(3000, 9000)
-
-    @contextmanager
-    def _create_server(app):
-        def target():
-            async def callback_notify():
-                # Run periodically by the Uvicorn server.
-                ready.set()
-
-            app.run(host=host, port=port, callback_notify=callback_notify)
-
-        process = Process(target=target)
-        process.start()
-        if not ready.wait(ready_timeout):
-            raise TimeoutError(
-                f"Live server not ready after {ready_timeout} seconds"
-            )
-
-        try:
-            yield Server(host=host, port=port)
-        finally:
-            process.terminate()
-            process.join(stop_timeout)
-            if process.exitcode is None:
-                raise TimeoutError(
-                    f"Live server still running after {stop_timeout} seconds."
-                )
-
-    return _create_server
