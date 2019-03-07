@@ -117,7 +117,7 @@ res.headers["transfer-encoding"] = "chunked"
 
 [transfer-encoding]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding
 
-## Attachments
+## Attachments <Badge text="0.12+"/>
 
 If you want to tell the client's browser that the response should be downloaded and saved locally into a file, set `res.attachment` and the [Content-Disposition] header will be set for you.
 
@@ -134,7 +134,7 @@ async def send_hello(req, res):
 The above example will _not_ perform any I/O nor try to read the `"hello.txt"` file. All it will do is set the `Content-Disposition` header to `attachment; filename='hello.txt'`.
 :::
 
-## File responses
+## File responses <Badge text="0.12+"/>
 
 ::: warning REQUIREMENTS
 This feature requires that you install Bocadillo with the `files` extra, e.g.

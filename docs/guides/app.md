@@ -11,7 +11,7 @@ To run a Bocadillo app, either:
 
 ```python
 # app.py
-import bocadillo
+from bocadillo import App
 
 app = App()
 

@@ -3,14 +3,8 @@
 ## What are hooks?
 
 Hooks allow you to call arbitrary code before and after a view is executed. They materialize as the `@before()` and `@after()` decorators located in the `bocadillo.hooks` module.
- 
+
 These decorators take a **hook function**, which is a synchronous or asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
-
-::: tip CHANGED IN v0.9.0
-Hooks decorators are now located in a separate `hooks` module. Use `@hooks.<hook>` instead of `@app.<hook>`.
-
-Plus, they must now be the first decorators of a view, instead of `@app.route()`.
-:::
 
 ## Example
 
@@ -56,10 +50,10 @@ A hook function only just needs to be a callable, so it can be a class that impl
 
 ```python
 class RequestHasHeader:
-    
+
     def __init__(self, header):
         self.header = header
-       
+
     def __call__(self, req, res, params):
         if self.header not in req.headers:
             raise HTTPError(400)
