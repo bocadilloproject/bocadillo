@@ -11,5 +11,5 @@ exclude_lines =
 ignore_errors = True
 omit =
     setup.py
+    bocadillo/deprecation.py
     tests/*
-    _*.py
