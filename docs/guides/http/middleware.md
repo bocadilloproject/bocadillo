@@ -36,6 +36,12 @@ More specifically, each middleware:
 4. Processes it if needed (`.after_dispatch()` hook).
 5. Returns it to its _outer_ middleware.
 
+::: warning CAVEAT
+An application's HTTP middleware will **not** be called if the request gets routed to a sub-application, e.g. a [recipe](/guides/agnostic/recipes.md) or a [mounted application](/api/applications.md#mount).
+
+For this reason, you should register HTTP middleware on _all_ application instances that need it in their processing stack.
+:::
+
 ## Default middleware
 
 Two HTTP middleware are registered on every application:
