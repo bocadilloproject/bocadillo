@@ -43,7 +43,6 @@ generate:
   - templates.md:
       - bocadillo.templates:
           - bocadillo.templates.Templates+
-          - bocadillo.templates.TemplatesMixin+
   - testing.md:
       - bocadillo.testing+
   - utils.md:

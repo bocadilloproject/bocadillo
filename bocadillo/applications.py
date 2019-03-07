@@ -45,7 +45,6 @@ from .request import Request
 from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import WhiteNoise, static
-from .templates import TemplatesMixin
 from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -62,7 +61,7 @@ def _get_module(script_path: str) -> Optional[str]:
     return match.group(1).replace(os.path.sep, ".")
 
 
-class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
+class App(RoutingMixin, metaclass=DocsMeta):
     """The all-mighty application class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -237,10 +236,6 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
         if media_type not in self.media_handlers:
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
-
-    def get_template_globals(self):
-        # DEPRECATED: 0.13.0
-        return {"url_for": self.url_for}
 
     def url_for(self, name: str, **kwargs) -> str:
         # Implement route name lookup accross sub-apps.

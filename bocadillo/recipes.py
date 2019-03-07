@@ -42,8 +42,6 @@ class Recipe(App):
         assert prefix.startswith("/"), "recipe prefix must start with '/'"
 
         self.prefix = prefix
-        # DEPRECATED: 0.13.0
-        self._templates_dir_given = "templates_dir" in kwargs
 
     def _get_own_url_for(self, name: str, **kwargs) -> str:
         return self.prefix + super()._get_own_url_for(name, **kwargs)
@@ -51,11 +49,6 @@ class Recipe(App):
     def apply(self, app: App, root: str = ""):
         """Apply the recipe to an application."""
         app.mount(prefix=root + self.prefix, app=self)
-
-        # DEPRECATED: 0.13.0
-        # Look for templates where the app does, if not specified
-        if not self._templates_dir_given:
-            self.templates_dir = app.templates_dir  # type: ignore
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":

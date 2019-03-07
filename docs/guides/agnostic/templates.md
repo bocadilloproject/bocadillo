@@ -4,17 +4,6 @@ Bocadillo allows you to render [Jinja2] templates.
 You get all the niceties of the Jinja2 template engine:
 a familiar templating language, automatic escaping, template inheritance, etc.
 
-::: tip CHANGED IN v0.12.0
-Template rendering is now performed via a `Templates` helper, separate from the `App` class, which allows to use templates outside the context of an application.
-
-As migration hints, here's where the previous `App` template rendering methods went (suppose that `app = App()` and `templates = Templates(app)`):
-
-- `app.template()` -> `templates.render()`
-- `app.template_sync()` -> `templates.render_sync()`
-- `app.template_string()` -> `templates.render_string()`
-
-:::
-
 ## How templates work
 
 To begin with, templates (when loaded from the file system) are just regular files. For example, when writing HTML templates, the regular `.html` extension is used as for any other HTML file.

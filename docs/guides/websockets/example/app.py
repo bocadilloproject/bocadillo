@@ -1,7 +1,8 @@
 # app.py
-from bocadillo import App
+from bocadillo import App, Templates
 
 app = App()
+templates = Templates(app)
 
 clients = set()
 history = []
@@ -36,7 +37,7 @@ async def chat(ws):
 
 @app.route("/")
 async def index(req, res):
-    res.html = await app.template("index.html")
+    res.html = await templates.render("index.html")
 
 
 if __name__ == "__main__":
