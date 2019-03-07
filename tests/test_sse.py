@@ -5,7 +5,7 @@ import pytest
 import requests
 
 from bocadillo import App, server_event, ClientDisconnect
-from bocadillo.testing import create_server
+from bocadillo.testing import LiveServer
 
 from .utils import stops_incrementing
 
@@ -86,7 +86,7 @@ def test_stop_on_client_disconnect(app: App):
                 yield server_event("hello")
                 num_sent.value += 1
 
-    with create_server(app) as server:
+    with LiveServer(app) as server:
         r = requests.get(f"{server.url}/events", stream=True)
         assert r.status_code == 200
         assert stops_incrementing(counter=num_sent, response=r)
@@ -106,7 +106,7 @@ def test_raise_client_disconnects(app: App):
             except ClientDisconnect:
                 caught.value = 1
 
-    with create_server(app) as server:
+    with LiveServer(app) as server:
         r = requests.get(f"{server.url}/events", stream=True)
         assert r.status_code == 200
         r.close()

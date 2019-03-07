@@ -1,7 +1,6 @@
 import random
-from contextlib import contextmanager
 from multiprocessing import Event, Process
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING
 
 from starlette.testclient import TestClient
 
@@ -24,48 +23,80 @@ def create_client(app: "App", **kwargs) -> TestClient:
     return TestClient(app, **kwargs)
 
 
-class Server(NamedTuple):
-    host: str
-    port: str
+class LiveServer:
+    """Context manager to spin up a live server in a separate process.
+
+    The server process is terminated when exiting the context.
+
+    # Parameters
+    app (App): an application instance.
+    host (str):
+        the host to run the server on.
+        Defaults to `"127.0.0.1."` (i.e. `localhost`).
+    port (int):
+        the port to run the server on.
+        Defaults to a random integer between 3000 and 9000.
+    ready_timeout (float):
+        The maximum time to wait for the live server to be ready to handle
+        connections, in seconds.
+        Defaults to 2.
+    stop_timeout (float):
+        The maximum time to wait for the live server to terminate, in seconds.
+        Defaults to 2.
+    
+    # Attributes
+    url (str):
+        the full URL where the server lives.
+    """
+
+    def __init__(
+        self,
+        app: "App",
+        host: str = "127.0.0.1",
+        port: int = None,
+        ready_timeout: float = 2,
+        stop_timeout: float = 2,
+    ):
+        if port is None:
+            port = random.randint(3000, 9000)
+
+        self.app = app
+        self.host = host
+        self.port = port
+        self.ready_timeout = ready_timeout
+        self.stop_timeout = stop_timeout
+        self._process: Process = None
 
     @property
     def url(self):
         return f"http://{self.host}:{self.port}"
 
+    def __enter__(self):
+        ready = Event()
 
-@contextmanager
-def create_server(
-    app,
-    host: str = "127.0.0.1",
-    port: int = None,
-    ready_timeout=1,
-    stop_timeout=1,
-):
-    if port is None:
-        port = random.randint(3000, 9000)
+        def target():
+            async def callback_notify():
+                # Run periodically by the Uvicorn server.
+                ready.set()
 
-    ready = Event()
+            self.app.run(
+                host=self.host, port=self.port, callback_notify=callback_notify
+            )
 
-    def target():
-        async def callback_notify():
-            # Run periodically by the Uvicorn server.
-            ready.set()
+        self._process = Process(target=target)
+        self._process.start()
 
-        app.run(host=host, port=port, callback_notify=callback_notify)
-
-    process = Process(target=target)
-    process.start()
-    if not ready.wait(ready_timeout):
-        raise TimeoutError(
-            f"Live server not ready after {ready_timeout} seconds"
-        )
-
-    try:
-        yield Server(host=host, port=port)
-    finally:
-        process.terminate()
-        process.join(stop_timeout)
-        if process.exitcode is None:
+        if not ready.wait(self.ready_timeout):
             raise TimeoutError(
-                f"Live server still running after {stop_timeout} seconds."
+                f"Live server not ready after {self.ready_timeout} seconds"
+            )
+
+        return self
+
+    def __exit__(self, *args):
+        self._process.terminate()
+        self._process.join(self.stop_timeout)
+        if self._process.exitcode is None:
+            raise TimeoutError(
+                f"Live server still running after {self.stop_timeout} seconds."
             )

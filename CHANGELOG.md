@@ -22,7 +22,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
-- The new `testing` module contains a `create_client` helper to build a test client out of an application.
+- Add a `bocadillo.testing` module with testing utilities:
+  - `create_client` builds a `requests`-like test client out of an application.
+  - The `LiveServer` context manager runs a live application server in
+    a separate process.
 - Add the `override_env` utility context manager, available under `bocadillo.utils`.
 
 ### Changed
@@ -35,7 +38,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Deprecated
 
-- `app.client` has been deprecated in favor of the `create_client` helper, and will be removed in v0.14. For pytest users, consider building and using `client` fixture in your tests:
+- `app.client` has been deprecated in favor of the `create_client` testing helper, and will be removed in v0.14. For pytest users, consider building and using a `client` fixture in your tests:
 
 ```python
 # tests.py
