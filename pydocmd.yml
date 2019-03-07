@@ -39,6 +39,8 @@ generate:
           - bocadillo.response.Response+
   - staticfiles.md:
       - bocadillo.staticfiles+
+  - sse.md:
+      - bocadillo.sse+
   - templates.md:
       - bocadillo.templates:
           - bocadillo.templates.Templates+

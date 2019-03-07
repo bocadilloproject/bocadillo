@@ -1,7 +1,13 @@
 from asyncio import sleep
+from time import sleep as sync_sleep
+from multiprocessing import Value
 
 import pytest
-from bocadillo import App
+import requests
+
+from bocadillo import App, ClientDisconnect
+
+from .utils import stops_incrementing
 
 
 def test_stream_response(app: App, client):
@@ -54,3 +60,43 @@ def test_stream_func_must_be_async_generator_function(app: App):
             @res.stream
             def foo():
                 yield "nope"
+
+
+def test_stop_on_client_disconnect(app: App, create_server):
+    sent = Value("i", 0)
+
+    @app.route("/inf")
+    async def infinity(req, res):
+        @res.stream
+        async def stream():
+            nonlocal sent
+            while True:
+                yield "∞"
+                sent.value += 1
+
+    with create_server(app) as server:
+        r = requests.get(f"{server.url}/inf", stream=True)
+        assert r.status_code == 200
+        assert stops_incrementing(counter=sent, response=r)
+
+
+def test_raise_on_disconnect(app: App, create_server):
+    caught = Value("i", 0)
+
+    @app.route("/inf")
+    async def infinity(req, res):
+        @res.stream(raise_on_disconnect=True)
+        async def stream():
+            nonlocal caught
+            try:
+                while True:
+                    yield "∞"
+            except ClientDisconnect:
+                caught.value = 1
+
+    with create_server(app) as server:
+        r = requests.get(f"{server.url}/inf", stream=True)
+        assert r.status_code == 200
+        r.close()
+        sync_sleep(0.1)
+        assert caught.value

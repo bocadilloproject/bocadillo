@@ -1,5 +1,9 @@
+import time
 from contextlib import contextmanager
+from multiprocessing import Value
 from typing import Any
+
+import requests
 
 
 @contextmanager
@@ -59,3 +63,32 @@ def class_hooks():
 
     assert flags["before"]
     assert flags["after"]
+
+
+def stops_incrementing(
+    counter: Value, response: requests.Response, tolerance: int = 15
+) -> bool:
+    # Check that a counter stops incrementing after the response is closed.
+
+    # tolerance (int):
+    # Maximum number of events the server is allowed to send after the
+    # connection has been closed.
+
+    def wait_for_events(expect_many=False):
+        nonlocal counter
+        num_before = counter.value
+        time.sleep(0.1)
+        num_after = counter.value
+        if expect_many:
+            assert num_after - num_before >= 5 * tolerance, (
+                num_after,
+                num_before,
+                tolerance,
+            )
+        return num_after
+
+    sent_before_closing = wait_for_events(expect_many=True)
+    response.close()
+    sent_after_closing = wait_for_events() - sent_before_closing
+    assert sent_after_closing <= tolerance, (sent_after_closing, tolerance)
+    return True
