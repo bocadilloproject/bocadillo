@@ -4,7 +4,6 @@ generate:
   - applications.md:
       - bocadillo.applications:
           - bocadillo.applications.App+
-          - bocadillo.applications.API
   - compat.md:
       - bocadillo.compat+
   - error_handlers.md:
@@ -44,7 +43,6 @@ generate:
   - templates.md:
       - bocadillo.templates:
           - bocadillo.templates.Templates+
-          - bocadillo.templates.TemplatesMixin+
   - testing.md:
       - bocadillo.testing+
   - utils.md:

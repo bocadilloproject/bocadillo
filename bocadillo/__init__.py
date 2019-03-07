@@ -1,4 +1,4 @@
-from .applications import API, App
+from .applications import App
 from .errors import HTTPError
 from .middleware import ASGIMiddleware, Middleware
 from .recipes import Recipe

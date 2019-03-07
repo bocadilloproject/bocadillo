@@ -5,7 +5,7 @@
 For more background, see our [discussion on databases][databases-discussion].
 
 ::: warning
-Tortoise ORM is still a rather young project. As such, some convenient features like database migrations are not supported *yet*. See also their [roadmap][tortoise-roadmap].
+Tortoise ORM is still a rather young project. As such, some convenient features like database migrations are not supported _yet_. See also their [roadmap][tortoise-roadmap].
 :::
 
 ## Instructions
@@ -105,11 +105,12 @@ For a thorough description of the foreign key field and many others, see the [To
 Now that these models are defined in the `models.py` file, we can create the main application script, e.g. `blog.py`, add the Tortoise integration script there and start writing views:
 
 ```python
-from bocadillo import App
+from bocadillo import App, Templates
 from tortoise import Tortoise
 from models import Post
 
 app = App()
+templates = Templates()
 
 # << Tortoise integration code >>
 
@@ -118,7 +119,7 @@ async def home(req, res):
     # Fetch all posts along with their categories
     posts = await Post.all().prefetch_related("category")
     # Render a template that lists all posts
-    res.html = await app.template("home.html", posts=posts)
+    res.html = await templates.render("home.html", posts=posts)
 
 # << More routes >>
 
