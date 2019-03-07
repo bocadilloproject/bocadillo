@@ -1,4 +1,7 @@
+import pytest
+
 from bocadillo import App, ASGIMiddleware
+from bocadillo.testing import create_client
 
 
 def test_asgi_middleware(app: App, client):
@@ -57,26 +60,47 @@ def test_pure_asgi_middleware(app: App, client):
     assert called
 
 
-def test_middleware_called_if_routed_to_sub_app(app: App, client):
-    called = False
+@pytest.mark.parametrize(
+    ["path", "origin", "expected", "expected_body"],
+    [
+        ("/", "localhost:8001", "localhost:8001", "Hello"),
+        ("/", "ietf.org", "ietf.org", "Hello"),
+        ("/", "unknown.org", None, "Hello"),
+        ("/courses/", "localhost:8001", "localhost:8001", "OK"),
+        ("/courses/", "ietf.org", "ietf.org", "OK"),
+        ("/courses/", "unknown.org", None, "OK"),
+    ],
+)
+def test_middleware_called_if_routed_to_sub_app(
+    path: str, origin: str, expected: str, expected_body: str
+):
+    app = App(
+        enable_cors=True,
+        cors_config={
+            "allow_origins": ["example.com", "localhost:8001", "ietf.org"]
+        },
+    )
 
-    class Middleware(ASGIMiddleware):
-        def __call__(self, scope: dict):
-            nonlocal called
-            called = True
-            return self.inner(scope)
+    @app.route("/")
+    async def index(req, res):
+        res.text = "Hello"
 
-    app.add_asgi_middleware(Middleware)
+    courses = App()
 
-    sub = App()
+    @courses.route("/")
+    class CoursesList:
+        async def get(self, req, res):
+            res.text = "OK"
 
-    @sub.route("/home")
-    async def home(req, res):
-        res.text = "OK"
+    app.mount("/courses", courses)
 
-    app.mount("/sub", sub)
+    client = create_client(app)
+    res = client.get(path, headers={"origin": origin})
 
-    r = client.get("/sub/home")
-    assert r.status_code == 200
-    assert r.text == "OK"
-    assert called
+    assert res.text == expected_body
+
+    if not expected:  # unknown origin -> no allow-origin header
+        assert "access-control-allow-origin" not in res.headers
+    else:  # allowed origin -> allow-origin header"
+        assert "access-control-allow-origin" in res.headers
+        assert res.headers.get("access-control-allow-origin") == expected
