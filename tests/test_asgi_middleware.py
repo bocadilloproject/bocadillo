@@ -55,3 +55,28 @@ def test_pure_asgi_middleware(app: App, client):
 
     client.get("/")
     assert called
+
+
+def test_middleware_called_if_routed_to_sub_app(app: App, client):
+    called = False
+
+    class Middleware(ASGIMiddleware):
+        def __call__(self, scope: dict):
+            nonlocal called
+            called = True
+            return self.inner(scope)
+
+    app.add_asgi_middleware(Middleware)
+
+    sub = App()
+
+    @sub.route("/home")
+    async def home(req, res):
+        res.text = "OK"
+
+    app.mount("/sub", sub)
+
+    r = client.get("/sub/home")
+    assert r.status_code == 200
+    assert r.text == "OK"
+    assert called

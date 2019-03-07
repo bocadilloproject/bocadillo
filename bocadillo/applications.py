@@ -409,15 +409,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        if scope["type"] == "websocket":
-            return partial(self.dispatch_websocket, scope=scope)
-        assert scope["type"] == "http"
-        return partial(self.dispatch_http, scope=scope)
-
-    def __call__(self, scope: Scope) -> ASGIAppInstance:
-        if scope["type"] == "lifespan":
-            return self._lifespan(scope)
-
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
@@ -432,6 +423,15 @@ class App(RoutingMixin, metaclass=DocsMeta):
             except TypeError:
                 return WSGIResponder(app, scope)
 
+        if scope["type"] == "websocket":
+            return partial(self.dispatch_websocket, scope=scope)
+
+        assert scope["type"] == "http"
+        return partial(self.dispatch_http, scope=scope)
+
+    def __call__(self, scope: Scope) -> ASGIAppInstance:
+        if scope["type"] == "lifespan":
+            return self._lifespan(scope)
         return self.asgi(scope)
 
     def run(
