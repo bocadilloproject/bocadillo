@@ -18,9 +18,9 @@ What are we going to build, exactly?
 
 Well, as described in the [socket.io chat tutorial], we'll need:
 
-1. A backend socket.io server to handle incoming messages and broadcast them to all the connected clients. This will be done via [python-socketio].
-2. A JavaScript socket.io client to send messages typed by the user, and listen to and display messages from other users. We'll use the [socket.io-client Node.js package][socketio-client] for this purpose.
-3. A web application server to serve the HTML page, the socket.io server and any static files we need. This is where Bocadillo kicks in!
+1. A backend socket.io server to handle incoming messages and broadcast them to all connected clients. This will be done via [python-socketio].
+2. A JavaScript socket.io client to send messages typed by the user, and listen to and display messages from other users. We'll use the [socket.io-client] Node.js package for this purpose.
+3. A web application server to serve the HTML page, the socket.io server and any static files we need. **This is where Bocadillo kicks in!**
 
 Let's get down to business, shall we?
 
@@ -48,6 +48,7 @@ All we're doing here is creating a Bocadillo application with a root endpoint th
 1. First, create a `static` directory in the project root directory, and place the following CSS file there. You can check out the [Static files](/guides/http/static-files.md) guide to know how Bocadillo will pick that up.
 
 ```css
+/* static/styles.css */
 * {
   margin: 0;
   padding: 0;
@@ -112,7 +113,7 @@ form button {
 
 ## Integrating with `python-socketio`
 
-It's now time we integrate [python-socketio] to build a backend socket.io server.
+It's now time we integrate [python-socketio] to build the socket.io server.
 
 First, let's install it:
 
@@ -139,11 +140,11 @@ Let's break this code down:
 
 1. We import the `socketio` package made available by `python-socketio`.
 2. We [create an `AsyncServer` instance](https://python-socketio.readthedocs.io/en/latest/server.html#creating-a-server-instance). We need to use the `asgi` async mode so that the server can be wrapped as an ASGI application (see [Deployment strategies (python-socketio)](https://python-socketio.readthedocs.io/en/latest/server.html#uvicorn-daphne-and-other-asgi-servers)).
-3. We wrap the server in an `ASGIApp` and [mount](/api/applications.md#mount) it under the `/sio` URL prefix.
+3. We wrap the server in an `ASGIApp`. It implements the ASGI interface, so we can [mount](/api/applications.md#mount) it under the `/sio` URL prefix to have Bocadillo pass it on requests made to `/sio*`.
 
 The rest of `app.py` is unchanged.
 
-That's it! **We've just integrated `python-socketio` within our Bocadillo application**. We're not quite done yet, but we'll only work with `python-socketio` from now on.
+That's it! **We've just integrated `python-socketio` within our Bocadillo application**. We're not quite done yet, but we'll only need to work with `python-socketio` from now on.
 
 ## Integrating with `socket.io-client`
 
@@ -154,7 +155,7 @@ npm install --save socket.io-client
 ```
 
 ::: tip
-Our approach here is to to install the `socket.io` library and use the static JavaScript files distributed with it.
+Our approach here is to install the `socket.io` library and use the static JavaScript files distributed with it.
 
 Alternatively, you could retrieve these files from a CDN. See also the [JavaScript client documentation (socket.io)](https://socket.io/docs/#Javascript-Client).
 :::
@@ -187,7 +188,7 @@ All set! We can now proceed to build the application-level logic for the chat ap
 
 We'll start with the server-side application code. For this chat tutorial, all we need to do is listen to `message` events (the name of the event is arbitrary) and **broadcast** the received message to all connected clients.
 
-Remember: we have an `sio` object reprensenting an asynchronous socket.io server. So, we can define an [event handler][event handlers] to handle `message` events. We'll print the received message for debugging, and emit a `response` to all clients containing the same message:
+Remember: we have an `sio` object reprensenting the asynchronous socket.io server. So, we can define an [event handler][event handlers] to handle `message` events, print the received message for debugging, and emit a `response` event to all clients with the message contents:
 
 ```python
 # app.py
@@ -205,9 +206,9 @@ This code should be self-explanatory. If you're feeling unsure, be sure to check
 
 [event handlers]: https://python-socketio.readthedocs.io/en/latest/server.html#defining-event-handlers
 
-## Client: connecting to the socket.io server
+We're basically done with the socket.io server! Let's setup the code to connect to it on the client-side.
 
-We're mostly done with the socket.io server, so let's setup the code to connect to it on the client-side.
+## Client: connecting to the socket.io server
 
 We need to add a new script to the HTML page that will connect to the socket.io server using the `socket.io-client` library. This is how it should look like:
 
@@ -228,15 +229,16 @@ We need to add a new script to the HTML page that will connect to the socket.io 
 </body>
 ```
 
-Here, we specify that the socket.io client should connect to the backend running on the same host (here `localhost:8000`) at the `/sio/socket.io` path. This path corresponds to the prefix under which we mounted the socket.io server (`/sio`) and the default path under which `python-socketio` expects to receive connection requests (`/socket.io`).
+This code:
 
-We also add the two event handlers to show when socket.io managed to connect, or when we lose connection to the server.
+- Specifies that the socket.io client should connect to the server at the `/sio/socket.io` path on the same host (here `localhost:8000`). This path corresponds to the prefix under which we mounted the socket.io server (`/sio`) and the default path under which `python-socketio` expects to receive connection requests (`/socket.io`).
+- Adds two event handlers to show when socket.io manages to connect, or when it loses connection to the server.
+
+At this point, if you fire up the application using `$ python app.py` and connect to `http://localhost:8000`, you should see a `"Connected!"` message popping up in the browser console.
 
 ## Client: handling messages
 
-As a final step, we'll write the client-side code to a) send events when submitting the form, and b) add new items to the list when receiving messages from the server.
-
-First, let's add the basic code
+As a final step, we'll write the client-side code to a) send events when submitting the input form, and b) add new items to the list of messages when receiving messages from the server.
 
 Remember that the body of the `index.html` page contains the following snippet:
 
@@ -247,7 +249,7 @@ Remember that the body of the `index.html` page contains the following snippet:
 </form>
 ```
 
-So, to send a message to other people in the chat, we need to hook onto the submission of the `form`, and send a `message` event with the contents of the `input` element.
+So, to send a message to the other people in the chat, we need to hook onto the submission of the `form`, and send a `message` event with the contents of the `input` element.
 
 Then, to display messages received from other people, we'll need to add an event handler for the `response` event, and dynamically append `<li>` elements to the list of messages.
 
