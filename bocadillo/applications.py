@@ -517,13 +517,3 @@ class App(TemplatesMixin, RoutingMixin, metaclass=DocsMeta):
             target = self
 
         _run(target, host=host, port=port, **kwargs)
-
-
-@deprecated(
-    since="0.12",
-    removal="0.13",
-    alternative=("bocadillo.App", "/api/applications.md#app"),
-    warn_on_instanciate=True,
-)
-class API(App):
-    """The all-mighty API class. An alias to `App`, nothing more."""

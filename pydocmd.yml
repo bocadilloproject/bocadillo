@@ -4,7 +4,6 @@ generate:
   - applications.md:
       - bocadillo.applications:
           - bocadillo.applications.App+
-          - bocadillo.applications.API
   - compat.md:
       - bocadillo.compat+
   - error_handlers.md:

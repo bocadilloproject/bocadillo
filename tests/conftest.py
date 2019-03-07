@@ -2,13 +2,13 @@ from typing import NamedTuple
 
 import pytest
 
-from bocadillo import App, API, Templates, Recipe
+from bocadillo import App, Templates, Recipe
 from bocadillo.testing import create_client
 
 
 # Tests that use the `app` fixture will run once for each of these
 # application classes.
-APP_CLASSES = [App, API, lambda: Recipe("tacos")]
+APP_CLASSES = [App, lambda: Recipe("tacos")]
 CLIENT_FACTORIES = [create_client, lambda app: app.client]
 
 
