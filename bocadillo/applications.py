@@ -208,7 +208,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-        # Setup request-time ingredients.
+        # Setup request-time providers.
 
         self._response: Optional[Response] = None
         self._request: Optional[Request] = None

@@ -26,9 +26,9 @@ from parse import Parser
 from starlette.websockets import WebSocketClose
 
 from . import views
-from .injection import consumer
 from .app_types import HTTPApp, Receive, Scope, Send
 from .errors import HTTPError
+from .injection import consumer
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -200,7 +200,7 @@ class HTTPRoute(BaseRoute[View]):
             raise HTTPError(405) from e
 
         # NOTE: do not pass `req` and `res` because they are injected
-        # into the view by the app's ingredients.
+        # into the view by the app's providers.
         await handler(**params)  # type: ignore
 
 
@@ -341,7 +341,7 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
         return route.pattern
 
     def normalize(self, view: WebSocketView) -> WebSocketView:
-        # Resolve ingredients in the websocket view.
+        # Resolve providers in the websocket view.
         return consumer(view)
 
     def add_route(
