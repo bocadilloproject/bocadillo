@@ -1,8 +1,15 @@
+import os
 import random
+import sys
 from multiprocessing import Event, Process
 from typing import TYPE_CHECKING
 
 from starlette.testclient import TestClient
+
+try:
+    import pytest
+except ImportError:
+    pytest = None
 
 if TYPE_CHECKING:
     from .applications import App
@@ -66,6 +73,14 @@ class LiveServer:
         self.ready_timeout = ready_timeout
         self.stop_timeout = stop_timeout
         self._process: Process = None
+
+        if (
+            pytest is not None
+            and os.getenv("CI")
+            and os.getenv("TRAVIS")
+            and (3, 7) <= sys.version_info < (3, 8)
+        ):
+            pytest.skip("server process makes travis ci hang on python 3.7")
 
     @property
     def url(self):
