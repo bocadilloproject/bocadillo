@@ -61,18 +61,18 @@ def test_pure_asgi_middleware(app: App, client):
 
 
 @pytest.mark.parametrize(
-    ["path", "origin", "expected", "expected_body"],
+    ["route", "origin", "expected", "expected_body"],
     [
         ("/", "localhost:8001", "localhost:8001", "Hello"),
         ("/", "ietf.org", "ietf.org", "Hello"),
         ("/", "unknown.org", None, "Hello"),
-        ("/courses/", "localhost:8001", "localhost:8001", "OK"),
-        ("/courses/", "ietf.org", "ietf.org", "OK"),
-        ("/courses/", "unknown.org", None, "OK"),
+        ("/sub/", "localhost:8001", "localhost:8001", "OK"),
+        ("/sub/", "ietf.org", "ietf.org", "OK"),
+        ("/sub/", "unknown.org", None, "OK"),
     ],
 )
 def test_middleware_called_if_routed_to_sub_app(
-    path: str, origin: str, expected: str, expected_body: str
+    route: str, origin: str, expected: str, expected_body: str
 ):
     app = App(
         enable_cors=True,
@@ -85,17 +85,17 @@ def test_middleware_called_if_routed_to_sub_app(
     async def index(req, res):
         res.text = "Hello"
 
-    courses = App()
+    sub = App()
 
-    @courses.route("/")
-    class CoursesList:
+    @sub.route("/")
+    class SubApp:
         async def get(self, req, res):
             res.text = "OK"
 
-    app.mount("/courses", courses)
+    app.mount("/sub", sub)
 
     client = create_client(app)
-    res = client.get(path, headers={"origin": origin})
+    res = client.get(route, headers={"origin": origin})
 
     assert res.text == expected_body
 
