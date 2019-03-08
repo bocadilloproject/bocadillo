@@ -26,6 +26,7 @@ from parse import Parser
 from starlette.websockets import WebSocketClose
 
 from . import views
+from .injection import consumer
 from .app_types import HTTPApp, Receive, Scope, Send
 from .errors import HTTPError
 from .redirection import Redirection
@@ -338,6 +339,10 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
 
     def _get_key(self, route: WebSocketRoute) -> str:
         return route.pattern
+
+    def normalize(self, view: WebSocketView) -> WebSocketView:
+        # Resolve ingredients in the websocket view.
+        return consumer(view)
 
     def add_route(
         self, view: WebSocketView, pattern: str, **kwargs
