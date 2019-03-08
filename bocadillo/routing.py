@@ -28,6 +28,7 @@ from starlette.websockets import WebSocketClose
 from . import views
 from .app_types import HTTPApp, Receive, Scope, Send
 from .errors import HTTPError
+from .injection import consumer
 from .redirection import Redirection
 from .request import Request
 from .response import Response
@@ -198,7 +199,9 @@ class HTTPRoute(BaseRoute[View]):
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 
-        await handler(req, res, **params)  # type: ignore
+        # NOTE: do not pass `req` and `res` because they are injected
+        # into the view by the app's providers.
+        await handler(**params)  # type: ignore
 
 
 class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
@@ -336,6 +339,10 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
 
     def _get_key(self, route: WebSocketRoute) -> str:
         return route.pattern
+
+    def normalize(self, view: WebSocketView) -> WebSocketView:
+        # Resolve providers in the websocket view.
+        return consumer(view)
 
     def add_route(
         self, view: WebSocketView, pattern: str, **kwargs
