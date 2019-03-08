@@ -38,7 +38,7 @@ from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
 from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .injection import freeze_providers, provider
+from .injection import AppProvidersMixin
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
@@ -62,7 +62,7 @@ def _get_module(script_path: str) -> Optional[str]:
     return match.group(1).replace(os.path.sep, ".")
 
 
-class App(RoutingMixin, metaclass=DocsMeta):
+class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
     """The all-mighty application class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -207,21 +207,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(HTTPSRedirectMiddleware)
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
-
-        # Setup request-time providers.
-
-        self._response: Optional[Response] = None
-        self._request: Optional[Request] = None
-
-        @provider
-        async def req():
-            return self._request
-
-        @provider
-        async def res():
-            return self._response
-
-        self.__providers_frozen = False
 
     @property
     @deprecated(
@@ -411,20 +396,13 @@ class App(RoutingMixin, metaclass=DocsMeta):
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        # NOTE: make the request and response available to the `req` and `res`
-        # providers.
-        self._request = req
-        self._response = res
 
-        res: Response = await self.server_error_middleware(req, res)
-
-        await res(receive, send)
-
-        # Re-raise the exception to allow the server to log the error
-        # and for the test client to optionally re-raise it too.
-        self.server_error_middleware.raise_if_exception()
-
-        self._request = self._response = None
+        with self.provide_req(req), self.provide_res(res):
+            res: Response = await self.server_error_middleware(req, res)
+            await res(receive, send)
+            # Re-raise the exception to allow the server to log the error
+            # and for the test client to optionally re-raise it too.
+            self.server_error_middleware.raise_if_exception()
 
     async def dispatch_websocket(
         self, receive: Receive, send: Send, scope: Scope
@@ -432,29 +410,26 @@ class App(RoutingMixin, metaclass=DocsMeta):
         await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        if not self.__providers_frozen:
-            freeze_providers()
-            self.__providers_frozen = True
+        with self.app_providers():
+            path: str = scope["path"]
 
-        path: str = scope["path"]
+            # Return a sub-mounted extra app, if found
+            for prefix, app in self._prefix_to_app.items():
+                if not path.startswith(prefix):
+                    continue
+                # Remove prefix from path so that the request is made according
+                # to the mounted app's point of view.
+                scope["path"] = path[len(prefix) :]
+                try:
+                    return app(scope)
+                except TypeError:
+                    return WSGIResponder(app, scope)
 
-        # Return a sub-mounted extra app, if found
-        for prefix, app in self._prefix_to_app.items():
-            if not path.startswith(prefix):
-                continue
-            # Remove prefix from path so that the request is made according
-            # to the mounted app's point of view.
-            scope["path"] = path[len(prefix) :]
-            try:
-                return app(scope)
-            except TypeError:
-                return WSGIResponder(app, scope)
+            if scope["type"] == "websocket":
+                return partial(self.dispatch_websocket, scope=scope)
 
-        if scope["type"] == "websocket":
-            return partial(self.dispatch_websocket, scope=scope)
-
-        assert scope["type"] == "http"
-        return partial(self.dispatch_http, scope=scope)
+            assert scope["type"] == "http"
+            return partial(self.dispatch_http, scope=scope)
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
