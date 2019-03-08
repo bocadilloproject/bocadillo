@@ -1,4 +1,7 @@
+import pytest
+
 from bocadillo import App, ASGIMiddleware
+from bocadillo.testing import create_client
 
 
 def test_asgi_middleware(app: App, client):
@@ -55,3 +58,49 @@ def test_pure_asgi_middleware(app: App, client):
 
     client.get("/")
     assert called
+
+
+@pytest.mark.parametrize(
+    ["route", "origin", "expected", "expected_body"],
+    [
+        ("/", "localhost:8001", "localhost:8001", "Hello"),
+        ("/", "ietf.org", "ietf.org", "Hello"),
+        ("/", "unknown.org", None, "Hello"),
+        ("/sub/", "localhost:8001", "localhost:8001", "OK"),
+        ("/sub/", "ietf.org", "ietf.org", "OK"),
+        ("/sub/", "unknown.org", None, "OK"),
+    ],
+)
+def test_middleware_called_if_routed_to_sub_app(
+    route: str, origin: str, expected: str, expected_body: str
+):
+    app = App(
+        enable_cors=True,
+        cors_config={
+            "allow_origins": ["example.com", "localhost:8001", "ietf.org"]
+        },
+    )
+
+    @app.route("/")
+    async def index(req, res):
+        res.text = "Hello"
+
+    sub = App()
+
+    @sub.route("/")
+    class SubApp:
+        async def get(self, req, res):
+            res.text = "OK"
+
+    app.mount("/sub", sub)
+
+    client = create_client(app)
+    res = client.get(route, headers={"origin": origin})
+
+    assert res.text == expected_body
+
+    if not expected:  # unknown origin -> no allow-origin header
+        assert "access-control-allow-origin" not in res.headers
+    else:  # allowed origin -> allow-origin header"
+        assert "access-control-allow-origin" in res.headers
+        assert res.headers.get("access-control-allow-origin") == expected
