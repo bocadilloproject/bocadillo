@@ -35,6 +35,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Fixed
 
 - Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
+- ASGI middleware was not applied when the request was routed to a sub-application (e.g. a recipe). For example, this lead to CORS headers not being added on a recipe despite them being configured on the root application. This has been fixed!
 
 ### Deprecated
 
