@@ -28,14 +28,14 @@ from .utils import stops_incrementing
         [(), {"data": ["hello", "world"]}, ["data: hello", "data: world", ""]],
     ],
 )
-def test_send_event(app: App, args: list, kwargs: dict, lines: list):
+def test_send_event(app: App, client, args: list, kwargs: dict, lines: list):
     @app.route("/events")
     async def view_with_events(req, res):
         @res.event_stream
         async def generate_events():
             yield server_event(*args, **kwargs)
 
-    r = app.client.get("/events", stream=True)
+    r = client.get("/events", stream=True)
     assert r.status_code == 200
     stream = r.iter_lines()
 
@@ -46,21 +46,21 @@ def test_send_event(app: App, args: list, kwargs: dict, lines: list):
         next(stream)
 
 
-def test_sse_headers_are_set(app: App):
+def test_sse_headers_are_set(app: App, client):
     @app.route("/events")
     async def view_with_events(req, res):
         @res.event_stream
         async def generate_events():
             yield server_event(name="foo")
 
-    r = app.client.get("/events")
+    r = client.get("/events")
     assert r.status_code == 200
     assert r.headers["connection"] == "keep-alive"
     assert r.headers["content-type"] == "text/event-stream"
     assert r.headers["cache-control"] == "no-cache"
 
 
-def test_cache_control_header_not_replaced_if_manually_set(app: App):
+def test_cache_control_header_not_replaced_if_manually_set(app: App, client):
     @app.route("/events")
     async def sse(req, res):
         res.headers["cache-control"] = "foo"
@@ -69,7 +69,7 @@ def test_cache_control_header_not_replaced_if_manually_set(app: App):
         async def generate_events():
             yield server_event("hello")
 
-    r = app.client.get("/events")
+    r = client.get("/events")
     assert r.status_code == 200
     assert r.headers["cache-control"] == "foo"
 
