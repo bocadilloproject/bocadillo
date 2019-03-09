@@ -11,6 +11,17 @@ from typing import (
     Awaitable,
 )
 
+try:
+    # >= 3.7
+    from contextlib import nullcontext  # pylint: disable=unused-import
+except ImportError:  # pragma: no cover
+    from contextlib import contextmanager
+
+    @contextmanager
+    def nullcontext(enter_result: Any = None):
+        yield enter_result
+
+
 from starlette.concurrency import run_in_threadpool
 
 _CAMEL_REGEX = re.compile(r"(.)([A-Z][a-z]+)")
