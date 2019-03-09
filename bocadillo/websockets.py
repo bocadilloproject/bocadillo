@@ -76,6 +76,15 @@ class WebSocket:
         """
         return self._ws.url
 
+    @property
+    def headers(self):
+        """Headers attached to the connection request.
+        
+        # See Also
+        - [starlette.WebSocket.header]s(https://www.starlette.io/websockets/#headers)
+        """
+        return self._ws.headers
+
     # Connection handling.
 
     async def accept(self, subprotocol: str = None) -> None:
