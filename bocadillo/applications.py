@@ -33,12 +33,12 @@ from .app_types import (
     Scope,
     Send,
 )
-from .compat import WSGIApp
+from .compat import WSGIApp, nullcontext
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
 from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .injection import AppProvidersMixin
+from .injection import create_context_provider, freeze_providers
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
@@ -62,7 +62,7 @@ def _get_module(script_path: str) -> Optional[str]:
     return match.group(1).replace(os.path.sep, ".")
 
 
-class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
+class App(RoutingMixin, metaclass=DocsMeta):
     """The all-mighty application class.
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
@@ -207,6 +207,18 @@ class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
             self.add_asgi_middleware(HTTPSRedirectMiddleware)
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
+
+        # Built-in providers.
+        self._frozen = False
+        self._http_context = create_context_provider("req", "res")
+
+    def _app_providers(self):  # pylint: disable=method-hidden
+        if not self._frozen:
+            freeze_providers()
+            self._frozen = True
+            # do nothing on subsequent calls
+            self._app_providers = nullcontext
+        return nullcontext()
 
     @property
     @deprecated(
@@ -385,9 +397,9 @@ class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
                 return func
 
             return register
-        else:
-            self._lifespan.add_event_handler(event, handler)
-            return handler
+
+        self._lifespan.add_event_handler(event, handler)
+        return handler
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         req = Request(scope, receive)
@@ -397,7 +409,7 @@ class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
             media_handler=self.media_handlers[self.media_type],
         )
 
-        with self.provide_req(req), self.provide_res(res):
+        with self._http_context.assign(req=req, res=res):
             res: Response = await self.server_error_middleware(req, res)
             await res(receive, send)
             # Re-raise the exception to allow the server to log the error
@@ -410,7 +422,7 @@ class App(AppProvidersMixin, RoutingMixin, metaclass=DocsMeta):
         await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        with self.app_providers():
+        with self._app_providers():
             path: str = scope["path"]
 
             # Return a sub-mounted extra app, if found
