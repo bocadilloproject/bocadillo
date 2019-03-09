@@ -115,6 +115,19 @@ def test_websocket_headers(app: App):
     assert headers["x-foo"] == "bar"
 
 
+def test_websocket_query_params(app: App):
+    @app.websocket_route("/test")
+    async def test(ws: WebSocket):
+        async with ws:
+            print(ws["query_string"])
+            await ws.send_json(dict(ws.query_params))
+
+    with app.client.websocket_connect("/test?q=hello") as ws:
+        query_params = ws.receive_json()
+
+    assert query_params["q"] == "hello"
+
+
 # Encoding / decoding of messages
 
 
