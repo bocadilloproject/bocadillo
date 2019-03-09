@@ -12,7 +12,7 @@ pytest-cov = "*"
 pytest-asyncio = "*"
 bumpversion = "*"
 pre-commit = "*"
-pydoc-markdown = "*"
+pydoc-markdown = {git = "https://github.com/NiklasRosenstein/pydoc-markdown.git"}
 pylint = "*"
 mypy = "*"
 

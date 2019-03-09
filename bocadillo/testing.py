@@ -21,7 +21,7 @@ def create_client(app: "App", **kwargs) -> TestClient:
     [client]: https://www.starlette.io/testclient/
 
     # Parameters
-    app (App): an application instance.
+    app: an #::bocadillo.applications#App instance.
     **kwargs (any): keyword arguments passed to the `TestClient` constructor.
 
     # Returns
@@ -36,7 +36,7 @@ class LiveServer:
     The server process is terminated when exiting the context.
 
     # Parameters
-    app (App): an application instance.
+    app: an #::bocadillo.applications#App instance.
     host (str):
         the host to run the server on.
         Defaults to `"127.0.0.1."` (i.e. `localhost`).

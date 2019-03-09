@@ -9,5 +9,6 @@ _STORE = Store(
 provider = _STORE.provider
 discover_providers = _STORE.discover
 useprovider = _STORE.useprovider
+create_context_provider = _STORE.create_context_provider
 consumer = _STORE.consumer
 freeze_providers = _STORE.freeze

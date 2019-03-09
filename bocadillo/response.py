@@ -40,9 +40,13 @@ class Response:
     [Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
     # Parameters
-    request (Request): the currently processed request.
-    media_type (str): the configured media type (given by the `App`).
-    media_handler (callable): the configured media handler (given by the `App`).
+    request:
+        the currently processed #::bocadillo.request#Request.
+    media_type (str):
+        the configured media type (given by the #::bocadillo.applications#App).
+    media_handler (callable):
+        the configured media handler
+        (given by the #::bocadillo.applications#App).
 
     # Attributes
     content (bytes or str): the raw response content.
@@ -81,7 +85,7 @@ class Response:
     media = property(
         doc=(
             "Write-only property that sets `content` to the set value "
-            "serializer using the `media_handler`, sets the "
+            "serialized using the `media_handler`, and sets the "
             "`Content-Type` header to the `media_type`."
         )
     )
@@ -98,9 +102,9 @@ class Response:
 
         # Parameters
         path (str):
-            A path to a file on this machine.
+            a path to a file on this machine.
         attach (bool, optional):
-            Whether to send the file as an [attachment](#response).
+            whether to send the file as an [attachment](#response).
             Defaults to `True`.
         """
         self._file_path = path
@@ -116,9 +120,9 @@ class Response:
 
         # Parameters
         func (callable):
-            A coroutine function.
+            a coroutine function.
         *args, **kwargs:
-            Any positional and keyword arguments to pass to `func` when
+            any positional and keyword arguments to pass to `func` when
             executing it.
         """
 

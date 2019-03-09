@@ -33,12 +33,12 @@ from .app_types import (
     Scope,
     Send,
 )
-from .compat import WSGIApp
+from .compat import WSGIApp, nullcontext
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
 from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .injection import freeze_providers, provider
+from .injection import create_context_provider, freeze_providers
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
@@ -75,7 +75,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
     ```
 
     # Parameters
-
     name (str):
         An optional name for the app.
     static_dir (str):
@@ -88,7 +87,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         Defaults to `"static"`.
     static_config (dict):
         Extra static files configuration attributes.
-        See also [static](./staticfiles.md#static).
+        See also #::bocadillo.staticfiles#static.
     allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
         If the list contains `"*"`, any host is allowed.
@@ -208,20 +207,17 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-        # Setup request-time providers.
+        # Built-in providers.
+        self._frozen = False
+        self._http_context = create_context_provider("req", "res")
 
-        self._response: Optional[Response] = None
-        self._request: Optional[Request] = None
-
-        @provider
-        async def req():
-            return self._request
-
-        @provider
-        async def res():
-            return self._response
-
-        self.__providers_frozen = False
+    def _app_providers(self):  # pylint: disable=method-hidden
+        if not self._frozen:
+            freeze_providers()
+            self._frozen = True
+            # do nothing on subsequent calls
+            self._app_providers = nullcontext
+        return nullcontext()
 
     @property
     @deprecated(
@@ -287,9 +283,14 @@ class App(RoutingMixin, metaclass=DocsMeta):
     def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
 
+        [WSGI]: https://wsgi.readthedocs.io
+        [ASGI]: https://asgi.readthedocs.io
+
         # Parameters
-        prefix (str): A path prefix where the app should be mounted, e.g. `"/myapp"`.
-        app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+        prefix (str):
+            A path prefix where the app should be mounted, e.g. `"/myapp"`.
+        app:
+            an object implementing the [WSGI] or [ASGI] protocol.
         """
         if not prefix.startswith("/"):
             prefix = "/" + prefix
@@ -306,8 +307,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Apply a recipe.
 
         # Parameters
-        recipe (Recipe or RecipeBook):
-            a recipe to be applied to the application.
+        recipe:
+            a #::bocadillo.recipes#Recipe or #::bocadillo.recipes#RecipeBook
+            to be applied to the application.
 
         # See Also
         - [Recipes](../guides/agnostic/recipes.md)
@@ -318,7 +320,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register a new error handler.
 
         # Parameters
-        exception_cls (Exception class):
+        exception_cls (exception class):
             The type of exception that should be handled.
         handler (callable):
             The actual error handler, which is called when an instance of
@@ -344,9 +346,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register a middleware class.
 
         # Parameters
-
-        middleware_cls (Middleware class):
-            A subclass of `bocadillo.Middleware`.
+        middleware_cls: a subclass of #::bocadillo.middleware#Middleware.
 
         # See Also
         - [Middleware](../guides/http/middleware.md)
@@ -359,8 +359,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register an ASGI middleware class.
 
         # Parameters
-        middleware_cls (Middleware class):
-            A class that complies with the ASGI specification.
+        middleware_cls: a class that complies with the ASGI specification.
 
         # See Also
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
@@ -400,9 +399,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
                 return func
 
             return register
-        else:
-            self._lifespan.add_event_handler(event, handler)
-            return handler
+
+        self._lifespan.add_event_handler(event, handler)
+        return handler
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         req = Request(scope, receive)
@@ -411,20 +410,13 @@ class App(RoutingMixin, metaclass=DocsMeta):
             media_type=self.media_type,
             media_handler=self.media_handlers[self.media_type],
         )
-        # NOTE: make the request and response available to the `req` and `res`
-        # providers.
-        self._request = req
-        self._response = res
 
-        res: Response = await self.server_error_middleware(req, res)
-
-        await res(receive, send)
-
-        # Re-raise the exception to allow the server to log the error
-        # and for the test client to optionally re-raise it too.
-        self.server_error_middleware.raise_if_exception()
-
-        self._request = self._response = None
+        with self._http_context.assign(req=req, res=res):
+            res: Response = await self.server_error_middleware(req, res)
+            await res(receive, send)
+            # Re-raise the exception to allow the server to log the error
+            # and for the test client to optionally re-raise it too.
+            self.server_error_middleware.raise_if_exception()
 
     async def dispatch_websocket(
         self, receive: Receive, send: Send, scope: Scope
@@ -432,29 +424,26 @@ class App(RoutingMixin, metaclass=DocsMeta):
         await self.websocket_router(scope, receive, send)
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        if not self.__providers_frozen:
-            freeze_providers()
-            self.__providers_frozen = True
+        with self._app_providers():
+            path: str = scope["path"]
 
-        path: str = scope["path"]
+            # Return a sub-mounted extra app, if found
+            for prefix, app in self._prefix_to_app.items():
+                if not path.startswith(prefix):
+                    continue
+                # Remove prefix from path so that the request is made according
+                # to the mounted app's point of view.
+                scope["path"] = path[len(prefix) :]
+                try:
+                    return app(scope)
+                except TypeError:
+                    return WSGIResponder(app, scope)
 
-        # Return a sub-mounted extra app, if found
-        for prefix, app in self._prefix_to_app.items():
-            if not path.startswith(prefix):
-                continue
-            # Remove prefix from path so that the request is made according
-            # to the mounted app's point of view.
-            scope["path"] = path[len(prefix) :]
-            try:
-                return app(scope)
-            except TypeError:
-                return WSGIResponder(app, scope)
+            if scope["type"] == "websocket":
+                return partial(self.dispatch_websocket, scope=scope)
 
-        if scope["type"] == "websocket":
-            return partial(self.dispatch_websocket, scope=scope)
-
-        assert scope["type"] == "http"
-        return partial(self.dispatch_http, scope=scope)
+            assert scope["type"] == "http"
+            return partial(self.dispatch_http, scope=scope)
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
