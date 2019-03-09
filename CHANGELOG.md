@@ -14,14 +14,17 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+Highlights: providers (dependency injection), SSE support, middleware API improvements, testing utilities.
+
 ### Added
 
-- New base class for ASGI middleware: `ASGIMiddleware`.
-  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
-  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Providers: explicit, modular and flexible runtime dependency injection system.
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
+- New base class for ASGI middleware: `ASGIMiddleware`.
+  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
+  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
 - Add a `bocadillo.testing` module with testing utilities:
   - `create_client` builds a `requests`-like test client out of an application.
   - The `LiveServer` context manager runs a live application server in
