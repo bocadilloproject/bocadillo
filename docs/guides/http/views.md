@@ -22,7 +22,7 @@ async def current_datetime(req, res):
 Let's break this code down:
 
 - First, we import the `datetime` module.
-- Then, we define an `async` function called `current_datetime` — this is the view function. A view function takes a [`Request`][Request] and a [`Response`][Response] (in this order) as its first two arguments, which are typically called `req` and `res` respectively.
+- Then, we define an `async` function called `current_datetime` — this is the view function. A view function takes a [`Request`][request] and a [`Response`][response] (in this order) as its first two arguments, which are typically called `req` and `res` respectively.
 
 ::: tip
 The view function's name is used by Bocadillo when the view is associated to the route. See [naming routes].
@@ -87,67 +87,46 @@ The recommended way to define views in Bocadillo is using the async/await syntax
 
 ```python
 from asyncio import sleep
-from bocadillo import view
 
 async def find_post_content(slug: str):
     await sleep(1)  # perhaps query a database here?
     return 'My awesome post'
 
-@view()
 async def retrieve_post(req, res, slug: str):
     res.text = await find_post_content(slug)
 ```
-
-::: tip
-
-> Is `view()` necessary here?
-
-TL;DR: **no**.
-
-The role of the `view()` decorator is to build a class-based view out of a function-based view. This is because internally, Bocadillo only deals with class-based views.
-
-Lucky you! We hide this implementation detail from you by automatically decorating function-based views when registering them via `@app.route()`.
-:::
 
 ### Synchronous views
 
 While Bocadillo is asynchronous at its core, you can also use plain Python functions to define synchronous views:
 
 ```python
-@view()
 def index(req, res):
     res.html = '<h1>My website</h1>'
 ```
 
-**Note**: it is generally more
-efficient to use asynchronous views rather than synchronous ones.
-This is because, when given a synchronous view, Bocadillo needs to perform
-a sync-to-async conversion, which might add extra overhead.
+::: tip
+It is generally more efficient to use asynchronous views than synchronous ones. This is because, when given a synchronous view, Bocadillo needs to perform a sync-to-async conversion, which might add extra overhead.
+:::
 
 ### Class-based views
 
-The previous examples were function-based views, but Bocadillo also supports
-class-based views.
+The previous examples were function-based views, but Bocadillo also supports class-based views. They're just regular Python classes and don't need to extend any base class.
 
-Class-based views are regular Python classes (there is no base `View` class).
-Each HTTP method gets mapped to the corresponding method on the
-class. For example, `GET` gets mapped to `.get()`,
-`POST` gets mapped to `.post()`, etc.
-
-Other than that, class-based view methods are just regular views:
+During routing, the request gets routed to the **handler method** (or _handler_ for short) corresponding to the requested HTTP method. For example, `GET` gets mapped to `.get()`, `POST` gets mapped to `.post()`, etc.
 
 ```python
 class Index:
 
     async def get(self, req, res):
         res.text = 'Classes, oh my!'
-       
+
     def post(self, req, res):
         res.text = 'Roger that'
 ```
 
-A catch-all `.handle()` method can also be implemented to process all incoming
-requests — resulting in other methods being ignored.
+A catch-all `.handle()` handler can be implemented to process all incoming
+requests regardless of their HTTP method — resulting in other handlers being ignored.
 
 ```python
 class Index:
@@ -155,6 +134,10 @@ class Index:
     async def handle(self, req, res):
         res.text = 'Post it, get it, put it, delete it.'
 ```
+
+::: tip NOTE
+Bocadillo actually has a [`View`](/api/views.md#view) base class, but you don't need to subclass it when building class-based views. It only exists as a unique representation to which all the types of views described in this section get mapped internally.
+:::
 
 ## About type annotations
 
@@ -164,7 +147,7 @@ However, **type annotations are not used at all by Bocadillo**.
 
 Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
 
-[Routes and URL design]: routing.md
+[routes and url design]: routing.md
 [naming routes]: routing.md#naming-routes
-[Request]: requests.md
-[Response]: responses.md
+[request]: requests.md
+[response]: responses.md
