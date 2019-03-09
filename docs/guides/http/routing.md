@@ -207,7 +207,7 @@ Which HTTP methods are exposed on a route is managed at the [view](./views.md) l
 
 On class-based views, HTTP methods are exposed according to the declared handlers. For example, the POST method is accepted if and only if the view defines `.post()`.
 
-On function-based views, you can use the `@view()` decorator and its case-insensitive `methods` argument. If `methods` is not given or the decorator is omitted altogether, only safe HTTP methods are exposed, i.e. `GET` and `HEAD`.
+On function-based views, you can use the [`@view()`](/api/views.md#view-2) decorator and its case-insensitive `methods` argument. If `methods` is not given or the decorator is omitted altogether, only safe HTTP methods are exposed, i.e. `GET` and `HEAD`.
 
 ```python
 from bocadillo import view
@@ -218,17 +218,15 @@ async def delete_blog_post(req, res, pk):
     res.status_code = 204
 ```
 
-::: warning CHANGED IN v0.9.0
-The `methods` argument is no longer located on `app.route()`.
-:::
+### How are unsupported methods handled?
 
-#### How are unsupported methods handled?
+When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. When this happens, [hooks] will not be called either but [HTTP middleware][middleware] will.
 
-When a non-allowed HTTP method is used by a client, a `405 Not Allowed` error response is automatically returned. [Hooks] callbacks will not be called either (but request [middleware] will).
+### Automatic implementation of `HEAD`
 
-::: tip
-Bocadillo implements the `HEAD` method automatically if your route supports `GET`. It is safe and systems such as URL checkers may use it to access your application without transferring the full request body.
-:::
+The `HEAD` HTTP method is used by systems such as URL checkers and web crawlers to examine a read-only resource without transferring the full request body.
+
+As a result, Bocadillo implements the `HEAD` method automatically if your route supports `GET`.
 
 [request]: requests.md
 [response]: responses.md
