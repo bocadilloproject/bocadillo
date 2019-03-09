@@ -62,9 +62,9 @@ dictionary-like object.
 Example if a client requests `ws://localhost:8000/chatroom?add=1&sub=2&sub=3`:
 
 ```python
-req.query_params["add"]  # "1"
-req.query_params["sub"]  # "2"  (first item)
-req.query_params.getlist("sub")  # ["2", "3"]
+ws.query_params["add"]  # "1"
+ws.query_params["sub"]  # "2"  (first item)
+ws.query_params.getlist("sub")  # ["2", "3"]
 ```
 
 [deployment]: ../../discussions/deployment.md
