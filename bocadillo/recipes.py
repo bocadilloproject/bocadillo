@@ -16,7 +16,7 @@ class RecipeBase:
         Should be implemented by subclasses.
 
         # Parameters
-        app (App): an application instance.
+        app: an #::bocadillo.applications#App instance.
         root (str): a root URL path.
         """
         raise NotImplementedError
@@ -26,7 +26,6 @@ class Recipe(App):
     """A grouping of capabilities that can be merged back into an application.
 
     # Parameters
-
     name (str):
         A name for the recipe.
     prefix (str):
@@ -42,8 +41,6 @@ class Recipe(App):
         assert prefix.startswith("/"), "recipe prefix must start with '/'"
 
         self.prefix = prefix
-        # DEPRECATED: 0.13.0
-        self._templates_dir_given = "templates_dir" in kwargs
 
     def _get_own_url_for(self, name: str, **kwargs) -> str:
         return self.prefix + super()._get_own_url_for(name, **kwargs)
@@ -51,11 +48,6 @@ class Recipe(App):
     def apply(self, app: App, root: str = ""):
         """Apply the recipe to an application."""
         app.mount(prefix=root + self.prefix, app=self)
-
-        # DEPRECATED: 0.13.0
-        # Look for templates where the app does, if not specified
-        if not self._templates_dir_given:
-            self.templates_dir = app.templates_dir  # type: ignore
 
     @classmethod
     def book(cls, *recipes: "Recipe", prefix: str) -> "RecipeBook":
@@ -70,7 +62,7 @@ class RecipeBook(RecipeBase):
     """A composition of multiple recipes.
 
     # Parameters
-    recipes (list): a list of `Recipe` objects.
+    recipes (list): a list of #::bocadillo.recipes#Recipe objects.
     prefix (str):
         A prefix that will be prepended to all of the recipes' prefixes.
     """

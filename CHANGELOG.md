@@ -14,15 +14,21 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+Highlights: providers (dependency injection), SSE support, middleware API improvements, testing utilities.
+
 ### Added
 
-- New base class for ASGI middleware: `ASGIMiddleware`.
-  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
-  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Providers: explicit, modular and flexible runtime dependency injection system.
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
-- The new `testing` module contains a `create_client` helper to build a test client out of an application.
+- New base class for ASGI middleware: `ASGIMiddleware`.
+  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
+  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Add a `bocadillo.testing` module with testing utilities:
+  - `create_client` builds a `requests`-like test client out of an application.
+  - The `LiveServer` context manager runs a live application server in
+    a separate process.
 - Add the `override_env` utility context manager, available under `bocadillo.utils`.
 
 ### Changed
@@ -32,10 +38,11 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Fixed
 
 - Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
+- ASGI middleware was not applied when the request was routed to a sub-application (e.g. a recipe). For example, this lead to CORS headers not being added on a recipe despite them being configured on the root application. This has been fixed!
 
 ### Deprecated
 
-- `app.client` has been deprecated in favor of the `create_client` helper, and will be removed in v0.14. For pytest users, consider building and using `client` fixture in your tests:
+- `app.client` has been deprecated in favor of the `create_client` testing helper, and will be removed in v0.14. For pytest users, consider building and using a `client` fixture in your tests:
 
 ```python
 # tests.py
@@ -51,6 +58,12 @@ def client():
 def test_stuff(client):
     ...
 ```
+
+## [v0.12.6] - 2019-03-09
+
+### Fixed
+
+- Missing `headers` and `query_params` attributes on `WebSocket`.
 
 ## [v0.12.5] - 2019-03-06
 
@@ -519,7 +532,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...HEAD
+[v0.12.6]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...v0.12.6
 [v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
 [v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
 [v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3

@@ -13,8 +13,9 @@ jobs:
       python: "3.6"
       install:
         - pip install ".[files]"
-        - pip install -U pytest pytest-asyncio
-      script: pytest
+        - pip install -U pytest pytest-asyncio codecov pytest-cov
+      script: pytest --cov=./
+      after_success: codecov
 
     - stage: test
       if: branch != release/docs
@@ -25,9 +26,8 @@ jobs:
       python: "3.7"
       install:
         - pip install ".[files]"
-        - pip install -U pytest pytest-asyncio codecov pytest-cov
-      script: pytest --cov=./
-      after_success: codecov
+        - pip install -U pytest pytest-asyncio
+      script: pytest
 
     - stage: build and deploy docs
       if: branch = release/docs
@@ -36,7 +36,7 @@ jobs:
         - nvm use 8
       install:
         - pip install .
-        - pip install pydoc-markdown
+        - pip install git+https://github.com/NiklasRosenstein/pydoc-markdown.git
         - npm install --only=dev
       script:
         - pydocmd generate

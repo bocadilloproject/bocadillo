@@ -1,8 +1,9 @@
 from asyncio import Queue
 
-from bocadillo import App, server_event
+from bocadillo import App, Templates, server_event
 
 app = App()
+templates = Templates(app)
 
 clients = set()
 
@@ -36,7 +37,7 @@ class Events:
 
 @app.route("/")
 async def index(req, res):
-    res.html = await app.template("index.html")
+    res.html = await templates.render("index.html")
 
 
 if __name__ == "__main__":

@@ -133,10 +133,6 @@ app = App(
 
 Please refer to Starlette's [CORSMiddleware](https://www.starlette.io/middleware/#corsmiddleware) documentation for the full list of options and defaults.
 
-::: warning CAVEAT
-CORS is activated on a per-app basis. In particular, CORS configuration applied on the root `App` instance won't apply to sub-applications, nor [recipes](/guides/agnostic/recipes.md). You'll have to redefine the CORS configuration on each of these. See also [#188](https://github.com/bocadilloproject/bocadillo/issues/188).
-:::
-
 ### HSTS
 
 If you want enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS (or WS to WSS), simply use:

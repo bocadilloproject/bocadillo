@@ -1,19 +1,22 @@
-from typing import Awaitable, Callable, Optional, Any, Union, Tuple
+from typing import Any, Awaitable, Callable, Optional, Tuple, Union
 
-from starlette.datastructures import URL
-from starlette.websockets import (
-    WebSocket as StarletteWebSocket,
-    WebSocketDisconnect as _WebSocketDisconnect,
-)
+from starlette.datastructures import URL, Headers, QueryParams
+from starlette.websockets import WebSocket as StarletteWebSocket
+from starlette.websockets import WebSocketDisconnect as _WebSocketDisconnect
 
-from .app_types import Event, Scope, Receive, Send
+from .app_types import Event, Receive, Scope, Send
 from .constants import WEBSOCKET_CLOSE_CODES
 
 
 class WebSocket:
     """Represents a WebSocket connection.
 
+    See also [WebSockets](/guides/websockets/).
+
     # Parameters
+    scope (dict): ASGI scope.
+    receive (callable): ASGI receive function.
+    send (callable): ASGI send function.
     value_type (str):
         The type of messages received or sent over the WebSocket.
         If given, overrides `receive_type` and `send_type`.
@@ -27,13 +30,19 @@ class WebSocket:
     caught_close_codes (tuple of int):
         Close codes of `WebSocketDisconnect` exceptions that should be
         caught and silenced. Defaults to `(1000, 1001)`.
-    args (any):
-        Passed to the underlying Starlette `WebSocket` object. This is
-        typically the ASGI `scope`, `receive` and `send` objects.
+
+    # Attributes
+    url (str-like): the URL which the WebSocket connection was made to.
+    headers (dict): headers attached to the connection request.
+    query_params (dict): parsed query parameters.
     """
 
     __default_receive_type__ = "text"
     __default_send_type__ = "text"
+
+    url: URL
+    headers: Headers
+    query_params: QueryParams
 
     def __init__(
         self,
@@ -67,14 +76,11 @@ class WebSocket:
         self.receive_type = receive_type
         self.send_type = send_type
 
-    @property
-    def url(self) -> URL:
-        """The URL which the WebSocket connection was made to.
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._ws, name)
 
-        # See Also
-        - [starlette.WebSocket.url](https://www.starlette.io/websockets/#url)
-        """
-        return self._ws.url
+    def __getitem__(self, name: str) -> Any:
+        return self._ws.__getitem__(name)
 
     # Connection handling.
 
