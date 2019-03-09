@@ -56,6 +56,12 @@ def test_stuff(client):
     ...
 ```
 
+## [v0.12.6] - 2019-03-09
+
+### Fixed
+
+- Missing `headers` and `query_params` attributes on `WebSocket`.
+
 ## [v0.12.5] - 2019-03-06
 
 ### Fixed
@@ -523,7 +529,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...HEAD
+[v0.12.6]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...v0.12.6
 [v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
 [v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
 [v0.12.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.2...v0.12.3
