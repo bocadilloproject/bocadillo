@@ -16,23 +16,20 @@ class Templates:
 
     See also [Templates](../guides/agnostic/templates.md) for detail.
 
-    [RoutingMixin]: ./routing.md#routingmixin
-
-    # Parameters
-
     ::: tip
-    These parameters are also stored as attributes and can be accessed or
+    Parameters are also stored as attributes and can be accessed or
     modified at runtime.
     :::
 
+    # Parameters
     app (any):
-        an optional application object. May be a subclass of [RoutingMixin].
+        an optional application object.
+        May be a subclass of #::bocadillo.routing#RoutingMixin.
     directory (str):
-        The directory where templates should be searched for.
-        Passed to the `engine`.
+        the directory where templates should be searched for.
         Defaults to `"templates"` relative to the current working directory.
     context (dict, optional):
-        Global template variables passed to the `engine`.
+        global template variables.
         If present, the app's `.url_for()` method is registered as
         an `url_for` global variable.
     """
@@ -97,13 +94,13 @@ class Templates:
 
         # Parameters
         name (str):
-            Name of the template, located inside `templates_dir`.
+            name of the template, located inside `templates_dir`.
             The trailing underscore avoids collisions with a potential
             context variable named `name`.
         *args (dict):
-            Context variables to inject in the template.
+            context variables to inject in the template.
         *kwargs (str):
-            Context variables to inject in the template.
+            context variables to inject in the template.
         """
         with self._enable_async():
             return await self._get_template(filename).render_async(

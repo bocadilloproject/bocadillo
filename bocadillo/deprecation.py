@@ -22,13 +22,17 @@ def deprecated(
     rendered in the API reference.
 
     # Parameters
-    since (str): version when the function has been deprecated.
-    removal (str): version when the function will be removed.
+    since (str):
+        version when the function has been deprecated.
+    removal (str):
+        version when the function will be removed.
     alternative (str or tuple):
         what should be used instead. Can be a string (name of the alternative)
         or a tuple of two strings (name and a link to the API reference).
-    link (str): a link to the API reference for the alternative.
-    update_doc (bool): whether the object's docstring should be updated.
+    link (str):
+        a link to the API reference for the alternative.
+    update_doc (bool):
+        whether the object's docstring should be updated.
     warn_on_instanciate (bool):
         if the object is a class, whether a deprecation warning should be
         sent when instanciating it.    

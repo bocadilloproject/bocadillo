@@ -63,7 +63,7 @@ class HTTPError(Exception):
 class ServerErrorMiddleware(HTTPApp):
     """Return 500 response when an unhandled exception occurs.
 
-    Adaptation of Starlette's ServerErrorMiddleware.
+    Adaptation of Starlette's `ServerErrorMiddleware`.
     """
 
     _template_name = "server_error.jinja"
@@ -125,7 +125,7 @@ class ServerErrorMiddleware(HTTPApp):
 class HTTPErrorMiddleware(HTTPApp):
     """Handle exceptions that occur while handling HTTP requests.
 
-    Adaptation of Starlette's ExceptionMiddleware.
+    Adaptation of Starlette's `ExceptionMiddleware`.
     """
 
     def __init__(self, app: HTTPApp, debug: bool = False) -> None:

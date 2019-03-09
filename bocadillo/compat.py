@@ -28,11 +28,11 @@ async def call_async(
     """Call a function in an async manner.
 
     # Parameters
-    func (Callable):
+    func:
         a callable that is either awaited (if a coroutine function)
         or run in the thread pool (if a regular function).
     sync (bool):
-        A hint as to whether `func` is synchronous. If not given, it is
+        a hint as to whether `func` is synchronous. If not given, it is
         inferred as `asyncio.iscoroutinefunction(func)`.
 
     # See Also
@@ -59,7 +59,7 @@ WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
 
 
 def empty_wsgi_app() -> WSGIApp:
-    """Return a WSGI app that always returns 404 Not Found."""
+    """Return a WSGI app that always returns `404 Not Found`."""
 
     def wsgi(environ, start_response):
         status = "404 Not Found"

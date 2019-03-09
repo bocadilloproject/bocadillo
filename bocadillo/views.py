@@ -40,7 +40,6 @@ class View:
     :::
 
     # Attributes
-
     name (str): the name of the view.
     """
 
@@ -102,7 +101,7 @@ class View:
 
 
 def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
-    """Convert a handler to a `View` instance.
+    """Convert a handler to a #::bocadillo.views#View instance.
 
     # Parameters
     handler (function or coroutine function):
@@ -115,7 +114,7 @@ def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
         to support all HTTP methods. Defaults to `["get"]`.
 
     # Returns
-    view (View): a `View` instance.
+    view: a #::bocadillo.views#View instance.
 
     # See Also
     - The [constants](./constants.md) module for the list of all HTTP methods.
@@ -131,7 +130,7 @@ def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
 
 
 def from_obj(obj: Any) -> View:
-    """Convert an object to a `View` instance.
+    """Convert an object to a #::bocadillo.views#View instance.
 
     # Parameters
     obj (any):
@@ -139,7 +138,7 @@ def from_obj(obj: Any) -> View:
         onto the view.
 
     # Returns
-    view (View): a `View` instance.
+    view: a #::bocadillo.views#View instance.
     """
     handlers = get_handlers(obj)
     name = camel_to_snake(obj.__class__.__name__)
@@ -147,7 +146,7 @@ def from_obj(obj: Any) -> View:
 
 
 def get_handlers(obj: Any) -> Dict[str, Handler]:
-    """Return all `View` handlers declared on an object.
+    """Return all #::bocadillo.views#View handlers declared on an object.
 
     # Parameters
     obj (any): an object.
@@ -170,7 +169,7 @@ def get_handlers(obj: Any) -> Dict[str, Handler]:
 
 
 def view(methods: MethodsParam = None):
-    """Convert the decorated function to a proper `View` object.
+    """Convert the decorated function to a proper #::bocadillo.views#View.
 
     This decorator is a shortcut for [from_handler](#from-handler).
     """

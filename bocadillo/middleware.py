@@ -10,9 +10,10 @@ class Middleware(HTTPApp):
     """Base class for middleware classes.
 
     # Parameters
-    app: a callable that may as well be another `Middleware` instance.
+    app:
+        a callable that may as well be another `Middleware` instance.
     kwargs (any):
-        Keyword arguments passed when registering the
+        keyword arguments passed when registering the
         middleware on the application.
     """
 
@@ -25,15 +26,15 @@ class Middleware(HTTPApp):
     ) -> Optional[Response]:
         """Perform processing before a request is dispatched.
 
-        If the `Response` object is returned, it will be used
-        and no further processing will be performed.
+        If the #::bocadillo.response#Response object is returned,
+        it will be used and no further processing will be performed.
 
         # Parameters
-        req (Request): a Request object.
-        res (Response): a Response object.
+        req: a #::bocadillo.request#Request object.
+        res: a #::bocadillo.response#Response object.
 
         # Returns
-        res (Response or None): an optional response object.
+        res: an optional #::bocadillo.response#Response object.
         """
 
     async def after_dispatch(
@@ -42,11 +43,11 @@ class Middleware(HTTPApp):
         """Perform processing after a request has been dispatched.
 
         # Parameters
-        req (Request): a Request object.
-        res (Response): a Response object.
+        req: a #::bocadillo.request#Request object.
+        res: a #::bocadillo.response#Response object.
 
         # Returns
-        res (Response or None): an optional response object.
+        res: an optional #::bocadillo.response#Response object.
         """
 
     async def process(self, req: Request, res: Response) -> Response:
@@ -62,11 +63,11 @@ class Middleware(HTTPApp):
         instances are callable.
 
         # Parameters
-        req (Request): a Request object.
-        res (Response): a Response object.
+        req: a #::bocadillo.request#Request object.
+        res: a #::bocadillo.response#Response object.
 
         # Returns
-        res (Response): a Response object.
+        res: a #::bocadillo.response#Response object.
         """
         before_res: Optional[Response] = await call_async(  # type: ignore
             self.before_dispatch, req, res

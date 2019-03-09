@@ -16,7 +16,7 @@ class RecipeBase:
         Should be implemented by subclasses.
 
         # Parameters
-        app (App): an application instance.
+        app: an #::bocadillo.applications#App instance.
         root (str): a root URL path.
         """
         raise NotImplementedError
@@ -26,7 +26,6 @@ class Recipe(App):
     """A grouping of capabilities that can be merged back into an application.
 
     # Parameters
-
     name (str):
         A name for the recipe.
     prefix (str):
@@ -70,7 +69,7 @@ class RecipeBook(RecipeBase):
     """A composition of multiple recipes.
 
     # Parameters
-    recipes (list): a list of `Recipe` objects.
+    recipes (list): a list of #::bocadillo.recipes#Recipe objects.
     prefix (str):
         A prefix that will be prepended to all of the recipes' prefixes.
     """
