@@ -1,13 +1,11 @@
 """This module defines classes (both abstract and concrete) that power routing.
 
-::: tip NOTATIONS
-This modules uses the following [generic types]:
+**Notations**: this modules uses the following [generic types]:
 
 - `_R` refers to a route object, i.e. an instance of a subclass of [BaseRoute](#baseroute).
 - `_V` refers to a view object.
 
 [generic types]: https://docs.python.org/3/library/typing.html#generics
-:::
 """
 
 import inspect
@@ -96,7 +94,7 @@ class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
-    route (BaseRoute): a route object.
+    route: a route object (subclass of #::bocadillo.routing#BaseRoute).
     params (dict): extracted route parameters.
     """
 
@@ -110,7 +108,7 @@ class BaseRouter(Generic[_R, _V]):
 
     # Attributes
     routes (dict):
-        A mapping of URL patterns to route objects.
+        a mapping of URL patterns to route objects.
     """
 
     def __init__(self):
@@ -160,8 +158,8 @@ class BaseRouter(Generic[_R, _V]):
         path (str): an URL path
 
         # Returns
-        match (RouteMatch or None):
-            a [`RouteMatch`](#routematch) object if the path matched
+        match:
+            a #::bocadillo.routing#RouteMatch object if the path matched
             a registered route, `None` otherwise.
         """
         for route in self.routes.values():
@@ -177,14 +175,15 @@ class BaseRouter(Generic[_R, _V]):
 class HTTPRoute(BaseRoute[View]):
     """Represents the binding of an URL pattern to an HTTP view.
 
-    Subclass of [BaseRoute](#baseroute).
+    Subclass of #::bocadillo.routing#BaseRoute.
 
     # Parameters
-    pattern (str): an URL pattern.
-    view (View):
-        A `View` object.
+    pattern (str):
+        an URL pattern.
+    view:
+        a #::bocadillo.views#View object.
     name (str):
-        The route's name.
+        the route's name.
     """
 
     def __init__(self, pattern: str, view: View, name: str):
@@ -207,7 +206,7 @@ class HTTPRoute(BaseRoute[View]):
 class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
     """A router for HTTP routes.
 
-    Subclass of [BaseRouter](#baserouter).
+    Subclass of #::bocadillo.routing#BaseRouter.
 
     Note: routes are stored by `name` instead of `pattern`.
     """
@@ -218,7 +217,7 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
         return route.name
 
     def normalize(self, view: Any) -> View:
-        """Build a `View` object.
+        """Build a #::bocadillo.views#View object.
 
         The input, free-form `view` object is converted using the following
         rules:
@@ -229,12 +228,13 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
         - Any other object is interpreted as a view-like object, and converted
         with [`from_obj()`][obj].
 
-        [handler]: ./views.md#from-handler
         [obj]: ./views.md#from-obj
+        [handler]: ./views.md#from-handler
 
         # Returns
-        view (View):
-            a `View` object, ready to be fed to [`.add_route()`](#add-route).
+        view:
+            a #::bocadillo.views#View object,
+            ready to be fed to [`.add_route()`](#add-route).
         """
 
         if isinstance(view, View):
@@ -264,15 +264,16 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
         """Register an HTTP route.
 
         # Parameters
-        view (View):
-            a `View` object. You may use [.normalize()](#normalize-2)
-            to get one from a function or class-based view before-hand.
+        view:
+            a #::bocadillo.views#View object.
+            You may use [.normalize()](#normalize-2) to get one from a
+            function or class-based view before-hand.
         pattern (str): an URL pattern.
         name (str): a route name (inferred from the view if not given).
         namespace (str): an optional route namespace.
 
         # Returns
-        route (HTTPRoute): the registered route.
+        route: the registered #::bocadillo.routing#HTTPRoute.
         """
         if name is None:
             name = view.name
@@ -304,16 +305,15 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
 class WebSocketRoute(BaseRoute[WebSocketView]):
     """Represents the binding of an URL pattern to a WebSocket view.
 
-    Subclass of [BaseRoute](#baseroute).
-
-    [WebSocket]: ./websockets.md#websocket
+    Subclass of #::bocadillo.routing#BaseRoute.
 
     # Parameters
     pattern (str): an URL pattern.
     view (coroutine function):
-        Should take as parameters a `WebSocket` object and
+        Should take as parameters a #::bocadillo.websockets#WebSocket object and
         any extracted route parameters.
-    kwargs (any): passed when building the [WebSocket] object.
+    kwargs (any):
+        passed when building the #::bocadillo.websockets#WebSocket object.
     """
 
     def __init__(self, pattern: str, view: WebSocketView, **kwargs):
@@ -334,7 +334,7 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
 class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
     """A router for WebSocket routes.
 
-    Subclass of [BaseRouter](#baserouter).
+    Subclass of #::bocadillo.routing#BaseRouter.
     """
 
     def _get_key(self, route: WebSocketRoute) -> str:
@@ -354,7 +354,7 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
         view (coroutine function): a WebSocket view.
 
         # Returns
-        route (WebSocketRoute): the registered route.
+        route: the registered #::bocadillo.routing#WebSocketRoute.
         """
         route = WebSocketRoute(pattern=pattern, view=view, **kwargs)
         self.add(route)
@@ -385,15 +385,15 @@ class RoutingMixin:
         # Parameters
         pattern (str): an URL pattern.
         methods (list of str):
-            An optional list of HTTP methods.
+            an optional list of HTTP methods.
             Defaults to `["get", "head"]`.
             Ignored for class-based views.
         name (str):
-            An optional name for the route.
+            an optional name for the route.
             If a route already exists for this name, it is replaced.
             Defaults to a snake-cased version of the view's name.
         namespace (str):
-            An optional namespace for the route. If given, it is prefixed to
+            an optional namespace for the route. If given, it is prefixed to
             the name and separated by a colon.
         """
         return self.http_router.route(
@@ -415,7 +415,7 @@ class RoutingMixin:
         pattern (str): an URL pattern.
 
         # See Also
-        - [WebSocket](./websockets.md#websocket) for a description of keyword
+        - #::bocadillo.websockets#WebSocket for a description of keyword
         arguments.
         """
         # NOTE: use named keyword arguments instead of `**kwargs` to improve
@@ -429,7 +429,7 @@ class RoutingMixin:
         )
 
     def url_for(self, name: str, **kwargs) -> str:
-        """Build the full URL path for a named route.
+        """Build the full URL path for a named #::bocadillo.routing#HTTPRoute.
 
         # Parameters
         name (str): the name of the route.
@@ -454,7 +454,7 @@ class RoutingMixin:
         permanent: bool = False,
         **kwargs,
     ) -> NoReturn:
-        """Redirect to another HTTP route.
+        """Redirect to another #::bocadillo.routing#HTTPRoute.
 
         This is only meant to be used inside an HTTP view.
 

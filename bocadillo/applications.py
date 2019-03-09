@@ -75,7 +75,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
     ```
 
     # Parameters
-
     name (str):
         An optional name for the app.
     static_dir (str):
@@ -88,7 +87,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         Defaults to `"static"`.
     static_config (dict):
         Extra static files configuration attributes.
-        See also [static](./staticfiles.md#static).
+        See also #::bocadillo.staticfiles#static.
     allowed_hosts (list of str, optional):
         A list of hosts which the server is allowed to run at.
         If the list contains `"*"`, any host is allowed.
@@ -284,9 +283,14 @@ class App(RoutingMixin, metaclass=DocsMeta):
     def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
 
+        [WSGI]: https://wsgi.readthedocs.io
+        [ASGI]: https://asgi.readthedocs.io
+
         # Parameters
-        prefix (str): A path prefix where the app should be mounted, e.g. `"/myapp"`.
-        app: An object implementing [WSGI](https://wsgi.readthedocs.io) or [ASGI](https://asgi.readthedocs.io) protocol.
+        prefix (str):
+            A path prefix where the app should be mounted, e.g. `"/myapp"`.
+        app:
+            an object implementing the [WSGI] or [ASGI] protocol.
         """
         if not prefix.startswith("/"):
             prefix = "/" + prefix
@@ -303,8 +307,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Apply a recipe.
 
         # Parameters
-        recipe (Recipe or RecipeBook):
-            a recipe to be applied to the application.
+        recipe:
+            a #::bocadillo.recipes#Recipe or #::bocadillo.recipes#RecipeBook
+            to be applied to the application.
 
         # See Also
         - [Recipes](../guides/agnostic/recipes.md)
@@ -315,7 +320,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register a new error handler.
 
         # Parameters
-        exception_cls (Exception class):
+        exception_cls (exception class):
             The type of exception that should be handled.
         handler (callable):
             The actual error handler, which is called when an instance of
@@ -341,9 +346,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register a middleware class.
 
         # Parameters
-
-        middleware_cls (Middleware class):
-            A subclass of `bocadillo.Middleware`.
+        middleware_cls: a subclass of #::bocadillo.middleware#Middleware.
 
         # See Also
         - [Middleware](../guides/http/middleware.md)
@@ -356,8 +359,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register an ASGI middleware class.
 
         # Parameters
-        middleware_cls (Middleware class):
-            A class that complies with the ASGI specification.
+        middleware_cls: a class that complies with the ASGI specification.
 
         # See Also
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
