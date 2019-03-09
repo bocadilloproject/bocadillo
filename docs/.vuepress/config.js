@@ -183,6 +183,22 @@ module.exports = {
           ])
         },
         {
+          title: "Providers (Dependency injection)",
+          collapsable: false,
+          children: listDir("guides/injection", [
+            "",
+            "problem",
+            "basics",
+            "scopes",
+            "async",
+            "yield",
+            "modularity",
+            "factory",
+            "auto",
+            "builtins"
+          ])
+        },
+        {
           title: "Protocol-agnostic",
           collapsable: false,
           children: listDir("guides/agnostic", [

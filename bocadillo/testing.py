@@ -46,10 +46,10 @@ class LiveServer:
     ready_timeout (float):
         The maximum time to wait for the live server to be ready to handle
         connections, in seconds.
-        Defaults to 2.
+        Defaults to 5.
     stop_timeout (float):
         The maximum time to wait for the live server to terminate, in seconds.
-        Defaults to 2.
+        Defaults to 5.
     
     # Attributes
     url (str):
@@ -61,8 +61,8 @@ class LiveServer:
         app: "App",
         host: str = "127.0.0.1",
         port: int = None,
-        ready_timeout: float = 2,
-        stop_timeout: float = 2,
+        ready_timeout: float = 5,
+        stop_timeout: float = 5,
     ):
         if port is None:
             port = random.randint(3000, 9000)
