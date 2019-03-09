@@ -22,18 +22,28 @@ async def current_datetime(req, res):
 Let's break this code down:
 
 - First, we import the `datetime` module.
-- Then, we define an `async` function called `current_datetime` — this is the view function. A view function takes a [`Request`][request] and a [`Response`][response] (in this order) as its first two arguments, which are typically called `req` and `res` respectively.
-
-::: tip
-The view function's name is used by Bocadillo when the view is associated to the route. See [naming routes].
-:::
-
+- Then, we define an `async` function called `current_datetime` — this is the view function.
 - Next, we grab the current date and time and build a dictionary out of it.
 - Finally, we assign this dictionary to `res.media`, which results in returning a JSON response.
 
-Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.media`.
+Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.media`. [Learn why in the FAQ](/faq/#why-pass-the-request-and-response-around-everywhere).
 
-For more information on working with requests and responses, check out our [Request] and [Response] API guides.
+::: tip
+The `req` and `res` parameters are actually optional. If present, the current [`Request`][request] and [`Response`][response] are _injected_ in the view by Bocadillo's [dependency injection](/guides/injection/) mechanism.
+
+For example, the view above doesn't need to use `req`, so we can safely skip its declaration and refactor the view as follows:
+
+```python
+import datetime
+
+async def current_datetime(res):
+    now = datetime.datetime.now()
+    res.media = {'now': now.isoformat()}
+```
+
+:::
+
+More information on working with requests and responses can be found in the [Request] and [Response] user guides.
 
 ## Mapping URLs to views
 
@@ -148,6 +158,11 @@ However, **type annotations are not used at all by Bocadillo**.
 Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
 
 [routes and url design]: routing.md
+
+<<<<<<< Updated upstream
 [naming routes]: routing.md#naming-routes
-[request]: requests.md
-[response]: responses.md
+=======
+
+> > > > > > > Stashed changes
+> > > > > > > [request]: requests.md
+> > > > > > > [response]: responses.md

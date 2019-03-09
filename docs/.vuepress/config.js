@@ -194,7 +194,8 @@ module.exports = {
             "yield",
             "modularity",
             "factory",
-            "auto"
+            "auto",
+            "builtins"
           ])
         },
         {
