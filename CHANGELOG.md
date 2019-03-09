@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Missing `headers` and `query_params` attributes on `WebSocket`.
+
 ## [v0.12.5] - 2019-03-06
 
 ### Fixed
