@@ -12,10 +12,7 @@ When an inbound HTTP requests hits your Bocadillo application, the following alg
 
 1. Bocadillo runs through each URL pattern and stops at the first matching one, extracting the route parameters as well. If none can be found or any of the route parameters fails validation, an `HTTPError(404)` exception is raised.
 2. Bocadillo checks that the matching route supports the requested HTTP method and raises an `HTTPError(405)` exception if it does not.
-3. When this is done, Bocadillo calls the view attached to the route, converting it to an `async` function if necessary. The view is passed the following arguments:
-   - An instance of [`Request`][request].
-   - An instance of [`Response`][response].
-   - Keyword arguments representing the extracted keyword arguments.
+3. When this is done, Bocadillo calls the view attached to the route.
 4. If no pattern matches, or if an exception is raised in the process, Bocadillo invokes an appropriate error handler (see [Route error handling](#route-error-handling) below).
 
 ## Examples
