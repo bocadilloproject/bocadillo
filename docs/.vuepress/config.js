@@ -151,7 +151,11 @@ module.exports = {
       ],
       "/guides/": [
         "/guides/app",
-        "/guides/cli",
+        {
+          title: "Tooling",
+          collapsable: false,
+          children: listDir("guides/tooling", ["cli", "testing"])
+        },
         {
           title: "HTTP",
           collapsable: false,
@@ -183,6 +187,16 @@ module.exports = {
           ])
         },
         {
+          title: "Protocol-agnostic",
+          collapsable: false,
+          children: listDir("guides/agnostic", [
+            "asgi-middleware",
+            "templates",
+            "recipes",
+            "events"
+          ])
+        },
+        {
           title: "Providers (Dependency injection)",
           collapsable: false,
           children: listDir("guides/injection", [
@@ -197,28 +211,23 @@ module.exports = {
             "auto",
             "builtins"
           ])
-        },
-        {
-          title: "Protocol-agnostic",
-          collapsable: false,
-          children: listDir("guides/agnostic", [
-            "asgi-middleware",
-            "templates",
-            "recipes",
-            "events"
-          ])
         }
       ],
       "/how-to/": [
         {
-          title: "How-To",
+          title: "Building upon the framework",
           collapsable: false,
-          children: listDir("how-to", [
-            "yaml-media",
-            "middleware",
-            "tortoise",
-            "socketio"
-          ])
+          children: listDir("how-to", ["yaml-media", "middleware"])
+        },
+        {
+          title: "Third-party solutions",
+          collapsable: false,
+          children: listDir("how-to", ["tortoise", "socketio"])
+        },
+        {
+          title: "Testing",
+          collapsable: false,
+          children: listDir("how-to", ["test-pytest"])
         }
       ],
       "/discussions/": [
