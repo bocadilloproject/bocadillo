@@ -6,7 +6,7 @@ We also have specific how-to guides explaining how to integrate Bocadillo with y
 
 - [pytest](/how-to/test-pytest.md)
 
-### Test client
+## Test client
 
 The [`create_client`](/api/testing.md#create-client) helper can be used to build a [Starlette `TestClient`](https://www.starlette.io/testclient/) out of an [`App`](/api/applications.md#App) instance. Additional arguments are passed to the `TestClient` constructor.
 
@@ -24,7 +24,7 @@ The returned `TestClient` exposes the same interface as the [requests] library, 
 
 We recommend you read the documentation for Starlette's test client for further information.
 
-### Running a live server
+## Live server
 
 If you need to perform integration tests against a live server, the [`LiveServer`](/api/testing.md#liveserver) context manager should come handy. It runs `app.run()` in a separate process which is terminated when exiting the context.
 
@@ -39,9 +39,9 @@ with LiveServer(app) as server:
     ...
 ```
 
-### Miscellaneous utilities
+## Miscellaneous utilities
 
-#### Overriding environment variables
+### Overriding environment variables
 
 If you need to override some environment variables during your tests, you may find the [`override_env`](/api/utils.md#override-env) helper useful:
 
