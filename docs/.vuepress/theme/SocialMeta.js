@@ -20,7 +20,7 @@ export default {
     });
 
     if (frontmatter.image) {
-      meta.push({ name: "twitter:image", content: frontmatter.coverImage });
+      meta.push({ name: "twitter:image", content: frontmatter.image });
     }
 
     const head = document.getElementsByTagName("head")[0];
