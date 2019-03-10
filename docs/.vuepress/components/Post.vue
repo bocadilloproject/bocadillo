@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Page from "@default-theme/Page";
+import Page from "@theme/Page";
 import PostShare from "./PostShare";
 
 export default { components: { Page, PostShare } };

@@ -11,6 +11,11 @@ features:
   - title: Performant
     details: Built on Starlette and Uvicorn, the lightning-fast Python ASGI toolkit and server.
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
+meta:
+  - name: twitter:title
+    content: Bocadillo
+  - name: twitter:description
+    content: A modern Python web framework filled with asynchronous salsa
 ---
 
 ## Quick start

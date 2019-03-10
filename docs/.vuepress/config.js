@@ -8,7 +8,7 @@ module.exports = {
   description: "A modern Python web framework filled with asynchronous salsa",
   lastUpdated: true,
   head: [
-    // Twitter card meta tags
+    // Global Twitter card meta tags
     ["meta", { name: "twitter:card", content: "summary" }],
     [
       "meta",
@@ -19,14 +19,6 @@ module.exports = {
     ],
     ["meta", { name: "twitter:site", content: "Bocadillo" }],
     ["meta", { name: "twitter:creator", content: "Florimond Manca" }],
-    ["meta", { name: "twitter:title", content: "Bocadillo" }],
-    [
-      "meta",
-      {
-        name: "twitter:description",
-        content: "A modern Python web framework filled with asynchronous salsa"
-      }
-    ],
     [
       "meta",
       {
