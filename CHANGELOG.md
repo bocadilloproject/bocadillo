@@ -18,6 +18,8 @@ Highlights: providers (dependency injection), SSE support, middleware API improv
 
 ### Added
 
+Features:
+
 - Providers: explicit, modular and flexible runtime dependency injection system.
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
@@ -25,11 +27,16 @@ Highlights: providers (dependency injection), SSE support, middleware API improv
 - New base class for ASGI middleware: `ASGIMiddleware`.
   - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
   - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
-- Add a `bocadillo.testing` module with testing utilities:
+- Testing helpers:
   - `create_client` builds a `requests`-like test client out of an application.
   - The `LiveServer` context manager runs a live application server in
     a separate process.
 - Add the `override_env` utility context manager, available under `bocadillo.utils`.
+
+Documentation:
+
+- Add testing guide.
+- Add how-to guide on integrating with pytest.
 
 ### Changed
 
