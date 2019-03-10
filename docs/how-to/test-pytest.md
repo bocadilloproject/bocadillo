@@ -1,6 +1,6 @@
 # Test applications using pytest
 
-This page lists what we believe are best practices when testing Bocadillo applications with the [pytest] test framework.
+This page lists what we believe are best practices when testing Bocadillo applications using the [pytest] test framework.
 
 [pytest]: https://docs.pytest.org
 
@@ -8,7 +8,7 @@ This page lists what we believe are best practices when testing Bocadillo applic
 
 [fixtures]: https://docs.pytest.org/en/latest/fixture.html
 
-When using pytest, we recommend you setup some [fixtures] that provision to application instance, a [test client](/guides/tooling/testing.md#test-client) and a [live server](/guides/tooling/testing.md#live-server). By doing so, you'll be able to write tests in a more concise fashion.
+When using pytest, we recommend you setup some [fixtures] to provision an [application instance](/guides/app.md), a [test client](/guides/tooling/testing.md#test-client) and a [live server](/guides/tooling/testing.md#live-server). By doing so, you'll be able to write tests in a more concise fashion.
 
 You can use this sample `conftest.py` as a starting point:
 
@@ -49,7 +49,9 @@ def test_hello(client):
 
 [pytest-asyncio]: https://github.com/pytest-dev/pytest-asyncio
 
-You can use the [pytest-asyncio] extension if you need to test asynchronous code. Among other things, it provides an `asyncio` mark that allows to run `async` test functions, as well as the ability to write async fixtures.
+You can use the [pytest-asyncio] extension if you need to test asynchronous code.
+
+Among other things, it provides an `asyncio` mark that allows to run `async` test functions, as well as the ability to write async fixtures.
 
 ```python
 # tests.py
