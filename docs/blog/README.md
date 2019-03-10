@@ -1,5 +1,5 @@
 ---
-title: Breaking Bread | Blog
+title: Breaking Bread
 description: The Official Bocadillo Blog.
 ---
 
