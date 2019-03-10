@@ -5,7 +5,7 @@
 For more background, see our [discussion on databases][databases-discussion].
 
 ::: warning
-Tortoise ORM is still a rather young project. As such, some convenient features like database migrations are not supported *yet*. See also their [roadmap][tortoise-roadmap].
+Tortoise ORM is still a rather young project. As such, some convenient features like database migrations are not supported _yet_. See also their [roadmap][tortoise-roadmap].
 :::
 
 ## Instructions
