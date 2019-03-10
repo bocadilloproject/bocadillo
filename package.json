@@ -32,5 +32,8 @@
   "devDependencies": {
     "dotenv": "^6.2.0",
     "vuepress": "^0.14.5"
+  },
+  "dependencies": {
+    "date-fns": "^1.30.1"
   }
 }
