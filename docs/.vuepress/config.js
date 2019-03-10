@@ -102,6 +102,10 @@ module.exports = {
             text: "News",
             items: [
               {
+                text: "Blog",
+                link: "/blog/"
+              },
+              {
                 text: "Mentions",
                 link: "/mentions"
               },
