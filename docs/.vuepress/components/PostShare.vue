@@ -45,7 +45,7 @@ export default {
 .icons {
   position: fixed;
   top: 10em;
-  left: calc(((100vw - 740px) / 2) - 80px);
+  left: calc(((100vw - 740px) / 2) - 120px);
   display: flex;
   flex-flow: column nowrap;
 }
