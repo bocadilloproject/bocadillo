@@ -7,6 +7,7 @@ This page is a curated list of articles, newsletters, podcasts or other contents
 ## February 2019
 
 - (Feb 23, 2019): [Consuming APIs in Angular: Displaying Data In Components](https://blog.florimondmanca.com/consuming-apis-in-angular-displaying-data-in-components) uses Bocadillo to build a API server accessible by a web browser.
+- (Feb 9, 2019): Bocadillo is added to [awesome-vuepress](https://github.com/ulivz/awesome-vuepress) as an example open source project using [Vuepress](https://vuepress.vuejs.org) for its docs site.
 
 ## January 2019
 
