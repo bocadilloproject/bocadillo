@@ -8,7 +8,7 @@ This page lists what we believe are best practices when testing Bocadillo applic
 
 [fixtures]: https://docs.pytest.org/en/latest/fixture.html
 
-When using pytest, we recommend you setup some [fixtures] that provision to application instance, a [test client](/guides/tooling/testing.md#test-client) and a [live server](/guides/tooling/testing.md#running-a-live-server). By doing so, you'll be able to write tests in a more concise fashion.
+When using pytest, we recommend you setup some [fixtures] that provision to application instance, a [test client](/guides/tooling/testing.md#test-client) and a [live server](/guides/tooling/testing.md#live-server). By doing so, you'll be able to write tests in a more concise fashion.
 
 You can use this sample `conftest.py` as a starting point:
 

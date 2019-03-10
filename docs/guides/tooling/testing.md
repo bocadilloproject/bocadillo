@@ -2,9 +2,12 @@
 
 This page documents ways in which Bocadillo can help you write great tests and ensure the quality of your apps.
 
-We also have specific how-to guides explaining how to integrate Bocadillo with your favorite test framework:
+::: tip
+We also have specific how-to guides explaining how to integrate Bocadillo with the following test frameworks:
 
 - [pytest](/how-to/test-pytest.md)
+
+:::
 
 ## Test client
 
