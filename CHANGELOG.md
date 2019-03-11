@@ -20,32 +20,29 @@ Highlights: providers (dependency injection), SSE support, middleware API improv
 
 Features:
 
-- Providers: explicit, modular and flexible runtime dependency injection system.
+- Providers: explicit, modular and flexible runtime dependency injection system, inspired by pytest fixtures. Implemented via [aiodine].
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
-- New base class for ASGI middleware: `ASGIMiddleware`.
-  - Expects the `inner` middleware and an `app` instance when instanciated — which allows to perform initialisation by overriding `__init__()`.
-  - In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
-- Testing helpers:
-  - `create_client` builds a `requests`-like test client out of an application.
-  - The `LiveServer` context manager runs a live application server in
-    a separate process.
-- Add the `override_env` utility context manager, available under `bocadillo.utils`.
+- New base class for ASGI middleware: `ASGIMiddleware`. In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
+- Testing helpers: `create_client`, `LiveServer`.
+- Add an `override_env` utility context manager.
+
+[aiodine]: https://github.com/bocadilloproject/aiodine
 
 Documentation:
 
-- Add testing guide.
-- Add how-to guide on integrating with pytest.
+- Testing guide.
+- How-to guide on integrating with pytest.
 
 ### Changed
 
-- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method.
+- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed as positional arguments, instead of only `inner`. This allows to perform initialisation on the `app` in the middleware's `__init__()` method. The same goes for the new `ASGIMiddleware` base class.
 
 ### Fixed
 
-- Stream responses (and SSE event streams by extension) now stop as soon as a client disconnects. Handle client disconnects yourself with `raise_on_disconnect=True`.
-- ASGI middleware was not applied when the request was routed to a sub-application (e.g. a recipe). For example, this lead to CORS headers not being added on a recipe despite them being configured on the root application. This has been fixed!
+- Stream responses (and SSE streams by extension) now stop as soon as a client disconnects. For custom disconnect handling, use `raise_on_disconnect=True` and handle `bocadillo.request.ClientDisconnect` yourself.
+- ASGI middleware is now applied even when the request is routed to a sub-application (e.g. a recipe). In the past, this could lead to CORS headers not being added on a recipe despite them being configured on the root application.
 
 ### Deprecated
 
@@ -54,9 +51,9 @@ Documentation:
 ```python
 # tests.py
 import pytest
+from bocadillo.testing import create_client
 
 from myproject import app
-from bocadillo.testing import create_client
 
 @pytest.fixture
 def client():
