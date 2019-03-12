@@ -22,7 +22,7 @@ Bocadillo is a modern Python web framework that aims at making async web apps an
 
 It is designed to be:
 
-- **Productive**: a carefully chosen set of included batteries helps you solve common and more advanced problems\*.
+- **Productive**: a carefully chosen set of included batteries\* helps you solve common and more advanced problems.
 
 - **Real-time capable**: embrace async programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
 
