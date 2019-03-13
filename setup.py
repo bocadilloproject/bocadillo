@@ -32,7 +32,7 @@ setuptools.setup(
         "websockets>=6.0",
         "aiodine>=1.1, <2.0",
     ],
-    extras_require={"files": ["aiofiles"]},
+    extras_require={"files": ["aiofiles"], "sessions": ["itsdangerous"]},
     python_requires=">=3.6",
     url=DOCS,
     project_urls={

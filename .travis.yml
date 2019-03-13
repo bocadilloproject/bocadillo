@@ -12,7 +12,7 @@ jobs:
       cache: pip
       python: "3.6"
       install:
-        - pip install ".[files]"
+        - pip install ".[files,sessions]"
         - pip install -U pytest pytest-asyncio codecov pytest-cov
       script: pytest --cov=./
       after_success: codecov
@@ -25,7 +25,7 @@ jobs:
       dist: xenial
       python: "3.7"
       install:
-        - pip install ".[files]"
+        - pip install ".[files,sessions]"
         - pip install -U pytest pytest-asyncio
       script: pytest
 

@@ -17,6 +17,7 @@ from typing import (
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
@@ -92,6 +93,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
         A list of hosts which the server is allowed to run at.
         If the list contains `"*"`, any host is allowed.
         Defaults to `["*"]`.
+    enable_sessions (bool):
+        If `True` cookie-based sessions will be enabled if `SECRET_KEY` environment
+        variable has nonzero length. Defaults to `False`.
     enable_cors (bool):
         If `True`, Cross Origin Resource Sharing will be configured according
         to `cors_config`. Defaults to `False`.
@@ -147,6 +151,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         static_root: Optional[str] = "static",
         static_config: dict = None,
         allowed_hosts: List[str] = None,
+        enable_sessions: bool = False,
         enable_cors: bool = False,
         cors_config: dict = None,
         enable_hsts: bool = False,
@@ -199,6 +204,13 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.add_asgi_middleware(
             TrustedHostMiddleware, allowed_hosts=allowed_hosts
         )
+        if enable_sessions:
+            secret_key = os.environ.get("SECRET_KEY", "")
+            if not secret_key:
+                raise RuntimeError(
+                    "Use of sessions requires SECRET_KEY environment variable"
+                )
+            self.add_asgi_middleware(SessionMiddleware, secret_key=secret_key)
         if enable_cors:
             cors_config = {**DEFAULT_CORS_CONFIG, **(cors_config or {})}
             self.add_asgi_middleware(CORSMiddleware, **cors_config)
