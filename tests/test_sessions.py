@@ -1,5 +1,3 @@
-import sys
-
 import pytest
 
 from bocadillo import App, view
