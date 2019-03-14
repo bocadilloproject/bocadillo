@@ -26,13 +26,13 @@ def test_sessions_enabled_secret_key_present():
             req.session["data"] = "something"
             res.text = "Saved"
 
-    @app.route("/")
-    async def index(req, res):
-        data = req.session["data"]
-        res.text = f"Hello {data}"
+        @app.route("/")
+        async def index(req, res):
+            data = req.session["data"]
+            res.text = f"Hello {data}"
 
-    client = create_client(app)
-    client.post("/set")
-    response = client.get("/")
-    assert "something" in response.text
-    assert "session" in response.cookies
+        client = create_client(app)
+        client.post("/set")
+        response = client.get("/")
+        assert "something" in response.text
+        assert "session" in response.cookies
