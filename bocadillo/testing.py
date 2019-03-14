@@ -64,6 +64,9 @@ class LiveServer:
         ready_timeout: float = 5,
         stop_timeout: float = 5,
     ):
+        if pytest is not None and os.getenv("CI") and os.getenv("TRAVIS"):
+            pytest.skip("live server process sometimes makes travis ci stall")
+
         if port is None:
             port = random.randint(3000, 9000)
 
@@ -73,14 +76,6 @@ class LiveServer:
         self.ready_timeout = ready_timeout
         self.stop_timeout = stop_timeout
         self._process: Process = None
-
-        if (
-            pytest is not None
-            and os.getenv("CI")
-            and os.getenv("TRAVIS")
-            and (3, 7) <= sys.version_info < (3, 8)
-        ):
-            pytest.skip("server process makes travis ci hang on python 3.7")
 
     @property
     def url(self):
