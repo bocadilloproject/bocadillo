@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-bocadillo = {editable = true,extras = ["files"],path = "."}
+bocadillo = {editable = true,extras = ["files","sessions"],path = "."}
 
 [dev-packages]
 pytest = "*"
