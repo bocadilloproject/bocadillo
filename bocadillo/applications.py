@@ -45,6 +45,7 @@ from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
+from .sessions import MissingSecretKey
 from .staticfiles import WhiteNoise, static
 from .testing import create_client
 
@@ -233,7 +234,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
                 secret_key = os.environ.get("SECRET_KEY", "")
 
             if not secret_key:
-                raise ValueError(
+                raise MissingSecretKey(
                     "A non-empty secret key must be set to use sessions. "
                     "Pass a 'secret_key' to 'session_config', or set the "
                     "SECRET_KEY environment variable."

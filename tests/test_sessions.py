@@ -1,18 +1,19 @@
 import pytest
 
 from bocadillo import App, view
+from bocadillo.sessions import MissingSecretKey
 from bocadillo.testing import create_client
 from bocadillo.utils import override_env
 
 
 def test_sessions_enabled_no_secret_key():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(MissingSecretKey):
         App(enable_sessions=True)
 
 
 def test_sessions_enabled_secret_key_empty():
     with override_env("SECRET_KEY", ""):
-        with pytest.raises(RuntimeError):
+        with pytest.raises(MissingSecretKey):
             App(enable_sessions=True)
 
 
