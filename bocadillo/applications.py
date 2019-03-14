@@ -17,7 +17,6 @@ from typing import (
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
@@ -68,6 +67,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
 
+    [CORSMiddleware]: https://www.starlette.io/middleware/#corsmiddleware
+    [SessionMiddleware]: https://www.starlette.io/middleware/#sessionmiddleware
+
     # Example
 
     ```python
@@ -94,15 +96,21 @@ class App(RoutingMixin, metaclass=DocsMeta):
         If the list contains `"*"`, any host is allowed.
         Defaults to `["*"]`.
     enable_sessions (bool):
-        If `True` cookie-based sessions will be enabled if `SECRET_KEY` environment
-        variable has nonzero length. Defaults to `False`.
+        If `True`, cookie-based signed sessions are enabled according to the
+        `sessions_config`. The secret key must be non-empty and can also be
+        set via the `SECRET_KEY` environment variable.
+        Defaults to `False`.
+    sessions_config (dict):
+        A dictionary of sessions configuration parameters.
+        See [SessionMiddleware].
     enable_cors (bool):
-        If `True`, Cross Origin Resource Sharing will be configured according
+        If `True`, Cross Origin Resource Sharing are configured according
         to `cors_config`. Defaults to `False`.
         See also [CORS](../guides/http/middleware.md#cors).
     cors_config (dict):
         A dictionary of CORS configuration parameters.
         Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
+        See [CORSMiddleware].
     enable_hsts (bool):
         If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
         redirect HTTP traffic to HTTPS.
@@ -152,6 +160,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         static_config: dict = None,
         allowed_hosts: List[str] = None,
         enable_sessions: bool = False,
+        sessions_config: dict = None,
         enable_cors: bool = False,
         cors_config: dict = None,
         enable_hsts: bool = False,
@@ -199,23 +208,48 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self._lifespan = Lifespan()
 
         # ASGI middleware
+
         if allowed_hosts is None:
             allowed_hosts = ["*"]
         self.add_asgi_middleware(
             TrustedHostMiddleware, allowed_hosts=allowed_hosts
         )
+
         if enable_sessions:
-            secret_key = os.environ.get("SECRET_KEY", "")
+            sessions_config = sessions_config or {}
+
+            try:
+                from starlette.middleware.sessions import SessionMiddleware
+            except ImportError as exc:
+                if "itsdangerous" in str(exc):
+                    raise ImportError(
+                        "Please install the [sessions] extra to use sessions: "
+                        "`pip install bocadillo[sessions]`."
+                    ) from exc
+                raise exc from None
+
+            secret_key = sessions_config.pop("secret_key", None)
+            if secret_key is None:
+                secret_key = os.environ.get("SECRET_KEY", "")
+
             if not secret_key:
-                raise RuntimeError(
-                    "Use of sessions requires SECRET_KEY environment variable"
+                raise ValueError(
+                    "A non-empty secret key must be set to use sessions. "
+                    "Pass a 'secret_key' to 'session_config', or set the "
+                    "SECRET_KEY environment variable."
                 )
-            self.add_asgi_middleware(SessionMiddleware, secret_key=secret_key)
+
+            sessions_config["secret_key"] = secret_key
+
+            self.add_asgi_middleware(SessionMiddleware, **sessions_config)
+
         if enable_cors:
             cors_config = {**DEFAULT_CORS_CONFIG, **(cors_config or {})}
             self.add_asgi_middleware(CORSMiddleware, **cors_config)
+
         if enable_hsts:
             self.add_asgi_middleware(HTTPSRedirectMiddleware)
+
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
