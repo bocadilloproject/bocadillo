@@ -23,17 +23,17 @@ Some of the facts may be outdated by now, but if you're interested in the more p
 
 ### Why "Bocadillo", and how do you pronounce it?
 
-Bocadillo is named after the Spanish word: *bocadillo*.
+Bocadillo is named after the Spanish word: _bocadillo_.
 
 It is pronounced the Castilian Spanish way: _**bo-kah-DEE-yo**_ (or `/bokaˈðiʝo/` for phonetics enthusiasts).
 
-In Spain, a *bocadillo* is a sandwich made with baguette or a similar type of bread, and filled with a mix of ingredients including meat, vegetables or even omelette.
+In Spain, a _bocadillo_ is a sandwich made with baguette or a similar type of bread, and filled with a mix of ingredients including meat, vegetables or even omelette.
 
 Its simplicity and low cost allowed it to thrive, become an iconic piece of Spanish cuisine and take over the world as a fast-and-healthy meal. It is also the name of a Columbian sugar confection also known as Guava jelly.
 
 This name was chosen because it is short, easy to remember, and reminiscent that web frameworks should be fun, easy to use, and allow to build delicious systems from simple ingredients.
 
-This Spanish inspiration also explains our tagline, "A modern Python web framework built with asynchronous *salsa*".
+This Spanish inspiration also explains our tagline, "A modern Python web framework built with asynchronous _salsa_".
 
 Congrats, you know all of it! 🎉
 
@@ -59,13 +59,13 @@ We have tons of ideas on making Bocadillo better. Check out our [roadmap] for a 
 
 ### Why pass the request and response around everywhere?
 
-At the fundamental level, an HTTP server application takes an HTTP request as input and *return* and HTTP response. Many frameworks have implemented this style with great success.
+At the fundamental level, an HTTP server application takes an HTTP request as input and _return_ and HTTP response. Many frameworks have implemented this style with great success.
 
-In Bocadillo however, you may have noticed that [HTTP views][http-views] don't *return* a `Response`.
+In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _return_ a `Response`.
 
 [http-views]: ../guides/http/views.md
 
-Instead, they are given the `Request` object (nothing oustanding there) *and* the `Response` object. Inside a view, the response is *mutated* as seems fit. Why?
+Instead, they are given the `Request` object (nothing oustanding there) _and_ the `Response` object. Inside a view, the response is _mutated_ as seems fit. Why?
 
 This idea was inspired to us by [Falcon's "responders"][falcon-responders]. In Bocadillo, the `Response` object is very much a **response builder** instead of an actual HTTP response. Which attributes were set and methods were called on the builder determines what the HTTP response effectively sent over the wire will contain.
 
@@ -95,7 +95,7 @@ We wouldn't go as far as saying so. Only experience will tell. However, if you a
 
 ### Does Bocadillo scale?
 
-Yes, it *should* in many ways.
+Yes, it _should_ in many ways.
 
 Bocadillo being an async framework, you get client concurrency for free, which can help increase request throughput in case that your application is IO-intensive.
 
@@ -109,7 +109,7 @@ For hints on deploying Bocadillo applications, see our [Deployment](../discussio
 
 ### Do I need to run Bocadillo behind a reverse proxy such as Nginx?
 
-No, you don't *have* to.
+No, you don't _have_ to.
 
 Bocadillo already serves static files efficiently for you using [WhiteNoise](http://whitenoise.evans.io/en/stable/), and if you're using a process manager like Gunicorn you should be just fine.
 
