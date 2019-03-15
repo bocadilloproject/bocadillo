@@ -1,6 +1,5 @@
 import os
 import random
-import sys
 from multiprocessing import Event, Process
 from typing import TYPE_CHECKING
 
@@ -64,7 +63,9 @@ class LiveServer:
         ready_timeout: float = 5,
         stop_timeout: float = 5,
     ):
-        if pytest is not None and os.getenv("CI") and os.getenv("TRAVIS"):
+        if (
+            pytest is not None and os.getenv("CI") and os.getenv("TRAVIS")
+        ):  # pragma: no cover
             pytest.skip("live server process sometimes makes travis ci stall")
 
         if port is None:
@@ -96,7 +97,7 @@ class LiveServer:
         self._process = Process(target=target)
         self._process.start()
 
-        if not ready.wait(self.ready_timeout):
+        if not ready.wait(self.ready_timeout):  # pragma: no cover
             raise TimeoutError(
                 f"Live server not ready after {self.ready_timeout} seconds"
             )
@@ -106,7 +107,7 @@ class LiveServer:
     def __exit__(self, *args):
         self._process.terminate()
         self._process.join(self.stop_timeout)
-        if self._process.exitcode is None:
+        if self._process.exitcode is None:  # pragma: no cover
             raise TimeoutError(
                 f"Live server still running after {self.stop_timeout} seconds."
             )

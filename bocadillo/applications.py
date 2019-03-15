@@ -56,7 +56,7 @@ if TYPE_CHECKING:  # pragma: no cover
 _SCRIPT_REGEX = re.compile(r"(.*)\.py")
 
 
-def _get_module(script_path: str) -> Optional[str]:
+def _get_module(script_path: str) -> Optional[str]:  # pragma: no cover
     match = _SCRIPT_REGEX.match(script_path)
     if match is None:
         return None
@@ -221,7 +221,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
             try:
                 from starlette.middleware.sessions import SessionMiddleware
-            except ImportError as exc:
+            except ImportError as exc:  # pragma: no cover
                 if "itsdangerous" in str(exc):
                     raise ImportError(
                         "Please install the [sessions] extra to use sessions: "
