@@ -39,7 +39,7 @@ from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
 from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .injection import create_context_provider, freeze_providers
+from .injection import _STORE
 from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
@@ -219,13 +219,23 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if enable_gzip:
             self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
-        # Built-in providers.
+        # Providers.
+
+        self._store = _STORE
+
+        @self.on("startup")
+        async def setup_providers():
+            self._store.discover_default()
+            await self._store.enter_session()
+
+        self.on("shutdown", self._store.exit_session)
+
         self._frozen = False
-        self._http_context = create_context_provider("req", "res")
+        self._http_context = self._store.create_context_provider("req", "res")
 
     def _app_providers(self):  # pylint: disable=method-hidden
         if not self._frozen:
-            freeze_providers()
+            self._store.freeze()
             self._frozen = True
             # do nothing on subsequent calls
             self._app_providers = nullcontext
