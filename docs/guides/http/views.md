@@ -28,21 +28,6 @@ Let's break this code down:
 
 Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.media`. [Learn why in the FAQ](/faq/#why-pass-the-request-and-response-around-everywhere).
 
-::: tip
-The `req` and `res` parameters are actually optional. If present, the current [`Request`][request] and [`Response`][response] are _injected_ in the view by Bocadillo's [dependency injection](/guides/injection/) mechanism.
-
-For example, the view above doesn't need to use `req`, so we can safely skip its declaration and refactor the view as follows:
-
-```python
-import datetime
-
-async def current_datetime(res):
-    now = datetime.datetime.now()
-    res.media = {'now': now.isoformat()}
-```
-
-:::
-
 More information on working with requests and responses can be found in the [Request] and [Response] user guides.
 
 ## Mapping URLs to views

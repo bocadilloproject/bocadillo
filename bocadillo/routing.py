@@ -198,9 +198,7 @@ class HTTPRoute(BaseRoute[View]):
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 
-        # NOTE: do not pass `req` and `res` because they are injected
-        # into the view by the app's providers.
-        await handler(**params)  # type: ignore
+        await handler(req, res, **params)  # type: ignore
 
 
 class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):

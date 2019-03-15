@@ -231,7 +231,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.on("shutdown", self._store.exit_session)
 
         self._frozen = False
-        self._http_context = self._store.create_context_provider("req", "res")
 
     def _app_providers(self):  # pylint: disable=method-hidden
         if not self._frozen:
@@ -433,12 +432,11 @@ class App(RoutingMixin, metaclass=DocsMeta):
             media_handler=self.media_handlers[self.media_type],
         )
 
-        with self._http_context.assign(req=req, res=res):
-            res: Response = await self.server_error_middleware(req, res)
-            await res(receive, send)
-            # Re-raise the exception to allow the server to log the error
-            # and for the test client to optionally re-raise it too.
-            self.server_error_middleware.raise_if_exception()
+        res: Response = await self.server_error_middleware(req, res)
+        await res(receive, send)
+        # Re-raise the exception to allow the server to log the error
+        # and for the test client to optionally re-raise it too.
+        self.server_error_middleware.raise_if_exception()
 
     async def dispatch_websocket(
         self, receive: Receive, send: Send, scope: Scope
