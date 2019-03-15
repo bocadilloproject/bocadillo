@@ -19,10 +19,10 @@ In the rest of the documentation, we will use `python` to refer to your Python e
 To verify that Python is correctly installed, type `python` in your shell. You should see something like:
 
 ```
-Python 3.7.0 (default, Jun 29 2018, 20:13:13) 
+Python 3.7.0 (default, Jun 29 2018, 20:13:13)
 [Clang 9.1.0 (clang-902.0.39.2)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
->>> 
+>>>
 ```
 
 ## Install Bocadillo
@@ -58,6 +58,7 @@ To verify that Bocadillo can be seen by Python, type `python` from your shell, t
 ```
 
 Alternatively, you can use an inline script:
+
 ```bash
 python -c "import bocadillo; print(bocadillo.__version__)"
 0.12.6
@@ -65,4 +66,4 @@ python -c "import bocadillo; print(bocadillo.__version__)"
 
 Note that you may have another version of Bocadillo installed.
 
-Now that you're all set up, go take a look at our [quickstart](./quickstart.md) guide to see some of Bocadillo's most delicious features.
+Now that you're all set up, you can take a look at our [quickstart](./quickstart.md) guide to see the basics of working with Bocadillo.

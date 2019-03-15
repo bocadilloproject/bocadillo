@@ -141,7 +141,8 @@ module.exports = {
           children: listDir("getting-started", [
             "",
             "installation",
-            "quickstart"
+            "quickstart",
+            "tutorial"
           ])
         }
       ],
@@ -205,8 +206,7 @@ module.exports = {
             "yield",
             "modularity",
             "factory",
-            "auto",
-            "builtins"
+            "auto"
           ])
         }
       ],
