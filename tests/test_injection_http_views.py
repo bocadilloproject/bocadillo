@@ -54,22 +54,3 @@ def test_class_based_view_with_route_parameters(app: App, client):
     r = client.get("/hi/peeps")
     assert r.status_code == 200
     assert r.text == "Hello, peeps!"
-
-
-def test_req_is_optional(app: App, client):
-    @app.route("/")
-    async def index(res):
-        res.text = "Hello"
-
-    r = client.get("/")
-    assert r.status_code == 200
-    assert r.text == "Hello"
-
-
-def test_res_is_optional(app: App, client):
-    @app.route("/")
-    async def index():
-        pass
-
-    r = client.get("/")
-    assert r.status_code == 200
