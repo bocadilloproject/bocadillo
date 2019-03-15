@@ -1,14 +1,30 @@
+# Caches
 *.pyc
 __pycache__/
-.idea/
-.vscode/
 .pytest_cache/
 .mypy_cache/
+
+# IDEs
+.idea/
+.vscode/
+
+# Packaging
 *.egg-info
-.env
-*.db
+
+# Dependencies
 node_modules/
+
+# Build
 docs/.vuepress/dist
+
+# Private
+.env
+
+# Development
+debug/
 .coverage
 out/
-debug/
+
+# Databases
+*.sqlite3*
+*.db
