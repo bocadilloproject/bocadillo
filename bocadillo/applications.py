@@ -223,11 +223,11 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
         self._store = _STORE
 
-        @self.on("startup")
-        async def setup_providers():
-            self._store.discover_default()
-            await self._store.enter_session()
+        # NOTE: discover providers from `providerconf` at instanciation time,
+        # so that further declared views correctly resolve providers.
+        self._store.discover_default()
 
+        self.on("startup", self._store.enter_session)
         self.on("shutdown", self._store.exit_session)
 
         self._frozen = False
