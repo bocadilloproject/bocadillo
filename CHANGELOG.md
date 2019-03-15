@@ -24,6 +24,7 @@ Features:
 - Server-Sent Event support:
   - Define an event stream with `@res.event_stream`.
   - Format SSE messages with `server_event`.
+- Cookie-based sessions: set the `SECRET_KEY` environment variable, and access/modify via `req.session`.
 - New base class for ASGI middleware: `ASGIMiddleware`. In the docs, old-style ASGI middleware has been rebranded as "pure" ASGI middleware.
 - Testing helpers: `create_client`, `LiveServer`.
 - Add an `override_env` utility context manager.

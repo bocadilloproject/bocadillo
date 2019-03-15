@@ -234,6 +234,7 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
             a #::bocadillo.views#View object,
             ready to be fed to [`.add_route()`](#add-route).
         """
+        view = super().normalize(view)
 
         if isinstance(view, View):
             return view
@@ -339,6 +340,7 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
         return route.pattern
 
     def normalize(self, view: WebSocketView) -> WebSocketView:
+        view = super().normalize(view)
         # Resolve providers in the websocket view.
         return consumer(view)
 

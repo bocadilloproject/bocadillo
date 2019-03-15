@@ -189,7 +189,8 @@ module.exports = {
             "asgi-middleware",
             "templates",
             "recipes",
-            "events"
+            "events",
+            "sessions"
           ])
         },
         {

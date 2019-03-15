@@ -13,3 +13,4 @@ omit =
     setup.py
     bocadillo/deprecation.py
     tests/*
+    debug/*
