@@ -6,7 +6,6 @@ To help you build Bocadillo applications faster and automate common tasks, we bu
 Our CLI now ships as a separate package.
 :::
 
-Documentation is available at [Queso: Tasty development tooling for Bocadillo][cli].
+Documentation is available at <queso text="Queso: Tasty development tooling for Bocadillo"/>.
 
 [click]: https://click.palletsprojects.com
-[cli]: https://bocadilloproject.github.io/queso

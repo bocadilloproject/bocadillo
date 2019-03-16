@@ -40,7 +40,7 @@ jobs:
         - npm install --only=dev
       script:
         - pydocmd generate
-        - npm run docs:build
+        - npm run build
       deploy:
         provider: pages
         skip_cleanup: true

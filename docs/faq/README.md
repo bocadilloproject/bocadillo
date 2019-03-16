@@ -51,9 +51,7 @@ So, if you're using Bocadillo for a cool project or even in production (wow!), s
 
 ### What's coming next?
 
-We have tons of ideas on making Bocadillo better. Check out our [roadmap] for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by [opening an issue on GitHub][github-issues]!
-
-[roadmap]: https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md
+We have tons of ideas on making Bocadillo better. Check out our <repo-page to="ROADMAP.md" text="roadmap"/> for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by <open-issue text="opening an issue on GitHub"/>.
 
 ## Design and API
 
@@ -81,11 +79,9 @@ Lastly, without this approach we probably wouldn't have been able to implement a
 
 ### How fast is Bocadillo?
 
-Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
+Quite fast, according to [benchmarks]. Optimizing for speed has not been our primary focus so far, but we'll definitely consider improving it further as the project stabilizes.
 
-[benchmarks]: https://github.com/bocadilloproject/benchmarks
-
-Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
+[benchmarks]: https://github.com/the-benchmarker/web-frameworks
 
 ## Going live
 
@@ -119,17 +115,13 @@ In our experience, running behind Nginx should be motivated by specific needs.
 
 ### How can I get help?
 
-We have a [Gitter chat room][gitter] where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
-
-[gitter]: https://gitter.im/bocadilloproject/bocadillo
+We have a <custom-link :href="$project.gitter" text="Gitter chat room"/> where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
 
 ### I think I've found a bug! What should I do?
 
-The first step would be to verify it can be reproduced, and then [open an issue on GitHub][github-issues].
+The first step would be to verify it can be reproduced, and then <open-issue text="open an issue on GitHub"/>.
 
-If you're willing to help fix the bug, detailed instructions can be found in our [Contributing guide][contributing].
-
-[contributing]: https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md
+If you're willing to help fix the bug, detailed instructions can be found in our <custom-link :href="$project.contributing" text="Contributing guide"/>.
 
 ::: warning
 If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
@@ -137,8 +129,7 @@ If the bug is related to security, **do not** publicly reveal the information. W
 
 ### How can I contact maintainers?
 
-If you've got anything else to tell us, you can reach out on Twitter. Our official account is [@bocadillopy].
+If you've got anything else to tell us, you can reach out on Twitter. Our official account is <twitter-link/>.
 
 [@bocadillopy]: https://twitter.com/bocadillopy
 [contact-maintainers]: #how-can-i-contact-maintainers
-[github-issues]: https://github.com/bocadilloproject/bocadillo/issues/new/choose

@@ -7,7 +7,7 @@ We recommend you read this quick introduction before you get started with Bocadi
 If you want to jump right in, feel free to skip to the [Installation guide](installation.md).
 
 ::: tip CONTRIBUTING
-Building and improving the documentation is an ongoing community effort. If you'd like to contribute, join us on [GitHub](https:github.com/bocadilloproject/bocadillo) or use the "Edit" link at the bottom of each page!
+Building and improving the documentation is an ongoing community effort. If you'd like to contribute, join us on <repo text="GitHub"/> or use the "Edit" link at the bottom of each page!
 :::
 
 ## What is Bocadillo?
