@@ -7,7 +7,7 @@ We recommend you read this quick introduction before you get started with Bocadi
 That said, if you want to jump right in, feel free to skip to the [Installation guide](installation.md).
 
 ::: warning STATUS NOTE
-Bocadillo is still in **Alpha**. The documentation is regularly updated as new features are added and new guides are written. If you'd like to contribute, join us on [GitHub](https:github.com/bocadilloproject/bocadillo) or use the "Edit" link on each page of this site!
+Bocadillo is still in **Alpha**. The documentation is regularly updated as new features are added and new guides are written. If you'd like to contribute, join us on <repo text="GitHub"/> or use the "Edit" link on each page of this site!
 :::
 
 ## What is Bocadillo?
@@ -20,7 +20,7 @@ Lastly, **Bocadillo is not exactly minimal**. It comes with a certain number of 
 
 ### Asynchronous-first
 
-In typical WSGI frameworks (like Django, Flask or Falcon), the server is *synchronous* — it is only able to process a single request at a time.
+In typical WSGI frameworks (like Django, Flask or Falcon), the server is _synchronous_ — it is only able to process a single request at a time.
 
 There are, however, times when the CPU will block and remain idle as it waits for an I/O-bound operation to execute — be it reading a file from disk, querying the database, sending an email, or performing an external HTTP request.
 
@@ -114,16 +114,16 @@ Here's a sneak peak into what you'll find in Bocadillo:
 
 To learn more about the framework's history, design decisions or why it's even called Bocadillo, check out our [Frequently Asked Questions][faq] page.
 
-[ASGI]: https://asgi.readthedocs.io
-[Django]: https://www.djangoproject.com
-[Channels]: https://channels.readthedocs.io
-[Flask]: http://flask.pocoo.org
-[Falcon]: https://falconframework.org
-[Responder]: http://python-responder.org/en/latest/
-[Starlette]: https://www.starlette.io
-[Uvicorn]: https://www.uvicorn.org
-[WhiteNoise]: http://whitenoise.evans.io
-[Jinja]: http://jinja.pocoo.org
-[Click]: https://click.palletsprojects.com
-[Queso]: https://bocadilloproject.github.io/queso
+[asgi]: https://asgi.readthedocs.io
+[django]: https://www.djangoproject.com
+[channels]: https://channels.readthedocs.io
+[flask]: http://flask.pocoo.org
+[falcon]: https://falconframework.org
+[responder]: http://python-responder.org/en/latest/
+[starlette]: https://www.starlette.io
+[uvicorn]: https://www.uvicorn.org
+[whitenoise]: http://whitenoise.evans.io
+[jinja]: http://jinja.pocoo.org
+[click]: https://click.palletsprojects.com
+[queso]: https://bocadilloproject.github.io/queso
 [faq]: ../faq/

@@ -8,9 +8,8 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "npm run docs:dev",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "start": "vuepress dev docs",
+    "build": "vuepress build docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

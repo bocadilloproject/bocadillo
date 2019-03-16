@@ -1,4 +1,4 @@
-const project = require("../project");
+const project = require("./project");
 
 // Change the version to force web browsers to refresh favicons.
 const faviconVersion = "lk90Ny5lbz";

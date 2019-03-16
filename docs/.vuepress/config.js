@@ -1,8 +1,13 @@
-const head = require("./head");
-const project = require("../project");
-const listDir = require("../utils").listDir;
+const dotenv = require("dotenv");
 
-require("dotenv").load();
+const head = require("./head");
+const project = require("./project");
+const listDir = require("./utils").listDir;
+
+dotenv.load();
+
+// Allow to load project.js (CommonJS module) in enhanceApp.js (ES5 module).
+process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 
 module.exports = {
   base: "/",

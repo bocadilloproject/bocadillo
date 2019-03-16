@@ -23,17 +23,17 @@ Some of the facts may be outdated by now, but if you're interested in the more p
 
 ### Why "Bocadillo", and how do you pronounce it?
 
-Bocadillo is named after the Spanish word: *bocadillo*.
+Bocadillo is named after the Spanish word: _bocadillo_.
 
 It is pronounced the Castilian Spanish way: _**bo-kah-DEE-yo**_ (or `/bokaˈðiʝo/` for phonetics enthusiasts).
 
-In Spain, a *bocadillo* is a sandwich made with baguette or a similar type of bread, and filled with a mix of ingredients including meat, vegetables or even omelette.
+In Spain, a _bocadillo_ is a sandwich made with baguette or a similar type of bread, and filled with a mix of ingredients including meat, vegetables or even omelette.
 
 Its simplicity and low cost allowed it to thrive, become an iconic piece of Spanish cuisine and take over the world as a fast-and-healthy meal. It is also the name of a Columbian sugar confection also known as Guava jelly.
 
 This name was chosen because it is short, easy to remember, and reminiscent that web frameworks should be fun, easy to use, and allow to build delicious systems from simple ingredients.
 
-This Spanish inspiration also explains our tagline, "A modern Python web framework built with asynchronous *salsa*".
+This Spanish inspiration also explains our tagline, "A modern Python web framework built with asynchronous _salsa_".
 
 Congrats, you know all of it! 🎉
 
@@ -51,21 +51,19 @@ So, if you're using Bocadillo for a cool project or even in production (wow!), s
 
 ### What's coming next?
 
-We have tons of ideas on making Bocadillo better. Check out our [roadmap] for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by [opening an issue on GitHub][github-issues]!
-
-[roadmap]: https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md
+We have tons of ideas on making Bocadillo better. Check out our <repo-page to="ROADMAP.md" text="roadmap"/> for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by <open-issue text="opening an issue on GitHub"/>.
 
 ## Design and API
 
 ### Why pass the request and response around everywhere?
 
-At the fundamental level, an HTTP server application takes an HTTP request as input and *return* and HTTP response. Many frameworks have implemented this style with great success.
+At the fundamental level, an HTTP server application takes an HTTP request as input and _return_ and HTTP response. Many frameworks have implemented this style with great success.
 
-In Bocadillo however, you may have noticed that [HTTP views][http-views] don't *return* a `Response`.
+In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _return_ a `Response`.
 
 [http-views]: ../guides/http/views.md
 
-Instead, they are given the `Request` object (nothing oustanding there) *and* the `Response` object. Inside a view, the response is *mutated* as seems fit. Why?
+Instead, they are given the `Request` object (nothing oustanding there) _and_ the `Response` object. Inside a view, the response is _mutated_ as seems fit. Why?
 
 This idea was inspired to us by [Falcon's "responders"][falcon-responders]. In Bocadillo, the `Response` object is very much a **response builder** instead of an actual HTTP response. Which attributes were set and methods were called on the builder determines what the HTTP response effectively sent over the wire will contain.
 
@@ -81,11 +79,9 @@ Lastly, without this approach we probably wouldn't have been able to implement a
 
 ### How fast is Bocadillo?
 
-Quite fast, according to [our benchmarks][benchmarks], but we can definitely do better.
+Quite fast, according to [benchmarks]. Optimizing for speed has not been our primary focus so far, but we'll definitely consider improving it further as the project stabilizes.
 
-[benchmarks]: https://github.com/bocadilloproject/benchmarks
-
-Optimizing for speed has not been our primary focus so far, but we'll definitely consider it as the project stabilizes.
+[benchmarks]: https://github.com/the-benchmarker/web-frameworks
 
 ## Going live
 
@@ -95,7 +91,7 @@ We wouldn't go as far as saying so. Only experience will tell. However, if you a
 
 ### Does Bocadillo scale?
 
-Yes, it *should* in many ways.
+Yes, it _should_ in many ways.
 
 Bocadillo being an async framework, you get client concurrency for free, which can help increase request throughput in case that your application is IO-intensive.
 
@@ -109,7 +105,7 @@ For hints on deploying Bocadillo applications, see our [Deployment](../discussio
 
 ### Do I need to run Bocadillo behind a reverse proxy such as Nginx?
 
-No, you don't *have* to.
+No, you don't _have_ to.
 
 Bocadillo already serves static files efficiently for you using [WhiteNoise](http://whitenoise.evans.io/en/stable/), and if you're using a process manager like Gunicorn you should be just fine.
 
@@ -119,17 +115,13 @@ In our experience, running behind Nginx should be motivated by specific needs.
 
 ### How can I get help?
 
-We have a [Gitter chat room][gitter] where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
-
-[gitter]: https://gitter.im/bocadilloproject/bocadillo
+We have a <custom-link :href="$project.gitter" text="Gitter chat room"/> where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
 
 ### I think I've found a bug! What should I do?
 
-The first step would be to verify it can be reproduced, and then [open an issue on GitHub][github-issues].
+The first step would be to verify it can be reproduced, and then <open-issue text="open an issue on GitHub"/>.
 
-If you're willing to help fix the bug, detailed instructions can be found in our [Contributing guide][contributing].
-
-[contributing]: https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md
+If you're willing to help fix the bug, detailed instructions can be found in our <custom-link :href="$project.contributing" text="Contributing guide"/>.
 
 ::: warning
 If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
@@ -137,8 +129,7 @@ If the bug is related to security, **do not** publicly reveal the information. W
 
 ### How can I contact maintainers?
 
-If you've got anything else to tell us, you can reach out on Twitter. Our official account is [@bocadillopy].
+If you've got anything else to tell us, you can reach out on Twitter. Our official account is <twitter-link/>.
 
 [@bocadillopy]: https://twitter.com/bocadillopy
 [contact-maintainers]: #how-can-i-contact-maintainers
-[github-issues]: https://github.com/bocadilloproject/bocadillo/issues/new/choose

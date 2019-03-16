@@ -12,7 +12,7 @@ function listDir(dir, children) {
 }
 
 function maybeRoot(base, path) {
-  return path ? `${base}/path` : base;
+  return path ? `${base}/${path}` : base;
 }
 
 module.exports = { listDir, maybeRoot };
