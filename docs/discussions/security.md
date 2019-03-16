@@ -17,7 +17,7 @@ Once your certificate and key files (`.crt`, `.key`) are generated, you can prov
 - Telling [uvicorn](https://www.uvicorn.org/settings/#https) by passing the `ssl_certfile` and `ssl_keyfile` arguments to `app.run()`:
 
 ```python
-app.run(ssl_certfile="path/to/server.key", ssl_keyfile="path/to/server.crt")
+app.run(ssl_certfile="path/to/server.crt", ssl_keyfile="path/to/server.key")
 ```
 
 - Passing `--certfile` and `--keyfile` to Gunicorn in a production setup (see [deployment]):
