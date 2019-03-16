@@ -79,7 +79,7 @@ To solve this, providers were designed to be:
 
 Besides, providers can be overridden at anytime, thus improving testability.
 
-We extracted the core of this feature into <custom-link :href="$project.aiodine" text="aiodine"/>, an async-first dependency injection library. Be sure to check it out!
+We extracted the core of this feature into [aiodine](https://github.com/bocadilloproject/aiodine), an async-first dependency injection library. Be sure to check it out!
 
 ### Next steps
 

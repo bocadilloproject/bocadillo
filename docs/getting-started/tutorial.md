@@ -134,7 +134,7 @@ with suppress(KeyboardInterrupt):
 
 Run the server-side application with `python app.py` and, in a separate terminal, start the `client.py` script. You should be greeted with a `>` prompt. If so, start chattin'!
 
-```repl
+```
 $ python client.py
 > Hi!
 Hi!

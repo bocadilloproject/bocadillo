@@ -30,6 +30,9 @@ Note that **the view function does not return the response object**. Indeed, in 
 
 More information on working with requests and responses can be found in the [Request] and [Response] user guides.
 
+[request]: requests.md
+[response]: responses.md
+
 ## Mapping URLs to views
 
 As you have seen above, a view is merely just a Python function. To attach it to an URL pattern, you'll need to decorate it with a route. See [Routes and URL design] for more information.
@@ -143,11 +146,3 @@ However, **type annotations are not used at all by Bocadillo**.
 Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
 
 [routes and url design]: routing.md
-
-<<<<<<< Updated upstream
-[naming routes]: routing.md#naming-routes
-=======
-
-> > > > > > > Stashed changes
-> > > > > > > [request]: requests.md
-> > > > > > > [response]: responses.md
