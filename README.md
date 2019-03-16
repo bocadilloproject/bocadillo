@@ -18,7 +18,7 @@
 
 [docs]: https://bocadilloproject.github.io
 
-Bocadillo is a modern Python web framework that aims at making async web apps and services fun to build and accessible to everyone.
+Bocadillo is a modern Python web framework that aims at **making async web apps and services fun to build and accessible to everyone**. We ultimately believe that web frameworks should be fun and easy to use while empowering the developer to make good decisions and ship high-quality applications.
 
 It is designed to be:
 
