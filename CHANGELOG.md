@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.13.0] - 2019-03-16
+
 Supporting blog post: [Bocadillo 0.13 released!](https://bocadilloproject.github.io/blog/release-0.13.md)
 
 ### Added
@@ -545,7 +547,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.0...HEAD
+[v0.13.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...v0.13.0
 [v0.12.6]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...v0.12.6
 [v0.12.5]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.4...v0.12.5
 [v0.12.4]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.3...v0.12.4
