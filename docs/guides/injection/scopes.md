@@ -2,7 +2,7 @@
 
 By default, a provider is recomputed on every call to the view. This is convenient when you want to provide pre-computed values — e.g. common database queries, or objects that are derived from the request — and those values are relatively cheap to compute.
 
-However, some providers are typically expansive to setup and teardown, or could gain from being reused accross requests. This is the case of providers that access the network, such as an SMTP client or, as in the [problem statement](#problem-statement), a Redis connection.
+However, some providers are typically expansive to setup and teardown, or could gain from being reused across requests. This is the case of providers that access the network, such as an SMTP client or, as in the [problem statement](#problem-statement), a Redis connection.
 
 For this reason, Bocadillo providers come with two possible **scopes**:
 

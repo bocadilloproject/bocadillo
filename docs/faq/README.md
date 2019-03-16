@@ -65,7 +65,7 @@ In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _
 
 [http-views]: ../guides/http/views.md
 
-Instead, they are given the `Request` object (nothing oustanding there) _and_ the `Response` object. Inside a view, the response is _mutated_ as seems fit. Why?
+Instead, they are given the `Request` object (nothing outstanding there) _and_ the `Response` object. Inside a view, the response is _mutated_ as seems fit. Why?
 
 This idea was inspired to us by [Falcon's "responders"][falcon-responders]. In Bocadillo, the `Response` object is very much a **response builder** instead of an actual HTTP response. Which attributes were set and methods were called on the builder determines what the HTTP response effectively sent over the wire will contain.
 
