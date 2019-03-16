@@ -34,7 +34,7 @@ It is designed to be:
 
 - **Transparent**: every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
 
-_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving, event handlers…_
+_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, dependency injection, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving, test client, event handlers…_
 
 [starlette]: https://www.starlette.io
 [uvicorn]: https://www.starlette.io
