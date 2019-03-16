@@ -8,14 +8,22 @@ Information Security is hard, and we're no experts. If you notice anything wrong
 
 ## HTTPS
 
-HTTPS allows the server and a client to perform an encrypted communication, which means no one will be able to intercept or forge packets. It typically helps in preventing Man-in-the-Middle (MITM) attacks and is a necessary condition for securing a web application. Many web browsers today even display your site as "insecure" if it does not have HTTPS.
+HTTPS encrypts the communication between the server and the client, which means no one will be able to intercept or forge packets. This typically helps in preventing Man-in-the-Middle (MITM) attacks and is a necessary condition for securing a web application. Many web browsers today even display your site as "insecure" if it does not have HTTPS.
 
 To set up HTTPS, you need to get a certificate from a Certificate Authority (CA). [Let's Encrypt](https://letsencrypt.org) is a popular, free and open source CA. Certificates need to be regularly updated, so we recommend you use [Certbot](https://certbot.eff.org) to automate the process.
 
-Once your certificate and key files (`.crt`, `.key`) are generated, you can pass them to Gunicorn (see our [Deployment] guide) like so:
+Once your certificate and key files (`.crt`, `.key`) are generated, you can provide them to your Bocadillo application either by:
+
+- Telling [uvicorn](https://www.uvicorn.org/settings/#https) by passing the `ssl_certfile` and `ssl_keyfile` arguments to `app.run()`:
+
+```python
+app.run(ssl_certfile="path/to/server.key", ssl_keyfile="path/to/server.crt")
+```
+
+- Passing `--certfile` and `--keyfile` to Gunicorn in a production setup (see [deployment]):
 
 ```bash
-gunicorn --certfile=server.crt --keyfile=server.key ...
+gunicorn --certfile=path/to/server.crt --keyfile=path/to/server.key ...
 ```
 
 If you're hosting your app via a cloud provider, refer to their documentation as they may provide a feature to set up HTTPS for you.
