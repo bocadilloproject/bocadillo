@@ -24,15 +24,15 @@ It is designed to be:
 
 - **Productive**: a carefully chosen set of included batteries\* helps you solve common and more advanced problems.
 
-- **Real-time capable**: embrace async programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
+- **Real-time capable**: embrace asynchronous programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
 
 - **Flexible**: inject resources into web views using providers, an explicit, modular and easy-to-use mechanism inspired by pytest fixtures.
 
-- **Performant**: Bocadillo is built on top of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and framework.
+- **Performant**: squeeze the juice out of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and web server.
 
-- **Empowering**: ships with testing and command line tools that help you build delicious, high-quality applications.
+- **Empowering**: use tailored testing and command line tools to build delicious, high-quality applications.
 
-- **Transparent**: we make sure every single feature is documented front to back, and provide optimal editor support with a 100% type-annotated code base.
+- **Transparent**: every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
 
 _\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving, event handlers…_
 

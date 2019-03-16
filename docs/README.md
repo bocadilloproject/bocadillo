@@ -4,12 +4,18 @@ heroImage: /social-image.png
 actionText: Get Started →
 actionLink: /getting-started/
 features:
-  - title: Simple and productive
-    details: A minimal setup and carefully chosen included batteries help you solve common (and more advanced) problems in no time.
-  - title: Async-first
-    details: Embrace modern Python asynchronous programming capabilities! Don't worry, though — it's all optional.
-  - title: Performant
-    details: Built on Starlette and Uvicorn, the lightning-fast Python ASGI toolkit and server.
+  - title: 🥪 Productive
+    details: A carefully chosen set of included batteries helps you solve common and more advanced problems.
+  - title: 🧞‍ Real-time capable
+    details: Embrace asynchronous programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
+  - title: 🍬 Flexible
+    details: Inject resources into web views using providers, an explicit, modular and easy-to-use mechanism inspired by pytest fixtures.
+  - title: ⚡️ Performant
+    details: Squeeze the juice out of Starlette and uvicorn, the lightning-fast ASGI toolkit and web server.
+  - title: 👨‍🍳👩‍🍳 Empowering
+    details: Use tailored testing and command line tools to build delicious, high-quality applications.
+  - title: 👓 Transparent
+    details: Every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 meta:
   - name: twitter:title
