@@ -28,9 +28,6 @@ export default {
 
       const url = encodeURIComponent(document.location.href);
       let text = `${this.page.frontmatter.title} |`;
-      if (this.page.frontmatter.author) {
-        text = `${text} ${this.page.frontmatter.author},`;
-      }
       text = `${text} @bocadillopy`;
       text = encodeURIComponent(text);
       const shareUrl = `https://twitter.com/share?url=${url}&text=${text}`;

@@ -6,7 +6,7 @@ Bocadillo has support for signed cookie-based HTTP sessions. These are available
 
 ## Security considerations
 
-When misused, cookies can be vectors for several attacks including Man-in-the-Middle, [Cross-Site Scripting](/discussions/security.md#cross-site-scripting-xss) (XSS) and [Cross-Site Request Forgery](/discussions/security.md#cross-site-request-forgery-csrf) (CSRF).
+When misused, cookies can be vectors for several attacks including Man-in-the-Middle, [Cross-Site Scripting](/discussions/security.md#xss) (XSS) and [Cross-Site Request Forgery](/discussions/security.md#csrf) (CSRF).
 
 The first one can be mitigated by using [HTTPS](/discussions/security.md#https). XSS is mostly mitigated by the `httponly` flag set by Bocadillo when setting up the cookie.
 

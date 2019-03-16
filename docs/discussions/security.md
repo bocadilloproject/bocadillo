@@ -30,9 +30,9 @@ If you're hosting your app via a cloud provider, refer to their documentation as
 
 It can be a good idea to enable [HSTS] so that all HTTP traffic is redirected to HTTPS.
 
-## Cross-Site Scripting (XSS)
+## XSS
 
-An XSS attack consists in injecting malicious JavaScript code into HTML, such as through a `<script>` tag.
+XSS stands for **Cross-Site Scripting**. This attack consists in injecting malicious JavaScript code into HTML, such as through a `<script>` tag.
 
 One way to prevent XSS attacks is by escaping all quotes, replacing them with their HTML equivalent.
 
@@ -68,9 +68,9 @@ app.add_middleware(CSPMiddleware)
 
 For reference, see [Jinja2 autoescaping](http://jinja.pocoo.org/docs/2.10/app/#autoescaping).
 
-## Cross-Site Request Forgery (CSRF)
+## CSRF
 
-CSRF is a type of attack in which a malicious website or program causes an authenticated user's browser to perform an unwanted operation on a trusted site.
+CSRF stands for **Cross-Site Request Forgery**. It is a type of attack in which a malicious website or program causes an authenticated user's browser to perform an unwanted operation on a trusted site.
 
 These attacks work because web browsers automatically provide session cookies and the IP address with the request, hence allowing the attacker to forge a request against them.
 

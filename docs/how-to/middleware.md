@@ -53,9 +53,9 @@ class Always202Middleware(Middleware):
 
 Note: returning a response in `after_dispatch` has no effect.
 
-### Configuration and initialisation
+### Configuration and initialization
 
-Middleware configuaration and initialisation can be performed by overriding its `__init__()` method, which is given the following:
+Middleware configuaration and initialization can be performed by overriding its `__init__()` method, which is given the following:
 
 - `inner`: this is the inner middleware that this middleware wraps.
 - `app`: this is the application instance which this middleware is being registered on.
@@ -133,7 +133,7 @@ Bocadillo also supports "pure" ASGI middleware, i.e. middleware that only expect
 Third-party ASGI middleware classes are typically given in this form.
 :::
 
-Note that, because it performs initialisation on the application instance, the previous `DatabaseMiddleware` cannot be rewritten as a pure ASGI middleware.
+Note that, because it performs initialization on the application instance, the previous `DatabaseMiddleware` cannot be rewritten as a pure ASGI middleware.
 
 As an example, here's a pure ASGI middleware that injects a static value in the request scope:
 

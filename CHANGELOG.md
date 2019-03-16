@@ -14,7 +14,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
-Highlights: providers (dependency injection), SSE support, middleware API improvements, testing utilities.
+Supporting blog post: [Bocadillo 0.13 released!](https://bocadilloproject.github.io/blog/release-0.13.md)
 
 ### Added
 
@@ -35,6 +35,7 @@ Documentation:
 
 - Testing guide.
 - How-to guide on integrating with pytest.
+- Chatbot server tutorial.
 
 ### Changed
 
@@ -63,6 +64,13 @@ def client():
 def test_stuff(client):
     ...
 ```
+
+### Removed
+
+Deprecated items from 0.12:
+
+- **BREAKING**: the `API` class was removed. Use `App` now.
+- **Breaking**: the `template*` methods on `App` no longer exists. Use the `Templates` helper instead.
 
 ## [v0.12.6] - 2019-03-09
 
