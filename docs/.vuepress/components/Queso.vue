@@ -1,5 +1,5 @@
 <template>
-  <custom-link :href="$project.queso" :text="text"/>
+  <custom-link href="https://bocadilloproject.github.io/queso" :text="text"/>
 </template>
 
 <script>

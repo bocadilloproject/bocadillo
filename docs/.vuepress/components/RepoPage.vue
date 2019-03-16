@@ -3,13 +3,13 @@
 </template>
 
 <script>
-import project from "../project";
-
 export default {
   props: ["to", "text"],
   computed: {
     href() {
-      return project.repoPage(this.to);
+      return `https://github.com/bocadilloproject/bocadillo/master/blob/${
+        this.to
+      }`;
     }
   }
 };
