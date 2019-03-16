@@ -1,43 +1,18 @@
-const listDir = require("./utils").listDir;
+const head = require("./head");
+const project = require("../project");
+const listDir = require("../utils").listDir;
 
 require("dotenv").load();
 
 module.exports = {
   base: "/",
-  title: "Bocadillo",
-  description: "A modern Python web framework filled with asynchronous salsa",
+  title: project.title,
+  description: project.description,
   lastUpdated: true,
-  head: [
-    // Twitter card meta tags
-    ["meta", { name: "twitter:card", content: "summary" }],
-    [
-      "meta",
-      {
-        name: "twitter:url",
-        content: "https://bocadillo.github.io"
-      }
-    ],
-    ["meta", { name: "twitter:site", content: "Bocadillo" }],
-    ["meta", { name: "twitter:creator", content: "Florimond Manca" }],
-    ["meta", { name: "twitter:title", content: "Bocadillo" }],
-    [
-      "meta",
-      {
-        name: "twitter:description",
-        content: "A modern Python web framework filled with asynchronous salsa"
-      }
-    ],
-    [
-      "meta",
-      {
-        name: "twitter:image",
-        content: "https://bocadilloproject.github.io/social-image.png"
-      }
-    ]
-  ],
+  head,
   serviceWorker: true,
   themeConfig: {
-    repo: "bocadilloproject/bocadillo",
+    repo: project.repo,
     docsDir: "docs",
     docsBranch: "release/docs",
     editLinks: true,
@@ -49,7 +24,7 @@ module.exports = {
       process.env.NODE_ENV === "production"
         ? {
             apiKey: process.env.ALGOLIA_API_KEY,
-            indexName: "bocadilloproject"
+            indexName: project.algoliaIndex
           }
         : {},
     nav: [
@@ -85,7 +60,7 @@ module.exports = {
               },
               {
                 text: "Chat",
-                link: "https://gitter.im/bocadilloproject/bocadillo"
+                link: `https://gitter.im/${project.repo}`
               }
             ]
           },
@@ -94,7 +69,7 @@ module.exports = {
             items: [
               {
                 text: "Queso (CLI)",
-                link: "https://bocadilloproject.github.io/queso"
+                link: project.docsPage("queso")
               }
             ]
           },
@@ -111,12 +86,11 @@ module.exports = {
               },
               {
                 text: "Twitter",
-                link: "https://twitter.com/bocadillopy"
+                link: `https://twitter.com/${project.twitterUsage}`
               },
               {
                 text: "Roadmap",
-                link:
-                  "https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md"
+                link: project.repoPage("ROADMAP.md")
               }
             ]
           },
@@ -125,16 +99,15 @@ module.exports = {
             items: [
               {
                 text: "Changelog",
-                link:
-                  "https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md"
+                link: project.repoPage("CHANGELOG.md")
               },
               {
                 text: "PyPI",
-                link: "https://pypi.org/project/bocadillo/"
+                link: `https://pypi.org/project/${project.name}/`
               },
               {
                 text: "Official repos",
-                link: "https://github.com/bocadilloproject"
+                link: project.orgLink
               }
             ]
           }
