@@ -22,7 +22,6 @@ module.exports = {
     sidebarDepth: 2,
     lastUpdated: true,
     serviceWorker: { updatePopup: true },
-    /*
     algolia:
       process.env.NODE_ENV === "production"
         ? {
@@ -30,7 +29,6 @@ module.exports = {
             indexName: project.algoliaIndex
           }
         : {},
-    */
     nav: [
       {
         text: "Get Started",
