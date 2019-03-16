@@ -115,13 +115,15 @@ In our experience, running behind Nginx should be motivated by specific needs.
 
 ### How can I get help?
 
-We have a <custom-link :href="$project.gitter" text="Gitter chat room"/> where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
+We have a [Gitter chat room][gitter] where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
+
+[gitter]: https://gitter.im/bocadilloproject/bocadillo
 
 ### I think I've found a bug! What should I do?
 
 The first step would be to verify it can be reproduced, and then <open-issue text="open an issue on GitHub"/>.
 
-If you're willing to help fix the bug, detailed instructions can be found in our <custom-link :href="$project.contributing" text="Contributing guide"/>.
+If you're willing to help fix the bug, detailed instructions can be found in our <repo-page to="CONTRIBUTING.md" text="Contributing guide"/>.
 
 ::: warning
 If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].

@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import project from "../project";
-
 export default {
   props: {
     to: {
@@ -20,7 +18,8 @@ export default {
   },
   computed: {
     href() {
-      return project.repoPage(this.to, { branch: this.branch });
+      const base = "https://github.com/bocadilloproject/bocadillo";
+      return `${base}/${this.branch}/blob/${this.to}`;
     }
   }
 };

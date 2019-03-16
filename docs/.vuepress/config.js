@@ -6,9 +6,6 @@ const listDir = require("./utils").listDir;
 
 dotenv.load();
 
-// Allow to load project.js (CommonJS module) in enhanceApp.js (ES5 module).
-process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
-
 module.exports = {
   base: "/",
   title: project.title,
