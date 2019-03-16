@@ -67,5 +67,11 @@ module.exports = [
   ["meta", { name: "twitter:site", content: project.title }],
   ["meta", { name: "twitter:creator", content: project.author }],
   ["meta", { name: "twitter:description", content: project.description }],
-  ["meta", { name: "twitter:image", content: "/social-image.png" }]
+  [
+    "meta",
+    {
+      name: "twitter:image",
+      content: "https://bocadilloproject.github.io/social-image.png"
+    }
+  ]
 ];
