@@ -2,6 +2,7 @@ const utils = require("./utils");
 
 const name = "bocadillo";
 const org = "bocadilloproject";
+const orgLink = `https://github.com/${org}`;
 const repo = `${org}/${name}`;
 const repoLink = `https://github.com/${repo}`;
 const docs = `https://${org}.github.io`;
@@ -16,24 +17,30 @@ function docsPage(path) {
   return utils.maybeRoot(docs, path);
 }
 
+function projectRepo(name) {
+  return `${orgLink}/${name}`;
+}
+
 module.exports = {
   title: "Bocadillo",
   description: "A modern Python web framework filled with asynchronous salsa",
   name,
   author: "Florimond Manca",
   org,
-  orgLink: `https://github.com/${org}`,
+  orgLink,
   repo,
   repoLink,
   issues: `${repoLink}/issues/new/choose`,
   contributing: repoPage("CONTRIBUTING.md"),
   roadmap: repoPage("ROADMAP.md"),
   docs,
+  aiodine: projectRepo("aiodine"),
   queso: docsPage("queso"),
   gitter: `https://gitter.im/${repo}`,
   twitterUser,
   twitter: `https://twitter.com/${twitterUser}`,
   algoliaIndex: "bocadilloproject",
   repoPage,
-  docsPage
+  docsPage,
+  projectRepo
 };

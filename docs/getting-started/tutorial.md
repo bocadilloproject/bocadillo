@@ -497,7 +497,7 @@ Together, we've seen how to:
 - Use providers to decouple resources and their consumers.
 - Test WebSocket and HTTP endpoints.
 
-The complete code for this tutorial is available on our GitHub repo: [get the code](https://github.com/bocadilloproject/bocadillo/blob/docs/docs/getting-started/tutorial/). All in all, the server and `providerconf.py` only add up to about 60 lines of code — pretty good bang for the buck!
+The complete code for this tutorial is available on our GitHub repo: <repo-page to="docs/getting-started/tutorial" branch="docs" text="get the code"/>. All in all, the server and `providerconf.py` only add up to about 60 lines of code — pretty good bang for the buck!
 
 ## Next steps
 

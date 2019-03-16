@@ -6,10 +6,21 @@
 import project from "../project";
 
 export default {
-  props: ["to", "text"],
+  props: {
+    to: {
+      type: String
+    },
+    branch: {
+      type: String,
+      default: "master"
+    },
+    text: {
+      type: String
+    }
+  },
   computed: {
     href() {
-      return project.repoPage(this.to);
+      return project.repoPage(this.to, { branch: this.branch });
     }
   }
 };
