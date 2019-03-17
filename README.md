@@ -54,7 +54,7 @@ pip install bocadillo
 ```python
 from bocadillo import App
 
-app = app()
+app = App()
 
 @app.route("/")
 async def index(req, res):
