@@ -1,3 +1,5 @@
+@require './override.styl';
+
 .wrapper {
   padding: 1em 2rem 0 2rem;
   max-width: 740px;
@@ -6,4 +8,20 @@
 
 .content:not(.custom) > *:first-child {
   margin-top: 0 !important;
+}
+
+// Custom containers
+
+.tip {
+  border-color: $accentColor !important;
+}
+
+.danger {
+  border-color: $dangerColor !important;
+  background-color: rgba($dangerColor, 0.2) !important;
+}
+
+.warning {
+  border-color: $warnColor !important;
+  background-color: rgba($warnColor, 0.25) !important;
 }
