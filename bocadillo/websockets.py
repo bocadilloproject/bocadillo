@@ -17,6 +17,12 @@ class WebSocket:
     scope (dict): ASGI scope.
     receive (callable): ASGI receive function.
     send (callable): ASGI send function.
+    auto_accept (bool):
+        whether to automatically accept the WebSocket connection request.
+        Defaults to `True`. If `False` is passed, the connection must be 
+        accepted via `.accept()` or an `async with` block. Useful to
+        perform conditionally `.reject()` a connection request or perform
+        advanced error handling.
     value_type (str):
         The type of messages received or sent over the WebSocket.
         If given, overrides `receive_type` and `send_type`.
@@ -49,10 +55,11 @@ class WebSocket:
         scope: Scope,
         receive: Receive,
         send: Send,
-        value_type: Optional[str] = None,
-        receive_type: Optional[str] = None,
-        send_type: Optional[str] = None,
-        caught_close_codes: Optional[Tuple[int, ...]] = None,
+        auto_accept: bool = True,
+        value_type: str = None,
+        receive_type: str = None,
+        send_type: str = None,
+        caught_close_codes: Tuple[int, ...] = None,
     ):
         # NOTE: we use composition over inheritance here, because
         # we want to redefine `receive()` and `send()` but Starlette's
@@ -66,6 +73,9 @@ class WebSocket:
         if caught_close_codes is all:
             caught_close_codes = tuple(WEBSOCKET_CLOSE_CODES)
         self.caught_close_codes = caught_close_codes
+
+        self.auto_accept = auto_accept
+        self.__accepted = False
 
         if value_type is not None:
             receive_type = send_type = value_type
@@ -180,7 +190,9 @@ class WebSocket:
     # Asynchronous context manager.
 
     async def __aenter__(self, *args, **kwargs):
-        await self.accept()
+        if not self.__accepted:
+            await self.accept()
+            self.__accepted = True
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):

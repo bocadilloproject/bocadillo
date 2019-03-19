@@ -94,9 +94,8 @@ Add the following between the `app` object declaration and the `app.run()` block
 ```python
 @app.websocket_route("/conversation")
 async def converse(ws):
-    async with ws:
-        async for message in ws:
-            await ws.send(message)
+    async for message in ws:
+        await ws.send(message)
 ```
 
 A few minimal explanations here, for the curious:
@@ -190,10 +189,9 @@ from chatbot import diego
 
 @app.websocket_route("/conversation")
 async def converse(ws):
-    async with ws:
-        async for message in ws:
-            response = diego.get_response(message)
-            await ws.send(str(response))
+    async for message in ws:
+        response = diego.get_response(message)
+        await ws.send(str(response))
 ```
 
 If you run the [server/client setup](#trying-out-the-websocket-endpoint) from earlier, you can now see that Diego converses with us over the WebSocket!
@@ -261,10 +259,9 @@ app = App()
 
 @app.websocket_route("/conversation")
 async def converse(ws, diego):  # <-- 👋, Diego!
-    async with ws:
-        async for message in ws:
-            response = diego.get_response(message)
-            await ws.send(str(response))
+    async for message in ws:
+        response = diego.get_response(message)
+        await ws.send(str(response))
 
 if __name__ == "__main__":
     app.run()
@@ -333,21 +330,17 @@ def clients():
 ```python
 # providerconf.py
 from bocadillo import provider
-from contextlib import asynccontextmanager
-# NOTE: on Python 3.6, you'll need to `pip install async_generator`,
-# then use this instead:
-# from async_generator import asynccontextmanager
+from contextlib import contextmanager
 
 ...
 
 @provider
 def save_client(clients):
-    @asynccontextmanager
-    async def _register(ws):
+    @contextmanager
+    def _register(ws):
         clients.add(ws)
         try:
-            async with ws:
-                yield ws
+            yield ws
         finally:
             clients.remove(ws)
 
@@ -363,7 +356,7 @@ def save_client(clients):
 
 @app.websocket_route("/conversation")
 async def converse(ws, diego, save_client):
-    async with save_client(ws):
+    with save_client(ws):
         async for message in ws:
             response = diego.get_response(message)
             await ws.send(str(response))

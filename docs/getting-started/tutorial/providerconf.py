@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+from contextlib import contextmanager
 
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
@@ -25,12 +25,11 @@ def clients():
 
 @provider
 def save_client(clients):
-    @asynccontextmanager
+    @contextmanager
     async def _register(ws):
         clients.add(ws)
         try:
-            async with ws:
-                yield ws
+            yield ws
         finally:
             clients.remove(ws)
 

@@ -64,8 +64,7 @@ class SayHi:
 ```python
 @app.websocket_route("/hi")
 async def say_hi(ws, hello: str):
-    async with ws:
-        await ws.send(hello)
+    await ws.send(hello)
 ```
 
 ::: tip NOTE

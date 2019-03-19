@@ -160,9 +160,9 @@ module.exports = {
           children: listDir("guides/websockets", [
             "",
             "routing",
+            "messages",
             "connections",
             "error-handling",
-            "messages",
             "example"
           ])
         },

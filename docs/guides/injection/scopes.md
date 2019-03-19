@@ -24,13 +24,12 @@ app = App()
 
 @app.websocket_route("/echo")
 async def echo(ws, clients: set):
-    async with ws:
-        clients.add(ws)
-        try:
-            async for message in ws:
-                await ws.send(message)
-        finally:
-            clients.remove(ws)
+    clients.add(ws)
+    try:
+        async for message in ws:
+            await ws.send(message)
+    finally:
+        clients.remove(ws)
 ```
 
 Since `clients` is app-scoped, other routes can require it and they'll have access to the _same_ set of clients.

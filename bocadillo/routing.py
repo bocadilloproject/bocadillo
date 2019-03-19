@@ -9,6 +9,7 @@
 """
 
 import inspect
+import traceback
 from typing import (
     Any,
     Callable,
@@ -25,6 +26,7 @@ from starlette.websockets import WebSocketClose
 
 from . import views
 from .app_types import HTTPApp, Receive, Scope, Send
+from .compat import asyncnullcontext
 from .errors import HTTPError
 from .injection import consumer
 from .redirection import Redirection
@@ -323,9 +325,13 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
         self, scope: Scope, receive: Receive, send: Send, **params
     ):
         ws = WebSocket(scope, receive=receive, send=send, **self._ws_kwargs)
+
+        context = ws if ws.auto_accept else asyncnullcontext()
         try:
-            await self.view(ws, **params)  # type: ignore
+            async with context:
+                await self.view(ws, **params)  # type: ignore
         except BaseException:
+            traceback.print_exc()  # useful for client-side debugging
             await ws.ensure_closed(1011)
             raise
 
@@ -404,10 +410,11 @@ class RoutingMixin:
         self,
         pattern: str,
         *,
-        value_type: Optional[str] = None,
-        receive_type: Optional[str] = None,
-        send_type: Optional[str] = None,
-        caught_close_codes: Optional[Tuple[int]] = None,
+        auto_accept: bool = True,
+        value_type: str = None,
+        receive_type: str = None,
+        send_type: str = None,
+        caught_close_codes: Tuple[int] = None,
     ):
         """Register a WebSocket route by decorating a view.
 
@@ -422,6 +429,7 @@ class RoutingMixin:
         # their accessibility (e.g. for IDE discovery).
         return self.websocket_router.route(
             pattern=pattern,
+            auto_accept=auto_accept,
             value_type=value_type,
             receive_type=receive_type,
             send_type=send_type,

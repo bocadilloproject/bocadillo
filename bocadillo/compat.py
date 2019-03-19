@@ -30,6 +30,17 @@ _SNAKE_REGEX = re.compile(r"([a-z0-9])([A-Z])")
 _V = TypeVar("_V")
 
 
+class asyncnullcontext:
+    def __init__(self, enter_result: Any = None):
+        self._result = enter_result
+
+    async def __aenter__(self):
+        return self._result
+
+    async def __aexit__(self, *args):
+        pass
+
+
 async def call_async(
     func: Union[Callable[..., _V], Callable[..., Awaitable[_V]]],
     *args: Any,

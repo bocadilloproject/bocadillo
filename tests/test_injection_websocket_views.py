@@ -13,9 +13,8 @@ def clients_provider():
 def test_websocket_clients_example(app: App, client):
     @app.websocket_route("/chat")
     async def chat(ws: WebSocket, clients):
-        async with ws:
-            clients.add(ws)
-            await ws.send_text(str(len(clients)))
+        clients.add(ws)
+        await ws.send_text(str(len(clients)))
 
     @app.route("/clients")
     async def client_count(req, res, clients):
