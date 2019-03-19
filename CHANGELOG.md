@@ -16,7 +16,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Changed
 
-- WebSocket auto-accept: in order to reduce boilerplate for common use cases, WebSocket endpoints now automatically `.accept()` and `.close()` the connection (or, equivalently, enter with `async with ws:` block). This is backwards compatible: entering `async with ws:` has no effect if the connection has already been accepted.
+- WebSocket auto-accept: in order to reduce boilerplate for common use cases, WebSocket endpoints now automatically `.accept()` and `.close()` the connection (or, equivalently, enter with `async with ws:` block). This is backwards compatible: entering `async with ws:` has no effect if the connection has already been accepted. Revert to the old behavior by passing `auto_accept=False` to `@app.websocket_route()`.
 
 ## [v0.13.0] - 2019-03-16
 
