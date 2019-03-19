@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Changed
+
+- WebSocket auto-accept: in order to reduce boilerplate for common use cases, WebSocket endpoints now automatically `.accept()` and `.close()` the connection (or, equivalently, enter with `async with ws:` block). This is backwards compatible: entering `async with ws:` has no effect if the connection has already been accepted.
+
 ## [v0.13.0] - 2019-03-16
 
 Supporting blog post: [Bocadillo 0.13 released!](https://bocadilloproject.github.io/blog/release-0.13.md)
