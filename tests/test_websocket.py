@@ -129,23 +129,23 @@ def test_websocket_url(app: App, client):
         pass
 
 
-def test_websocket_headers(app: App):
+def test_websocket_headers(app: App, client):
     @app.websocket_route("/test")
     async def test(ws: WebSocket):
         await ws.send_json(dict(ws.headers))
 
-    with app.client.websocket_connect("/test", headers={"X-Foo": "bar"}) as ws:
+    with client.websocket_connect("/test", headers={"X-Foo": "bar"}) as ws:
         headers = ws.receive_json()
 
     assert headers["x-foo"] == "bar"
 
 
-def test_websocket_query_params(app: App):
+def test_websocket_query_params(app: App, client):
     @app.websocket_route("/test")
     async def test(ws: WebSocket):
         await ws.send_json(dict(ws.query_params))
 
-    with app.client.websocket_connect("/test?q=hello") as ws:
+    with client.websocket_connect("/test?q=hello") as ws:
         query_params = ws.receive_json()
 
     assert query_params["q"] == "hello"

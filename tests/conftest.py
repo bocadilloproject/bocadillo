@@ -7,7 +7,6 @@ from bocadillo.testing import create_client
 
 
 APP_CLASSES = [App, lambda: Recipe("tacos")]
-CLIENT_FACTORIES = [create_client, lambda app: app.client]
 
 
 @pytest.fixture(params=APP_CLASSES, name="app")
@@ -16,10 +15,9 @@ def fixture_app(request):
     return cls()
 
 
-@pytest.fixture(params=CLIENT_FACTORIES)
-def client(app, request):
-    factory = request.param
-    return factory(app)
+@pytest.fixture
+def client(app):
+    return create_client(app)
 
 
 @pytest.fixture(name="templates")

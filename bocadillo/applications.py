@@ -35,7 +35,6 @@ from .app_types import (
 )
 from .compat import WSGIApp, nullcontext
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
-from .deprecation import deprecated
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import _STORE
@@ -47,7 +46,6 @@ from .response import Response
 from .routing import RoutingMixin
 from .sessions import MissingSecretKey
 from .staticfiles import WhiteNoise, static
-from .testing import create_client
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -274,15 +272,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             # do nothing on subsequent calls
             self._app_providers = nullcontext
         return nullcontext()
-
-    @property
-    @deprecated(
-        since="0.13",
-        removal="0.14",
-        alternative=("create_client", "/api/testing.md#create-client"),
-    )
-    def client(self):
-        return create_client(self)
 
     @property
     def debug(self) -> bool:

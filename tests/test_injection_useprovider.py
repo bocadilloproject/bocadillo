@@ -4,7 +4,7 @@ from bocadillo import App, provider, useprovider
 
 
 @pytest.mark.parametrize("by_name", (False, True))
-def test_useprovider(app: App, by_name):
+def test_useprovider(app: App, client, by_name):
     called = False
 
     @provider
@@ -17,6 +17,6 @@ def test_useprovider(app: App, by_name):
     async def index(req, res):
         pass
 
-    r = app.client.get("/")
+    r = client.get("/")
     assert r.status_code == 200
     assert called

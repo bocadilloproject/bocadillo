@@ -14,6 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Removed
+
+Deprecated items from 0.13:
+
+- **BREAKING**: `.client` attribute on `App` and `Recipe` was removed. Please use `bocadillo.testing.create_client` instead.
+
 ## [v0.13.1] - 2019-03-19
 
 ### Changed
