@@ -61,7 +61,7 @@ $ tree
 
 ## Bootstrapping the application
 
-Now, let's write a basic application in `app.py`. This is very similar to the example provided in the [quickstart](/getting-started/quickstart.md), so be sure to check it out if you need to:
+Now, let's write the app skeleton in `app.py`. Hang tight — first decent bit of code incoming:
 
 ```python
 # app.py
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     app.run()
 ```
 
-You can run the application script to make sure all is well:
+If you've ever worked with Flask or, well, nearly any Python web framework really, this should look oddly familiar. Nearly boring. Who cares? It works! Check for yourself:
 
 ```bash
 python app.py
@@ -85,9 +85,13 @@ If you go to [http://localhost:8000](http://localhost:8000) and get a `404 Not F
 
 We're now ready to get to the meat of it! The first thing we'll build is the WebSocket endpoint.
 
-You don't really need to know about how WebSocket works for now — just know that it allows a server and a client to exchange messages in a bi-directional way. This is what makes it very suitable to enable the conversation between a client and our chatbot.
+If you're not familiar with WebSocket, don't worry — here's a 10-word summary: it allows a server and a client to exchange messages in a bidirectional way. It's good old sockets reinvented for the web.
 
-We won't plug in the chatbot yet, but instead make the server return any message that it receives — a behavior also known as an "echo" endpoint.
+Due to their **bidirectional nature**, they're very suitable for the kind of application we're building here — some sort of _conversation_ between a client and a server (i.e. our chatbot).
+
+If you're interested in learning more about WebSockets in Python, I strongly recommend this talk: [A beginner's guide to WebSockets](https://www.youtube.com/watch?v=PjiXkJ6P9pQ).
+
+Alright, so we're not going to plug the chatbot in just yet. Instead, let's make the server send back any message it receives — a behavior also known as an "echo" endpoint.
 
 Add the following between the `app` object declaration and the `app.run()` block in `app.py`:
 
@@ -101,13 +105,12 @@ async def converse(ws):
 A few minimal explanations here, for the curious:
 
 - This defines a WebSocket endpoint accessible at the `ws://localhost:8000/conversation` location.
-- The role of the `async with ws:` line is to accept the WebSocket connection.
 - The `async for message in ws:` line iterates over messages received over the WebSocket.
 - Lastly, `await ws.send(message)` sends the received `message` as-is back to the client.
 
 ## Trying out the WebSocket endpoint
 
-How about we try this out by creating a WebSocket client? Fear not — we won't write any JavaScript. We'll stick to Python and use the [websockets] library, which comes installed with Bocadillo.
+How about we try this out by creating a WebSocket client? Fear not — we don't need to write any JavaScript. We'll stick to Python and use the [websockets] library, which comes installed with Bocadillo.
 
 [websockets]: https://websockets.readthedocs.io
 
@@ -150,7 +153,9 @@ Type `Ctrl+C` to exit the session and close the WebSocket connection.
 
 Now that we're able to make the server and a client communicate, how about we replace the echo implementation with an actual, intelligent and friendly chatbot?
 
-This is where [ChatterBot] comes in! We'll create a chatbot named **Diego**. Go ahead and create a `chatbot.py` file, and add Diego in there:
+This is where [ChatterBot] comes in! We'll create a chatbot rightfully named **Diego** — a chatbot speaking the asynchronous salsa. 🕺
+
+Go ahead and create a chatbot.py file, and add Diego in there:
 
 ```python
 # chatbot.py
@@ -329,8 +334,8 @@ def clients():
 
 ```python
 # providerconf.py
-from bocadillo import provider
 from contextlib import contextmanager
+from bocadillo import provider
 
 ...
 
@@ -362,7 +367,7 @@ async def converse(ws, diego, save_client):
             await ws.send(str(response))
 ```
 
-That's it! While the client is talking with Diego, it will be present in the set of `clients`.
+That's it! While the client is chatting with Diego, it will be present in the set of `clients`.
 
 How about we do something with this information?
 
