@@ -56,7 +56,7 @@ Using an ORM (Object Relational Mapper) allows you to think in terms of classes 
 
 There are awesome things happening in the landscape of Python async ORMs right now. Here are some of the best alternatives we've come across:
 
-- [orm]: an async ORM built on top of [databases]. It has support for Postgres, MySQL, and SQLite and exposes a Django-like querying interface.
+- [orm]: an async ORM built on top of [Databases]. It has support for Postgres, MySQL, and SQLite and exposes a Django-like querying interface.
 - [Tortoise]: an async ORM inspired by the Django ORM. See also our [Tortoise guide](/how-to/tortoise.md).
 - [GINO]: an async ORM based on SQLAlchemy Core.
 - [peewee-async]: async wrapper around [peewee].
