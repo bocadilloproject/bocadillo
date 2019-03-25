@@ -1,90 +1,154 @@
 # Databases
 
-Storing data and/or retrieving it from a database is a very common task to perform in a server-side web application. This page will discuss some aspects of how you can work with databases in Bocadillo, and what to expect in the future.
+Storing data and/or retrieving it from a database is a very common task to perform in a server-side web application.
 
-## How can Bocadillo help me work with a database?
+**Bocadillo does not provide its _own_ database layer**, and probably never will. However, we do wish to integrate with a recommended solution in a foreseeable future.
 
-**Bocadillo does not currently provide its own database layer.** It is however an important feature which we would like to support in a mid-term future.
+In the meantime, you'll need to integrate with third-party libraries. While doing so, you'll definitely find [providers] handy, as shown in this guide.
 
-This means that, in the meantime, you'll need to integrate with third-party libraries.
+[providers]: /guides/injection/
 
-::: tip
-You may find some features built into Bocadillo handy when integrating a third-party database library.
+::: tip NOTE
+**Querying a database is typically I/O-bound** and can represent a significant part of the request processing time.
 
-One of them is [event handlers][event-handlers], which can typically allow you to initialize and clean up database connections.
+This makes asynchronous programming an ideal tool for the job, which is why this page only discusses **async solutions**.
 :::
-
-In the rest of this document, we'll go through third-party solutions that you may find useful for a range of use cases.
-
-::: warning Do I have do use async?
-
-We recommend you do because **making queries to a database is typically I/O-bound** and represents most of the processing time in a typical server-side web application.
-
-Using a synchronous client or ORM such as [SQLAlchemy] will make the server block while it is waiting for results, annihilating performance gains you obtained from using an asynchronous web framework like Bocadillo.
-
-Because of this, we'll only discuss async solutions here.
-:::
-
-## NoSQL
-
-If you're using a NoSQL database, many high-quality async clients are already available. Some examples are:
-
-- [Motor] for MongoDB.
-- [aioelasticsearch] for ElasticSearch.
-- [aioredis] for Redis.
 
 ## SQL
 
-### Use a database client
+### Databases
 
-Depending on your use case, you may not need to resort to a full-blown ORM. In that case, you may get away with using a database-specific async SQL client, such as:
+[databases]: #databases-2
+
+[Databases](https://github.com/encode/databases) is a library that "brings async database support to Python". It was built by Tom Christie, the developer behind the Django REST Framework, Starlette, uvicorn, as well as a number of exciting projects in the async Python world.
+
+Here's an example setup that uses [providers] to create the Database instance and inject it into web views:
+
+```python
+# providerconf.py
+from bocadillo import provider
+from databases import Database
+
+@provider(scope="app")
+async def db():
+    async with Database("postgresql://localhost/example") as db:
+        yield db
+```
+
+```python
+# app.py
+from bocadillo import App
+
+app = App()
+
+@app.route("/")
+async def index(req, res, db):
+    # TODO: query the `db`! ✨
+    ...
+
+if __name__ == "__main__":
+    app.run()
+```
+
+### ORM
+
+Using an ORM (Object Relational Mapper) allows you to think in terms of classes and objects instead of tables and rows. You should be aware that this has [a number of benefits and drawbacks](https://www.fullstackpython.com/object-relational-mappers-orms.html).
+
+There are awesome things happening in the landscape of Python async ORMs right now. Here are some of the best alternatives we've come across:
+
+- [orm]: an async ORM built on top of [Databases]. It has support for Postgres, MySQL, and SQLite and exposes a Django-like querying interface.
+- [Tortoise]: an async ORM inspired by the Django ORM. See also our [Tortoise guide](/how-to/tortoise.md).
+- [GINO]: an async ORM based on SQLAlchemy Core.
+- [peewee-async]: async wrapper around [peewee].
+
+[tortoise]: https://tortoise-orm.readthedocs.io
+[orm]: https://github.com/encode/orm
+[gino]: https://github.com/fantix/gino
+[peewee-async]: https://github.com/05bit/peewee-async
+[peewee]: https://github.com/coleifer/peewee
+
+Our recommended option is the `orm` package. It's beautiful, ease to use, and _very_ easy to integrate with Bocadillo. Beware, though, that the project is still very young, so make sure to pin your dependencies.
+
+Anyway, here's an example setup:
+
+```python
+# db.py
+import os
+
+import databases
+import orm
+import sqlalchemy
+
+url = os.getenv("DATABASE_URL")
+database = databases.Database(url)
+metadata = sqlalchemy.MetaData()
+
+class Post(orm.Model):
+    __tablename__ = "posts"
+    __database__ = database
+    __metadata__ = metadata
+
+    id = orm.Integer(primary_key=True)
+    title = orm.String(max_length=300)
+    content = orm.Text(allow_blank=True)
+
+engine = sqlalchemy.create_engine(url)
+metadata.create_all(engine)
+```
+
+```python
+# app.py
+from bocadillo import App
+from db import Post
+
+app = App()
+
+@app.route("/posts")
+async def list_posts(req, res):
+    res.media = [dict(post) for post in await Post.objects.all()]
+
+if __name__ == "__main__":
+    app.run()
+```
+
+### Dialect-specific client library (advanced)
+
+If your use case is very specific or low-level, you may want to resort to a dialect-specific async client library.
+
+Here are some of the most popular ones:
 
 - [asyncpg] for PostgreSQL.
 - [aiomysql] for MySQL.
 - [aiosqlite] for SQLite.
 
-### Use an ORM
-
-#### What is an ORM?
-
-Paraphrasing the [Wikipedia page][orm-wikipedia], ORM — a.k.a. *Object Relational Mapping* — is a programming technique to convert data between incompatible type systems.
-
-Although it is a general concept, *an ORM* typically refers to software that acts as **a conversion layer between a given programming language and a database**, e.g. between Python and PostgreSQL.
-
-Put simply, an ORM allows the developer to interact with the database through objects and method calls instead of writing SQL queries by hand.
-
-#### Do I need an ORM?
-
-Using an ORM has the benefit of making the data manipulation code more reusable, more consistent and more secure.
-
-That said, keep in mind that ORMs have downsides, too. [Full Stack Python's article on Object Relation Mappers][fsp-article] mentions impedance mismatch, potentially reduced performance, and shift of complexity from the database to application code.
-
-If this is too much for you, consider resorting to an [async SQL client](#use-a-database-client) instead.
-
-#### Which async ORMs are available?
-
-The world of asynchronous Python ORMs is still maturing. There, however, a few solutions available already.
-
-A first approach is to use an **async ORM built on top of a synchronous one**. Examples include [GINO][gino] (built on SQLAlchemy Core) or [peewee-async] (built on [peewee]). This has the advantage of exposing an API familiar to the sync equivalent. But these may have extra performance overhead and missing features because of incompatibilities with the asynchronous paradigm.
-
-Another approach is to use an **async-first ORM**. Few of them exist, but the most promising seems to be [Tortoise ORM][tortoise]. It is a from-scratch ORM implementation specifically targeted at async Python applications, which exposes a clean API very reminiscent of the Django ORM.
-
-::: tip
-We discuss how to integrate Tortoise ORM in a Bocadillo application in our how-to guide: [Use Tortoise ORM to interact with an SQL database][tortoise-how-to].
-:::
-
-[orm-wikipedia]: https://en.wikipedia.org/wiki/Object-relational_mapping
-[fsp-article]: https://www.fullstackpython.com/object-relational-mappers-orms.html
-[sqlalchemy]: https://www.sqlalchemy.org
 [asyncpg]: https://www.github.com/MagicStack/asyncpg
 [aiomysql]: https://github.com/aio-libs/aiomysql
 [aiosqlite]: https://github.com/jreese/aiosqlite
-[gino]: https://github.com/fantix/gino
-[peewee-async]: https://github.com/05bit/peewee-async
-[peewee]: https://github.com/coleifer/peewee
-[motor]: https://github.com/mongodb/motor
-[aioelasticsearch]: https://github.com/aio-libs/aioelasticsearch
-[aioredis]: https://github.com/aio-libs/aioredis
-[event-handlers]: ../guides/agnostic/events.md
-[tortoise]: https://tortoise-orm.readthedocs.io
-[tortoise-how-to]: ../how-to/tortoise.md
+
+Again, you'll definitely want to use [providers] to setup and teardown database connections. Here's an example for asyncpg:
+
+```python
+# providerconf.py
+import asyncpg
+from bocadillo import provider
+
+@provider(scope="app")
+async def conn():
+    conn = await asyncpg.connect(
+        user="user", password="secret", database="example", host="localhost"
+    )
+    yield conn
+    await conn.close()
+```
+
+## NoSQL
+
+If you're using a NoSQL database, many high-quality async clients are already available.
+
+Here are some popular ones:
+
+- [Motor](https://github.com/mongodb/motor) for MongoDB.
+- [aioelasticsearch](https://github.com/aio-libs/aioelasticsearch) for ElasticSearch.
+- [aioredis](https://github.com/aio-libs/aioredis) for Redis.
+
+You can find an example Redis setup [at the end of the providers problem statement](/guides/injection/problem.md#with-providers).
