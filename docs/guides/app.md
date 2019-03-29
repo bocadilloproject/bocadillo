@@ -119,14 +119,17 @@ To enable CORS, simply use:
 app = App(enable_cors=True)
 ```
 
-Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET` for `Allow-Methods`. To customize the CORS configuration, use `cors_config`, e.g.:
+Bocadillo has restrictive defaults to prevent security issues: empty `Allow-Origins`, only `GET` for `Allow-Methods`, empty `Allow-Headers`.
+
+This means that you'll typically need to customize the CORS configuration. You can do so using `cors_config`, e.g.:
 
 ```python
 app = App(
     enable_cors=True,
     cors_config={
-        'allow_origins': ['*'],
-        'allow_methods': ['*'],
+        "allow_origins": ["*"],
+        "allow_methods": ["*"],
+        "allow_headers": ["*"],
     }
 )
 ```
