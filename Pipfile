@@ -15,6 +15,7 @@ pre-commit = "*"
 pydoc-markdown = {git = "https://github.com/NiklasRosenstein/pydoc-markdown.git"}
 pylint = "*"
 mypy = "*"
+rope = "*"
 
 [requires]
 python_version = "3.7"
