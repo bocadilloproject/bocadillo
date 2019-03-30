@@ -43,6 +43,15 @@ class WebSocket:
     query_params (dict): parsed query parameters.
     """
 
+    __slots__ = (
+        "_ws",
+        "caught_close_codes",
+        "auto_accept",
+        "__accepted",
+        "receive_type",
+        "send_type",
+    )
+
     __default_receive_type__ = "text"
     __default_send_type__ = "text"
 

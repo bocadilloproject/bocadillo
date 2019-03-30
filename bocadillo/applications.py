@@ -136,6 +136,23 @@ class App(RoutingMixin, metaclass=DocsMeta):
         You can access, edit or replace this at will.
     """
 
+    __slots__ = (
+        "name",
+        "import_string",
+        "_debug",
+        "asgi",
+        "_prefix_to_app",
+        "_name_to_prefix_and_app",
+        "_static_apps",
+        "media_handlers",
+        "_media_type",
+        "exception_middleware",
+        "server_error_middleware",
+        "_lifespan",
+        "_store",
+        "_frozen",
+    )
+
     import_string: Optional[str]
 
     def __new__(cls, *args, **kwargs):
@@ -269,8 +286,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if not self._frozen:
             self._store.freeze()
             self._frozen = True
-            # do nothing on subsequent calls
-            self._app_providers = nullcontext
         return nullcontext()
 
     @property

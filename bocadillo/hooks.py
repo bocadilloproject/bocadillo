@@ -18,6 +18,8 @@ AFTER = "after"
 class Hooks:
     """Hooks manager."""
 
+    __slots__ = ()
+
     def before(self, hook: HookFunction, *args, **kwargs):
         """Register a before hook on a handler.
 

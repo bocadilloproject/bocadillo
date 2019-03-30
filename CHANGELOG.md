@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- The code base now uses `__slots__` in all relevant places. We expect some speed improvements as a result.
+
 ### Removed
 
 Deprecated items from 0.13:

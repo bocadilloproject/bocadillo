@@ -24,17 +24,12 @@ def get_default_handlers() -> Handlers:
 
 
 class UnsupportedMediaType(Exception):
-    """Raised when trying to use an unsupported media type.
+    """Raised when trying to use an unsupported media type."""
 
-    # Attributes
-    media_type (str): the unsupported media type.
-    handlers (dict): the dict of supported media handlers.
-    """
+    __slots__ = ("media_type",)
 
     def __init__(self, media_type: str, handlers: Handlers):
         self.media_type = media_type
-        self.handlers = handlers
-        self._available = ", ".join(handlers.keys())
-
-    def __str__(self):
-        return f"{self.media_type} (available: {self._available})"
+        available = ", ".join(handlers.keys())
+        message = f"{media_type} (available: {available})"
+        super().__init__(message)

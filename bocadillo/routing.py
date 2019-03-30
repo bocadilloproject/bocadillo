@@ -54,6 +54,8 @@ class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
     params (dict): extracted route parameters.
     """
 
+    __slots__ = ("route", "params")
+
     def __init__(self, route: _R, params: dict):
         self.route = route
         self.params = params
@@ -73,6 +75,8 @@ class BaseRoute(Generic[_V]):
         a view function or object whose actual type is defined by concrete
         routes.
     """
+
+    __slots__ = ("_pattern", "_parser", "view")
 
     def __init__(self, pattern: str, view: _V):
         if pattern != WILDCARD and not pattern.startswith("/"):
@@ -136,6 +140,8 @@ class BaseRouter(Generic[_R, _V]):
     routes (dict):
         a mapping of URL patterns to route objects.
     """
+
+    __slots__ = ("routes", "route_class")
 
     route_class: Type[_R]
 
@@ -203,6 +209,8 @@ class HTTPRoute(BaseRoute[View]):
     name (str):
         the route's name.
     """
+
+    __slots__ = ("name",)
 
     def __init__(self, pattern: str, view: View, name: str):
         super().__init__(pattern, view)
@@ -331,6 +339,8 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
         passed when building the #::bocadillo.websockets#WebSocket object.
     """
 
+    __slots__ = ("_ws_kwargs",)
+
     def __init__(self, pattern: str, view: WebSocketView, **kwargs):
         super().__init__(pattern, view)
         self._ws_kwargs = kwargs
@@ -379,6 +389,8 @@ class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):
 
 class RoutingMixin:
     """Provide HTTP and WebSocket routing to an application class."""
+
+    __slots__ = ("http_router", "websocket_router")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

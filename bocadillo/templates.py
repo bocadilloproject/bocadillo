@@ -32,6 +32,8 @@ class Templates:
         an `url_for` global variable.
     """
 
+    __slots__ = ("app", "_directory", "_environment")
+
     def __init__(
         self,
         app: Optional[Any] = None,

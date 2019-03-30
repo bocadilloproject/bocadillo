@@ -29,6 +29,8 @@ class HTTPError(Exception):
     - [HTTP response status codes (MDN web docs)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
     """
 
+    __slots__ = ("_status", "detail")
+
     def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
         if isinstance(status, int):
             status = HTTPStatus(  # pylint: disable=no-value-for-parameter
@@ -65,6 +67,8 @@ class ServerErrorMiddleware(HTTPApp):
 
     Adaptation of Starlette's `ServerErrorMiddleware`.
     """
+
+    __slots__ = ("app", "handler", "debug", "exception", "jinja")
 
     _template_name = "server_error.jinja"
 
@@ -127,6 +131,8 @@ class HTTPErrorMiddleware(HTTPApp):
 
     Adaptation of Starlette's `ExceptionMiddleware`.
     """
+
+    __slots__ = ("app", "debug", "_exception_handlers")
 
     def __init__(self, app: HTTPApp, debug: bool = False) -> None:
         self.app = app

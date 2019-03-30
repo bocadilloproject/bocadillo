@@ -62,6 +62,20 @@ class Response:
         download and save the file locally.
     """
 
+    __slots__ = (
+        "content",
+        "request",
+        "status_code",
+        "headers",
+        "chunked",
+        "attachment",
+        "_file_path",
+        "_media_type",
+        "_media_handler",
+        "_background",
+        "_stream",
+    )
+
     text = _content_setter(CONTENT_TYPE.PLAIN_TEXT)
     html = _content_setter(CONTENT_TYPE.HTML)
 
