@@ -3,11 +3,13 @@
 In this guide, we will be looking at how to deploy a Bocadillo application to Heroku.
 You can find the example code in the [heroku-example](https://github.com/bocadilloproject/heroku-example) repo.
 
-## Bocadillo application
+## Setting things up
+
+### Bocadillo application
 
 Let's assume you have the following `app.py` script:
 
-```
+```python
 from bocadillo import App
 
 app = App()
@@ -20,59 +22,66 @@ if __name__ == "__main__":
     app.run()
 ```
 
-## Procfile
+### Procfile
 
 The [Procfile](https://devcenter.heroku.com/articles/procfile) is a text file located in the root directory of your project which explicitly declares what command should be executed to start your app.
 
 As described in [Deployment](/discussions/deployment.md#running-with-gunicorn), the following should fit most use cases:
 
-```
+```txt
 web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app
 ```
 
-## requirements.txt
+### `requirements.txt`
 
-Heroku recognizes a Python app by the existence of requirements.txt file in the root directory (see [Python Dependencies via Pip](https://devcenter.heroku.com/articles/python-pip)). Here's an example of what yours may look like:
+Heroku recognizes a Python app by the existence of `requirements.txt` file in the root directory (see [Python Dependencies via Pip](https://devcenter.heroku.com/articles/python-pip)). Here's an example of what yours may look like:
 
-```
+```txt
 bocadillo
 gunicorn
 ```
 
-## runtime.txt
+### `runtime.txt`
 
 Place this file in the root directory with a specific Python version. [Heroku will look at it](https://devcenter.heroku.com/articles/python-runtimes) to determine which Python version to use.
 
-```
+```txt
 python-3.6.8
 ```
 
-## Heroku CLI
+## Deploying via the Heroku CLI
 
-To interact with Heroku from the command line, make sure you have the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed.
+1. Log into the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) (you may need to install it on your machine):
 
-## Create a Heroku application
-
-```sh
-heroku login    # This will ask you to enter email id and password
-
-heroku create my-bocadillo-app  # This will create an application with given name in Heroku
-
-heroku git:remote -a my-bocadillo-app   # This will add a git remote to an app repository so that you can refer to it when deploying
+```bash
+heroku login
 ```
 
-## Commit the changes and deploy!
+2. Create the application on Heroku, e.g.:
 
-```
-git add .       # Add all the files
-
-git commit -m “Ready to deploy to Heroku”     # Commit the code
-
-git push heroku master      # This will push the entire app on Heroku Server
-
-heroku open     # Visit the app through generated URL or with this command
-
-heroku logs     # This is to check the logs, if anything goes wrong.
+```bash
+heroku create my-bocadillo-app
 ```
 
-That's it! You've just deployed a Bocadillo application to Heroku. 🚀
+3. Add the app's git remote:
+
+```
+heroku git:remote -a my-bocadillo-app
+```
+
+4. Commit the changes, if any:
+
+```bash
+git add .
+git commit -m “Ready to deploy to Heroku”
+```
+
+5. Deploy!
+
+```bash
+git push heroku master
+```
+
+Once this is done, you can visit the newly deployed application using `$ heroku open`.
+
+Congrats! You've just deployed a Bocadillo application to Heroku. 🚀
