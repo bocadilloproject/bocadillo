@@ -36,7 +36,8 @@ jobs:
         - nvm use 8
       install:
         - pip install .
-        - pip install git+https://github.com/NiklasRosenstein/pydoc-markdown.git
+        - pip install "pydoc-markdown<2.0.5"
+        # ^ See: https://github.com/NiklasRosenstein/pydoc-markdown/pull/78
         - npm install --only=dev
       script:
         - pydocmd generate
