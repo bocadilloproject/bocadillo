@@ -6,6 +6,8 @@ In production you'll probably also want to use a process manager to be able to s
 
 You'll also want to turn off [debug mode] to disable auto-reload and prevent displaying error tracebacks in the browser.
 
+For deploying on Heroku please refer to [Deploy To Heroku] guide.
+
 ## Running with Gunicorn
 
 [Gunicorn] is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment]).
@@ -32,9 +34,10 @@ Bocadillo keeps it simple by using [WhiteNoise](http://whitenoise.evans.io/en/st
 
 In practice, this means that **you won't need any extra steps to serve static files in production**, unless you have very high performance requirements, in which case you should probably put your app behind a CDN.
 
-[Uvicorn]: https://www.uvicorn.org
+[uvicorn]: https://www.uvicorn.org
 [uvloop]: https://github.com/MagicStack/uvloop
 [asyncio]: https://docs.python.org/3/library/asyncio.html
-[Gunicorn]: http://docs.gunicorn.org/en/stable/
-[Uvicorn Deployment]: https://www.uvicorn.org/deployment/
+[gunicorn]: http://docs.gunicorn.org/en/stable/
+[uvicorn deployment]: https://www.uvicorn.org/deployment/
 [debug mode]: ../guides/app.md#debug-mode
+[deploy to heroku]: ../how-to/deploy-to-heroku.md
