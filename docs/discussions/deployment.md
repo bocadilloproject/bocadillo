@@ -12,7 +12,7 @@ You'll also want to turn off [debug mode](/guides/app.md#debug-mode) to disable 
 
 ## Running with Gunicorn
 
-[Gunicorn] is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment](https://www.uvicorn.org/deployment/)).
+[Gunicorn](https://gunicorn.org/) is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment](https://www.uvicorn.org/deployment/)).
 
 The following will start a Gunicorn server for your application:
 
@@ -28,6 +28,10 @@ Let's break down this command:
 4. `-b localhost:8000`: specifies on which host and port the application should run.
 5. `app:app`: identifies the Bocadillo application in the `path.to.module:object` format.
 
+## Running with Docker
+
+Bocadillo applications can easily be containerized to run in Docker containers. You can find an example `Dockerfile` in our [docker-example](https://github.com/bocadilloproject/docker-example) repo.
+
 ## What about static files?
 
 A typical answer to, "How should I service static files for my Gunicorn-served web app" is that you should use a reverse proxy such as Nginx. Even though this and other options such as using a CDN or object storage are valid approaches, they're difficult to get started with and require extra sysadmin work.
@@ -40,4 +44,4 @@ In practice, this means that **you won't need any extra steps to serve static fi
 
 ### Heroku
 
-Bocadillo applications are very easy to deploy to Heroku. Please refer to our [Deploy To Heroku](/how-to/heroku.md) how-to guide to get started!
+Bocadillo applications are very easy to deploy to Heroku. Check out our [Heroku deployment guide](/how-to/heroku.md) to get started!
