@@ -197,7 +197,7 @@ module.exports = {
         {
           title: "Building upon the framework",
           collapsable: false,
-          children: listDir("how-to", ["yaml-media", "middleware"])
+          children: listDir("how-to", ["yaml-media", "middleware", "heroku"])
         },
         {
           title: "Third-party solutions",
