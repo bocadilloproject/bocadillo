@@ -2,11 +2,13 @@
 
 In development, running the `app.py` application script has the effect of passing your ASGI application to [Uvicorn], a very fast ASGI server running on [uvloop], an event loop [up to 4x faster](https://github.com/MagicStack/uvloop#performance) than the standard [asyncio] event loop.
 
+[uvicorn]: https://www.uvicorn.org
+[uvloop]: https://github.com/MagicStack/uvloop
+[asyncio]: https://docs.python.org/3/library/asyncio.html
+
 In production you'll probably also want to use a process manager to be able to spin up multiple workers and increase throughput.
 
-You'll also want to turn off [debug mode] to disable auto-reload and prevent displaying error tracebacks in the browser.
-
-For deploying on Heroku please refer to [Deploy To Heroku] guide.
+You'll also want to turn off [debug mode](/guides/app.md#debug-mode) to disable auto-reload and prevent displaying error tracebacks in the browser.
 
 ## Running with Gunicorn
 
@@ -34,10 +36,8 @@ Bocadillo keeps it simple by using [WhiteNoise](http://whitenoise.evans.io/en/st
 
 In practice, this means that **you won't need any extra steps to serve static files in production**, unless you have very high performance requirements, in which case you should probably put your app behind a CDN.
 
-[uvicorn]: https://www.uvicorn.org
-[uvloop]: https://github.com/MagicStack/uvloop
-[asyncio]: https://docs.python.org/3/library/asyncio.html
-[gunicorn]: http://docs.gunicorn.org/en/stable/
-[uvicorn deployment]: https://www.uvicorn.org/deployment/
-[debug mode]: ../guides/app.md#debug-mode
-[deploy to heroku]: ../how-to/deploy-to-heroku.md
+## Deployment solutions
+
+### Heroku
+
+Bocadillo applications are very easy to deploy to Heroku. Please refer to our [Deploy To Heroku](/how-to/heroku.md) how-to guide to get started!
