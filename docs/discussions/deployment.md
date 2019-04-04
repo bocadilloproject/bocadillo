@@ -12,7 +12,7 @@ You'll also want to turn off [debug mode](/guides/app.md#debug-mode) to disable 
 
 ## Running with Gunicorn
 
-[Gunicorn] is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment]).
+[Gunicorn] is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment](https://www.uvicorn.org/deployment/)).
 
 The following will start a Gunicorn server for your application:
 
