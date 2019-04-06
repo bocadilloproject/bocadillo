@@ -22,6 +22,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
 from uvicorn.main import run
+import typesystem
 
 from .app_types import (
     _E,
@@ -35,6 +36,7 @@ from .app_types import (
 )
 from .compat import WSGIApp, nullcontext
 from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
+from .converters import on_validation_error
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import _STORE
@@ -219,6 +221,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self.exception_middleware, handler=error_to_text, debug=self._debug
         )
         self.add_error_handler(HTTPError, error_to_text)
+        self.add_error_handler(typesystem.ValidationError, on_validation_error)
 
         # Lifespan middleware
         self._lifespan = Lifespan()

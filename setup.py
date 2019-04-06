@@ -24,10 +24,10 @@ setuptools.setup(
     install_requires=[
         "starlette>=0.11, <0.12",
         "uvicorn>=0.5.1, <0.6",
+        "typesystem>=0.2.2",
         "jinja2>=2.10",
         "whitenoise",
         "requests",
-        "parse",
         "python-multipart",
         "websockets>=6.0",
         "aiodine>=1.2.5, <2.0",

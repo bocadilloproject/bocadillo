@@ -55,17 +55,6 @@ def test_websocket_route_parameters(app: App, client):
         assert ws.receive_text() == "foo"
 
 
-def test_if_route_parameter_fails_validation_then_403(app: App, client):
-    @app.websocket_route("/chat/{id:d}")
-    async def chat_room(ws: WebSocket, id: int):
-        pass
-
-    with pytest.raises(WebSocketDisconnect) as ctx:
-        with client.websocket_connect("/chat/foo"):
-            pass
-    assert ctx.value.code == 403
-
-
 def test_non_existing_endpoint_returns_403_as_per_the_asgi_spec(client):
     with pytest.raises(WebSocketDisconnect) as ctx:
         with client.websocket_connect("/foo"):

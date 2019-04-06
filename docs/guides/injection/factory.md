@@ -37,7 +37,7 @@ def get_note(notes):
 
 app = App()
 
-@app.route("/notes/{pk:d}")
+@app.route("/notes/{pk}")
 async def retrieve_note(req, res, pk: int, get_note):
     res.media = await get_note(pk)
 ```

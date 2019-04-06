@@ -6,6 +6,7 @@ from . import injection
 from .app_types import AsyncHandler, Handler
 from .compat import call_async, camel_to_snake
 from .constants import ALL_HTTP_METHODS
+from .converters import ViewConverter, convert_arguments
 
 MethodsParam = Union[List[str], all]  # type: ignore
 
@@ -13,6 +14,12 @@ MethodsParam = Union[List[str], all]  # type: ignore
 class HandlerDoesNotExist(Exception):
     # Raised to signal that no handler exists for a requested HTTP method.
     pass
+
+
+class HTTPConverter(ViewConverter):
+    def get_query_params(self, args, kwargs):
+        req = args[0]
+        return req.query_params
 
 
 class View:
@@ -94,6 +101,7 @@ class View:
         vue: View = cls(name)
 
         for method, handler in async_handlers.items():
+            handler = convert_arguments(handler, converter_class=HTTPConverter)
             handler = injection.consumer(handler)
             setattr(vue, method, handler)
 

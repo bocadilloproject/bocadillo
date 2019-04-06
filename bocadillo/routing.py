@@ -9,7 +9,6 @@
 """
 
 import inspect
-import traceback
 from typing import (
     Any,
     Callable,
@@ -22,21 +21,18 @@ from typing import (
     TypeVar,
 )
 
-from parse import Parser
 from starlette.websockets import WebSocketClose
 
 from . import views
 from .app_types import HTTPApp, Receive, Scope, Send
-from .compat import asyncnullcontext
 from .errors import HTTPError
 from .injection import consumer
 from .redirection import Redirection
 from .request import Request
 from .response import Response
+from .urlparse import Parser
 from .views import AsyncHandler, HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
-
-WILDCARD = "{}"
 
 # Route generic types.
 _R = TypeVar("_R", bound="BaseRoute")  # route
@@ -79,15 +75,12 @@ class BaseRoute(Generic[_V]):
     __slots__ = ("_pattern", "_parser", "view")
 
     def __init__(self, pattern: str, view: _V):
-        if pattern != WILDCARD and not pattern.startswith("/"):
-            pattern = f"/{pattern}"
-        self._pattern = pattern
-        self._parser = Parser(self._pattern)
+        self._parser = Parser(pattern)
         self.view = view
 
     @property
     def pattern(self) -> str:
-        return self._pattern
+        return self._parser.pattern
 
     def url(self, **kwargs) -> str:
         """Return the full URL path for the given route parameters.
@@ -100,7 +93,7 @@ class BaseRoute(Generic[_V]):
             A full URL path obtained by formatting the route pattern with
             the provided route parameters.
         """
-        return self._pattern.format(**kwargs)
+        return self.pattern.format(**kwargs)
 
     def parse(self, path: str) -> Optional[dict]:
         """Parse an URL path against the route's URL pattern.
@@ -110,8 +103,7 @@ class BaseRoute(Generic[_V]):
             If the URL path matches the URL pattern, this is a dictionary
             containing the route parameters, otherwise it is `None`.
         """
-        result = self._parser.parse(path)
-        return result.named if result is not None else None
+        return self._parser.parse(path)
 
     @classmethod
     def normalize(cls, view: Any) -> _V:
@@ -346,23 +338,14 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
         self._ws_kwargs = kwargs
 
     @classmethod
-    def normalize(cls, view: WebSocketView) -> WebSocketView:
-        # Resolve providers in the websocket view.
-        return consumer(view)
+    def normalize(cls, view: Any) -> WebSocketView:
+        return WebSocketView(view)
 
     async def __call__(
         self, scope: Scope, receive: Receive, send: Send, **params
     ):
         ws = WebSocket(scope, receive=receive, send=send, **self._ws_kwargs)
-
-        context = ws if ws.auto_accept else asyncnullcontext()
-        try:
-            async with context:
-                await self.view(ws, **params)  # type: ignore
-        except BaseException:
-            traceback.print_exc()  # useful for client-side debugging
-            await ws.ensure_closed(1011)
-            raise
+        await self.view(ws, **params)
 
 
 class WebSocketRouter(BaseRouter[WebSocketRoute, WebSocketView]):

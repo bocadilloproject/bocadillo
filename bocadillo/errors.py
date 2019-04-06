@@ -152,13 +152,25 @@ class HTTPErrorMiddleware(HTTPApp):
         return None
 
     async def __call__(self, req: Request, res: Response) -> Response:
-        try:
-            res = await self.app(req, res)
-        except Exception as exc:  # pylint: disable=broad-except
-            handler = self._get_exception_handler(exc)
-            if handler is None:
-                raise exc from None
-            await call_async(handler, req, res, exc)  # type: ignore
-            return res
-        else:
-            return res
+        response = self.app(req, res)
+
+        while True:
+            # Deal with errors while there's one.
+            # Allows error handlers to raise exceptions to be handled
+            # by other error handlers, e.g. raising an `HTTPError` in an
+            # error handler.
+
+            has_error = False
+
+            try:
+                res = (await response) or res
+            except Exception as exc:  # pylint: disable=broad-except
+                has_error = True
+                handler = self._get_exception_handler(exc)
+                if handler is None:
+                    raise exc from None
+                response = call_async(handler, req, res, exc)  # type: ignore
+
+            if not has_error:
+                assert res is not None
+                return res

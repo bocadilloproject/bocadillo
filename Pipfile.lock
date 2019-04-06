@@ -126,12 +126,6 @@
             ],
             "version": "==1.1.1"
         },
-        "parse": {
-            "hashes": [
-                "sha256:870dd675c1ee8951db3e29b81ebe44fd131e3eb8c03a79483a58ea574f3145c2"
-            ],
-            "version": "==1.11.1"
-        },
         "python-multipart": {
             "hashes": [
                 "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"
@@ -157,6 +151,12 @@
                 "sha256:7f2307d705b2d9ed584d98468616dee7625d4bc402ce841cc6fa3a863e162e8b"
             ],
             "version": "==0.11.4"
+        },
+        "typesystem": {
+            "hashes": [
+                "sha256:aa01ac52370a7e5996960c8a899da0f939753bc49d405e92dea5cb1f6bc3700a"
+            ],
+            "version": "==0.2.2"
         },
         "urllib3": {
             "hashes": [

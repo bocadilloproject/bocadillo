@@ -124,7 +124,7 @@ from bocadillo import Recipe
 
 employees = Recipe('employees')
 
-@employees.route('/{pk:d}')
+@employees.route('/{pk}')
 async def get_employee(req, res, pk: int):
     res.media = {'id': pk, 'name': 'John Doe'}
 ```
@@ -135,7 +135,7 @@ from bocadillo import Recipe
 
 interns = Recipe('interns')
 
-@interns.route('/{pk:d}')
+@interns.route('/{pk}')
 async def get_intern(req, res, pk: int):
     res.media = {'id': pk, 'name': 'Don Joe'}
 ```

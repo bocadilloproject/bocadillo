@@ -74,9 +74,7 @@ req.query_params["sub"]
 ```
 
 ::: tip
-For **optional** query parameters, use `.get()` instead of direct item access. Otherwise, a `KeyError` is raised if the parameter is not present.
-
-See also: [Why dict.get(key) instead of dict[key]?](https://stackoverflow.com/questions/11041405/why-dict-getkey-instead-of-dictkey).
+For convenience, query parameters can be automatically injected based on view parameters. See [Routing](./routing.md#query-parameters).
 :::
 
 ## Body

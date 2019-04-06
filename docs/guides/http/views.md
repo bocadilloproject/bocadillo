@@ -1,6 +1,8 @@
 # Views
 
-Once that a route is defined with a well-designed URL pattern (see [Routes and URL design]), you'll need to write the **view** to handle the request and shape up the response.
+Once that a route is defined with a well-designed URL pattern (see [Routing]), you'll need to write the **view** to handle the request and shape up the response.
+
+[routing]: ./routing.md
 
 In Bocadillo, views are functions that take at least a request and a response
 as arguments, and mutate those objects as necessary.
@@ -35,7 +37,7 @@ More information on working with requests and responses can be found in the [Req
 
 ## Mapping URLs to views
 
-As you have seen above, a view is merely just a Python function. To attach it to an URL pattern, you'll need to decorate it with a route. See [Routes and URL design] for more information.
+As you have seen above, a view is merely just a Python function. To attach it to an URL pattern, you'll need to decorate it with a route. See [Routing] for more information.
 
 ## Returning HTTP errors
 
@@ -49,7 +51,7 @@ As an example, consider the following route:
 ```python
 from bocadillo import HTTPError
 
-@app.route('/fail/{status_code:d}')
+@app.route('/fail/{status_code}')
 def fail(req, res, status_code: int):
     raise HTTPError(status_code, detail="You asked for it!")
 ```
@@ -119,6 +121,7 @@ class Index:
     async def get(self, req, res):
         res.text = 'Classes, oh my!'
 
+    # Synchronous handlers are also supported here.
     def post(self, req, res):
         res.text = 'Roger that'
 ```
@@ -136,13 +139,3 @@ class Index:
 ::: tip NOTE
 Bocadillo actually has a [`View`](/api/views.md#view) base class, but you don't need to subclass it when building class-based views. It only exists as a unique representation to which all the types of views described in this section get mapped internally.
 :::
-
-## About type annotations
-
-You may have seen in the previous examples that we sometimes use type hints to annotate view arguments, such as the request, the response or route parameters.
-
-However, **type annotations are not used at all by Bocadillo**.
-
-Future features may rely on type annotations if we think they improve the user experience. But for now, you can safely omit type annotations on your views — although we recommend you do use them, especially for route parameters.
-
-[routes and url design]: routing.md

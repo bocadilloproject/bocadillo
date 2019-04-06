@@ -6,7 +6,7 @@ Now that you've got Bocadillo [installed][installation], let's go through the tr
 
 Here you go:
 
-<<<@/docs/getting-started/snippets/hello.py
+<<<@/docs/getting-started/quickstart/hello.py
 
 If you've ever worked with [Flask], the API should look familiar. Still, let's break this code down:
 
