@@ -34,7 +34,3 @@ async def chat(ws, history, clients):
 @app.route("/")
 async def index(req, res):
     res.html = await templates.render("index.html")
-
-
-if __name__ == "__main__":
-    app.run()

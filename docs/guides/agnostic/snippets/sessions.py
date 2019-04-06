@@ -30,7 +30,3 @@ async def create_todo(req, res, todos):
     todo = {"id": len(todos) + 1, "content": json["content"]}
     todos.append(todo)
     res.status_code = 201
-
-
-if __name__ == "__main__":
-    app.run()

@@ -49,15 +49,14 @@ async def index(req, res):
 @app.route("/greet/{person}")
 async def greet(req, res, person):
     res.media = {"message": f"Hi, {person}!"}
-
-if __name__ == "__main__":
-    app.run()
 ```
 
-Launch:
+Start the [uvicorn] web server (hot reload enabled!):
+
+[uvicorn]: https://www.uvicorn.org/
 
 ```bash
-python app.py
+uvicorn app:app --reload
 ```
 
 Make requests!

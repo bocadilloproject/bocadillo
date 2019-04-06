@@ -5,99 +5,51 @@ The main object you'll manipulate in Bocadillo is the [App] object, an
 
 [app]: /api/applications.md#app
 
-This page explains the basics of running and configurating an application.
+This page explains the basics of serving and configurating an application.
 
 [asgi]: https://asgi.readthedocs.io
 
-## Running the application server
+## Serving an application
 
 ### Basics
 
-The Bocadillo server is powered by [uvicorn], a Python ASGI web server installed along with Bocadillo.
-
-Consider the following application:
-
-```python
-# app.py
-from bocadillo import App
-
-app = App()
-
-if __name__ == '__main__':
-    app.run()
-```
-
-To start the application server, either:
+The officially recommended web server for Bocadillo is [uvicorn]. It comes installed with the `bocadillo` package, so you can use it right away.
 
 [uvicorn]: https://www.uvicorn.org
 
-- Run the application script:
+If the application is declared as `app` in the `app.py` script, e.g.:
 
-```bash
-python app.py
+```python
+from bocadillo import App
+
+app = App()
 ```
 
-- Give it to uvicorn as `path.to.module:app_variable`:
+you can serve it using:
 
 ```bash
 uvicorn app:app
 ```
 
-### Debug mode
+### Server configuration
 
-During development, you can run an application in debug mode to enable in-browser tracebacks and hot reloading.
+You can use any of the [uvicorn settings](https://www.uvicorn.org/settings/) to configure the server.
 
-::: danger
-Debug mode discloses sensitive information about your application runtime. We strongly recommend to **disable it in production**.
-:::
-
-When running via the application script, debug mode can be enabled:
-
-- By setting the `BOCADILLO_DEBUG` environment variable to a non-empty value.
-
-- By passing `debug=True` to `app.run`:
-
-```python
-app.run(debug=True)
-```
-
-::: warning CAVEAT
-In debug mode, for uvicorn to be able to find the application object, you should declare it as `app` in the application script — like we do on this page.
-
-If you can't, you should tell uvicorn by passing the `declared_as` argument:
-
-```python
-application.run(debug=True, declared_as="application")
-```
-
-:::
-
-Alternatively, you can activate debug mode from the command line by passing the `--debug` flag to uvicorn:
+For example, you can tell uvicorn to use port 5000 using:
 
 ```bash
-uvicorn app:app --debug
+uvicorn app:app --port 5000
+```
+
+### Hot reload
+
+Hot reload is baked into uvicorn. Use the uvicorn `--reload` argument and uvicorn will watch your files and automatically reload the whole application on each file change! This is extremely useful in a development setting.
+
+```bash
+uvicorn app:app --reload
 ```
 
 ## Configuration
-
-### Host and port
-
-By default, Bocadillo serves your app at `127.0.0.1:8000`,
-i.e. `localhost` on port 8000.
-
-To customize the host and port, you can:
-
-- Specify them on `app.run()`:
-
-```python
-app.run(host='mydomain.org', port=5045)
-```
-
-- Set the `PORT` environment variable. Bocadillo will pick
-  it up and automatically use the host `0.0.0.0` to accept all existing hosts
-  on the machine. This is especially useful when running the app in a
-  container, or if your hosting provider (e.g. Heroku) injects a port via this environment variable. If needed, you can still specify
-  the `host` on `app.run()`.
 
 ### Allowed hosts
 

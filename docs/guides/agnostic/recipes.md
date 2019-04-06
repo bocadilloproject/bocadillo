@@ -41,9 +41,6 @@ from tacos import tacos
 
 app = App()
 app.recipe(tacos)
-
-if __name__ == '__main__':
-    app.run()
 ```
 
 This will add all the routes in the `tacos` recipe under the `/tacos` path, meaning your app is now equipped with the `retrieve_taco` view at `/tacos/{ingredient}`. Yummy!
@@ -71,6 +68,7 @@ The fact that a `Recipe` behaves just like any other `App` also means that it ap
 In particular, a root route `/` registered on a recipe will be mounted on the `App` at `/{recipe.prefix}/` — note the trailing slash!
 
 ```python
+# app.py
 from bocadillo import App, Recipe
 
 tacos = Recipe("tacos")
@@ -81,13 +79,10 @@ async def index(req, res):
 
 app = App()
 app.recipe(tacos)
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 ```bash
-python app.py
+uvicorn app:app
 ```
 
 ```bash
@@ -174,14 +169,12 @@ entities = Recipe.book(people, companies, prefix='/entities')
 Applying the `entities` book is straight-forward:
 
 ```python{5}
+# app.py
 from bocadillo import App
 from .entities import entities
 
 app = App()
 app.recipe(entities)
-
-if __name__ == '__main__':
-    app.run()
 ```
 
 You'll end up with the following routes:

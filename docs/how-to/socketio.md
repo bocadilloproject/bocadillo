@@ -38,9 +38,6 @@ templates = Templates(app)
 @app.route("/")
 async def index(req, res):
     res.html = await templates.render("index.html")
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 All we're doing here is creating a Bocadillo application with a root endpoint that serves an HTML page, which we're now going to set up. We'll start from the HTML page provided in the [socket.io chat tutorial].
@@ -234,7 +231,7 @@ This code:
 - Specifies that the socket.io client should connect to the server at the `/sio/socket.io` path on the same host (here `localhost:8000`). This path corresponds to the prefix under which we mounted the socket.io server (`/sio`) and the default path under which `python-socketio` expects to receive connection requests (`/socket.io`).
 - Adds two event handlers to show when socket.io manages to connect, or when it loses connection to the server.
 
-At this point, if you fire up the application using `$ python app.py` and connect to `http://localhost:8000`, you should see a `"Connected!"` message popping up in the browser console.
+At this point, if you fire up the application using `uvicorn app:app` and connect to `http://localhost:8000`, you should see a `"Connected!"` message popping up in the browser console.
 
 ## Client: handling messages
 

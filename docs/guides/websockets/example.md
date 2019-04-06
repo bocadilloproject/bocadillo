@@ -9,7 +9,7 @@ The server exposes:
 
 Usage:
 
-- Execute the `app.py` script: `python app.py`.
+- Start the server: `uvicorn app:app`.
 - Then, open a web browser at [http://localhost:8000](http://localhost:8000) to start chatting!
 
 ## Provider configuration

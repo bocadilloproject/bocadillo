@@ -14,10 +14,23 @@ To set up HTTPS, you need to get a certificate from a Certificate Authority (CA)
 
 Once your certificate and key files (`.crt`, `.key`) are generated, you can provide them to your Bocadillo application either by:
 
-- Telling [uvicorn](https://www.uvicorn.org/settings/#https) by passing the `ssl_certfile` and `ssl_keyfile` arguments to `app.run()`:
+- Passing `--ssl-certfile` and `--ssl-keyfile` to [uvicorn](https://www.uvicorn.org/settings/#https):
+
+```bash
+# Command line usage:
+uvicorn app:app --ssl-certfile=path/to/server.crt --ssl-keyfile=path/to/server.key
+```
 
 ```python
-app.run(ssl_certfile="path/to/server.crt", ssl_keyfile="path/to/server.key")
+# Programmatic usage:
+import uvicorn
+from app import app
+
+uvicorn.run(
+    app,
+    ssl_certfile="path/to/server.crt",
+    ssl_keyfile="path/to/server.key"
+)
 ```
 
 - Passing `--certfile` and `--keyfile` to Gunicorn in a production setup (see [deployment]):

@@ -45,9 +45,6 @@ app = App()
 async def index(req, res, db):
     # TODO: query the `db`! ✨
     ...
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 ### ORM
@@ -106,9 +103,6 @@ app = App()
 @app.route("/posts")
 async def list_posts(req, res):
     res.media = [dict(post) for post in await Post.objects.all()]
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 ### Dialect-specific client library (advanced)

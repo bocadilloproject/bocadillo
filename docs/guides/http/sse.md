@@ -51,9 +51,6 @@ async def temperature_feed(req, res):
 async def get_temperature():
     # TODO: get this from a sensor or something?
     return 10 + 2 * (2 * random.random() - 1)
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 Let's break this code down:

@@ -37,7 +37,7 @@ It is designed to be:
 _\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, dependency injection, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving, test client, event handlers…_
 
 [starlette]: https://www.starlette.io
-[uvicorn]: https://www.starlette.io
+[uvicorn]: https://www.uvicorn.org
 
 ## Quick start
 
@@ -52,6 +52,7 @@ pip install bocadillo
 2. Write the app:
 
 ```python
+# app.py
 from bocadillo import App
 
 app = App()
@@ -59,15 +60,12 @@ app = App()
 @app.route("/")
 async def index(req, res):
     res.text = "Hello, world!"
-
-if __name__ == "__main__":
-    app.run()
 ```
 
-3. Start the server:
+3. Start a [uvicorn] server (hot reload enabled!):
 
 ```bash
-python app.py
+uvicorn app:app --reload
 ```
 
 4. Say hello!
@@ -75,6 +73,13 @@ python app.py
 ```bash
 $ curl http://localhost:8000
 Hello, world!
+```
+
+5. Edit `app.py` to say "Hello, Bocadillo!" instead, then hit save. Uvicorn will pick up the changes and restart the application. Try it out again:
+
+```bash
+$ curl http://localhost:8000
+Hello, Bocadillo!
 ```
 
 Tastes good! 🥪

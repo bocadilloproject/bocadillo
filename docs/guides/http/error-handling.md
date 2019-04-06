@@ -49,10 +49,8 @@ When an exception is raised within an HTTP view or middleware, the following alg
 1. We iterate over the registered exception classes until we find one that the raised exception is a subclass of.
 2. The latest registered error handler for that exception class is then called, and the (perhaps mutated) response is returned. If the error handler itself raises an exception, we go back to 1.
 3. If no error handler was found:
-   - A special error handler is called to convert the response to an `500 Internal Server Error` response. If [debug mode] is active, the response body is an HTML page containing the exception traceback. If debug mode is not active, the body is just plain text.
+   - A special error handler is called to convert the response to an `500 Internal Server Error` response.
    - The response is sent to the client and the exception is re-raised to allow server-side logging.
-
-[debug mode]: /guides/app.md#debug-mode
 
 ## How `HTTPError` is handled
 
@@ -105,9 +103,6 @@ async def play(req, res):
         raise Lose()
     else:
         raise RuntimeError("We did not expect that.")
-
-if __name__ == "__main__":
-    app.run(debug=os.getenv("DEBUG"))
 ```
 
 - 10% of the time, a `Win` exception is raised. We do have registered an error handler for it, so it will be called and, since it does not re-raise it, the exception won't propagate.

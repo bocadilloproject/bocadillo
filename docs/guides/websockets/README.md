@@ -20,6 +20,8 @@ We wrote a guide on how to use the higher-level [socket.io](https://socket.io) f
 
 Bocadillo comes with the [websockets] package installed, so you do not need to install extra dependencies. You're ready to go!
 
+[websockets]: https://websockets.readthedocs.io
+
 ## A basic example
 
 Let's learn by example! Here's how simple it is to create an echo WebSocket server:
@@ -33,24 +35,20 @@ app = App()
 async def echo(ws: WebSocket):
     message = await ws.receive()
     await ws.send(f"You said: {message}")
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 Let's break this code down:
 
-1. We create an `App` instance as usual. (If this is not familiar to you, see [The application class].)
+1. We create an `App` instance as usual. (If this is not familiar to you, see [Applications].)
 2. We register a new **WebSocket route** using the [`@app.websocket_route()`](/api/routing.md#websocket-route) decorator. It works in a way similar to `@app.route()` for regular HTTP routes: we give it an URL pattern that will be matched against when an incoming WebSocket connection request is received.
-3. We define a **WebSocket view**, i.e. an asynchronous function that takes a [`WebSocket`](/api/websockets.md#websocket) object as its first parameter. Route parameters are passed as extra arguments just like for HTTP routes (see also [Routes and URL design]).
+3. We define a **WebSocket view**, i.e. an asynchronous function that takes a [`WebSocket`](/api/websockets.md#websocket) object as its first parameter. Route parameters are passed as extra arguments just like for HTTP routes (see also [Routing]).
 4. Inside the view:
    - We **receive** a text message from the WebSocket. If no message is available yet, the view will suspend, allowing the server to process other requests until a message is received.
    - Next, we **send** a message to the client.
 
+[routing]: ../http/routing.md
+[applications]: ../app.md
+
 That's it! These two operations (`.receive()` and `.send()`) are the basic building blocks of WebSocket views.
 
 Continue to learn more about how to use WebSockets in Bocadillo.
-
-[websockets]: https://websockets.readthedocs.io
-[the application class]: ../app.md
-[routes and url design]: ../http/routing.md

@@ -1,13 +1,8 @@
-import traceback
 from http import HTTPStatus
 from typing import Any, Dict, Optional, Type, Union
 
-import jinja2
-from starlette.responses import HTMLResponse, PlainTextResponse
-
 from .app_types import _E, ErrorHandler, HTTPApp
 from .compat import call_async
-from .misc import read_asset
 from .request import Request
 from .response import Response
 
@@ -68,43 +63,12 @@ class ServerErrorMiddleware(HTTPApp):
     Adaptation of Starlette's `ServerErrorMiddleware`.
     """
 
-    __slots__ = ("app", "handler", "debug", "exception", "jinja")
+    __slots__ = ("app", "handler", "exception")
 
-    _template_name = "server_error.jinja"
-
-    def __init__(
-        self, app: HTTPApp, handler: ErrorHandler, debug: bool = False
-    ) -> None:
+    def __init__(self, app: HTTPApp, handler: ErrorHandler) -> None:
         self.app = app
         self.handler = handler
-        self.debug = debug
         self.exception: Optional[BaseException] = None
-        self.jinja = jinja2.Environment()
-
-    def generate_html(self, req: Request, exc: BaseException) -> str:
-        template = self.jinja.from_string(read_asset(self._template_name))
-        tb_exc = traceback.TracebackException.from_exception(
-            exc, capture_locals=True
-        )
-        return template.render(
-            exc_type=exc.__class__.__name__,
-            exc=exc,
-            url_path=req.url.path,
-            frames=tb_exc.stack,
-        )
-
-    def generate_plain_text(self, exc: BaseException) -> str:
-        return "".join(traceback.format_tb(exc.__traceback__))
-
-    def debug_response(self, req: Request, exc: BaseException) -> Response:
-        accept = req.headers.get("accept", "")
-
-        if "text/html" in accept:
-            content = self.generate_html(req, exc)
-            return HTMLResponse(content, status_code=500)
-
-        content = self.generate_plain_text(exc)
-        return PlainTextResponse(content, status_code=500)
 
     def raise_if_exception(self):
         if self.exception is not None:
@@ -115,9 +79,6 @@ class ServerErrorMiddleware(HTTPApp):
             res = await self.app(req, res)
         except BaseException as exc:
             self.exception = exc
-            if self.debug:
-                # In debug mode, return traceback responses.
-                res = self.debug_response(req, exc)
             await call_async(  # type: ignore
                 self.handler, req, res, HTTPError(500)
             )
@@ -132,11 +93,10 @@ class HTTPErrorMiddleware(HTTPApp):
     Adaptation of Starlette's `ExceptionMiddleware`.
     """
 
-    __slots__ = ("app", "debug", "_exception_handlers")
+    __slots__ = ("app", "_exception_handlers")
 
-    def __init__(self, app: HTTPApp, debug: bool = False) -> None:
+    def __init__(self, app: HTTPApp) -> None:
         self.app = app
-        self.debug = debug
         self._exception_handlers: Dict[Type[BaseException], ErrorHandler] = {}
 
     def add_exception_handler(

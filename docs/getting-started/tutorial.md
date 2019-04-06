@@ -61,22 +61,21 @@ $ tree
 
 ## Bootstrapping the application
 
-Now, let's write the app skeleton in `app.py`. Hang tight — first decent bit of code incoming:
+Now, let's write the app skeleton in `app.py`:
 
 ```python
 # app.py
 from bocadillo import App
 
 app = App()
-
-if __name__ == "__main__":
-    app.run()
 ```
 
-If you've ever worked with Flask or, well, nearly any Python web framework really, this should look oddly familiar. Nearly boring. Who cares? It works! Check for yourself:
+All we have to do to start the server is give the `app` object to [uvicorn]:
+
+[uvicorn]: https://www.uvicorn.org
 
 ```bash
-python app.py
+uvicorn app:app
 ```
 
 If you go to [http://localhost:8000](http://localhost:8000) and get a `404 Not Found` response, you're all good! Enter `Ctrl+C` in your terminal to stop the server.
@@ -93,7 +92,7 @@ If you're interested in learning more about WebSockets in Python, I strongly rec
 
 Alright, so we're not going to plug the chatbot in just yet. Instead, let's make the server send back any message it receives — a behavior also known as an "echo" endpoint.
 
-Add the following between the `app` object declaration and the `app.run()` block in `app.py`:
+Add the following between the `app` object declaration in `app.py`:
 
 ```python
 @app.websocket_route("/conversation")
@@ -134,7 +133,7 @@ with suppress(KeyboardInterrupt):
     asyncio.run(client("ws://localhost:8000/conversation"))
 ```
 
-Run the server-side application with `python app.py` and, in a separate terminal, start the `client.py` script. You should be greeted with a `>` prompt. If so, start chattin'!
+Run the server-side application with `uvicorn app:app` and, in a separate terminal, start the `client.py` script. You should be greeted with a `>` prompt. If so, start chattin'!
 
 ```
 $ python client.py
@@ -267,19 +266,16 @@ async def converse(ws, diego):  # <-- 👋, Diego!
     async for message in ws:
         response = diego.get_response(message)
         await ws.send(str(response))
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 No imports required — Diego will _automagically_ get injected in the WebSocket view when processing the WebSocket connection request. ✨
 
 Alright, ready to try things out?
 
-1. Run the `app.py` script. You should see additional logs corresponding to Bocadillo setting up Diego on startup:
+1. Run the server using [uvicorn]. You should see additional logs corresponding to Bocadillo setting up Diego on startup:
 
 ```bash
-$ python app.py
+$ uvicorn app:app
 INFO: Started server process [29843]
 INFO: Waiting for application startup.
 [nltk_data] Downloading package averaged_perceptron_tagger to
@@ -389,7 +385,7 @@ async def client_count(req, res, clients):
 
 If you went through the [quickstart] example, hopefully this code shouldn't come as a surprise. All we do here is send the number of `clients` (obtained from the `clients` provider) in a JSON response.
 
-Go ahead! Run `python app.py` and a few `python client.py` instances, and check out how many clients are connected by opening [http://localhost:8000/client-count](http://localhost:8000/client-count) in a web browser. Press `Ctrl+C` for one of the clients, and see the client count go down!
+Go ahead! Run `uvicorn app:app` and a few `python client.py` instances, and check out how many clients are connected by opening [http://localhost:8000/client-count](http://localhost:8000/client-count) in a web browser. Press `Ctrl+C` for one of the clients, and see the client count go down!
 
 Did it work? Congrats! ✨
 

@@ -19,6 +19,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 - Route parameters are now validated based on type annotations defined on the HTTP or WebSocket view. Annotations can be `int`, `float`, `bool`, `date`, `datetime`, `time`, `decimal.Decimal` or any [TypeSystem] field.
 - Query parameters can be injected into a view by declaring them as parameters with defaults, e.g. `limit: int = None`. Type annotation-based validation is also available.
 - Error handlers can now re-raise exceptions for further processing, e.g. re-raise an `HTTPError` which will be processed by the registered `HTTPError` handler.
+- Build a full URL for a `LiveServer` using `server.url("/path")`. Note: `server.url` still gives access to the root live server URL.
 
 [typesystem]: https://www.encode.io/typesystem
 
@@ -28,7 +29,11 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Removed
 
+- **BREAKING**: the `.run()` method on `App` has been removed in favor of the `uvicorn` command shipped with the [uvicorn] ASGI server (which comes installed with Bocadillo). In particular, the `if __name__ == "__main__": app.run()` invokation is now obsolete. Just use `uvicorn app:app` instead of `python app.py` (and `uvicorn.run(app)` for programmatic usage).
 - **BREAKING**: route parameter validation via specifiers (e.g. `{id:d}`) is not supported anymore. Please use type annotation-based validation instead (e.g. `pk: int`).
+- **BREAKING**: debug mode has been removed., which means `App` does not accept a `debug` parameter anymore. To enable hot reload, please use `uvicorn --reload` instead.
+
+[uvicorn]: https://www.uvicorn.org/
 
 Deprecated items from 0.13:
 

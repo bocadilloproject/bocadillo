@@ -64,9 +64,6 @@ async def ping_pong(ws: WebSocket):
     async for message in ws:
         resp = "pong" if message["text"] == "ping" else "ping"
         await ws.send({"text": resp})
-
-if __name__ == '__main__':
-    app.run()
 ```
 
 A JavaScript client for this would be:

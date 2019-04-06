@@ -1,18 +1,10 @@
 # Deployment
 
-In development, running the `app.py` application script has the effect of passing your ASGI application to [Uvicorn], a very fast ASGI server running on [uvloop], an event loop [up to 4x faster](https://github.com/MagicStack/uvloop#performance) than the standard [asyncio] event loop.
-
-[uvicorn]: https://www.uvicorn.org
-[uvloop]: https://github.com/MagicStack/uvloop
-[asyncio]: https://docs.python.org/3/library/asyncio.html
-
-In production you'll probably also want to use a process manager to be able to spin up multiple workers and increase throughput.
-
-You'll also want to turn off [debug mode](/guides/app.md#debug-mode) to disable auto-reload and prevent displaying error tracebacks in the browser.
+In production, we recommend you use a process manager to spin up multiple workers, increase throughput and increase resiliency in case any of the workers fails.
 
 ## Running with Gunicorn
 
-[Gunicorn](https://gunicorn.org/) is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (see also [Uvicorn Deployment](https://www.uvicorn.org/deployment/)).
+[Gunicorn](https://gunicorn.org/) is a very popular option to manage multiple application processes in production. Luckily, uvicorn includes a worker class which means you can run your Bocadillo apps on Gunicorn with very little configuration (details: [Uvicorn Deployment](https://www.uvicorn.org/deployment/)).
 
 The following will start a Gunicorn server for your application:
 

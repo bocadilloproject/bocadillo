@@ -140,8 +140,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
     __slots__ = (
         "name",
-        "import_string",
-        "_debug",
         "asgi",
         "_prefix_to_app",
         "_name_to_prefix_and_app",
@@ -154,20 +152,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         "_store",
         "_frozen",
     )
-
-    import_string: Optional[str]
-
-    def __new__(cls, *args, **kwargs):
-        instance = super().__new__(cls)
-
-        # HACK: get the Python module path where this app was instanciated.
-        # This import string is passed to uvicorn in debug mode.
-        # See the `.run()` method.
-        _, *frames = inspect.stack()
-        frame = frames[0]
-        instance.import_string = _get_module(frame.filename)
-
-        return instance
 
     def __init__(
         self,
@@ -191,9 +175,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
         self.name = name
 
-        # Debug mode defaults to `False` but it can be set in `.run()`.
-        self._debug = False
-
         # Base ASGI app
         self.asgi = self.dispatch
 
@@ -214,11 +195,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.media_type = media_type
 
         # HTTP middleware
-        self.exception_middleware = HTTPErrorMiddleware(
-            self.http_router, debug=self._debug
-        )
+        self.exception_middleware = HTTPErrorMiddleware(self.http_router)
         self.server_error_middleware = ServerErrorMiddleware(
-            self.exception_middleware, handler=error_to_text, debug=self._debug
+            self.exception_middleware, handler=error_to_text
         )
         self.add_error_handler(HTTPError, error_to_text)
         self.add_error_handler(typesystem.ValidationError, on_validation_error)
@@ -290,16 +269,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self._store.freeze()
             self._frozen = True
         return nullcontext()
-
-    @property
-    def debug(self) -> bool:
-        return self._debug
-
-    @debug.setter
-    def debug(self, debug: bool):
-        self._debug = debug
-        self.exception_middleware.debug = debug
-        self.server_error_middleware.debug = debug
 
     @property
     def media_type(self) -> str:
@@ -511,82 +480,3 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if scope["type"] == "lifespan":
             return self._lifespan(scope)
         return self.asgi(scope)
-
-    def run(
-        self,
-        host: str = None,
-        port: int = None,
-        debug: bool = None,
-        declared_as: str = "app",
-        _run: Callable = None,
-        **kwargs,
-    ):
-        """Serve the application using [uvicorn](https://www.uvicorn.org).
-
-        # Parameters
-
-        host (str):
-            The host to bind to.
-            Defaults to `"127.0.0.1"` (localhost).
-            If not given and `$PORT` is set, `"0.0.0.0"` will be used to
-            serve to all known hosts.
-        port (int):
-            The port to bind to.
-            Defaults to `8000` or (if set) the value of the `$PORT` environment
-            variable.
-        debug (bool):
-            Whether to serve the application in debug mode. Defaults to `False`,
-            except if the `BOCADILLO_DEBUG` environment variable is set.
-        declared_as (str):
-            The name under which the application is declared.
-            This is only used when `debug=True` to indicate to
-            uvicorn how to import the application object.
-            Defaults to `"app"`.
-        kwargs (dict):
-            Extra keyword arguments passed to the uvicorn runner.
-
-        # See Also
-        - [Configuring host and port](../guides/app.md#configuring-host-and-port)
-        - [Debug mode](../guides/app.md#debug-mode)
-        - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
-        available keyword arguments.
-        """
-        if _run is None:  # pragma: no cover
-            _run = run
-
-        if "PORT" in os.environ:
-            port = int(os.environ["PORT"])
-            if host is None:
-                host = "0.0.0.0"
-
-        if host is None:
-            host = "127.0.0.1"
-
-        if port is None:
-            port = 8000
-
-        if debug is None:
-            debug = os.environ.get("BOCADILLO_DEBUG", False)
-
-        if debug:
-            self.debug = kwargs["debug"] = True
-
-            # Reload static files in development.
-            # See: http://whitenoise.evans.io/en/stable/base.html#autorefresh
-            for whitenoise in self._static_apps.values():
-                whitenoise.autorefresh = True
-
-            if self.import_string is None:
-                # The import string could not be inferred.
-                # We're probaby in the REPL.
-                target = self
-                warnings.warn(
-                    "Could not infer application module. "
-                    "uvicorn won't be able to hot reload on changes."
-                )
-            else:
-                target = f"{self.import_string}:{declared_as}"
-        else:
-            target = self
-
-        _run(target, host=host, port=port, **kwargs)

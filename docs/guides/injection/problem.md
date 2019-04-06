@@ -45,9 +45,6 @@ async def index(req, res):
         page = await templates.render("index.html")
         await redis.set("index-page", page)
     res.text = page
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 This code may look fine at first sight, but there are at least two issues:
@@ -122,9 +119,6 @@ async def index(req, res, redis):
         page = await templates.render("index.html")
         await redis.set("index-page", page)
     res.text = page
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 That's it! As you can see, providers allow views to **receive and use objects without having to care about import, setup nor cleanup**.

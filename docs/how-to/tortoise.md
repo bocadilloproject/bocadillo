@@ -122,9 +122,6 @@ async def home(req, res):
     res.html = await templates.render("home.html", posts=posts)
 
 # << More routes >>
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 Again, feel free to read through Bloguero's source code [on GitHub][bloguero] to understand the finer details and see the complete CRUD implementation.

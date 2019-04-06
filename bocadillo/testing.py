@@ -3,11 +3,12 @@ import random
 from multiprocessing import Event, Process
 from typing import TYPE_CHECKING
 
+import uvicorn
 from starlette.testclient import TestClient
 
 try:
     import pytest
-except ImportError:
+except ImportError:  # pragma: no cover
     pytest = None
 
 if TYPE_CHECKING:
@@ -29,19 +30,18 @@ def create_client(app: "App", **kwargs) -> TestClient:
     return TestClient(app, **kwargs)
 
 
+class ServerURL(str):
+    def __call__(self, path: str) -> str:
+        return self + path
+
+
 class LiveServer:
-    """Context manager to spin up a live server in a separate process.
+    """Context manager to spin up a live uvicorn server in a separate process.
 
     The server process is terminated when exiting the context.
 
     # Parameters
     app: an #::bocadillo.applications#App instance.
-    host (str):
-        the host to run the server on.
-        Defaults to `"127.0.0.1."` (i.e. `localhost`).
-    port (int):
-        the port to run the server on.
-        Defaults to a random integer between 3000 and 9000.
     ready_timeout (float):
         The maximum time to wait for the live server to be ready to handle
         connections, in seconds.
@@ -49,38 +49,44 @@ class LiveServer:
     stop_timeout (float):
         The maximum time to wait for the live server to terminate, in seconds.
         Defaults to 5.
+    **kwargs (any):
+        keyword arguments passed to `uvicorn.run()`.
+        `host` defaults to `"127.0.0.1."` (i.e. `localhost`).
+        `port` defaults to a random integer between 3000 and 9999.
     
     # Attributes
     url (str):
         the full URL where the server lives.
+        Build a full URL by calling this attribute,
+        e.g. `server.url("/path/foo")`.
     """
 
     def __init__(
         self,
         app: "App",
-        host: str = "127.0.0.1",
-        port: int = None,
         ready_timeout: float = 5,
         stop_timeout: float = 5,
+        **kwargs,
     ):
         if (
             pytest is not None and os.getenv("CI") and os.getenv("TRAVIS")
         ):  # pragma: no cover
             pytest.skip("live server process sometimes makes travis ci stall")
 
-        if port is None:
-            port = random.randint(3000, 9000)
+        kwargs.setdefault("host", "127.0.0.1")
+        kwargs.setdefault("port", random.randint(3000, 9999))
 
         self.app = app
-        self.host = host
-        self.port = port
+        self.kwargs = kwargs
         self.ready_timeout = ready_timeout
         self.stop_timeout = stop_timeout
         self._process: Process = None
 
     @property
-    def url(self):
-        return f"http://{self.host}:{self.port}"
+    def url(self) -> ServerURL:
+        host = self.kwargs["host"]
+        port = self.kwargs["port"]
+        return ServerURL(f"http://{host}:{port}")
 
     def __enter__(self):
         ready = Event()
@@ -90,8 +96,8 @@ class LiveServer:
                 # Run periodically by the Uvicorn server.
                 ready.set()
 
-            self.app.run(
-                host=self.host, port=self.port, callback_notify=callback_notify
+            uvicorn.run(
+                self.app, callback_notify=callback_notify, **self.kwargs
             )
 
         self._process = Process(target=target)

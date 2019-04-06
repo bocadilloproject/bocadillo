@@ -114,9 +114,6 @@ app = App()
 @app.route("/hello")
 async def hello(req, res, message):
     res.media = {"message": message}
-
-if __name__ == "__main__":
-    app.run()
 ```
 
 2. Functions decorated with `@provider` that get _imported_ in the application script.

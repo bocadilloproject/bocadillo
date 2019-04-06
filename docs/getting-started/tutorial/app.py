@@ -15,7 +15,3 @@ async def converse(ws, diego, save_client):
 @app.route("/client-count")
 async def client_count(req, res, clients):
     res.media = {"count": len(clients)}
-
-
-if __name__ == "__main__":
-    app.run()
