@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
 from .app_types import ASGIApp, ASGIAppInstance, HTTPApp, Scope
-from .compat import call_async
+from .compat import check_async
 from .request import Request
 from .response import Response
 
@@ -9,7 +9,18 @@ if TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 
-class Middleware(HTTPApp):
+class MiddlewareMeta(type):
+    def __new__(mcs, name, bases, namespace):
+        cls = super().__new__(mcs, name, bases, namespace)
+        for callback in "before_dispatch", "after_dispatch":
+            check_async(
+                getattr(cls, callback),
+                reason="'{name}.{callback}' must be asynchronous",
+            )
+        return cls
+
+
+class Middleware(HTTPApp, metaclass=MiddlewareMeta):
     """Base class for middleware classes.
 
     # Parameters
@@ -41,54 +52,25 @@ class Middleware(HTTPApp):
         res: an optional #::bocadillo.response#Response object.
         """
 
-    async def after_dispatch(
-        self, req: Request, res: Response
-    ) -> Optional[Response]:
+    async def after_dispatch(self, req: Request, res: Response) -> None:
         """Perform processing after a request has been dispatched.
 
         # Parameters
         req: a #::bocadillo.request#Request object.
         res: a #::bocadillo.response#Response object.
-
-        # Returns
-        res: an optional #::bocadillo.response#Response object.
         """
 
-    async def process(self, req: Request, res: Response) -> Response:
-        """Process an incoming request.
+    async def __call__(self, req: Request, res: Response) -> Response:
+        before_res: Optional[Response] = await self.before_dispatch(req, res)
 
-        - Call `before_dispatch()`. If a response is returned here, no
-        further processing is performed.
-        - Call the underlying HTTP `app`.
-        - Call `after_dispatch()`.
-        - Return the response.
-
-        Note: this is aliased to `__call__()`, which means middleware
-        instances are callable.
-
-        # Parameters
-        req: a #::bocadillo.request#Request object.
-        res: a #::bocadillo.response#Response object.
-
-        # Returns
-        res: a #::bocadillo.response#Response object.
-        """
-        before_res: Optional[Response] = await call_async(  # type: ignore
-            self.before_dispatch, req, res
-        )
-        if before_res:
+        if before_res is not None:
             return before_res
 
         res = await self.inner(req, res)
 
-        res = (
-            await call_async(self.after_dispatch, req, res)  # type: ignore
-            or res
-        )
+        await self.after_dispatch(req, res)
 
         return res
-
-    __call__ = process
 
 
 class ASGIMiddleware(ASGIApp):

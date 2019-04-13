@@ -30,6 +30,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Removed
 
 - **BREAKING**: the `.run()` method on `App` has been removed in favor of the `uvicorn` command shipped with the [uvicorn] ASGI server (which comes installed with Bocadillo). In particular, the `if __name__ == "__main__": app.run()` invokation is now obsolete. Just use `uvicorn app:app` instead of `python app.py` (and `uvicorn.run(app)` for programmatic usage).
+- **BREAKING**: synchronous views, HTTP middleware callbacks, hooks and error handlers are not supported anymore. Appropriate error messages will help you migrate to an all-async application.
 - **BREAKING**: route parameter validation via specifiers (e.g. `{id:d}`) is not supported anymore. Please use type annotation-based validation instead (e.g. `pk: int`).
 - **BREAKING**: debug mode has been removed., which means `App` does not accept a `debug` parameter anymore. To enable hot reload, please use `uvicorn --reload` instead.
 

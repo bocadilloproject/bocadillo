@@ -1,10 +1,9 @@
-import inspect
-from functools import partial, wraps
-from typing import Any, cast, Dict, List, Optional, Type, Union
+from functools import partial
+from typing import Any, Dict, List, Type, Union
 
 from . import injection
-from .app_types import AsyncHandler, Handler
-from .compat import call_async, camel_to_snake
+from .app_types import Handler
+from .compat import camel_to_snake, check_async
 from .constants import ALL_HTTP_METHODS
 from .converters import ViewConverter, convert_arguments
 
@@ -66,48 +65,45 @@ class View:
     def __init__(self, name: str):
         self.name = name
 
-    get: AsyncHandler
-    post: AsyncHandler
-    put: AsyncHandler
-    patch: AsyncHandler
-    delete: AsyncHandler
-    head: AsyncHandler
-    options: AsyncHandler
-    handle: AsyncHandler
-
-    @staticmethod
-    def _to_all_async(handlers: Dict[str, Handler]) -> Dict[str, AsyncHandler]:
-        async_handlers: Dict[str, AsyncHandler] = {}
-
-        for method, handler in handlers.items():
-            if not inspect.iscoroutinefunction(handler):
-                handler = wraps(handler)(partial(call_async, handler))
-            async_handlers[method] = cast(AsyncHandler, handler)
-
-        return async_handlers
+    get: Handler
+    post: Handler
+    put: Handler
+    patch: Handler
+    delete: Handler
+    head: Handler
+    options: Handler
+    handle: Handler
 
     @classmethod
     def create(
-        cls: Type["View"], name: str, handlers: Dict[str, Handler]
+        cls: Type["View"],
+        name: str,
+        handlers: Dict[str, Handler],
+        class_based: bool,
     ) -> "View":
-        async_handlers: Dict[str, AsyncHandler] = cls._to_all_async(handlers)
+        for method, handler in handlers.items():
+            full_name = f"{name}.{method.lower()}" if class_based else name
+            check_async(
+                handler, reason=(f"view '{full_name}()' must be asynchronous")
+            )
 
-        copy_get_to_head = (
-            "get" in async_handlers and "head" not in async_handlers
-        )
+        if class_based:
+            name = camel_to_snake(name)
+
+        copy_get_to_head = "get" in handlers and "head" not in handlers
         if copy_get_to_head:
-            async_handlers["head"] = async_handlers["get"]
+            handlers["head"] = handlers["get"]
 
         vue: View = cls(name)
 
-        for method, handler in async_handlers.items():
+        for method, handler in handlers.items():
             handler = convert_arguments(handler, converter_class=HTTPConverter)
             handler = injection.consumer(handler)
             setattr(vue, method, handler)
 
         return vue
 
-    def get_handler(self, method: str) -> AsyncHandler:
+    def get_handler(self, method: str) -> Handler:
         try:
             return getattr(self, "handle")
         except AttributeError:
@@ -143,7 +139,7 @@ def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
     else:
         methods = [m.lower() for m in methods]
     handlers = {method: handler for method in methods}
-    return View.create(handler.__name__, handlers)
+    return View.create(handler.__name__, handlers, class_based=False)
 
 
 def from_obj(obj: Any) -> View:
@@ -157,8 +153,7 @@ def from_obj(obj: Any) -> View:
     view: a #::bocadillo.views#View instance.
     """
     handlers = get_handlers(obj)
-    name = camel_to_snake(obj.__class__.__name__)
-    return View.create(name, handlers)
+    return View.create(obj.__class__.__name__, handlers, class_based=True)
 
 
 def get_handlers(obj: Any) -> Dict[str, Handler]:

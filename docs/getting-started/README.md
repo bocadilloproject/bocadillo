@@ -64,18 +64,21 @@ Just like WSGI, **ASGI is a common language** that Python _asynchronous_ web ser
 
 This has a number of benefits. Among others, you can now build **highly-concurrent web apps and services**, which typically results in **higher throughput** for applications that spend a lot of time on I/O.
 
-### What if I don't do async?
+### Do I need to use async?
 
-If you're just getting started with asynchronous programming in Python, we thought you would find the following resources useful:
+**Yes**, you will need to use asynchronous programming to write Bocadillo applications.
 
-- [Asynchronous Python for the Complete Beginner](https://www.youtube.com/watch?v=iG6fr81xHKA) - Miguel Grinberg, PyCon 2017.
-- [Async IO in Python: A Complete Walkthrough](https://realpython.com/async-io-python/) - Real Python.
+Don't be afraid, though — it's totally worth it! Here's why:
 
-Also check out the [awesome-asyncio] repo on GitHub to get a feel of what the Python async ecosystem has to offer.
+- It's **why you are here** — and why you didn't use a WSGI framework like Flask or Django in the first place.
+- It's **faster**: internally, Bocadillo must deal with async functions anyway (because _async is all-in_), so supporting synchronous APIs would have reduced performance.
+- It's **enriching**: we believe this is a great opportunity to level-up your Python async skills!
 
-[awesome-asyncio]: https://www.github.com/timofurrer/awesome-asyncio
+### I'm new to async. Where can I get help?
 
-If you don't particularly need to use async in some places, don't worry — Bocadillo is async-_first_, not async-_only_. This means that a lot of times writing asynchronous code is entirely optional, and Bocadillo will understand you just fine if you write plain ol' functions. But when you do need async and concurrent execution, be sure Bocadillo will have your back.
+We know that async Python can be confusing or overwhelming in the beginning.
+
+If you need help to get the ground running, we recommend you read our [Async crash course](/guides/async.md).
 
 ## Getting more background
 

@@ -7,7 +7,7 @@ from starlette.websockets import WebSocket as StarletteWebSocket
 from starlette.websockets import WebSocketDisconnect as _WebSocketDisconnect
 
 from .app_types import Event, Receive, Scope, Send
-from .compat import asyncnullcontext
+from .compat import asyncnullcontext, check_async
 from .constants import WEBSOCKET_CLOSE_CODES
 from .converters import ViewConverter, convert_arguments
 from .injection import consumer
@@ -240,6 +240,10 @@ class WebSocketView:
     __slots__ = ("func",)
 
     def __init__(self, func: Callable):
+        check_async(
+            func,
+            reason=f"WebSocket view '{func.__name__}' must be asynchronous",
+        )
         func = convert_arguments(func, converter_class=WebSocketConverter)
         func = consumer(func)
         self.func = func

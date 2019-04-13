@@ -52,31 +52,24 @@ app = App()
 templates = Templates(app)
 ```
 
-2. Render a template using `await templates.render()`. You can pass context variables as keyword arguments:
+2. Render a template using `templates.render()`. You can pass context variables as keyword arguments:
 
 ```python
 async def post_detail(req, res):
-    res.html = await templates.render('index.html', title='Hello, Bocadillo!')
-```
-
-- In synchronous views, use `templates.render_sync()` instead:
-
-```python
-def post_detail(req, res):
-    res.html = templates.render_sync('index.html', title='Hello, Bocadillo!')
+    res.html = await templates.render("index.html", title="Hello, Bocadillo!")
 ```
 
 - Context variables can also be given as a dictionary:
 
 ```python
-templates.render_sync('index.html', {'title': 'Hello, Bocadillo!'})
+await templates.render("index.html", {"title": "Hello, Bocadillo!"})
 ```
 
-- Lastly, you can render a template directly from a string:
+- You can render a template directly from a string:
 
 ```python
->>> templates.render_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
-'<h1>Hello, Bocadillo!</h1>'
+templates.render_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
+# Outputs: "<h1>Hello, Bocadillo!</h1>"
 ```
 
 ## How templates are discovered

@@ -2,9 +2,8 @@ from contextlib import suppress
 
 import pytest
 
-from bocadillo import WebSocket, App, WebSocketDisconnect
+from bocadillo import App, ExpectedAsync, WebSocket, WebSocketDisconnect
 from bocadillo.constants import WEBSOCKET_CLOSE_CODES
-
 
 # Basic usage
 
@@ -18,6 +17,14 @@ def test_websocket_route(app: App, client):
     with client.websocket_connect("/chat") as ws:
         ws.send_text("ping")
         assert ws.receive_text() == "pong"
+
+
+def test_async_check(app):
+    def chat(ws):
+        pass
+
+    with pytest.raises(ExpectedAsync):
+        app.websocket_route("/chat")(chat)
 
 
 def test_enter_context_twice_is_safe(app: App, client):

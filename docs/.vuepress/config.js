@@ -130,6 +130,7 @@ module.exports = {
         }
       ],
       "/guides/": [
+        "/guides/async",
         "/guides/app",
         {
           title: "Tooling",

@@ -31,7 +31,7 @@ from .redirection import Redirection
 from .request import Request
 from .response import Response
 from .urlparse import Parser
-from .views import AsyncHandler, HandlerDoesNotExist, View
+from .views import Handler, HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
 
 # Route generic types.
@@ -278,7 +278,7 @@ class HTTPRoute(BaseRoute[View]):
         method: str = req.method.lower()
 
         try:
-            handler: AsyncHandler = self.view.get_handler(method)
+            handler: Handler = self.view.get_handler(method)
         except HandlerDoesNotExist as e:
             raise HTTPError(405) from e
 

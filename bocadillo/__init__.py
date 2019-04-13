@@ -1,4 +1,5 @@
 from .applications import App
+from .compat import ExpectedAsync
 from .errors import HTTPError
 from .middleware import ASGIMiddleware, Middleware
 from .injection import discover_providers, provider, useprovider

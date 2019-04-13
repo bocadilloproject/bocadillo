@@ -2,13 +2,21 @@ from http import HTTPStatus
 
 import pytest
 
-from bocadillo import App, HTTPError
+from bocadillo import App, HTTPError, ExpectedAsync
 from bocadillo.error_handlers import (
     error_to_html,
     error_to_media,
     error_to_text,
 )
 from bocadillo.testing import create_client
+
+
+def test_async_check(app):
+    def handle_key_error(req, res, params):
+        pass
+
+    with pytest.raises(ExpectedAsync):
+        app.add_error_handler(KeyError, handle_key_error)
 
 
 @pytest.mark.parametrize(
@@ -48,7 +56,7 @@ def test_custom_error_handler(app: App, exception_cls):
     called = False
 
     @app.error_handler(KeyError)
-    def on_key_error(req, res, exc):
+    async def on_key_error(req, res, exc):
         nonlocal called
         res.text = "Oops!"
         called = True

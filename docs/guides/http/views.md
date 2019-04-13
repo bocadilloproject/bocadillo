@@ -4,10 +4,7 @@ Once that a route is defined with a well-designed URL pattern (see [Routing]), y
 
 [routing]: ./routing.md
 
-In Bocadillo, views are functions that take at least a request and a response
-as arguments, and mutate those objects as necessary.
-
-Views can be asynchronous or synchronous, function-based or class-based.
+In Bocadillo, views take at least a request and a response as arguments, and mutate those objects as necessary.
 
 ## A simple view
 
@@ -52,7 +49,7 @@ As an example, consider the following route:
 from bocadillo import HTTPError
 
 @app.route('/fail/{status_code}')
-def fail(req, res, status_code: int):
+async def fail(req, res, status_code: int):
     raise HTTPError(status_code, detail="You asked for it!")
 ```
 
@@ -79,11 +76,9 @@ We will go through how `HTTPError` and error handling in general works in the ne
 
 ## Types of views
 
-Views can be asynchronous or synchronous, function-based or class-based.
+### Function-based views
 
-### Asynchronous views
-
-The recommended way to define views in Bocadillo is using the async/await syntax. This allows you to call arbitrary asynchronous Python code:
+This is the most straight-forward way to define a view in Bocadillo. Function-based views are **asynchronous functions** — you need to use the `async/await` syntax, which has the benefit of allowing you to call arbitrary async code:
 
 ```python
 from asyncio import sleep
@@ -96,17 +91,8 @@ async def retrieve_post(req, res, slug: str):
     res.text = await find_post_content(slug)
 ```
 
-### Synchronous views
-
-While Bocadillo is asynchronous at its core, you can also use plain Python functions to define synchronous views:
-
-```python
-def index(req, res):
-    res.html = '<h1>My website</h1>'
-```
-
-::: tip
-It is generally more efficient to use asynchronous views than synchronous ones. This is because, when given a synchronous view, Bocadillo needs to perform a sync-to-async conversion, which might add extra overhead.
+::: tip CHANGED IN v0.14
+Synchronous function-based views are not supported anymore.
 :::
 
 ### Class-based views
@@ -121,8 +107,7 @@ class Index:
     async def get(self, req, res):
         res.text = 'Classes, oh my!'
 
-    # Synchronous handlers are also supported here.
-    def post(self, req, res):
+    async def post(self, req, res):
         res.text = 'Roger that'
 ```
 

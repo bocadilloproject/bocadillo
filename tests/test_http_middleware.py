@@ -3,12 +3,26 @@ from contextlib import contextmanager
 
 import pytest
 
-from bocadillo import App, Middleware, HTTPError
+from bocadillo import App, ExpectedAsync, HTTPError, Middleware
+
+
+def test_async_check(app):
+    with pytest.raises(ExpectedAsync):
+
+        class BeforeMiddleware(Middleware):
+            def before_dispatch(self):
+                pass
+
+    with pytest.raises(ExpectedAsync):
+
+        class AfterMiddleware(Middleware):
+            def after_dispatch(self):
+                pass
 
 
 @contextmanager
 def build_middleware(
-    expect_kwargs=None, sync=False, expect_call_after=True, old_style=False
+    expect_kwargs=None, expect_call_after=True, old_style=False
 ):
     called = {"before": False, "after": False}
     kwargs = None
@@ -29,27 +43,15 @@ def build_middleware(
                 nonlocal kwargs
                 kwargs = kw
 
-        if sync:
+        async def before_dispatch(self, req, res):
+            nonlocal called
+            await sleep(0.01)
+            called["before"] = True
 
-            def before_dispatch(self, req, res):
-                nonlocal called
-                called["before"] = True
-
-            def after_dispatch(self, req, res):
-                nonlocal called
-                called["after"] = True
-
-        else:
-
-            async def before_dispatch(self, req, res):
-                nonlocal called
-                await sleep(0.01)
-                called["before"] = True
-
-            async def after_dispatch(self, req, res):
-                nonlocal called
-                await sleep(0.01)
-                called["after"] = True
+        async def after_dispatch(self, req, res):
+            nonlocal called
+            await sleep(0.01)
+            called["after"] = True
 
     yield SetCalled
 
@@ -107,25 +109,13 @@ def test_only_before_dispatch_is_called_if_method_not_allowed(app: App, client):
         assert response.status_code == 405
 
 
-def test_callbacks_can_be_sync(app: App, client):
-    with build_middleware(sync=True) as middleware:
-        app.add_middleware(middleware)
-
-        @app.route("/")
-        async def index(req, res):
-            pass
-
-        response = client.get("/")
-        assert response.status_code == 200
-
-
 @pytest.mark.parametrize("when", ["before", "after"])
 def test_errors_raised_in_callback_are_handled(app: App, client, when):
     class CustomError(Exception):
         pass
 
     @app.error_handler(CustomError)
-    def handle_error(req, res, exception):
+    async def handle_error(req, res, exception):
         res.text = "gotcha!"
 
     class MiddlewareWithErrors(Middleware):
@@ -150,7 +140,7 @@ def test_errors_raised_in_callback_are_handled(app: App, client, when):
 
 def test_middleware_uses_registered_http_error_handler(app: App, client):
     @app.error_handler(HTTPError)
-    def custom(req, res, exc: HTTPError):
+    async def custom(req, res, exc: HTTPError):
         res.status_code = exc.status_code
         res.text = "Foo"
 

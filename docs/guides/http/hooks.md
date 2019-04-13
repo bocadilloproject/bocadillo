@@ -4,7 +4,7 @@
 
 Hooks allow you to call arbitrary code before and after a view is executed. They materialize as the `@before()` and `@after()` decorators located in the `bocadillo.hooks` module.
 
-These decorators take a **hook function**, which is a synchronous or asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
+These decorators take a **hook function**, which is a asynchronous function with the following signature: `(req: Request, res: Response, params: dict) -> None`.
 
 ## Example
 
@@ -12,7 +12,7 @@ These decorators take a **hook function**, which is a synchronous or asynchronou
 from asyncio import sleep
 from bocadillo import HTTPError, hooks
 
-def validate_has_my_header(req, res, params):
+async def validate_has_my_header(req, res, params):
     if 'x-my-header' not in req.headers:
         raise HTTPError(400)
 
@@ -36,7 +36,7 @@ The ordering of decorators is important: **hooks should always be a view's first
 As a first level of reusability, you can pass extra positional or keyword arguments to `@app.before()` and `@app.after()`, and they will be handed over to the hook function:
 
 ```python
-def validate_has_header(req, res, params, header):
+async def validate_has_header(req, res, params, header):
     if header not in req.headers:
         raise HTTPError(400)
 
@@ -46,7 +46,7 @@ async def foo(req, res):
     pass
 ```
 
-A hook function only just needs to be a callable, so it can be a class that implements `__call__()` too. This is another convenient way of building reusable hooks functions:
+A hook just needs to be an asynchronous callable, so it can be a class that implements `__call__()` too. This is another convenient way of building reusable hooks functions:
 
 ```python
 class RequestHasHeader:
@@ -54,7 +54,7 @@ class RequestHasHeader:
     def __init__(self, header):
         self.header = header
 
-    def __call__(self, req, res, params):
+    async def __call__(self, req, res, params):
         if self.header not in req.headers:
             raise HTTPError(400)
 
@@ -67,7 +67,7 @@ async def foo(req, res):
 You can also use hooks on class-based views:
 
 ```python
-def show_content_type(req, res, view, params):
+async def show_content_type(req, res, view, params):
     print(res.headers['content-type'])
 
 @app.route('/')

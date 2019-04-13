@@ -21,7 +21,7 @@ from bocadillo import Recipe
 tacos = Recipe('tacos')
 
 @tacos.route('/{ingredient}')
-def retrieve_taco(req, res, ingredient: str):
+async def retrieve_taco(req, res, ingredient: str):
     res.media = {'ingredient': ingredient}
 ```
 
