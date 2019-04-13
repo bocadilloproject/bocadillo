@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Update Jinja dependency to 2.10.1+.
+
 ## [v0.13.1] - 2019-03-19
 
 ### Changed
