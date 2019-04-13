@@ -26,7 +26,7 @@ def clients():
 @provider
 def save_client(clients):
     @contextmanager
-    async def _register(ws):
+    def _register(ws):
         clients.add(ws)
         try:
             yield ws

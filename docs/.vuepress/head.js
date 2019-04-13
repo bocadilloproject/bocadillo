@@ -73,5 +73,14 @@ module.exports = [
       name: "twitter:image",
       content: "https://bocadilloproject.github.io/social-image.png"
     }
+  ],
+
+  // Google Search Console.
+  [
+    "meta",
+    {
+      name: "google-site-verification",
+      content: "xbJzBKn7IuLWAUKvqHo1c3vMelw3eTRL0k3JcKjYB_k"
+    }
   ]
 ];
