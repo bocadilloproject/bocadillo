@@ -14,6 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.13.2] - 2019-04-13
+
+### Fixed
+
+- Update Jinja dependency to 2.10.1+.
+
 ## [v0.13.1] - 2019-03-19
 
 ### Changed
@@ -553,7 +559,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.1...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.2...HEAD
+[v0.13.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.1...v0.13.2
 [v0.13.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...v0.13.0
 [v0.12.6]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.5...v0.12.6
