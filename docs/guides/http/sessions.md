@@ -59,4 +59,4 @@ Once sessions are enabled and configured, use the `req.session` dictionary to re
 
 In the following example, we use a cookie-based session to store the ID of the last todo item that was sent to the client and only send the new todo items. It assumes that the `SECRET_KEY` environment variable is set.
 
-<<<@/docs/guides/agnostic/snippets/sessions.py
+<<<@/docs/guides/snippets/sessions.py

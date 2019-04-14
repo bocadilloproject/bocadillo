@@ -15,7 +15,7 @@ We'll go through many aspects of building apps with Bocadillo, including:
 
 [websocket]: /guides/websockets/
 [providers]: /guides/injection/
-[testing]: /guides/tooling/testing.md
+[testing]: /guides/architecture/testing.md
 [pytest]: https://docs.pytest.org
 
 We'll use the [ChatterBot] library to build **Diego**, a friendly conversational agent. Don't worry, this won't require _any_ background in data science nor chatbot technology!

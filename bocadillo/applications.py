@@ -331,7 +331,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
             to be applied to the application.
 
         # See Also
-        - [Recipes](../guides/agnostic/recipes.md)
+        - [Recipes](../guides/architecture/recipes.md)
         """
         recipe.apply(self)
 

@@ -129,7 +129,7 @@ Again, feel free to read through Bloguero's source code [on GitHub][bloguero] to
 [tortoise]: https://tortoise-orm.readthedocs.io
 [databases-discussion]: ../discussions/databases.md
 [aiosqlite]: https://github.com/jreese/aiosqlite
-[events]: ../guides/agnostic/events.md
+[events]: ../guides/architecture/events.md
 [asyncpg]: https://github.com/MagicStack/asyncpg
 [tortoise-roadmap]: https://tortoise-orm.readthedocs.io/en/latest/roadmap.html
 [tortoise-db-backends]: https://tortoise-orm.readthedocs.io/en/latest/index.html#pluggable-database-backends

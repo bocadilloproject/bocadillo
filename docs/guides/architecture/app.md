@@ -90,7 +90,7 @@ Please refer to Starlette's [CORSMiddleware](https://www.starlette.io/middleware
 
 ### HSTS
 
-If you want enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS (or WS to WSS), simply use:
+If you want to enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS (or WS to WSS), simply use:
 
 ```python
 app = App(enable_hsts=True)
