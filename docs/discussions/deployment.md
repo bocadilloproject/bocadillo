@@ -8,7 +8,7 @@ In development, running the `app.py` application script has the effect of passin
 
 In production you'll probably also want to use a process manager to be able to spin up multiple workers and increase throughput.
 
-You'll also want to turn off [debug mode](/guides/app.md#debug-mode) to disable auto-reload and prevent displaying error tracebacks in the browser.
+You'll also want to turn off [debug mode](/guides/architecture/app.md#debug-mode) to disable auto-reload and prevent displaying error tracebacks in the browser.
 
 ## Running with Gunicorn
 

@@ -107,7 +107,7 @@ Sessions allow you to persist data between requests from a given client. You can
 
 This release brings in new testing utilities that you can use to ensure the quality of your Bocadillo applications: [`create_client`](/api/testing.md#create-client) and [`LiveServer`](/api/testing.md#liveserver).
 
-We also wrote a brand new [Testing guide](/guides/tooling/testing.md) as well as a [pytest how-to guide](/how-to/test-pytest.md) to help you get started with Bocadillo testing! ✅
+We also wrote a brand new [Testing guide](/guides/architecture/testing.md) as well as a [pytest how-to guide](/how-to/test-pytest.md) to help you get started with Bocadillo testing! ✅
 
 ## Chatbot tutorial
 

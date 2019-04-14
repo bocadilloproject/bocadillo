@@ -130,11 +130,20 @@ module.exports = {
         }
       ],
       "/guides/": [
-        "/guides/app",
+        {
+          title: "Architecture",
+          collapsable: false,
+          children: listDir("guides/architecture", [
+            "app",
+            "recipes",
+            "events",
+            "testing"
+          ])
+        },
         {
           title: "Tooling",
           collapsable: false,
-          children: listDir("guides/tooling", ["cli", "testing"])
+          children: listDir("guides/tooling", ["cli"])
         },
         {
           title: "HTTP",
@@ -151,6 +160,7 @@ module.exports = {
             "hooks",
             "background-tasks",
             "middleware",
+            "sessions",
             "sse"
           ])
         },
@@ -169,13 +179,7 @@ module.exports = {
         {
           title: "Protocol-agnostic",
           collapsable: false,
-          children: listDir("guides/agnostic", [
-            "asgi-middleware",
-            "templates",
-            "recipes",
-            "events",
-            "sessions"
-          ])
+          children: listDir("guides/agnostic", ["asgi-middleware", "templates"])
         },
         {
           title: "Providers (Dependency injection)",

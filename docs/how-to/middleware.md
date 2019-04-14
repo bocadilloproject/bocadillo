@@ -61,7 +61,7 @@ Middleware configuaration and initialization can be performed by overriding its 
 - `app`: this is the application instance which this middleware is being registered on.
 - `**kwargs`: any keyword arguments passed to `app.add_middleware()`.
 
-For example, here's a middleware that registers a startup [event handler](../guides/agnostic/events.md) if a flag argument was passed:
+For example, here's a middleware that registers a startup [event handler](../guides/architecture/events.md) if a flag argument was passed:
 
 ```python
 from bocadillo import App, Middleware

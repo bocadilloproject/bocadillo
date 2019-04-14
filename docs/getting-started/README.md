@@ -29,7 +29,7 @@ Bocadillo is designed to be:
 [sse]: /guides/http/sse.md
 [providers]: /guides/injection/
 [starlette]: https://www.starlette.io
-[testing]: /guides/tooling/testing.md
+[testing]: /guides/architecture/testing.md
 [cli]: /guides/tooling/cli.md
 
 _\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, [Jinja2] templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving via [WhiteNoise], event handlers…_
