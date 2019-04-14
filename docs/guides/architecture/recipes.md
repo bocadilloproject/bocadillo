@@ -22,7 +22,7 @@ tacos = Recipe('tacos')
 
 @tacos.route('/{ingredient}')
 async def retrieve_taco(req, res, ingredient: str):
-    res.media = {'ingredient': ingredient}
+    res.json = {'ingredient': ingredient}
 ```
 
 The recipe is given the name `'tacos'`. This name is used to infer the path prefix for the recipe, i.e. `/tacos`. You can also pass a path `prefix` explicitly (which must start with `/`):
@@ -121,7 +121,7 @@ employees = Recipe('employees')
 
 @employees.route('/{pk}')
 async def get_employee(req, res, pk: int):
-    res.media = {'id': pk, 'name': 'John Doe'}
+    res.json = {'id': pk, 'name': 'John Doe'}
 ```
 
 ```python
@@ -132,7 +132,7 @@ interns = Recipe('interns')
 
 @interns.route('/{pk}')
 async def get_intern(req, res, pk: int):
-    res.media = {'id': pk, 'name': 'Don Joe'}
+    res.json = {'id': pk, 'name': 'Don Joe'}
 ```
 
 ```python{7}
@@ -153,7 +153,7 @@ companies = Recipe('companies')
 
 @companies.route('/')
 async def list_companies(req, res):
-    res.media = ['Python Software Foundation']
+    res.json = ['Python Software Foundation']
 ```
 
 ```python{7}

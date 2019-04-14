@@ -15,7 +15,7 @@ import datetime
 
 async def current_datetime(req, res):
     now = datetime.datetime.now()
-    res.media = {'now': now.isoformat()}
+    res.json = {'now': now.isoformat()}
 ```
 
 Let's break this code down:
@@ -23,9 +23,9 @@ Let's break this code down:
 - First, we import the `datetime` module.
 - Then, we define an `async` function called `current_datetime` — this is the view function.
 - Next, we grab the current date and time and build a dictionary out of it.
-- Finally, we assign this dictionary to `res.media`, which results in returning a JSON response.
+- Finally, we assign this dictionary to `res.json`, which results in returning a JSON response.
 
-Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.media`. [Learn why in the FAQ](/faq/#why-pass-the-request-and-response-around-everywhere).
+Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.json`. [Learn why in the FAQ](/faq/#why-pass-the-request-and-response-around-everywhere).
 
 More information on working with requests and responses can be found in the [Request] and [Response] user guides.
 

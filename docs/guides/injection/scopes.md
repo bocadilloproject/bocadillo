@@ -39,5 +39,5 @@ For example, here's an API endpoint that returns their count:
 ```python
 @app.route("/clients-count")
 async def clients_count(req, res, clients: set):
-    res.media = {"count": len(clients)}
+    res.json = {"count": len(clients)}
 ```

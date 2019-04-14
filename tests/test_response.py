@@ -50,10 +50,10 @@ def test_if_text_set_then_response_is_plain_text(app: App, client):
     assert response.text == "foo"
 
 
-def test_if_media_set_then_response_is_json(app: App, client):
+def test_if_json_set_then_response_is_json(app: App, client):
     @app.route("/")
     async def index(req, res):
-        res.media = {"foo": "bar"}
+        res.json = {"foo": "bar"}
 
     response = client.get("/")
     assert response.json() == {"foo": "bar"}
@@ -73,12 +73,12 @@ def test_if_html_set_then_response_is_html(app: App, client):
     "contents, content_type, check_content",
     [
         [
-            [("media", {"foo": "bar"}), ("text", "foo")],
+            [("json", {"foo": "bar"}), ("text", "foo")],
             "text/plain",
             lambda r: r.text == "foo",
         ],
         [
-            [("text", "foo"), ("media", {"foo": "bar"})],
+            [("text", "foo"), ("json", {"foo": "bar"})],
             "application/json",
             lambda r: r.json() == {"foo": "bar"},
         ],

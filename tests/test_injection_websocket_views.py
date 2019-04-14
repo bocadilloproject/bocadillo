@@ -18,7 +18,7 @@ def test_websocket_clients_example(app: App, client):
 
     @app.route("/clients")
     async def client_count(req, res, clients):
-        res.media = {"count": len(clients)}
+        res.json = {"count": len(clients)}
 
     with client.websocket_connect("/chat") as ws:
         assert ws.receive_text() == "1"

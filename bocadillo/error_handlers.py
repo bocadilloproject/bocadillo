@@ -26,8 +26,8 @@ async def error_to_html(req: Request, res: Response, exc: HTTPError):
     res.html = html
 
 
-async def error_to_media(req: Request, res: Response, exc: HTTPError):
-    """Convert an exception to a media response.
+async def error_to_json(req: Request, res: Response, exc: HTTPError):
+    """Convert an exception to a JSON response.
 
     The response contains the following items:
 
@@ -46,10 +46,10 @@ async def error_to_media(req: Request, res: Response, exc: HTTPError):
     ```
     """
     res.status_code = exc.status_code
-    media = {"error": exc.title, "status": exc.status_code}
+    data = {"error": exc.title, "status": exc.status_code}
     if exc.detail:
-        media["detail"] = exc.detail
-    res.media = media
+        data["detail"] = exc.detail
+    res.json = data
 
 
 async def error_to_text(req: Request, res: Response, exc: HTTPError):

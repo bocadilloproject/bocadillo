@@ -22,7 +22,7 @@ app = App()
 
 @app.route("/data")
 async def data(req, res, some_json: dict):
-    res.media = random_json  # NOTE: no need to `await`
+    res.json = random_json  # NOTE: no need to `await`
 ```
 
 ::: tip
@@ -50,9 +50,9 @@ app = App()
 @app.route("/data")
 async def data(req, res, random_json: Awaitable[dict]):
     if req.query_params.get("random"):
-        res.media = await random_json
+        res.json = await random_json
     else:
-        res.media = {"value": 42}
+        res.json = {"value": 42}
 ```
 
 ::: warning CAVEAT

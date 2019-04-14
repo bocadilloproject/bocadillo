@@ -113,7 +113,7 @@ app = App()
 
 @app.route("/hello")
 async def hello(req, res, message):
-    res.media = {"message": message}
+    res.json = {"message": message}
 ```
 
 2. Functions decorated with `@provider` that get _imported_ in the application script.

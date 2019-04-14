@@ -24,7 +24,7 @@ async def validate_response_is_json(req, res, params):
 @hooks.before(validate_has_my_header)
 @hooks.after(validate_response_is_json)
 async def foo(req, res):
-    res.media = {'message': 'valid!'}
+    res.json = {'message': 'valid!'}
 ```
 
 ::: tip
@@ -77,5 +77,5 @@ class Foo:
 
     @hooks.before(RequestHasHeader('x-my-header'))
     async def get(self, req, res):
-        res.media = {'header': req.headers['x-my-header']}
+        res.json = {'header': req.headers['x-my-header']}
 ```

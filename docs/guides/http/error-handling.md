@@ -29,7 +29,7 @@ To register an error handler, use the `@app.error_handler()` decorator:
 @app.error_handler(AttributeError)
 async def on_attribute_error(req, res, exc: AttributeError):
     res.status = 500
-    res.media = {'error': {'attribute_not_found': exc.args[0]}}
+    res.json = {'error': {'attribute_not_found': exc.args[0]}}
 ```
 
 For convenience, a non-decorator syntax is also available:
@@ -37,7 +37,7 @@ For convenience, a non-decorator syntax is also available:
 ```python
 async def on_attribute_error(req, res, exc: AttributeError):
     res.status = 500
-    res.media = {'error': {'attribute_not_found': exc.args[0]}}
+    res.json = {'error': {'attribute_not_found': exc.args[0]}}
 
 app.add_error_handler(AttributeError, on_attribute_error)
 ```
@@ -62,7 +62,7 @@ Of course, you can register your own error handler for `HTTPError`. Common `HTTP
 
 - `error_to_text()`: converts an exception to plain text (this is the default).
 - `error_to_html()`: converts an exception to an HTML response.
-- `error_to_media()`: converts an exception to a media response.
+- `error_to_json()`: converts an exception to a JSON response.
 
 ## Example
 

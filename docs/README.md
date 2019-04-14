@@ -48,7 +48,7 @@ async def index(req, res):
 
 @app.route("/greet/{person}")
 async def greet(req, res, person):
-    res.media = {"message": f"Hi, {person}!"}
+    res.json = {"message": f"Hi, {person}!"}
 ```
 
 Start the [uvicorn] web server (hot reload enabled!):

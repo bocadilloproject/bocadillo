@@ -5,13 +5,13 @@ import typesystem
 
 from bocadillo import HTTPError
 from bocadillo.testing import create_client
-from bocadillo.error_handlers import error_to_media
+from bocadillo.error_handlers import error_to_json
 
 
 def setup_http(app, annotation):
     @app.route("/{value}")
     async def index(req, res, value: annotation):
-        res.media = {"value": value}
+        res.json = {"value": value}
 
 
 def setup_websocket(app, annotation):
@@ -62,7 +62,7 @@ def test_convert_route_parameters(
 
 
 def setup_http_error_handler(app):
-    app.add_error_handler(HTTPError, error_to_media)
+    app.add_error_handler(HTTPError, error_to_json)
 
 
 def setup_websocket_error_handler(app):
@@ -115,7 +115,7 @@ def test_if_invalid_route_parameter_then_error_response(
 def test_typesystem_converter(app, client):
     @app.route("/{number}")
     async def show(req, res, number: typesystem.Integer(minimum=0)):
-        res.media = {"number": number}
+        res.json = {"number": number}
 
     r = client.get("/12")
     assert r.json() == {"number": 12}
@@ -126,7 +126,7 @@ def test_typesystem_converter(app, client):
 def test_defaults_to_str(app, client):
     @app.route("/{number}")
     async def show(req, res, number: "unknown_annotation"):
-        res.media = {"number": number}
+        res.json = {"number": number}
 
     r = client.get("/12")
     assert r.json() == {"number": "12"}
@@ -135,7 +135,7 @@ def test_defaults_to_str(app, client):
 def setup_http_query_params_route(app, annotation, default):
     @app.route("/")
     async def index(req, res, value: annotation = default):
-        res.media = {"value": value}
+        res.json = {"value": value}
 
 
 def setup_websocket_query_params_route(app, annotation, default):

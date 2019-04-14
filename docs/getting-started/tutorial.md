@@ -380,7 +380,7 @@ Go back to `app.py` and add the following code:
 
 @app.route("/client-count")
 async def client_count(req, res, clients):
-    res.media = {"count": len(clients)}
+    res.json = {"count": len(clients)}
 ```
 
 If you went through the [quickstart] example, hopefully this code shouldn't come as a surprise. All we do here is send the number of `clients` (obtained from the `clients` provider) in a JSON response.

@@ -107,7 +107,7 @@ def test_form_body(app: App, client):
         form = await req.form()
         assert isinstance(form, FormData)
         # not actually a dict, so not immediately JSON-serializable
-        res.media = dict(form)
+        res.json = dict(form)
 
     r = client.get("/", data={"foo": "bar"})
     assert r.status_code == 200
@@ -119,7 +119,7 @@ def test_json_body(app: App, client, data: str, status: int):
     @app.route("/")
     class Index:
         async def post(self, req, res):
-            res.media = await req.json()
+            res.json = await req.json()
 
     assert client.post("/", data=data).status_code == status
 
@@ -134,7 +134,7 @@ def test_stream_request(app: App, client, get_stream):
             chunks = [
                 chunk.decode() async for chunk in get_stream(req) if chunk
             ]
-            res.media = chunks
+            res.json = chunks
 
     # For testing, we use a chunk-encoded request. See:
     # http://docs.python-requests.org/en/master/user/advanced/#chunk-encoded-requests

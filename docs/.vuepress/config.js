@@ -143,7 +143,6 @@ module.exports = {
             "requests",
             "responses",
             "redirecting",
-            "media",
             "static-files",
             "hooks",
             "background-tasks",
@@ -189,7 +188,7 @@ module.exports = {
         {
           title: "Building upon the framework",
           collapsable: false,
-          children: listDir("how-to", ["yaml-media", "middleware", "heroku"])
+          children: listDir("how-to", ["middleware", "heroku"])
         },
         {
           title: "Third-party solutions",

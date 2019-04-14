@@ -1,6 +1,7 @@
 from functools import partial
 from os.path import basename
-from typing import Any, Callable, Coroutine, Dict, Optional, Union
+import json
+from typing import Callable, Coroutine, Dict, Optional, Union
 
 from starlette.background import BackgroundTask
 from starlette.requests import Request
@@ -9,22 +10,25 @@ from starlette.responses import Response as _Response
 from starlette.responses import StreamingResponse as _StreamingResponse
 
 from .constants import CONTENT_TYPE
-from .media import MediaHandler
+from .deprecation import deprecated
 from .streaming import Stream, StreamFunc, stream_until_disconnect
 
 AnyStr = Union[str, bytes]
 BackgroundFunc = Callable[..., Coroutine]
 
 
-def _content_setter(content_type: str):
+def _content_setter(
+    content_type: str, serializer=str, doc: str = None
+) -> property:
     def fset(res: "Response", value: AnyStr):
-        res.content = value
+        res.content = serializer(value)
         res.headers["content-type"] = content_type
 
-    doc = (
-        "Write-only property that sets `content` to the set value and sets "
-        f'the `Content-Type` header to `"{content_type}"`.'
-    )
+    if doc is None:
+        doc = (
+            "Write-only property that sets `content` to the set value and sets "
+            f'the `Content-Type` header to `"{content_type}"`.'
+        )
 
     return property(fget=None, fset=fset, doc=doc)
 
@@ -36,17 +40,11 @@ class Response:
     it is a callable and accepts `receive` and `send` as defined in the [ASGI
     spec](https://asgi.readthedocs.io/en/latest/specs/main.html#applications).
 
-    [media]: ../guides/http/media.md
     [Content-Disposition]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
 
     # Parameters
     request:
         the currently processed #::bocadillo.request#Request.
-    media_type (str):
-        the configured media type (given by the #::bocadillo.applications#App).
-    media_handler (callable):
-        the configured media handler
-        (given by the #::bocadillo.applications#App).
 
     # Attributes
     content (bytes or str): the raw response content.
@@ -70,18 +68,23 @@ class Response:
         "chunked",
         "attachment",
         "_file_path",
-        "_media_type",
-        "_media_handler",
         "_background",
         "_stream",
     )
 
     text = _content_setter(CONTENT_TYPE.PLAIN_TEXT)
     html = _content_setter(CONTENT_TYPE.HTML)
+    json = _content_setter(
+        CONTENT_TYPE.JSON,
+        serializer=json.dumps,
+        doc=(
+            "Write-only property that sets `content` to the JSON-serialized "
+            "version of the set value, "
+            'and sets the `Content-Type` header to `"application/json".'
+        ),
+    )
 
-    def __init__(
-        self, request: Request, media_type: str, media_handler: MediaHandler
-    ):
+    def __init__(self, request: Request):
         # Public attributes.
         self.content: Optional[AnyStr] = None
         self.request = request
@@ -91,23 +94,14 @@ class Response:
         self.attachment: Optional[str] = None
         # Private attributes.
         self._file_path: Optional[str] = None
-        self._media_type = media_type
-        self._media_handler = media_handler
         self._background: Optional[BackgroundFunc] = None
         self._stream: Optional[Stream] = None
 
-    media = property(
-        doc=(
-            "Write-only property that sets `content` to the set value "
-            "serialized using the `media_handler`, and sets the "
-            "`Content-Type` header to the `media_type`."
-        )
-    )
+    @deprecated(since="0.14", removal="0.15", alternative="res.json")
+    def media(self, value):
+        self.json = value
 
-    @media.setter
-    def media(self, value: Any):
-        self.content = self._media_handler(value)
-        self.headers["content-type"] = self._media_type
+    media = property(fget=None, fset=media)
 
     def file(self, path: str, attach: bool = True):
         """Send a file asynchronously using [aiofiles].

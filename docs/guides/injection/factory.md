@@ -39,7 +39,7 @@ app = App()
 
 @app.route("/notes/{pk}")
 async def retrieve_note(req, res, pk: int, get_note):
-    res.media = await get_note(pk)
+    res.json = await get_note(pk)
 ```
 
 ## Example: providing temporary files

@@ -19,12 +19,10 @@ from .app_types import (
 )
 from .config import settings
 from .compat import WSGIApp, nullcontext
-from .constants import CONTENT_TYPE
 from .converters import on_validation_error
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import _STORE
-from .media import UnsupportedMediaType, get_default_handlers
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
 from .request import Request
@@ -61,16 +59,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
     # Parameters
     name (str):
         An optional name for the app.
-    media_type (str):
-        Determines how values given to `res.media` are serialized.
-        Can be one of the supported media types.
-        Defaults to `"application/json"`.
-        See also [Media](../guides/http/media.md).
-
-    # Attributes
-    media_handlers (dict):
-        The dictionary of media handlers.
-        You can access, edit or replace this at will.
     """
 
     __slots__ = (
@@ -78,8 +66,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         "asgi",
         "_children",
         "_static_apps",
-        "media_handlers",
-        "_media_type",
         "exception_middleware",
         "server_error_middleware",
         "_lifespan",
@@ -87,9 +73,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         "_frozen",
     )
 
-    def __init__(
-        self, name: str = None, *, media_type: str = CONTENT_TYPE.JSON
-    ):
+    def __init__(self, name: str = None):
         super().__init__()
 
         self.name = name
@@ -100,11 +84,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         # Mounted (children) apps.
         self._children: Dict[str, Any] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
-
-        # Media
-        self.media_handlers = get_default_handlers()
-        self._media_type = ""
-        self.media_type = media_type
 
         # HTTP middleware
         self.exception_middleware = HTTPErrorMiddleware(self.http_router)
@@ -142,17 +121,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self._store.freeze()
             self._frozen = True
         return nullcontext()
-
-    @property
-    def media_type(self) -> str:
-        """The media type configured when instanciating the application."""
-        return self._media_type
-
-    @media_type.setter
-    def media_type(self, media_type: str):
-        if media_type not in self.media_handlers:
-            raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
-        self._media_type = media_type
 
     def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
@@ -276,11 +244,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
     async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
         req = Request(scope, receive)
-        res = Response(
-            req,
-            media_type=self.media_type,
-            media_handler=self.media_handlers[self.media_type],
-        )
+        res = Response(req)
 
         res: Response = await self.server_error_middleware(req, res)
         await res(receive, send)

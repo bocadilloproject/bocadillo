@@ -3,11 +3,7 @@ from http import HTTPStatus
 import pytest
 
 from bocadillo import App, HTTPError, ExpectedAsync
-from bocadillo.error_handlers import (
-    error_to_html,
-    error_to_media,
-    error_to_text,
-)
+from bocadillo.error_handlers import error_to_html, error_to_json, error_to_text
 from bocadillo.testing import create_client
 
 
@@ -96,7 +92,7 @@ def detail(request):
             ),
         ),
         (
-            error_to_media,
+            error_to_json,
             lambda res: res.json(),
             lambda detail: (
                 {"error": "403 Forbidden", "detail": detail, "status": 403}

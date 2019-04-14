@@ -18,17 +18,11 @@ Bocadillo has built-in support for common types of responses:
 ```python
 res.text = 'My awesome post'  # text/plain
 res.html = '<h1>My awesome post</h1>'  # text/html
-res.media = {'title': 'My awesome post'}  # application/json
+res.json = {'title': 'My awesome post'}  # application/json
 ```
 
 Setting one of the above attributes automatically sets the
 appropriate `Content-Type` header (shown in comments above).
-
-::: tip
-The `res.media` attribute serializes values based on the `media_type` configured on the application, which is `application/json` by default. Refer to [Media] for more information.
-:::
-
-[media]: media.md
 
 If you need to send another content type, use `.content` and set
 the `Content-Type` header yourself:
@@ -37,8 +31,6 @@ the `Content-Type` header yourself:
 res.content = 'h1 { color; gold; }'
 res.headers['content-type'] = 'text/css'
 ```
-
-or, alternatively, create a [custom media handler](./media.md#custom-media-types).
 
 ## Status codes
 
@@ -82,7 +74,7 @@ Similar to [request streaming](./requests.md#streaming), response content can be
 
 ### Basic usage
 
-A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes** (i.e. [media][media] streaming is not supported).
+A stream response can be defined by decorating a no-argument [asynchronous generator function][async generators] with `@res.stream`. The generator returned by that function will be used to compose the full response. It should only yield **strings or bytes**.
 
 [async generators]: https://www.python.org/dev/peps/pep-0525/#asynchronous-generators
 

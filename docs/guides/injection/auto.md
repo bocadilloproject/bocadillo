@@ -33,5 +33,5 @@ app = App()
 @app.route("/")
 async def index(req, res, db: Database):
     # This query is being executed within a transaction. ✨
-    res.media = await db.fetch_all(notes.select())
+    res.json = await db.fetch_all(notes.select())
 ```

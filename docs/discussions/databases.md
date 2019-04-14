@@ -102,7 +102,7 @@ app = App()
 
 @app.route("/posts")
 async def list_posts(req, res):
-    res.media = [dict(post) for post in await Post.objects.all()]
+    res.json = [dict(post) for post in await Post.objects.all()]
 ```
 
 ### Dialect-specific client library (advanced)

@@ -9,13 +9,13 @@ def numbers():
 
     @integers.route("/{x}")
     async def convert(req, res, x):
-        res.media = {"value": int(float(x))}
+        res.json = {"value": int(float(x))}
 
     floats = Recipe("floats")
 
     @floats.route("/{x}")
     async def convert(req, res, x):
-        res.media = {"value": float(x)}
+        res.json = {"value": float(x)}
 
     return Recipe.book(integers, floats, prefix="/numbers")
 

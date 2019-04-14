@@ -178,7 +178,7 @@ items = list(range(10))
 async def get_items(req, res, limit: int = None):
     if limit is not None:
         items = items[:limit]
-    res.media = items
+    res.json = items
 ```
 
 Here's what `limit` will be for various requested URL paths:

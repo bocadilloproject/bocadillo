@@ -31,7 +31,7 @@ Bocadillo is designed to be:
 [starlette]: https://www.starlette.io
 [testing]: /guides/architecture/testing.md
 
-_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, [Jinja2] templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving via [WhiteNoise], event handlers…_
+_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, [Jinja2] templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, file responses, attachments, static files serving via [WhiteNoise], event handlers…_
 
 [whitenoise]: http://whitenoise.evans.io
 [jinja2]: http://jinja.pocoo.org

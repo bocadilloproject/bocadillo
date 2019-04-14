@@ -46,7 +46,7 @@ app = App()
 
 @app.route("/data")
 async def data(req, res, random_json):
-    res.media = random_json
+    res.json = random_json
 ```
 
 The good thing is that the `http` provider is **reusable** — you could reuse it in other providers of other views. This encourages writing small, focused providers and building more complex ones on top of them.
