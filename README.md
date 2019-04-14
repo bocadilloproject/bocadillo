@@ -30,7 +30,7 @@ It is designed to be:
 
 - **Performant**: squeeze the juice out of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and web server.
 
-- **Empowering**: use tailored testing and command line tools to build delicious, high-quality applications.
+- **Empowering**: use tailored testing and development tools to build delicious, high-quality applications.
 
 - **Transparent**: every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
 

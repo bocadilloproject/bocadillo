@@ -35,7 +35,6 @@ module.exports = {
   roadmap: repoPage("ROADMAP.md"),
   docs,
   aiodine: projectRepo("aiodine"),
-  queso: docsPage("queso"),
   gitter: `https://gitter.im/${repo}`,
   twitterUser,
   twitter: `https://twitter.com/${twitterUser}`,

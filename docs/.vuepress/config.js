@@ -67,15 +67,6 @@ module.exports = {
             ]
           },
           {
-            text: "Tooling",
-            items: [
-              {
-                text: "Queso (CLI)",
-                link: project.docsPage("queso")
-              }
-            ]
-          },
-          {
             text: "News",
             items: [
               {
@@ -139,11 +130,6 @@ module.exports = {
             "events",
             "testing"
           ])
-        },
-        {
-          title: "Tooling",
-          collapsable: false,
-          children: listDir("guides/tooling", ["cli"])
         },
         {
           title: "HTTP",
