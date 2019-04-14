@@ -1,7 +1,17 @@
-from typing import Any, Awaitable, Callable, MutableMapping, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    MutableMapping,
+    TypeVar,
+)
 
 from .request import Request
 from .response import Response
+
+if TYPE_CHECKING:
+    from .applications import App
 
 _E = TypeVar("_E", bound=Exception)
 

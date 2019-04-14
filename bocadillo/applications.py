@@ -1,12 +1,8 @@
 import os
 import re
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Type, Union
 
-from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware.gzip import GZipMiddleware
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
 import typesystem
@@ -21,8 +17,9 @@ from .app_types import (
     Scope,
     Send,
 )
+from .config import settings
 from .compat import WSGIApp, nullcontext
-from .constants import CONTENT_TYPE, DEFAULT_CORS_CONFIG
+from .constants import CONTENT_TYPE
 from .converters import on_validation_error
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
@@ -33,8 +30,7 @@ from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .sessions import MissingSecretKey
-from .staticfiles import WhiteNoise, static
+from .staticfiles import WhiteNoise
 
 if TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -55,9 +51,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
     This class implements the [ASGI](https://asgi.readthedocs.io) protocol.
 
-    [CORSMiddleware]: https://www.starlette.io/middleware/#corsmiddleware
-    [SessionMiddleware]: https://www.starlette.io/middleware/#sessionmiddleware
-
     # Example
 
     ```python
@@ -68,51 +61,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
     # Parameters
     name (str):
         An optional name for the app.
-    static_dir (str):
-        The name of the directory containing static files, relative to
-        the application entry point. Set to `None` to not serve any static
-        files.
-        Defaults to `"static"`.
-    static_root (str):
-        The path prefix for static assets.
-        Defaults to `"static"`.
-    static_config (dict):
-        Extra static files configuration attributes.
-        See also #::bocadillo.staticfiles#static.
-    allowed_hosts (list of str, optional):
-        A list of hosts which the server is allowed to run at.
-        If the list contains `"*"`, any host is allowed.
-        Defaults to `["*"]`.
-    enable_sessions (bool):
-        If `True`, cookie-based signed sessions are enabled according to the
-        `sessions_config`. The secret key must be non-empty and can also be
-        set via the `SECRET_KEY` environment variable.
-        Defaults to `False`.
-    sessions_config (dict):
-        A dictionary of sessions configuration parameters.
-        See [SessionMiddleware].
-    enable_cors (bool):
-        If `True`, Cross Origin Resource Sharing are configured according
-        to `cors_config`. Defaults to `False`.
-        See also [CORS](../guides/http/middleware.md#cors).
-    cors_config (dict):
-        A dictionary of CORS configuration parameters.
-        Defaults to `dict(allow_origins=[], allow_methods=["GET"])`.
-        See [CORSMiddleware].
-    enable_hsts (bool):
-        If `True`, enable HSTS (HTTP Strict Transport Security) and automatically
-        redirect HTTP traffic to HTTPS.
-        Defaults to `False`.
-        See also [HSTS](../guides/http/middleware.md#hsts).
-    enable_gzip (bool):
-        If `True`, enable GZip compression and automatically
-        compress responses for clients that support it.
-        Defaults to `False`.
-        See also [GZip](../guides/http/middleware.md#gzip).
-    gzip_min_size (int):
-        If specified, compress only responses that
-        have more bytes than the specified value.
-        Defaults to `1024`.
     media_type (str):
         Determines how values given to `res.media` are serialized.
         Can be one of the supported media types.
@@ -141,40 +89,19 @@ class App(RoutingMixin, metaclass=DocsMeta):
     )
 
     def __init__(
-        self,
-        name: str = None,
-        *,
-        static_dir: Optional[str] = "static",
-        static_root: Optional[str] = "static",
-        static_config: dict = None,
-        allowed_hosts: List[str] = None,
-        enable_sessions: bool = False,
-        sessions_config: dict = None,
-        enable_cors: bool = False,
-        cors_config: dict = None,
-        enable_hsts: bool = False,
-        enable_gzip: bool = False,
-        gzip_min_size: int = 1024,
-        media_type: str = CONTENT_TYPE.JSON,
-        **kwargs,
+        self, name: str = None, *, media_type: str = CONTENT_TYPE.JSON
     ):
-        super().__init__(**kwargs)
+        super().__init__()
 
         self.name = name
 
         # Base ASGI app
         self.asgi = self.dispatch
 
-        # Mounted (children) apps
+        # Mounted (children) apps.
         self._prefix_to_app: Dict[str, Any] = {}
         self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
-
-        # Static files
-        if static_dir is not None:
-            if static_root is None:
-                static_root = static_dir
-            self.mount(static_root, static(static_dir, **(static_config or {})))
 
         # Media
         self.media_handlers = get_default_handlers()
@@ -192,55 +119,18 @@ class App(RoutingMixin, metaclass=DocsMeta):
         # Lifespan middleware
         self._lifespan = Lifespan()
 
-        # ASGI middleware
-
-        if allowed_hosts is None:
-            allowed_hosts = ["*"]
-        self.add_asgi_middleware(
-            TrustedHostMiddleware, allowed_hosts=allowed_hosts
-        )
-
-        if enable_sessions:
-            sessions_config = sessions_config or {}
-
-            try:
-                from starlette.middleware.sessions import SessionMiddleware
-            except ImportError as exc:  # pragma: no cover
-                if "itsdangerous" in str(exc):
-                    raise ImportError(
-                        "Please install the [sessions] extra to use sessions: "
-                        "`pip install bocadillo[sessions]`."
-                    ) from exc
-                raise exc from None
-
-            secret_key = sessions_config.pop("secret_key", None)
-            if secret_key is None:
-                secret_key = os.environ.get("SECRET_KEY", "")
-
-            if not secret_key:
-                raise MissingSecretKey(
-                    "A non-empty secret key must be set to use sessions. "
-                    "Pass a 'secret_key' to 'session_config', or set the "
-                    "SECRET_KEY environment variable."
+        # Startup checks.
+        @self.on("startup")
+        async def check_app():
+            if not settings.configured:
+                raise RuntimeError(
+                    "You must call `configure(app)` before serving `app`. "
                 )
-
-            sessions_config["secret_key"] = secret_key
-
-            self.add_asgi_middleware(SessionMiddleware, **sessions_config)
-
-        if enable_cors:
-            cors_config = {**DEFAULT_CORS_CONFIG, **(cors_config or {})}
-            self.add_asgi_middleware(CORSMiddleware, **cors_config)
-
-        if enable_hsts:
-            self.add_asgi_middleware(HTTPSRedirectMiddleware)
-
-        if enable_gzip:
-            self.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
         # Providers.
 
         self._store = _STORE
+        self._frozen = False
 
         # NOTE: discover providers from `providerconf` at instanciation time,
         # so that further declared views correctly resolve providers.
@@ -249,9 +139,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.on("startup", self._store.enter_session)
         self.on("shutdown", self._store.exit_session)
 
-        self._frozen = False
-
-    def _app_providers(self):  # pylint: disable=method-hidden
+    def _app_providers(self):
         if not self._frozen:
             self._store.freeze()
             self._frozen = True

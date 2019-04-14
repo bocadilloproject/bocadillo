@@ -4,6 +4,9 @@ generate:
   - applications.md:
       - bocadillo.applications:
           - bocadillo.applications.App+
+  - config.md:
+      - bocadillo.config:
+          - bocadillo.config.LazySettings+
   - compat.md:
       - bocadillo.compat+
   - error_handlers.md:
@@ -23,6 +26,8 @@ generate:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
           - bocadillo.middleware.ASGIMiddleware+
+  - plugins.md:
+      - bocadillo.plugins+
   - recipes.md:
       - bocadillo.recipes:
           - bocadillo.recipes.RecipeBase+

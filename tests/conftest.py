@@ -2,17 +2,24 @@ from typing import NamedTuple
 
 import pytest
 
-from bocadillo import App, Templates, Recipe
+from bocadillo import App, Templates, Recipe, settings, configure
 from bocadillo.testing import create_client
 
 
 APP_CLASSES = [App, lambda: Recipe("tacos")]
 
 
-@pytest.fixture(params=APP_CLASSES, name="app")
-def fixture_app(request):
+@pytest.fixture(params=APP_CLASSES, name="raw_app")
+def fixture_raw_app(request) -> App:
+    settings._wrapped = None  # force settings to clear
     cls = request.param
     return cls()
+
+
+@pytest.fixture(name="app")
+def fixture_app(raw_app: App) -> App:
+    configure(raw_app)
+    return raw_app
 
 
 @pytest.fixture

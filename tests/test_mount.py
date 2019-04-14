@@ -1,8 +1,8 @@
 from bocadillo import App
 
 
-def test_access_sub_route(app: App, client):
-    other = App()
+def test_mount(app: App, client):
+    other = App("other")
 
     @other.route("/foo")
     async def foo(req, res):

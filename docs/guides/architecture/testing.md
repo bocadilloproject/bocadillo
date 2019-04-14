@@ -29,17 +29,18 @@ We recommend you read the documentation for Starlette's test client for further 
 
 ## Live server
 
-If you need to perform integration tests against a live server, the [`LiveServer`](/api/testing.md#liveserver) context manager should come handy. It starts a [uvicorn server](/guides/app.md#serving-and-application) in a separate process which is terminated when exiting the context. You can then make requests to it, e.g. using [requests]:
+If you need to perform integration tests against a live server, the [`LiveServer`](/api/testing.md#liveserver) context manager should come handy. It starts a [uvicorn server](/guides/architecture/app.md#serving-and-application) in a separate process which is terminated when exiting the context. You can then make requests to it, e.g. using [requests]:
 
 ```python
 import requests
-from bocadillo import App
+from bocadillo import App, configure
 from bocadillo.testing import LiveServer
 
 app = App()
+configure(app)
 
 with LiveServer(app) as server:
-    response = requests.get(server.url + "/foo")
+    response = requests.get(server.url("/foo"))
 ```
 
 ## Miscellaneous utilities

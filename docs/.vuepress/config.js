@@ -129,6 +129,7 @@ module.exports = {
             "app",
             "recipes",
             "events",
+            "plugins",
             "testing"
           ])
         },

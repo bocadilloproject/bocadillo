@@ -15,10 +15,12 @@ You can use this sample `conftest.py` as a starting point:
 ```python
 # conftest.py
 import pytest
+from bocadillo import configure
 from bocadillo.testing import create_client, LiveServer
 
 from app import app
 
+configure(app)
 
 @pytest.fixture
 def app():

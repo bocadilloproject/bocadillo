@@ -1,9 +1,11 @@
-from bocadillo import App
+from bocadillo import configure
 from bocadillo.testing import create_client
 
 
-def test_if_hsts_enabled_and_request_is_on_http_then_redirects_to_https():
-    app = App(enable_hsts=True)
+def test_if_hsts_enabled_and_request_is_on_http_then_redirects_to_https(
+    raw_app
+):
+    app = configure(raw_app, hsts=True)
 
     @app.route("/")
     async def index(req, res):
