@@ -9,25 +9,14 @@
 """
 
 import inspect
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    NoReturn,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-)
+from typing import Any, Callable, Dict, Generic, Optional, Tuple, Type, TypeVar
 
 from starlette.websockets import WebSocketClose
 
 from . import views
 from .app_types import HTTPApp, Receive, Scope, Send
 from .errors import HTTPError
-from .injection import consumer
-from .redirection import Redirection
+from .redirection import Redirect
 from .request import Request
 from .response import Response
 from .urlparse import Parser
@@ -81,19 +70,6 @@ class BaseRoute(Generic[_V]):
     @property
     def pattern(self) -> str:
         return self._parser.pattern
-
-    def url(self, **kwargs) -> str:
-        """Return the full URL path for the given route parameters.
-
-        # Parameters
-        kwargs (dict): route parameters.
-
-        # Returns
-        url (str):
-            A full URL path obtained by formatting the route pattern with
-            the provided route parameters.
-        """
-        return self.pattern.format(**kwargs)
 
     def parse(self, path: str) -> Optional[dict]:
         """Parse an URL path against the route's URL pattern.
@@ -308,8 +284,8 @@ class HTTPRouter(HTTPApp, BaseRouter[HTTPRoute, View]):
 
         try:
             await match.route(req, res, **match.params)
-        except Redirection as redirection:
-            res = redirection.response
+        except Redirect as exc:
+            res = exc.response
 
         return res
 
@@ -430,56 +406,3 @@ class RoutingMixin:
             send_type=send_type,
             caught_close_codes=caught_close_codes,
         )
-
-    def url_for(self, name: str, **kwargs) -> str:
-        """Build the full URL path for a named #::bocadillo.routing#HTTPRoute.
-
-        # Parameters
-        name (str): the name of the route.
-        kwargs (dict): route parameters.
-
-        # Returns
-        url (str): an URL path.
-
-        # Raises
-        HTTPError(404) : if no route exists for the given `name`.
-        """
-        route = self.http_router.routes.get(name)
-        if route is None:
-            raise HTTPError(404)
-        return route.url(**kwargs)
-
-    def redirect(
-        self,
-        *,
-        name: str = None,
-        url: str = None,
-        permanent: bool = False,
-        **kwargs,
-    ) -> NoReturn:
-        """Redirect to another #::bocadillo.routing#HTTPRoute.
-
-        This is only meant to be used inside an HTTP view.
-
-        # Parameters
-        name (str): name of the route to redirect to.
-        url (str):
-            URL of the route to redirect to (required if `name` is omitted).
-        permanent (bool):
-            If `False` (the default), returns a temporary redirection (302).
-            If `True`, returns a permanent redirection (301).
-        kwargs (dict):
-            Route parameters.
-
-        # Raises
-        Redirection:
-            an exception that will be caught to trigger a redirection.
-
-        # See Also
-        - [Redirecting](../guides/http/redirecting.md)
-        """
-        if name is not None:
-            url = self.url_for(name=name, **kwargs)
-        else:
-            assert url is not None, "url is expected if no route name is given"
-        raise Redirection(url=url, permanent=permanent)

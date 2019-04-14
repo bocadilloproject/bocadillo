@@ -41,7 +41,8 @@ Other:
 
 ### Changed
 
-- Features such as CORS, HSTS or allowed hosts are now implemented via plugins, and configured via `app.configure()`. See the "Removed" section for the impact on the application API.
+- Features such as CORS, HSTS or allowed hosts are now implemented via plugins. See the "Removed" section for the impact on the application API.
+- **BREAKING**: redirects now use an exception syntax: `raise Redirect("/foo")` (`from bocadillo import Redirect`) instead of `app.redirect("/foo)`. `app.redirect()` has been removed consequently.
 
 ### Fixed
 
@@ -56,11 +57,19 @@ Other:
 - **BREAKING** Removed `enable_sessions` and `sessions_config`. Use the `SESSIONS` setting instead.
 - **BREAKING** Removed `enable_cors` and `cors_config`. Use the `CORS` setting instead.
 - **BREAKING** Removed `enable_hsts`. Use the `HSTS` setting instead.
-- # **BREAKING** Removed `enable_gzip` and `gzip_min_size`. Use the `GZIP` and `GZIP_MIN_SIZE` settings instead.
+- **BREAKING** Removed `enable_gzip` and `gzip_min_size`. Use the `GZIP` and `GZIP_MIN_SIZE` settings instead.
+
+Named routes:
+
+- **BREAKING** Removed route names and namespaces, i.e. `app.route(name="foo")` and `app.route(namespace="bar")` are not supported anymore.
+- **BREAKING** Removed `app.url_for()`. Please use relative URLs if you need to refer to another route by URL.
+
+Other:
+
 - **BREAKING**: the `.run()` method on `App` has been removed in favor of the `uvicorn` command shipped with the [uvicorn] ASGI server (which comes installed with Bocadillo). In particular, the `if __name__ == "__main__": app.run()` invokation is now obsolete. Just use `uvicorn app:app` instead of `python app.py` (and `uvicorn.run(app)` for programmatic usage).
 - **BREAKING**: synchronous views, HTTP middleware callbacks, hooks and error handlers are not supported anymore. Appropriate error messages will help you migrate to an all-async application.
 - **BREAKING**: route parameter validation via specifiers (e.g. `{id:d}`) is not supported anymore. Please use type annotation-based validation instead (e.g. `pk: int`).
-- **BREAKING**: debug mode has been removed., which means `App` does not accept a `debug` parameter anymore. To enable hot reload, please use `uvicorn --reload` instead.
+- **BREAKING**: debug mode has been removed, which means `App` does not accept a `debug` parameter anymore. To enable hot reload, please use `uvicorn --reload` instead.
 
 [uvicorn]: https://www.uvicorn.org/
 

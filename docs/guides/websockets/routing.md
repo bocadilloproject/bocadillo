@@ -30,12 +30,7 @@ However, there are also a few differences:
 
 - Requests that do not match a known route are turned down with a 403 close code, instead of returning a 404 HTTP error response.
 - There is no support for WebSocket redirection.
-- As a result, WebSocket routes cannot be [named] not [reversed]. In particular, this means that [`App.url_for()`][url-for] cannot be used within WebSocket routes.
 - There is, of course, no HTTP method checks because WebSockets do not use them.
-
-[named]: /guides/http/routing.md#naming-routes
-[reversed]: /guides/http/routing.md#reversing-named-routes
-[url-for]: /api/applications.md#url-for
 
 ## Inspecting the connection request
 

@@ -1,40 +1,20 @@
 # Redirecting
 
-Inside a view, you can redirect to another page using `app.redirect()`, which can be used in a few ways.
-
-## By route name
-
-Use the `name` argument:
+Inside a view, you can redirect to another URL by raising a `Redirect` exception. The given URL can be internal (a path relative to the server's host) or external (absolute URL).
 
 ```python
-@app.route('/home', name='home')
-async def home(req, res):
-    res.text = f'This is home!'
+from bocadillo import Redirect
 
-@app.route('/')
-async def index(req, res):
-    app.redirect(name='home')
-```
-
-**Note**: route parameters can be passed as additional keyword arguments.
-
-## By URL
-
-You can redirect by URL by passing `url`. The URL can be internal (path relative to the server's host) or external (absolute URL).
-
-```python
 @app.route('/')
 async def index(req, res):
     # internal:
-    app.redirect(url='/home')
+    raise Redirect("/home")
     # external:
-    app.redirect(url='http://localhost:8000/home')
+    raise Redirect("http://localhost:8000/home")
 ```
-
-## Permanent redirections
 
 Redirections are temporary (302) by default. To return a permanent (301) redirection, pass `permanent = True`:
 
 ```python
-app.redirect(url='/home', permanent=True)
+raise Redirect("/home", permanent=True)
 ```

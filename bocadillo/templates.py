@@ -1,4 +1,4 @@
-from contextlib import contextmanager, suppress
+from contextlib import contextmanager
 from typing import Any, Optional, cast
 
 from jinja2 import Environment, FileSystemLoader, Template
@@ -28,8 +28,6 @@ class Templates:
         Defaults to `"templates"` relative to the current working directory.
     context (dict, optional):
         global template variables.
-        If present, the app's `.url_for()` method is registered as
-        an `url_for` global variable.
     """
 
     __slots__ = ("app", "_directory", "_environment")
@@ -42,9 +40,6 @@ class Templates:
     ):
         if context is None:
             context = {}
-
-        with suppress(AttributeError):
-            context["url_for"] = app.url_for  # type: ignore
 
         self.app = app
 

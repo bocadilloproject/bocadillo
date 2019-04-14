@@ -51,9 +51,9 @@ This will add all the routes in the `tacos` recipe under the `/tacos` path, mean
 
 This includes, but is not limited to:
 
-- [Routing](../http/routing.md), e.g. `@recipe.route(...)`, `@recipe.websocket_route(...)`, `.url_for()`, etc.
+- [Routing](../http/routing.md), e.g. `@recipe.route(...)` and `@recipe.websocket_route(...)`.
 - [Error handling](../http/error-handling.md), e.g. `@recipe.error_handler()`.
-- [Redirecting](../http/redirecting.md), e.g. `recipe.redirect(...)`
+- [Redirecting](../http/redirecting.md), e.g. `raise Redirect("/some/page")`
 - [Middleware](../http/middleware.md), e.g. `recipe.add_middleware(...)`.
 
 Note, however, that:

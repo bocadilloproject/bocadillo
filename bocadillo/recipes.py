@@ -42,9 +42,6 @@ class Recipe(App):
 
         self.prefix = prefix
 
-    def _get_own_url_for(self, name: str, **kwargs) -> str:
-        return self.prefix + super()._get_own_url_for(name, **kwargs)
-
     def apply(self, app: App, root: str = ""):
         """Apply the recipe to an application."""
         app.mount(prefix=root + self.prefix, app=self)

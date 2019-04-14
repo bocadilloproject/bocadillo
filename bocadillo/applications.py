@@ -1,7 +1,7 @@
 import os
 import re
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type, Union
 
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
@@ -76,8 +76,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
     __slots__ = (
         "name",
         "asgi",
-        "_prefix_to_app",
-        "_name_to_prefix_and_app",
+        "_children",
         "_static_apps",
         "media_handlers",
         "_media_type",
@@ -99,8 +98,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.asgi = self.dispatch
 
         # Mounted (children) apps.
-        self._prefix_to_app: Dict[str, Any] = {}
-        self._name_to_prefix_and_app: Dict[str, Tuple[str, App]] = {}
+        self._children: Dict[str, Any] = {}
         self._static_apps: Dict[str, WhiteNoise] = {}
 
         # Media
@@ -156,37 +154,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             raise UnsupportedMediaType(media_type, handlers=self.media_handlers)
         self._media_type = media_type
 
-    def url_for(self, name: str, **kwargs) -> str:
-        # Implement route name lookup accross sub-apps.
-        try:
-            return super().url_for(name, **kwargs)
-        except HTTPError as exc:
-            app_name, _, name = name.partition(":")
-
-            if not name:
-                # No app name given.
-                raise exc from None
-
-            return self._url_for_app(app_name, name, **kwargs)
-
-    def _url_for_app(self, app_name: str, name: str, **kwargs) -> str:
-        if app_name == self.name:
-            # NOTE: this allows to reference this app's routes in
-            # both with or without the namespace.
-            return self._get_own_url_for(name, **kwargs)
-
-        try:
-            prefix, app = self._name_to_prefix_and_app[app_name]
-        except KeyError as key_exc:
-            raise HTTPError(404) from key_exc
-        else:
-            return prefix + app.url_for(name, **kwargs)
-
-    def _get_own_url_for(self, name: str, **kwargs) -> str:
-        # NOTE: recipes hook into this method to prepend their
-        # prefix to the URL.
-        return super().url_for(name, **kwargs)
-
     def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
 
@@ -202,10 +169,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         if not prefix.startswith("/"):
             prefix = "/" + prefix
 
-        self._prefix_to_app[prefix] = app
-
-        if isinstance(app, App) and app.name is not None:
-            self._name_to_prefix_and_app[app.name] = (prefix, app)
+        self._children[prefix] = app
 
         if isinstance(app, WhiteNoise):
             self._static_apps[prefix] = app
@@ -334,7 +298,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
             path: str = scope["path"]
 
             # Return a sub-mounted extra app, if found
-            for prefix, app in self._prefix_to_app.items():
+            for prefix, app in self._children.items():
                 if not path.startswith(prefix):
                     continue
                 # Remove prefix from path so that the request is made according

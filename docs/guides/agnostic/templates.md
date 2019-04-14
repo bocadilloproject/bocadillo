@@ -98,9 +98,7 @@ templates = Templates(directory='path/to/templates')
 
 ## Using templates outside an application
 
-It is not mandatory that you pass an `App` instance when creating a `Templates` helper. All it does is try to configure some global variables for you, such as `url_for()` in order to reference absolute URLs.
-
-This means that `Templates` can be used to perform _any_ templating task.
+In fact, it is not mandatory that you pass an `App` instance when creating a `Templates` helper. This means that `Templates` can be used to perform _any_ templating task.
 
 For example, let's render email! 📨
 
