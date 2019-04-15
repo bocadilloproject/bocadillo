@@ -101,7 +101,7 @@ Everything you need to know is in the [SSE usage guide](/guides/http/sse.md), bu
 
 Signed cookie-based sessions have landed in Bocadillo! Thanks a lot to [@zgoda](https://github.com/bocadilloproject/bocadillo/pull/211) for helping bring this feature in.
 
-Sessions allow you to persist data between requests from a given client. You can find an example as well as usage tips in the new [Sessions guide](/guides/agnostic/sessions.md).
+Sessions allow you to persist data between requests from a given client. You can find an example as well as usage tips in the new [Sessions guide](/guides/http/sessions.md).
 
 ## Testing utilities
 

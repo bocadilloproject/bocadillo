@@ -1,6 +1,9 @@
-from bocadillo import App, view, provider
+# app.py
+from bocadillo import App, view, provider, configure
+import settings
 
 app = App()
+configure(app, settings)
 
 
 @provider(scope="app", name="todos")

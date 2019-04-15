@@ -26,37 +26,47 @@ pip install bocadillo[sessions]
 
 ## Enabling sessions
 
-To enable sessions, pass `enable_sessions=True` when instanciating the application instance:
+To enable sessions, [configure](/guides/architecture/app.md#configuration) the `SESSIONS` dictionary. It should at least contain a `secret_key`.
+
+You should use Starlette's `Secret` datastructure to make sure the secret key is never displayed in plain text.
 
 ```python
-from bocadillo import App
+# settings.py
+from starlette.config import Config
+from starlette.datastructures import Secret
 
-app = App(enable_sessions=True)
+config = Config(".env")
+
+SESSIONS = {"secret_key": config("SECRET_KEY", cast=Secret)}
 ```
-
-## Configuring sessions
-
-The most important session configuration item is the **secret key**. It is read from the `SECRET_KEY` environment variable, or from the `sessions_config` passed to the [`App`](/api/applications.md#app). It must be set and non-empty if sessions are enabled.
 
 ::: tip
 You can use tools like the [Django Secret Key Generator](https://www.miniwebtool.com/django-secret-key-generator/) to generate strong enough secret keys.
 :::
 
-The `sessions_config` parameter can be used to pass any configuration items described in Starlette's [SessionsMiddleware](https://www.starlette.io/middleware/#sessionmiddleware).
+Besides, you can declare any extra configuration item available in Starlette's [SessionsMiddleware](https://www.starlette.io/middleware/#sessionmiddleware) to fine-tune how sessions behave.
 
-For example, pass `{"https_only": True}` to restrict cookie-based sessions to requests made over HTTPS:
+For example, pass `"https_only": True` to restrict cookie-based sessions to requests made over HTTPS:
 
 ```python
-app = App(
-    enable_sessions=True,
-    sessions_config={"https_only": True},
-)
+SESSIONS = {
+    # ...
+    "https_only": True,
+}
 ```
 
 ## Using sessions
 
 Once sessions are enabled and configured, use the `req.session` dictionary to retrieve and store session data.
 
-In the following example, we use a cookie-based session to store the ID of the last todo item that was sent to the client and only send the new todo items. It assumes that the `SECRET_KEY` environment variable is set.
+In the following example, we use a cookie-based session to store the ID of the last todo item that was sent to the client, and only send the new todo items for future requests.
 
-<<<@/docs/guides/snippets/sessions.py
+<<<@/docs/guides/snippets/sessions/settings.py
+
+<<<@/docs/guides/snippets/sessions/app.py
+
+The `SECRET_KEY` environment variable must be set, so use the following to launch this example app:
+
+```bash
+SECRET_KEY=1234 uvicorn app:app
+```
