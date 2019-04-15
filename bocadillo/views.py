@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Dict, List, Type, Union
+import typing
 
 from . import injection
 from .app_types import Handler
@@ -7,7 +7,7 @@ from .compat import camel_to_snake, check_async
 from .constants import ALL_HTTP_METHODS
 from .converters import ViewConverter, convert_arguments
 
-MethodsParam = Union[List[str], all]  # type: ignore
+MethodsParam = typing.Union[typing.List[str], all]  # type: ignore
 
 
 class HandlerDoesNotExist(Exception):
@@ -76,9 +76,9 @@ class View:
 
     @classmethod
     def create(
-        cls: Type["View"],
+        cls: typing.Type["View"],
         name: str,
-        handlers: Dict[str, Handler],
+        handlers: typing.Dict[str, Handler],
         class_based: bool,
     ) -> "View":
         for method, handler in handlers.items():
@@ -142,7 +142,7 @@ def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
     return View.create(handler.__name__, handlers, class_based=False)
 
 
-def from_obj(obj: Any) -> View:
+def from_obj(obj: typing.Any) -> View:
     """Convert an object to a #::bocadillo.views#View instance.
 
     # Parameters
@@ -156,7 +156,7 @@ def from_obj(obj: Any) -> View:
     return View.create(obj.__class__.__name__, handlers, class_based=True)
 
 
-def get_handlers(obj: Any) -> Dict[str, Handler]:
+def get_handlers(obj: typing.Any) -> typing.Dict[str, Handler]:
     """Return all #::bocadillo.views#View handlers declared on an object.
 
     # Parameters

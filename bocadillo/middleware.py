@@ -1,11 +1,11 @@
-from typing import TYPE_CHECKING, Optional
+import typing
 
 from .app_types import ASGIApp, ASGIAppInstance, HTTPApp, Scope
 from .compat import check_async
 from .request import Request
 from .response import Response
 
-if TYPE_CHECKING:  # pragma: no cover
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 
@@ -38,7 +38,7 @@ class Middleware(HTTPApp, metaclass=MiddlewareMeta):
 
     async def before_dispatch(
         self, req: Request, res: Response
-    ) -> Optional[Response]:
+    ) -> typing.Optional[Response]:
         """Perform processing before a request is dispatched.
 
         If the #::bocadillo.response#Response object is returned,
@@ -61,7 +61,7 @@ class Middleware(HTTPApp, metaclass=MiddlewareMeta):
         """
 
     async def __call__(self, req: Request, res: Response) -> Response:
-        before_res: Optional[Response] = await self.before_dispatch(req, res)
+        before_res = await self.before_dispatch(req, res)
 
         if before_res is not None:
             return before_res

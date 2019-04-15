@@ -1,6 +1,6 @@
-from typing import TYPE_CHECKING, Any, Optional
+import typing
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from .applications import App
 
 
@@ -9,7 +9,7 @@ class SettingsError(Exception):
 
 
 class Settings:
-    def __init__(self, obj: Optional[Any]):
+    def __init__(self, obj: typing.Optional[typing.Any]):
         for setting in dir(obj):
             if not setting.isupper():
                 continue
@@ -35,7 +35,7 @@ class LazySettings:
     def __init__(self):
         self._wrapped = None
 
-    def configure(self, obj: Any = None, **options):
+    def configure(self, obj: typing.Any = None, **options):
         if self.configured:
             raise RuntimeError("Settings are already configured")
 
@@ -56,7 +56,7 @@ class LazySettings:
     def configured(self) -> bool:
         return self._wrapped is not None
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> typing.Any:
         if not self.configured:
             raise SettingsError(
                 f"Requested setting {name} but settings aren't configured yet."
@@ -68,21 +68,21 @@ class LazySettings:
 
         return value
 
-    def __setattr__(self, name: str, value: Any):
+    def __setattr__(self, name: str, value: typing.Any):
         if name == "_wrapped":
             self.__dict__.clear()
         else:
             self.__dict__.pop(name, None)  # remove from cache
         super().__setattr__(name, value)
 
-    def get(self, name: str, default: Any = None) -> Any:
+    def get(self, name: str, default: typing.Any = None) -> typing.Any:
         return getattr(self, name, default)
 
 
 settings = LazySettings()  # pylint: disable=invalid-name
 
 
-def configure(app: "App", settings_obj: Any = None, **kwargs) -> "App":
+def configure(app: "App", settings_obj: typing.Any = None, **kwargs) -> "App":
     """Configure the application settings and setup plugins.
 
     # Parameters

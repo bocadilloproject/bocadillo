@@ -1,11 +1,11 @@
 import re
-from typing import Optional, Pattern, Tuple
+import typing
 
 PARAM_RE = re.compile(r"{}|{([a-zA-Z_:][a-zA-Z0-9_:]*)}")
 WILDCARD = "{}"
 
 
-def compile_path(pattern: str) -> Tuple[Pattern, str]:
+def compile_path(pattern: str) -> typing.Tuple[typing.Pattern, str]:
     regex = "^"
     path_format = ""
     idx = 0
@@ -40,7 +40,7 @@ class Parser:
             pattern = f"/{pattern}"
         self.regex, self.pattern = compile_path(pattern)
 
-    def parse(self, value: str) -> Optional[dict]:
+    def parse(self, value: str) -> typing.Optional[dict]:
         match = self.regex.match(value)
         if match is None:
             return None

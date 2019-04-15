@@ -1,20 +1,20 @@
 import warnings
 from functools import partial, wraps
 from inspect import cleandoc, isclass
-from typing import Callable, Tuple, Type, TypeVar, Union, cast
+import typing
 
-_F = TypeVar("_F", bound=Callable)
-_T = TypeVar("_T")
-_FT = Union[_F, Type[_T]]
+_F = typing.TypeVar("_F", bound=typing.Callable)
+_T = typing.TypeVar("_T")
+_FT = typing.Union[_F, typing.Type[_T]]
 
 
 def deprecated(
     since: str,
     removal: str,
-    alternative: Union[str, Tuple[str, str]],
+    alternative: typing.Union[str, typing.Tuple[str, str]],
     update_doc: bool = True,
     warn_on_instanciate: bool = False,
-) -> Callable:
+) -> typing.Callable:
     """Mark a function or a class as deprecated.
 
     The function or class will raise a `DeprecationWarning` when called and
@@ -67,7 +67,7 @@ def deprecated(
 
     def add_warning(obj: _FT) -> _FT:
         if isclass(obj):
-            cls = cast(Type, obj)
+            cls = typing.cast(typing.Type, obj)
 
             if warn_on_instanciate:
 
@@ -84,7 +84,7 @@ def deprecated(
                 wrapped = cls  # type: ignore
 
         else:
-            func = cast(Callable, obj)
+            func = typing.cast(typing.Callable, obj)
 
             @wraps(func)  # type: ignore
             def wrapped(*args, **kwargs):
@@ -109,7 +109,7 @@ class ReplacedBy:
         self._factory = partial(deprecated, since=since, removal=removal)
 
     def __call__(self, name: str, fragment: str = None):
-        alternative: Union[str, tuple]
+        alternative: typing.Union[str, tuple]
         if fragment is not None:
             alternative = (self._obj_root + name, self._doc_root + fragment)
         else:

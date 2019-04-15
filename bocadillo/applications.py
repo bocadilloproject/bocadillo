@@ -1,7 +1,7 @@
 import os
 import re
 from functools import partial
-from typing import TYPE_CHECKING, Any, Dict, Optional, Type, Union
+import typing
 
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
@@ -30,18 +30,8 @@ from .response import Response
 from .routing import RoutingMixin
 from .staticfiles import WhiteNoise
 
-if TYPE_CHECKING:  # pragma: no cover
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
-
-
-_SCRIPT_REGEX = re.compile(r"(.*)\.py")
-
-
-def _get_module(script_path: str) -> Optional[str]:  # pragma: no cover
-    match = _SCRIPT_REGEX.match(script_path)
-    if match is None:
-        return None
-    return match.group(1).replace(os.path.sep, ".")
 
 
 class App(RoutingMixin, metaclass=DocsMeta):
@@ -82,8 +72,8 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.asgi = self.dispatch
 
         # Mounted (children) apps.
-        self._children: Dict[str, Any] = {}
-        self._static_apps: Dict[str, WhiteNoise] = {}
+        self._children: typing.Dict[str, typing.Any] = {}
+        self._static_apps: typing.Dict[str, WhiteNoise] = {}
 
         # HTTP middleware
         self.exception_middleware = HTTPErrorMiddleware(self.http_router)
@@ -122,7 +112,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self._frozen = True
         return nullcontext()
 
-    def mount(self, prefix: str, app: Union["App", ASGIApp, WSGIApp]):
+    def mount(self, prefix: str, app: typing.Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
 
         [WSGI]: https://wsgi.readthedocs.io
@@ -155,7 +145,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """
         recipe.apply(self)
 
-    def add_error_handler(self, exception_cls: Type[_E], handler: ErrorHandler):
+    def add_error_handler(
+        self, exception_cls: typing.Type[_E], handler: ErrorHandler
+    ):
         """Register a new error handler.
 
         # Parameters
@@ -168,7 +160,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """
         self.exception_middleware.add_exception_handler(exception_cls, handler)
 
-    def error_handler(self, exception_cls: Type[Exception]):
+    def error_handler(self, exception_cls: typing.Type[Exception]):
         """Register a new error handler (decorator syntax).
 
         # See Also
@@ -207,7 +199,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
-    def on(self, event: str, handler: Optional[EventHandler] = None):
+    def on(self, event: str, handler: typing.Optional[EventHandler] = None):
         """Register an event handler.
 
         # Parameters

@@ -1,4 +1,4 @@
-from typing import NamedTuple
+import typing
 
 import pytest
 
@@ -32,7 +32,7 @@ def fixture_templates(app: App):
     return Templates(app)
 
 
-class TemplateWrapper(NamedTuple):
+class TemplateWrapper(typing.NamedTuple):
     name: str
     context: dict
     rendered: str

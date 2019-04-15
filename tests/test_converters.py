@@ -1,4 +1,4 @@
-from typing import Type, Any
+import typing
 
 import pytest
 import typesystem
@@ -52,9 +52,9 @@ def test_convert_route_parameters(
     client,
     setup,
     get_json,
-    annotation: Type,
+    annotation: typing.Type,
     string_value: str,
-    converted_value: Any,
+    converted_value: typing.Any,
 ):
     setup(app, annotation)
     json = get_json(client, f"/{string_value}")
@@ -101,7 +101,7 @@ def test_if_invalid_route_parameter_then_error_response(
     setup,
     setup_error_handler,
     check_status,
-    annotation: Type,
+    annotation: typing.Type,
     string_value: str,
 ):
     setup_error_handler(app)

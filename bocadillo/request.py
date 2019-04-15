@@ -1,5 +1,5 @@
 from json import JSONDecodeError
-from typing import Any, AsyncGenerator
+import typing
 
 from starlette.requests import Request as _Request, ClientDisconnect as _CD
 
@@ -22,7 +22,7 @@ class Request(_Request):
         byte chunks using `async for chunk in req: ...`.
     """
 
-    async def json(self) -> Any:
+    async def json(self) -> typing.Any:
         """Parse the request body as JSON.
 
         # Returns
@@ -38,6 +38,6 @@ class Request(_Request):
 
             raise HTTPError(400, detail="JSON is malformed.")
 
-    async def __aiter__(self) -> AsyncGenerator[bytes, None]:
+    async def __aiter__(self) -> typing.AsyncGenerator[bytes, None]:
         async for chunk in self.stream():
             yield chunk

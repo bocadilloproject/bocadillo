@@ -1,6 +1,6 @@
 import inspect
 import re
-from typing import Callable, List, TypeVar, Any
+import typing
 
 try:
     # >= 3.7
@@ -9,14 +9,14 @@ except ImportError:  # pragma: no cover
     from contextlib import contextmanager
 
     @contextmanager
-    def nullcontext(enter_result: Any = None):
+    def nullcontext(enter_result: typing.Any = None):
         yield enter_result
 
 
 _CAMEL_REGEX = re.compile(r"(.)([A-Z][a-z]+)")
 _SNAKE_REGEX = re.compile(r"([a-z0-9])([A-Z])")
 
-_V = TypeVar("_V")
+_V = typing.TypeVar("_V")
 
 
 class ExpectedAsync(Exception):
@@ -31,7 +31,7 @@ def check_async(func, reason: str):
 
 # For 3.6 compatibility (only available in 3.7+).
 class asyncnullcontext:
-    def __init__(self, enter_result: Any = None):
+    def __init__(self, enter_result: typing.Any = None):
         self._result = enter_result
 
     async def __aenter__(self):
@@ -50,8 +50,8 @@ def camel_to_snake(name: str) -> str:
 # WSGI
 
 Environ = dict
-StartResponse = Callable[[str, List[str]], None]
-WSGIApp = Callable[[Environ, StartResponse], List[bytes]]
+StartResponse = typing.Callable[[str, typing.List[str]], None]
+WSGIApp = typing.Callable[[Environ, StartResponse], typing.List[bytes]]
 
 
 def empty_wsgi_app() -> WSGIApp:

@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Optional, cast
+import typing
 
 from jinja2 import Environment, FileSystemLoader, Template
 
@@ -34,7 +34,7 @@ class Templates:
 
     def __init__(
         self,
-        app: Optional[Any] = None,
+        app: typing.Optional[typing.Any] = None,
         directory: str = DEFAULT_TEMPLATES_DIR,
         context: dict = None,
     ):
@@ -68,7 +68,7 @@ class Templates:
 
     @property
     def _loader(self) -> FileSystemLoader:
-        return cast(FileSystemLoader, self._environment.loader)
+        return typing.cast(FileSystemLoader, self._environment.loader)
 
     def _get_template(self, name: str) -> Template:
         return self._environment.get_template(name)
@@ -82,7 +82,9 @@ class Templates:
         finally:
             self._environment.is_async = False
 
-    async def render(self, filename: str, *args: dict, **kwargs: Any) -> str:
+    async def render(
+        self, filename: str, *args: dict, **kwargs: typing.Any
+    ) -> str:
         """Render a template asynchronously.
 
         Can only be used within async functions.
@@ -102,7 +104,9 @@ class Templates:
                 *args, **kwargs
             )
 
-    def render_sync(self, filename: str, *args: dict, **kwargs: Any) -> str:
+    def render_sync(
+        self, filename: str, *args: dict, **kwargs: typing.Any
+    ) -> str:
         """Render a template synchronously.
 
         # See Also
@@ -110,7 +114,9 @@ class Templates:
         """
         return self._get_template(filename).render(*args, **kwargs)
 
-    def render_string(self, source: str, *args: dict, **kwargs: Any) -> str:
+    def render_string(
+        self, source: str, *args: dict, **kwargs: typing.Any
+    ) -> str:
         """Render a template from a string (synchronously).
 
         # Parameters

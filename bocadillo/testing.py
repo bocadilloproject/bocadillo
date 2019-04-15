@@ -1,7 +1,7 @@
 import os
 import random
 from multiprocessing import Event, Process
-from typing import TYPE_CHECKING
+import typing
 
 import uvicorn
 from starlette.testclient import TestClient
@@ -11,7 +11,7 @@ try:
 except ImportError:  # pragma: no cover
     pytest = None
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from .applications import App
 
 

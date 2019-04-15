@@ -1,13 +1,15 @@
 import time
 from contextlib import contextmanager
 from multiprocessing import Value
-from typing import Any
+import typing
 
 import requests
 
 
 @contextmanager
-def function_hooks(expected_before: Any = True, expected_after: Any = True):
+def function_hooks(
+    expected_before: typing.Any = True, expected_after: typing.Any = True
+):
     flags = {"before": False, "after": False}
 
     async def before(req, res, params, value=expected_before):

@@ -9,7 +9,7 @@
 """
 
 import inspect
-from typing import Any, Callable, Dict, Generic, Optional, Tuple, Type, TypeVar
+import typing
 
 from starlette.websockets import WebSocketClose
 
@@ -24,14 +24,14 @@ from .views import Handler, HandlerDoesNotExist, View
 from .websockets import WebSocket, WebSocketView
 
 # Route generic types.
-_R = TypeVar("_R", bound="BaseRoute")  # route
-_V = TypeVar("_V")  # view
+_R = typing.TypeVar("_R", bound="BaseRoute")  # route
+_V = typing.TypeVar("_V")  # view
 
 
 # Utilities.
 
 
-class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
+class RouteMatch(typing.Generic[_R]):  # pylint: disable=unsubscriptable-object
     """Represents a match between an URL path and a route.
 
     # Parameters
@@ -49,7 +49,7 @@ class RouteMatch(Generic[_R]):  # pylint: disable=unsubscriptable-object
 # Base classes.
 
 
-class BaseRoute(Generic[_V]):
+class BaseRoute(typing.Generic[_V]):
     """The base route class.
 
     This is referenced as `_R` in the rest of this module.
@@ -71,7 +71,7 @@ class BaseRoute(Generic[_V]):
     def pattern(self) -> str:
         return self._parser.pattern
 
-    def parse(self, path: str) -> Optional[dict]:
+    def parse(self, path: str) -> typing.Optional[dict]:
         """Parse an URL path against the route's URL pattern.
 
         # Returns
@@ -82,7 +82,7 @@ class BaseRoute(Generic[_V]):
         return self._parser.parse(path)
 
     @classmethod
-    def normalize(cls, view: Any) -> _V:
+    def normalize(cls, view: typing.Any) -> _V:
         """Perform any conversion necessary to return a proper view object.
 
         Not implemented.
@@ -95,13 +95,13 @@ class BaseRoute(Generic[_V]):
         return cls(view=view, pattern=pattern, **kwargs)
 
     @classmethod
-    def create(cls, view: Any, pattern: str, **kwargs) -> _R:
+    def create(cls, view: typing.Any, pattern: str, **kwargs) -> _R:
         """Normalize a view and build and a route instance."""
         view: _V = cls.normalize(view)
         return cls.build(view, pattern=pattern, **kwargs)
 
 
-class BaseRouter(Generic[_R, _V]):
+class BaseRouter(typing.Generic[_R, _V]):
     """The base router class.
 
     # Attributes
@@ -111,10 +111,10 @@ class BaseRouter(Generic[_R, _V]):
 
     __slots__ = ("routes", "route_class")
 
-    route_class: Type[_R]
+    route_class: typing.Type[_R]
 
     def __init__(self):
-        self.routes: Dict[str, _R] = {}
+        self.routes: typing.Dict[str, _R] = {}
 
     def _get_key(self, route: _R) -> str:
         # Return the key at which `route` should be stored internally.
@@ -124,7 +124,7 @@ class BaseRouter(Generic[_R, _V]):
         """Register a route."""
         self.routes[self._get_key(route)] = route
 
-    def route(self, *args, **kwargs) -> Callable[[Any], _R]:
+    def route(self, *args, **kwargs) -> typing.Callable[[typing.Any], _R]:
         """Register a route by decorating a view.
 
         The decorated function or class will be converted to a proper view using
@@ -137,13 +137,13 @@ class BaseRouter(Generic[_R, _V]):
             along with the normalized view.
         """
 
-        def decorate(view: Any) -> _R:
+        def decorate(view: typing.Any) -> _R:
             route = self.route_class.create(view, *args, **kwargs)
             self.add_route(route)
 
         return decorate
 
-    def match(self, path: str) -> Optional[RouteMatch[_R]]:
+    def match(self, path: str) -> typing.Optional[RouteMatch[_R]]:
         """Attempt to match an URL path against one of the registered routes.
 
         # Parameters
@@ -185,7 +185,7 @@ class HTTPRoute(BaseRoute[View]):
         self.name = name
 
     @classmethod
-    def normalize(cls, view: Any) -> View:
+    def normalize(cls, view: typing.Any) -> View:
         """Build a #::bocadillo.views#View object.
 
         The input, free-form `view` object is converted using the following
@@ -314,7 +314,7 @@ class WebSocketRoute(BaseRoute[WebSocketView]):
         self._ws_kwargs = kwargs
 
     @classmethod
-    def normalize(cls, view: Any) -> WebSocketView:
+    def normalize(cls, view: typing.Any) -> WebSocketView:
         return WebSocketView(view)
 
     async def __call__(
@@ -385,7 +385,7 @@ class RoutingMixin:
         value_type: str = None,
         receive_type: str = None,
         send_type: str = None,
-        caught_close_codes: Tuple[int] = None,
+        caught_close_codes: typing.Tuple[int] = None,
     ):
         """Register a WebSocket route by decorating a view.
 

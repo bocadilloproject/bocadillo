@@ -1,5 +1,5 @@
 import traceback
-from typing import Any, Callable, Tuple, Union
+import typing
 
 import typesystem
 from starlette.datastructures import URL, Headers, QueryParams
@@ -73,7 +73,7 @@ class WebSocket:
         value_type: str = None,
         receive_type: str = None,
         send_type: str = None,
-        caught_close_codes: Tuple[int, ...] = None,
+        caught_close_codes: typing.Tuple[int, ...] = None,
     ):
         # NOTE: we use composition over inheritance here, because
         # we want to redefine `receive()` and `send()` but Starlette's
@@ -100,10 +100,10 @@ class WebSocket:
         self.receive_type = receive_type
         self.send_type = send_type
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._ws, name)
 
-    def __getitem__(self, name: str) -> Any:
+    def __getitem__(self, name: str) -> typing.Any:
         return self._ws.__getitem__(name)
 
     # Connection handling.
@@ -161,7 +161,7 @@ class WebSocket:
         """Send a message as bytes."""
         return await self._ws.send_bytes(data)
 
-    async def receive_json(self) -> Union[dict, list]:
+    async def receive_json(self) -> typing.Union[dict, list]:
         """Receive a message as text and parse it to a JSON object.
 
         # Raises
@@ -169,7 +169,7 @@ class WebSocket:
         """
         return await self._ws.receive_json()
 
-    async def send_json(self, data: Union[dict, list]):
+    async def send_json(self, data: typing.Union[dict, list]):
         """Serialize an object to JSON and send it as text.
 
         # Raises
@@ -185,7 +185,7 @@ class WebSocket:
         """Send a raw ASGI event."""
         return await self._ws.send(event)
 
-    async def receive(self) -> Union[str, bytes, list, dict]:
+    async def receive(self) -> typing.Union[str, bytes, list, dict]:
         """Receive a message from the WebSocket.
 
         Shortcut for `receive_<self.receive_type>`.
@@ -193,7 +193,7 @@ class WebSocket:
         receiver = getattr(self, f"receive_{self.receive_type}")
         return await receiver()
 
-    async def send(self, message: Any):
+    async def send(self, message: typing.Any):
         """Send a message over the WebSocket.
 
         Shortcut for `send_<self.send_type>`.
@@ -239,7 +239,7 @@ class WebSocketView:
 
     __slots__ = ("func",)
 
-    def __init__(self, func: Callable):
+    def __init__(self, func: typing.Callable):
         check_async(
             func,
             reason=f"WebSocket view '{func.__name__}' must be asynchronous",

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any, Dict, Optional, Type, Union
+import typing
 
 from .app_types import _E, ErrorHandler, HTTPApp
 from .compat import check_async
@@ -26,7 +26,9 @@ class HTTPError(Exception):
 
     __slots__ = ("_status", "detail")
 
-    def __init__(self, status: Union[int, HTTPStatus], detail: Any = ""):
+    def __init__(
+        self, status: typing.Union[int, HTTPStatus], detail: typing.Any = ""
+    ):
         if isinstance(status, int):
             status = HTTPStatus(  # pylint: disable=no-value-for-parameter
                 status
@@ -68,7 +70,7 @@ class ServerErrorMiddleware(HTTPApp):
     def __init__(self, app: HTTPApp, handler: ErrorHandler) -> None:
         self.app = app
         self.handler = handler
-        self.exception: Optional[BaseException] = None
+        self.exception: typing.Optional[BaseException] = None
 
     def raise_if_exception(self):
         if self.exception is not None:
@@ -95,10 +97,12 @@ class HTTPErrorMiddleware(HTTPApp):
 
     def __init__(self, app: HTTPApp) -> None:
         self.app = app
-        self._exception_handlers: Dict[Type[BaseException], ErrorHandler] = {}
+        self._exception_handlers: typing.Dict[
+            typing.Type[BaseException], ErrorHandler
+        ] = {}
 
     def add_exception_handler(
-        self, exception_class: Type[_E], handler: ErrorHandler
+        self, exception_class: typing.Type[_E], handler: ErrorHandler
     ) -> None:
         assert issubclass(
             exception_class, BaseException
@@ -109,7 +113,7 @@ class HTTPErrorMiddleware(HTTPApp):
         )
         self._exception_handlers[exception_class] = handler
 
-    def _get_exception_handler(self, exc: _E) -> Optional[ErrorHandler]:
+    def _get_exception_handler(self, exc: _E) -> typing.Optional[ErrorHandler]:
         for cls, handler in self._exception_handlers.items():
             if issubclass(type(exc), cls):
                 return handler

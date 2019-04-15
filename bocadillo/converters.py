@@ -2,13 +2,13 @@ import decimal
 import inspect
 from datetime import date, datetime, time
 from functools import wraps
-from typing import Callable, Dict, List, Tuple, Type
+import typing
 
 import typesystem
 
 from .errors import HTTPError
 
-FIELD_ALIASES: Dict[Type, typesystem.Field] = {
+FIELD_ALIASES: typing.Dict[typing.Type, typesystem.Field] = {
     int: typesystem.Integer,
     float: typesystem.Float,
     bool: typesystem.Boolean,
@@ -23,11 +23,11 @@ class Converter:
 
     __slots__ = ("func", "signature", "annotations", "required_params")
 
-    def __init__(self, func: Callable):
+    def __init__(self, func: typing.Callable):
         self.func = func
         self.signature = inspect.signature(self.func)
 
-        self.annotations: Dict[str, Type] = {
+        self.annotations: typing.Dict[str, typing.Type] = {
             param.name: param.annotation
             for param in self.signature.parameters.values()
             if param.annotation is not inspect.Parameter.empty
@@ -38,10 +38,10 @@ class Converter:
             if param.default is inspect.Parameter.empty
         )
 
-    def convert(self, args: tuple, kwargs: dict) -> Tuple[tuple, dict]:
+    def convert(self, args: tuple, kwargs: dict) -> typing.Tuple[tuple, dict]:
         bound: inspect.BoundArguments = self.signature.bind(*args, **kwargs)
 
-        errors: List[typesystem.ValidationError] = []
+        errors: typing.List[typesystem.ValidationError] = []
 
         for param_name, value in bound.arguments.items():
             try:
@@ -82,7 +82,7 @@ class ViewConverter(Converter):
 
     __slots__ = ("query_parameters",)
 
-    def __init__(self, func):
+    def __init__(self, func: typing.Callable):
         super().__init__(func)
 
         self.query_parameters = set(
@@ -94,7 +94,7 @@ class ViewConverter(Converter):
     def get_query_params(self, args: tuple, kwargs: dict) -> dict:
         raise NotImplementedError
 
-    def convert(self, args: tuple, kwargs: dict) -> Tuple[tuple, dict]:
+    def convert(self, args: tuple, kwargs: dict) -> typing.Tuple[tuple, dict]:
         query_params = self.get_query_params(args, kwargs)
 
         for param_name in self.query_parameters:
@@ -104,7 +104,9 @@ class ViewConverter(Converter):
         return super().convert(args, kwargs)
 
 
-def convert_arguments(func: Callable, converter_class=None) -> Callable:
+def convert_arguments(
+    func: typing.Callable, converter_class=None
+) -> typing.Callable:
     if converter_class is None:
         converter_class = Converter
 

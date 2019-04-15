@@ -1,7 +1,7 @@
 from functools import partial
 from os.path import basename
 import json
-from typing import Callable, Coroutine, Dict, Optional, Union
+import typing
 
 from starlette.background import BackgroundTask
 from starlette.requests import Request
@@ -13,8 +13,8 @@ from .constants import CONTENT_TYPE
 from .deprecation import deprecated
 from .streaming import Stream, StreamFunc, stream_until_disconnect
 
-AnyStr = Union[str, bytes]
-BackgroundFunc = Callable[..., Coroutine]
+AnyStr = typing.Union[str, bytes]
+BackgroundFunc = typing.Callable[..., typing.Coroutine]
 
 
 def _content_setter(
@@ -86,16 +86,16 @@ class Response:
 
     def __init__(self, request: Request):
         # Public attributes.
-        self.content: Optional[AnyStr] = None
+        self.content: typing.Optional[AnyStr] = None
         self.request = request
-        self.status_code: Optional[int] = None
-        self.headers: Dict[str, str] = {}
+        self.status_code: typing.Optional[int] = None
+        self.headers: typing.Dict[str, str] = {}
         self.chunked = False
-        self.attachment: Optional[str] = None
+        self.attachment: typing.Optional[str] = None
         # Private attributes.
-        self._file_path: Optional[str] = None
-        self._background: Optional[BackgroundFunc] = None
-        self._stream: Optional[Stream] = None
+        self._file_path: typing.Optional[str] = None
+        self._background: typing.Optional[BackgroundFunc] = None
+        self._stream: typing.Optional[Stream] = None
 
     @deprecated(since="0.14", removal="0.15", alternative="res.json")
     def media(self, value):
@@ -141,7 +141,7 @@ class Response:
         return func
 
     @property
-    def _background_task(self) -> Optional[BackgroundTask]:
+    def _background_task(self) -> typing.Optional[BackgroundTask]:
         if self._background is not None:
             return BackgroundTask(self._background)
         return None

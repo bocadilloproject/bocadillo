@@ -1,13 +1,12 @@
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
 from bocadillo import App
 
 
-@pytest.fixture
-def txt(tmp_path) -> Path:
+@pytest.fixture(name="txt")
+def fixture_txt(tmp_path) -> Path:
     txt = tmp_path / "hello.txt"
     txt.write_text("hi files")
     assert txt.name == "hello.txt"

@@ -1,25 +1,18 @@
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Awaitable,
-    Callable,
-    MutableMapping,
-    TypeVar,
-)
+import typing
 
 from .request import Request
 from .response import Response
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from .applications import App
 
-_E = TypeVar("_E", bound=Exception)
+_E = typing.TypeVar("_E", bound=Exception)
 
 # ASGI
 Scope = dict
-Event = MutableMapping[str, Any]
-Receive = Callable[[], Awaitable[Event]]
-Send = Callable[[Event], None]
+Event = typing.MutableMapping[str, typing.Any]
+Receive = typing.Callable[[], typing.Awaitable[Event]]
+Send = typing.Callable[[Event], None]
 
 
 class ASGIAppInstance:
@@ -33,8 +26,10 @@ class ASGIApp:
 
 
 # HTTP
-Handler = Callable[[Request, Response, Any], Awaitable[None]]
-ErrorHandler = Callable[[Request, Response, _E], Awaitable[None]]
+Handler = typing.Callable[
+    [Request, Response, typing.Any], typing.Awaitable[None]
+]
+ErrorHandler = typing.Callable[[Request, Response, _E], typing.Awaitable[None]]
 
 
 class HTTPApp:
@@ -43,4 +38,4 @@ class HTTPApp:
 
 
 # Server lifespan events
-EventHandler = Callable[[], Awaitable[None]]
+EventHandler = typing.Callable[[], typing.Awaitable[None]]

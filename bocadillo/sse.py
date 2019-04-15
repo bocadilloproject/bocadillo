@@ -1,5 +1,5 @@
 from json import dumps
-from typing import Any, Union, Sequence
+import typing
 
 
 class server_event(str):
@@ -39,8 +39,8 @@ class server_event(str):
         cls,
         name: str = None,
         *,
-        data: Union[str, Sequence] = None,
-        json: Any = None,
+        data: typing.Union[str, typing.Sequence] = None,
+        json: typing.Any = None,
         id: int = None,
     ):
         if json is not None:
@@ -70,8 +70,8 @@ class server_event(str):
         self,
         name: str = None,
         *,
-        data: Union[str, Sequence] = None,
-        json: Any = None,
+        data: typing.Union[str, typing.Sequence] = None,
+        json: typing.Any = None,
         id: int = None,
     ):
         pass

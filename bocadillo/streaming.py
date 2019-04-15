@@ -1,10 +1,10 @@
-from typing import AnyStr, Callable, AsyncIterable
+import typing
 import inspect
 
 from .request import Request, ClientDisconnect
 
-Stream = AsyncIterable[AnyStr]
-StreamFunc = Callable[[], Stream]
+Stream = typing.AsyncIterable[typing.AnyStr]
+StreamFunc = typing.Callable[[], Stream]
 
 
 def stream_until_disconnect(

@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Callable, Dict, Union, Optional
+import typing
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -10,12 +10,12 @@ from .config import settings, SettingsError
 from .constants import DEFAULT_CORS_CONFIG
 from .staticfiles import static
 
-if TYPE_CHECKING:
+if typing.TYPE_CHECKING:
     from .applications import App
 
-PluginFunction = Callable[["App"], None]
+PluginFunction = typing.Callable[["App"], None]
 
-_PLUGINS: Dict[str, PluginFunction] = {}
+_PLUGINS: typing.Dict[str, PluginFunction] = {}
 
 
 def plugin(func: PluginFunction):
@@ -24,7 +24,7 @@ def plugin(func: PluginFunction):
     return func
 
 
-def get_plugins() -> Dict[str, PluginFunction]:
+def get_plugins() -> typing.Dict[str, PluginFunction]:
     """Return the currently registered plugins."""
     return _PLUGINS
 
@@ -57,7 +57,7 @@ def use_cors(app: "App"):
         if `True`, the default configuration defined in [constants.py] is used.
         Otherwise, the dictionary is passed to Starlette's [CORSMiddleware].
     """
-    cors: Optional[Union[bool, dict]] = settings.get("CORS")
+    cors: typing.Optional[typing.Union[bool, dict]] = settings.get("CORS")
 
     if cors is None:
         return

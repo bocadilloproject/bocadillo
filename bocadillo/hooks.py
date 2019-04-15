@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from typing import Callable, Dict, Union, Awaitable, Type
+import typing
 
 from .compat import check_async
 from .request import Request
@@ -8,8 +8,10 @@ from .response import Response
 from .routing import HTTPRoute
 from .views import Handler, get_handlers, View
 
-HookFunction = Callable[[Request, Response, dict], Awaitable[None]]
-HookCollection = Dict[HTTPRoute, HookFunction]
+HookFunction = typing.Callable[
+    [Request, Response, dict], typing.Awaitable[None]
+]
+HookCollection = typing.Dict[HTTPRoute, HookFunction]
 
 BEFORE = "before"
 AFTER = "after"
@@ -64,7 +66,7 @@ class Hooks:
     ):
         hook = self._prepare(hook, *args, **kwargs)
 
-        def attach_hook(handler: Union[Type[View], Handler]):
+        def attach_hook(handler: typing.Union[typing.Type[View], Handler]):
             if inspect.isclass(handler):
                 # Recursively apply the hook to all handlers.
                 for method, _handler in get_handlers(handler).items():
