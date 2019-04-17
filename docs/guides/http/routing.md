@@ -171,7 +171,7 @@ async def home(req, res):
 The namespace will be prepended to the route's name (either inferred or explicit) and separated by a colon, e.g. resulting in `blog:home` for the above example.
 
 ::: tip
-If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](../agnostic/recipes.md).
+If you find yourself namespacing a lot of routes under a common path prefix (like above), you might benefit from writing a [recipe](/guides/architecture/recipes.md).
 :::
 
 ## Reversing named routes
