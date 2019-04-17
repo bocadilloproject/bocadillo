@@ -10,7 +10,7 @@ Providers help you **decouple resources from their consumers**. Using providers 
 
 Suppose we're implementing a caching system backed by [Redis](https://redis.io), a key-value store, using the [aioredis](https://github.com/aio-libs/aioredis) library.
 
-The application would connect to the Redis instance on startup, disconnect on shutdown (see [event handlers](../agnostic/events.md)), and views could use the connection object to cache items to Redis.
+The application would connect to the Redis instance on startup, disconnect on shutdown (see [event handlers](/guides/architecture/events.md)), and views could use the connection object to cache items to Redis.
 
 ## Without providers
 
@@ -81,7 +81,7 @@ But this approach wouldn't work in practice, because now we cannot reference the
 
 (You could add a dynamic `.redis` attribute to `app`, but we argue that this is not satisfactory nor scalable. For example, it doesn't work well with type annotations.)
 
-Also, consider this: what if the routes were declared in a separate [recipe](../agnostic/recipes.md)? How could we make sure they use the same cache? This would be even more problematic if the cache was in-memory — we wouldn't want to have the recipe and the app reference different copies of the cache!
+Also, consider this: what if the routes were declared in a separate [recipe](/guides/architecture/recipes.md)? How could we make sure they use the same cache? This would be even more problematic if the cache was in-memory — we wouldn't want to have the recipe and the app reference different copies of the cache!
 
 ## With providers
 

@@ -207,6 +207,7 @@ module.exports = {
           collapsable: false,
           children: listDir("discussions", [
             "databases",
+            "frontend",
             "deployment",
             "security"
           ])

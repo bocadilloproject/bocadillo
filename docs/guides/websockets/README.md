@@ -46,8 +46,8 @@ Let's break this code down:
    - We **receive** a text message from the WebSocket. If no message is available yet, the view will suspend, allowing the server to process other requests until a message is received.
    - Next, we **send** a message to the client.
 
-[routing]: ../http/routing.md
-[applications]: ../app.md
+[routing]: /guides/http/routing.md
+[applications]: /guides/architecture/app.md
 
 That's it! These two operations (`.receive()` and `.send()`) are the basic building blocks of WebSocket views.
 

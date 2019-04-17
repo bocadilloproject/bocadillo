@@ -32,7 +32,7 @@ First, we'll create the Bocadillo application. [Install Bocadillo](/getting-star
 # app.py
 from bocadillo import App, Templates
 
-app = app()
+app = App()
 templates = Templates(app)
 
 @app.route("/")
