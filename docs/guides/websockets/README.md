@@ -52,5 +52,5 @@ That's it! These two operations (`.receive()` and `.send()`) are the basic build
 Continue to learn more about how to use WebSockets in Bocadillo.
 
 [websockets]: https://websockets.readthedocs.io
-[the application class]: ../app.md
-[routes and url design]: ../http/routing.md
+[the application class]: /guides/architecture/app.md
+[routes and url design]: /guides/http/routing.md

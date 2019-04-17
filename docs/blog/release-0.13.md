@@ -101,13 +101,13 @@ Everything you need to know is in the [SSE usage guide](/guides/http/sse.md), bu
 
 Signed cookie-based sessions have landed in Bocadillo! Thanks a lot to [@zgoda](https://github.com/bocadilloproject/bocadillo/pull/211) for helping bring this feature in.
 
-Sessions allow you to persist data between requests from a given client. You can find an example as well as usage tips in the new [Sessions guide](/guides/agnostic/sessions.md).
+Sessions allow you to persist data between requests from a given client. You can find an example as well as usage tips in the new [Sessions guide](/guides/http/sessions.md).
 
 ## Testing utilities
 
 This release brings in new testing utilities that you can use to ensure the quality of your Bocadillo applications: [`create_client`](/api/testing.md#create-client) and [`LiveServer`](/api/testing.md#liveserver).
 
-We also wrote a brand new [Testing guide](/guides/tooling/testing.md) as well as a [pytest how-to guide](/how-to/test-pytest.md) to help you get started with Bocadillo testing! ✅
+We also wrote a brand new [Testing guide](/guides/architecture/testing.md) as well as a [pytest how-to guide](/how-to/test-pytest.md) to help you get started with Bocadillo testing! ✅
 
 ## Chatbot tutorial
 

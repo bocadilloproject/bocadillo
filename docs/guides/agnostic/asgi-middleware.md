@@ -35,5 +35,5 @@ If you're interested in writing your own ASGI middleware, see our [Writing middl
 
 [writing middleware]: /how-to/middleware.md
 [http middleware]: /guides/http/middleware.md
-[hsts]: /guides/app.md#hsts
+[hsts]: /guides/architecture/app.md#hsts
 [asgi]: https://asgi.readthedocs.io

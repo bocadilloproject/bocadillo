@@ -46,7 +46,7 @@ def log():
 
 ## App-scoped yield providers
 
-Yield providers that are also [app-scoped](./scopes.md) work really well when you need to provide an expensive resource for the whole lifetime of the application. This pattern is an alternative to traditional [event handlers](/guides/agnostic/events.md) for when you need the event handler to setup a resource that views can use.
+Yield providers that are also [app-scoped](./scopes.md) work really well when you need to provide an expensive resource for the whole lifetime of the application. This pattern is an alternative to traditional [event handlers](/guides/architecture/events.md) for when you need the event handler to setup a resource that views can use.
 
 The reason why this works is because:
 

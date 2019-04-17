@@ -118,4 +118,4 @@ By default, this whitelist is empty. You must configure it through the `allowed_
 [deployment]: ./deployment.md
 [templates]: ../guides/agnostic/templates.md
 [hsts]: ../guides/http/middleware.md#hsts
-[allowed hosts]: ../guides/app.md#allowed-hosts
+[allowed hosts]: ../guides/architecture/app.md#allowed-hosts

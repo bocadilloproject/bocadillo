@@ -15,7 +15,7 @@ We'll go through many aspects of building apps with Bocadillo, including:
 
 [websocket]: /guides/websockets/
 [providers]: /guides/injection/
-[testing]: /guides/tooling/testing.md
+[testing]: /guides/architecture/testing.md
 [pytest]: https://docs.pytest.org
 
 We'll use the [ChatterBot] library to build **Diego**, a friendly conversational agent. Don't worry, this won't require _any_ background in data science nor chatbot technology!
@@ -509,7 +509,7 @@ Want to challenge yourself? Here are a few ideas:
 - [Train Diego](https://chatterbot.readthedocs.io/en/stable/training.html) to answers questions like "How many people are you talking to currently?"
 - Currently, all clients talk to the same instance of Diego. Yet, it would be nice if each client had their own Diego to ensure a bespoke conversation. You may want to investigate [cookie-based sessions] and [factory providers] to implement this behavior.
 
-[cookie-based sessions]: /guides/agnostic/sessions.md
+[cookie-based sessions]: /guides/http/sessions.md
 [templates]: /guides/agnostic/templates.md
 [static files]: /guides/http/static-files.md
 

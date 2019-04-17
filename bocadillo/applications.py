@@ -368,7 +368,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
             to be applied to the application.
 
         # See Also
-        - [Recipes](../guides/agnostic/recipes.md)
+        - [Recipes](../guides/architecture/recipes.md)
         """
         recipe.apply(self)
 
@@ -539,8 +539,8 @@ class App(RoutingMixin, metaclass=DocsMeta):
             Extra keyword arguments passed to the uvicorn runner.
 
         # See Also
-        - [Configuring host and port](../guides/app.md#configuring-host-and-port)
-        - [Debug mode](../guides/app.md#debug-mode)
+        - [Configuring host and port](../guides/architecture/app.md#configuring-host-and-port)
+        - [Debug mode](../guides/architecture/app.md#debug-mode)
         - [Uvicorn settings](https://www.uvicorn.org/settings/) for all
         available keyword arguments.
         """

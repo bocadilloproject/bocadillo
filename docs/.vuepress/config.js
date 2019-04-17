@@ -67,15 +67,6 @@ module.exports = {
             ]
           },
           {
-            text: "Tooling",
-            items: [
-              {
-                text: "Queso (CLI)",
-                link: project.docsPage("queso")
-              }
-            ]
-          },
-          {
             text: "News",
             items: [
               {
@@ -130,11 +121,15 @@ module.exports = {
         }
       ],
       "/guides/": [
-        "/guides/app",
         {
-          title: "Tooling",
+          title: "Architecture",
           collapsable: false,
-          children: listDir("guides/tooling", ["cli", "testing"])
+          children: listDir("guides/architecture", [
+            "app",
+            "recipes",
+            "events",
+            "testing"
+          ])
         },
         {
           title: "HTTP",
@@ -151,6 +146,7 @@ module.exports = {
             "hooks",
             "background-tasks",
             "middleware",
+            "sessions",
             "sse"
           ])
         },
@@ -169,13 +165,7 @@ module.exports = {
         {
           title: "Protocol-agnostic",
           collapsable: false,
-          children: listDir("guides/agnostic", [
-            "asgi-middleware",
-            "templates",
-            "recipes",
-            "events",
-            "sessions"
-          ])
+          children: listDir("guides/agnostic", ["asgi-middleware", "templates"])
         },
         {
           title: "Providers (Dependency injection)",
@@ -216,6 +206,7 @@ module.exports = {
           collapsable: false,
           children: listDir("discussions", [
             "databases",
+            "frontend",
             "deployment",
             "security"
           ])

@@ -1,5 +1,5 @@
 ---
-next: ./app.md
+next: ./architecture/app.md
 ---
 
 # Guides

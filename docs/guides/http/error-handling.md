@@ -49,8 +49,8 @@ When an exception is raised within an HTTP view or middleware, the following alg
 1. We iterate over the registered exception classes until we find one that the raised exception is a subclass of.
 2. The latest registered error handler for that exception class is then called, and the (perhaps mutated) response is returned.
 3. If no error handler was found:
-    - A special error handler is called to convert the response to an `500 Internal Server Error` response. If [debug mode] is active, the response body is an HTML page containing the exception traceback. If debug mode is not active, the body is just plain text.
-    - The response is sent to the client and the exception is re-raised to allow server-side logging.
+   - A special error handler is called to convert the response to an `500 Internal Server Error` response. If [debug mode] is active, the response body is an HTML page containing the exception traceback. If debug mode is not active, the body is just plain text.
+   - The response is sent to the client and the exception is re-raised to allow server-side logging.
 
 ## How `HTTPError` is handled
 
@@ -114,4 +114,4 @@ if __name__ == "__main__":
 - 89.9% of the time, a `Lose` exception is raised. We do not have any error handler registered for it, but we do have one for its parent class `GameException`, so it will be used.
 - 0.1% of the time, a `RuntimeError` is raised. There is no error handler registered for this exception, so a standard 500 error response will be returned and the exception will be raised for server-side logging.
 
-[debug mode]: ../app.md#debug-mode
+[debug mode]: /guides/architecture/app.md#debug-mode
