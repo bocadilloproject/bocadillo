@@ -11,6 +11,23 @@ GITHUB = "https://github.com/bocadilloproject/bocadillo"
 DOCS = "https://bocadilloproject.github.io"
 CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
+INSTALL_REQUIRES = [
+    "starlette>=0.11, <0.12",
+    "uvicorn>=0.5.1, <0.6",
+    "jinja2>=2.10.1",
+    "whitenoise",
+    "requests",
+    "parse",
+    "python-multipart",
+    "websockets>=6.0",
+    "aiodine>=1.2.1, <2.0",
+]
+
+EXTRAS_REQUIRE = {"files": ["aiofiles"], "sessions": ["itsdangerous"]}
+EXTRAS_REQUIRE["full"] = [
+    req for reqs in EXTRAS_REQUIRE.values() for req in reqs
+]
+
 setuptools.setup(
     name="bocadillo",
     version="0.13.2",
@@ -19,20 +36,10 @@ setuptools.setup(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["bocadillo"],
+    packages=setuptools.find_packages(),
     package_data={"bocadillo": ["assets/*"]},
-    install_requires=[
-        "starlette>=0.11, <0.12",
-        "uvicorn>=0.5.1, <0.6",
-        "jinja2>=2.10.1",
-        "whitenoise",
-        "requests",
-        "parse",
-        "python-multipart",
-        "websockets>=6.0",
-        "aiodine>=1.2.1, <2.0",
-    ],
-    extras_require={"files": ["aiofiles"], "sessions": ["itsdangerous"]},
+    install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
     python_requires=">=3.6",
     url=DOCS,
     project_urls={
