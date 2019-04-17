@@ -1,32 +1,21 @@
 language: python
-
-python: "3.6"
-
+dist: xenial
 cache: pip
+python: "3.6"
 
 jobs:
   include:
     - stage: test
       if: branch != release/docs
-      language: python
-      cache: pip
       python: "3.6"
-      install:
-        - pip install ".[files,sessions]"
-        - pip install -U pytest pytest-asyncio codecov pytest-cov
+      install: pip install -U -r requirements-ci.txt
       script: pytest --cov=./
       after_success: codecov
 
     - stage: test
       if: branch != release/docs
-      language: python
-      # Python 3.7 still not available in usual distro
-      sudo: required
-      dist: xenial
       python: "3.7"
-      install:
-        - pip install ".[files,sessions]"
-        - pip install -U pytest pytest-asyncio
+      install: pip install -U -r requirements-ci.txt
       script: pytest
 
     - stage: build and deploy docs
@@ -35,9 +24,7 @@ jobs:
         - nvm install 8
         - nvm use 8
       install:
-        - pip install .
-        - pip install "pydoc-markdown<2.0.5"
-        # ^ See: https://github.com/NiklasRosenstein/pydoc-markdown/pull/78
+        - pip install -U -r requirements-ci.txt
         - npm install --only=dev
       script:
         - pydocmd generate
@@ -51,18 +38,6 @@ jobs:
         local-dir: docs/.vuepress/dist
         on:
           branch: release/docs
-
-    - stage: deploy to test pypi
-      if: branch = release/test
-      script: skip
-      deploy:
-        - provider: pypi
-          distributions: "sdist bdist_wheel"
-          username: $TEST_PYPI_USERNAME
-          password: $TEST_PYPI_PASSWORD
-          server: https://test.pypi.org/legacy/
-          on:
-            branch: release/test
 
     - stage: deploy to pypi
       if: tag IS present

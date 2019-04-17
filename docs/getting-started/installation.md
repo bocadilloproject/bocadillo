@@ -19,33 +19,19 @@ In the rest of the documentation, we will use `python` to refer to your Python e
 To verify that Python is correctly installed, type `python` in your shell. You should see something like:
 
 ```
-Python 3.7.0 (default, Jun 29 2018, 20:13:13)
-[Clang 9.1.0 (clang-902.0.39.2)] on darwin
+Python 3.7.2 (default, Dec 27 2018, 17:33:56)
+[Clang 10.0.0 (clang-1000.11.45.5)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
 ## Install Bocadillo
 
-### From PyPI
-
-Bocadillo is released to PyPI, which means you can install using [pip](https://pip.pypa.io/en/stable/):
+Bocadillo is released to PyPI, so you can install using [pip](https://pip.pypa.io/en/stable/):
 
 ```bash
 pip install bocadillo
 ```
-
-### From source (advanced)
-
-For enthusiasts and contributors, Bocadillo can also be installed from source.
-
-You'll first need to clone the repository. Then, move to Bocadillo's root directory and run:
-
-```bash
-pip install .
-```
-
-Alternatively, use the `-e` option for an [editable installation](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
 
 ## Verifying your installation
 
@@ -54,16 +40,37 @@ To verify that Bocadillo can be seen by Python, type `python` from your shell, t
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.13.2'
+"0.13.3"
 ```
 
 Alternatively, you can use an inline script:
 
 ```bash
 python -c "import bocadillo; print(bocadillo.__version__)"
-0.13.2
+0.13.3
 ```
 
 Note that you may have another version of Bocadillo installed.
 
-Now that you're all set up, you can take a look at our [quickstart](./quickstart.md) guide to see the basics of working with Bocadillo.
+## Extras <Badge text="Advanced" type="warning"/>
+
+Beyond the base install, Bocadillo has pip extras for the following optional features:
+
+| Feature                 | Extra      |
+| ----------------------- | ---------- |
+| [File responses]        | `files`    |
+| [Cookie-based sessions] | `sessions` |
+
+[file responses]: /guides/http/responses.md#file-responses
+[cookie-based sessions]: /guides/http/sessions.md
+
+Example `pip` invocations:
+
+```bash
+pip install bocadillo[files]
+pip install bocadillo[files,sessions]
+```
+
+::: tip
+To install all optional features, use `$ pip install bocadillo[full]`.
+:::

@@ -10,18 +10,30 @@
   margin-top: 0 !important;
 }
 
-// Custom containers
-
 .tip {
   border-color: $accentColor !important;
+  &.badge {
+    background-color: $accentColor !important;
+  }
 }
 
 .danger {
   border-color: $dangerColor !important;
-  background-color: rgba($dangerColor, 0.2) !important;
+  &.badge {
+    background-color: $dangerColor !important;
+  }
+  &.custom-block {
+    background-color: rgba($dangerColor, 0.2) !important;
+  }
 }
 
 .warning {
   border-color: $warnColor !important;
-  background-color: rgba($warnColor, 0.25) !important;
+  &.badge {
+    background-color: $warnColor !important;
+  }
+  &.custom-block {
+    background-color: rgba($warnColor, 0.15) !important;
+  }
 }
+
