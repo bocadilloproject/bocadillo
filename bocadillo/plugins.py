@@ -118,6 +118,11 @@ def use_sessions(app: "App"):
         variable. Otherwise, it must be a dictionary which will be passed
         to Starlette's [SessionMiddleware].
     """
+    sessions = settings.get("SESSIONS")
+
+    if sessions is None:
+        return
+
     try:
         from starlette.middleware.sessions import SessionMiddleware
     except ImportError as exc:  # pragma: no cover
@@ -127,11 +132,6 @@ def use_sessions(app: "App"):
                 "`pip install bocadillo[sessions]`."
             ) from exc
         raise exc from None
-
-    sessions = settings.get("SESSIONS")
-
-    if sessions is None:
-        return
 
     if sessions is True:
         sessions = {"secret_key": os.getenv("SECRET_KEY")}
