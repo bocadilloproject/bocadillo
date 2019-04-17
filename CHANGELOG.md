@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Install all extra features (`sessions` and `files`) using `pip install bocadillo[full]`.
+
 ## [v0.13.2] - 2019-04-13
 
 ### Fixed
