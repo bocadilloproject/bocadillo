@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.13.3] - 2019-04-17
+
 ### Added
 
 - Install all extra features (`sessions` and `files`) using `pip install bocadillo[full]`.
@@ -563,7 +565,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.3...HEAD
+[v0.13.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.2...v0.13.3
 [v0.13.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.1...v0.13.2
 [v0.13.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.0...v0.13.1
 [v0.13.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.12.6...v0.13.0
