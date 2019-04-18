@@ -223,12 +223,7 @@ class HTTPRoute(BaseRoute[View]):
 
     @classmethod
     def build(
-        cls,
-        view: View,
-        pattern: str,
-        name: str = None,
-        namespace: str = None,
-        **kwargs,
+        cls, view: View, pattern: str, name: str = None, **kwargs
     ) -> "HTTPRoute":
         """Build an HTTP route.
 
@@ -238,15 +233,12 @@ class HTTPRoute(BaseRoute[View]):
             obtained via [.normalize()](#normalize-2).
         pattern (str): an URL pattern.
         name (str): a route name (inferred from the view if not given).
-        namespace (str): an optional route namespace.
 
         # Returns
         route: an instance of #::bocadillo.routing#HTTPRoute.
         """
         if name is None:
             name = view.name
-        if namespace is not None:
-            name = namespace + ":" + name
 
         return super().build(view=view, pattern=pattern, name=name)
 
@@ -356,7 +348,7 @@ class RoutingMixin:
         self.http_router = HTTPRouter()
         self.websocket_router = WebSocketRouter()
 
-    def route(self, pattern: str, *, name: str = None, namespace: str = None):
+    def route(self, pattern: str, *, name: str = None):
         """Register an HTTP route by decorating a view.
 
         # Parameters
@@ -365,13 +357,8 @@ class RoutingMixin:
             an optional name for the route.
             If a route already exists for this name, it is replaced.
             Defaults to a snake-cased version of the view's name.
-        namespace (str):
-            an optional namespace for the route. If given, it is prefixed to
-            the name and separated by a colon.
         """
-        return self.http_router.route(
-            pattern=pattern, name=name, namespace=namespace
-        )
+        return self.http_router.route(pattern=pattern, name=name)
 
     def websocket_route(
         self,
