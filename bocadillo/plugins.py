@@ -9,6 +9,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .config import settings, SettingsError
 from .constants import DEFAULT_CORS_CONFIG
 from .staticfiles import static
+from .injection import STORE
 
 if typing.TYPE_CHECKING:
     from .applications import App
@@ -27,6 +28,19 @@ def plugin(func: PluginFunction):
 def get_plugins() -> typing.Dict[str, PluginFunction]:
     """Return the currently registered plugins."""
     return _PLUGINS
+
+
+@plugin
+def use_providers(app: "App"):
+    """Configure providers.
+
+    This plugin is always enabled. It ensures that app-scoped providers
+    are correctly setup on app startup, and tore down on app shutdown, and
+    resolves dependencies between providers.
+    """
+    STORE.freeze()
+    app.on("startup", STORE.enter_session)
+    app.on("shutdown", STORE.exit_session)
 
 
 @plugin

@@ -15,11 +15,11 @@ from .app_types import (
     Send,
 )
 from .config import settings
-from .compat import WSGIApp, nullcontext
+from .compat import WSGIApp
 from .converters import on_validation_error
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
-from .injection import _STORE
+from .injection import STORE
 from .meta import DocsMeta
 from .middleware import ASGIMiddleware
 from .request import Request
@@ -54,8 +54,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         "server_error_middleware",
         "_children",
         "_lifespan",
-        "_store",
-        "_frozen",
     )
 
     def __init__(self, name: str = None):
@@ -88,23 +86,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
                     "You must call `configure(app)` before serving `app`. "
                 )
 
-        # Providers.
-
-        self._store = _STORE
-        self._frozen = False
-
         # NOTE: discover providers from `providerconf` at instanciation time,
         # so that further declared views correctly resolve providers.
-        self._store.discover_default()
-
-        self.on("startup", self._store.enter_session)
-        self.on("shutdown", self._store.exit_session)
-
-    def _app_providers(self):
-        if not self._frozen:
-            self._store.freeze()
-            self._frozen = True
-        return nullcontext()
+        STORE.discover_default()
 
     def mount(self, prefix: str, app: typing.Union["App", ASGIApp, WSGIApp]):
         """Mount another WSGI or ASGI app at the given prefix.
@@ -245,26 +229,25 @@ class App(RoutingMixin, metaclass=DocsMeta):
         return asgi
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
-        with self._app_providers():
-            path: str = scope["path"]
+        path: str = scope["path"]
 
-            # Return a sub-mounted extra app, if found
-            for prefix, app in self._children.items():
-                if not path.startswith(prefix):
-                    continue
-                # Remove prefix from path so that the request is made according
-                # to the mounted app's point of view.
-                scope["path"] = path[len(prefix) :]
-                try:
-                    return app(scope)
-                except TypeError:
-                    return WSGIResponder(app, scope)
+        # Return a sub-mounted extra app, if found
+        for prefix, app in self._children.items():
+            if not path.startswith(prefix):
+                continue
+            # Remove prefix from path so that the request is made according
+            # to the mounted app's point of view.
+            scope["path"] = path[len(prefix) :]
+            try:
+                return app(scope)
+            except TypeError:
+                return WSGIResponder(app, scope)
 
-            if scope["type"] == "websocket":
-                return self.dispatch_websocket(scope)
+        if scope["type"] == "websocket":
+            return self.dispatch_websocket(scope)
 
-            assert scope["type"] == "http"
-            return self.dispatch_http(scope)
+        assert scope["type"] == "http"
+        return self.dispatch_http(scope)
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
