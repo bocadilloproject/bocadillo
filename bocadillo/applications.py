@@ -1,6 +1,3 @@
-import os
-import re
-from functools import partial
 import typing
 
 from starlette.middleware.wsgi import WSGIResponder
@@ -28,7 +25,6 @@ from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
-from .staticfiles import WhiteNoise
 
 if typing.TYPE_CHECKING:  # pragma: no cover
     from .recipes import Recipe
@@ -54,10 +50,9 @@ class App(RoutingMixin, metaclass=DocsMeta):
     __slots__ = (
         "name",
         "asgi",
-        "_children",
-        "_static_apps",
         "exception_middleware",
         "server_error_middleware",
+        "_children",
         "_lifespan",
         "_store",
         "_frozen",
@@ -73,7 +68,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
 
         # Mounted (children) apps.
         self._children: typing.Dict[str, typing.Any] = {}
-        self._static_apps: typing.Dict[str, WhiteNoise] = {}
 
         # HTTP middleware
         self.exception_middleware = HTTPErrorMiddleware(self.http_router)
@@ -128,9 +122,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             prefix = "/" + prefix
 
         self._children[prefix] = app
-
-        if isinstance(app, WhiteNoise):
-            self._static_apps[prefix] = app
 
     def recipe(self, recipe: "Recipe"):
         """Apply a recipe.

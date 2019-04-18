@@ -76,5 +76,5 @@ def test_whitenoise_config(raw_app):
     app = configure(
         raw_app, static_root="static", static_config={"max_age": 30}
     )
-    whitenoise = app._static_apps["/static"]
+    whitenoise = app._children["/static"]
     assert whitenoise.max_age == 30
