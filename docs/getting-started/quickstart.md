@@ -4,38 +4,67 @@ Now that you've got Bocadillo [installed][installation], let's go through the tr
 
 [installation]: ./installation.md
 
-Here you go:
+We'll use the [Bocadillo CLI] to generate a project. First, install it:
 
-<<<@/docs/getting-started/quickstart/hello.py
-
-If you've ever worked with [Flask], the API should look familiar. Still, let's break this code down:
-
-1. First, we import the `bocadillo` package.
-2. Then, we create an `App` instance.
-3. Next, we use the `@app.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
-4. The `index()` function is a **view**. It is a coroutine function that takes a request and a response as arguments, and mutates the response as required — a pattern borrowed from [Falcon]. Here, we send a plain text response.
-5. The last lines run the application server when the file is run as a script.
-
-You can save this script somewhere, for example in a `hello.py` file.
-
-To start the application server, run the application script itself:
+[bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
 ```bash
-python hello.py
+pip install bocadillo-cli
 ```
 
-This launches a [uvicorn] server for your application.
+Next, create a new project called `hello`:
 
-::: tip
-If you want to see how this development setup can be scaled up to a production-grade setup, check out our [deployment instructions](https://www.uvicorn.org/deployment/).
-:::
+```bash
+bocadillo create hello
+```
+
+You can now `cd hello` and look around. Inside the `hello` package, a bunch of files were generated:
+
+```
+hello
+├── __init__.py
+├── app.py
+├── asgi.py
+├── providerconf.py
+└── settings.py
+```
+
+Here's what each of them corresponds to:
+
+- `app.py`: this is the [application](/guides/architecture/app.md) script. This is where you declare views and bind them to URLs.
+- `asgi.py`: this is the ASGI server entry point, which we can pass to [uvicorn] to serve the application.
+- `providerconf.py`: this is the configuration script for [providers](/guides/injection/), Bocadillo's powerful dependency injection mechanism for web views.
+- `settings.py`: this is the [settings module](/guides/architecture/app.md#settings-module) which is used to configure the application.
+
+[uvicorn]: https://www.uvicorn.org
+
+You'll learn more about the associated features when reading the usage guides. For now, let's focus on the `app.py` script and add an HTTP route there:
+
+```python{6,7,8}
+# hello/app.py
+from bocadillo import App
+
+app = App()
+
+@app.route("/")
+async def index(req, res):
+    res.text = "Hello, world!"
+```
+
+If you've ever worked with [Flask](http://flask.pocoo.org), the API should look familiar: we use the `@app.route()` decorator to tell Bocadillo to register the `index()` function at the root URL `/`. This operation is known as **routing**.
+
+The `index()` function is a **view**. It is a coroutine function (hence the `async` keyword) that takes a request and a response as parameters, and mutates the response as required — a pattern borrowed from [Falcon](https://falconframework.org). Here, we send a plain text response.
+
+We're now ready to start the server:
+
+```bash
+uvicorn hello.asgi:app
+```
 
 You can now head to [http://localhost:8000](http://localhost:8000), and see "Hello, world!" printed on your screen! :tada:
 
 ![](./hello-world.png)
 
-Carry on to the tutorial, in which we'll go on the journey of building a **chatbot server** with Bocadillo!
+This minimal hello world application is mostly done! If you already wonder how to deploy it to production, check out the [deployment guide](https://www.uvicorn.org/deployment/).
 
-[uvicorn]: https://www.uvicorn.org
-[flask]: http://flask.pocoo.org
-[falcon]: https://falconframework.org
+Carry on to the tutorial, in which we'll go on the journey of building a **chatbot server** with Bocadillo!

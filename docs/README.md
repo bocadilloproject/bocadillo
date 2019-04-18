@@ -26,44 +26,59 @@ meta:
 
 ## Quick start
 
-Install it:
+We all love delicious "Hello, world!" examples, don't we? Here's ours:
+
+1. Install [Bocadillo] and the [Bocadillo CLI]:
 
 ```bash
-pip install bocadillo
+pip install bocadillo bocadillo-cli
 ```
 
-Build something:
+[bocadillo]: https://github.com/bocadilloproject/bocadillo
+[bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
+
+2. Generate the project and `cd` into it:
+
+```bash
+bocadillo create hello
+cd hello/
+```
+
+3. Edit the application script:
 
 ```python
-# app.py
-from bocadillo import App, Templates
+# hello/app.py
+from bocadillo import App
 
 app = App()
-templates = Templates(app)
 
 @app.route("/")
 async def index(req, res):
-    # Use a template from the ./templates directory
-    res.html = await templates.render("index.html")
-
-@app.route("/greet/{person}")
-async def greet(req, res, person):
-    res.json = {"message": f"Hi, {person}!"}
+    res.text = "Hello, world!"
 ```
 
-Start the [uvicorn] web server (hot reload enabled!):
+4. Start a [uvicorn] server (hot reload enabled!):
 
-[uvicorn]: https://www.uvicorn.org/
+[uvicorn]: https://www.uvicorn.org
 
 ```bash
-uvicorn app:app --reload
+uvicorn hello.asgi:app --reload
 ```
 
-Make requests!
+5. Say hello!
 
 ```bash
-curl http://localhost:8000/greet/Bocadillo
-{"message": "Hi, Bocadillo!"}
+$ curl http://localhost:8000
+Hello, world!
 ```
+
+6. Edit `app.py` to send "Hello, Bocadillo!" instead, then hit save. Uvicorn will pick up the changes and restart the application. Try it out again:
+
+```bash
+$ curl http://localhost:8000
+Hello, Bocadillo!
+```
+
+Tastes good! 🥪
 
 Hungry for more? Head to our [Getting Started](./getting-started/README.md) guide!

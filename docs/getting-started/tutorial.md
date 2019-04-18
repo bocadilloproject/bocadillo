@@ -28,54 +28,63 @@ Sounds exciting? Let's dive in! 🙌
 
 First things first: let's set up our project:
 
-1. Open up a terminal, and create an empty directory somewhere on your computer, then `cd` to it:
+1. Open up a terminal, and go to your favorite development directory. For example
 
 ```bash
-mkdir ~/dev/bocadillo-chatbot
-cd ~/dev/bocadillo-chatbot
+cd ~/dev
 ```
 
-2. [Install Bocadillo](/getting-started/installation.md) and ChatterBot. We're using [pipenv] to install dependencies, but you can also use plain ol' `pip`, or enter the future with [piploc](https://github.com/cs01/pythonloc).
+2. Install the [Bocadillo CLI] globally:
 
-[pipenv]: https://pipenv.readthedocs.io
+[bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
 ```bash
-pipenv install bocadillo chatterbot pytz
+pip install bocadillo-cli
 ```
 
-3. Create an empty `app.py` script. This is where we'll create the application later on:
+3. Use the CLI to generate a new project called `chatbot`:
 
 ```bash
-touch app.py
+bocadillo create chatbot
 ```
 
-We should now have the following directory structure:
+4. Run `cd chatbot`, and you should have the following directory structure:
 
-```bash
+```
 $ tree
 .
-├── Pipfile
-├── Pipfile.lock
-└── app.py
+├── README.md
+├── chatbot
+│   ├── __init__.py
+│   ├── app.py
+│   ├── asgi.py
+│   ├── providerconf.py
+│   └── settings.py
+└── requirements.txt
 ```
 
-## Bootstrapping the application
+4. Edit `requirements.txt` to add Chatterbot there:
 
-Now, let's write the app skeleton in `app.py`:
-
-```python
-# app.py
-from bocadillo import App
-
-app = App()
+```txt
+bocadillo >= 0.14
+chatterbot
+pytz  # Required by Chatterbot
 ```
 
-All we have to do to start the server is give the `app` object to [uvicorn]:
-
-[uvicorn]: https://www.uvicorn.org
+5. Install dependencies. We're just using pip and a virtualenv here, but you can use any other dependency management solution:
 
 ```bash
-uvicorn app:app
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Serving the application
+
+Once this is all done, let's try and serve the app before we go any further. Run the following command:
+
+```bash
+uvicorn chatbot.asgi:app
 ```
 
 If you go to [http://localhost:8000](http://localhost:8000) and get a `404 Not Found` response, you're all good! Enter `Ctrl+C` in your terminal to stop the server.
@@ -92,9 +101,13 @@ If you're interested in learning more about WebSockets in Python, I strongly rec
 
 Alright, so we're not going to plug the chatbot in just yet. Instead, let's make the server send back any message it receives — a behavior also known as an "echo" endpoint.
 
-Add the following between the `app` object declaration in `app.py`:
+Add the following at the end of `app.py`:
 
 ```python
+# chatbot/app.py
+
+...
+
 @app.websocket_route("/conversation")
 async def converse(ws):
     async for message in ws:
@@ -113,30 +126,13 @@ How about we try this out by creating a WebSocket client? Fear not — we don't 
 
 [websockets]: https://websockets.readthedocs.io
 
-Create a `client.py` file and paste the following code there. It connects to the WebSocket endpoint and runs a simple REPL:
+Create a `client.py` file in the project root directory, and paste the following code there. It connects to the WebSocket endpoint and runs a simple REPL:
 
-```python
-# client.py
-import asyncio
-from contextlib import suppress
-import websockets
+<<<@/docs/getting-started/tutorial/client.py
 
-async def client(url: str):
-    async with websockets.connect(url) as websocket:
-        while True:
-            message = input("> ")
-            await websocket.send(message)
-            response = await websocket.recv()
-            print(response)
-
-with suppress(KeyboardInterrupt):
-    asyncio.run(client("ws://localhost:8000/conversation"))
-```
-
-Run the server-side application with `uvicorn app:app` and, in a separate terminal, start the `client.py` script. You should be greeted with a `>` prompt. If so, start chattin'!
+Serve the app again and, in a separate terminal, run `$ python client.py`. You should be greeted with a `>` prompt. If so, start chattin'!
 
 ```
-$ python client.py
 > Hi!
 Hi!
 > Is there anyone here?
@@ -154,21 +150,9 @@ Now that we're able to make the server and a client communicate, how about we re
 
 This is where [ChatterBot] comes in! We'll create a chatbot rightfully named **Diego** — a chatbot speaking the asynchronous salsa. 🕺
 
-Go ahead and create a chatbot.py file, and add Diego in there:
+Go ahead and create a `bot.py` file, and add Diego in there:
 
-```python
-# chatbot.py
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
-
-diego = ChatBot("Diego")
-
-trainer = ChatterBotCorpusTrainer(diego)
-trainer.train(
-    "chatterbot.corpus.english.greetings",
-    "chatterbot.corpus.english.conversations"
-)
-```
+<<<@/docs/getting-started/tutorial/chatbot/bot.py
 
 (ChatterBot's chatbots are quite dumb out of the box, so the code above trains Diego on an English corpus to make him a bit smarter.)
 
@@ -176,7 +160,7 @@ At this point, you can try out the chatbot in a Python interpreter:
 
 ```python
 $ python
->>> from chatbot import diego  # Be patient — this may take a few seconds to load!
+>>> from chatbot.bot import diego  # Be patient — this may take a few seconds to load!
 >>> diego.get_response("Hi, there!")
 <Statement text:There should be one-- and preferably only one --obvious way to do it.>
 ```
@@ -186,8 +170,8 @@ $ python
 Let's now plug Diego into the WebSocket endpoint: each time we receive a new `message`, we'll give it to Diego and send his response back.
 
 ```python
-# app.py
-from chatbot import diego
+# chatbot/app.py
+from .bot import diego
 
 ...
 
@@ -201,7 +185,6 @@ async def converse(ws):
 If you run the [server/client setup](#trying-out-the-websocket-endpoint) from earlier, you can now see that Diego converses with us over the WebSocket!
 
 ```
-$ python client.py
 > Hi there!
 I am a chat bot. I am the original chat bot. Did you know that I am incapable of error?
 > Where are you?
@@ -215,51 +198,40 @@ Looks like Diego is a jokester. 😉
 
 Clients are now able to chat with Diego over a WebSocket connection. That's great!
 
-However, there are a few non-functional issues with our current setup:
-
-- Loading Diego is quite expensive: it takes about ten seconds on a regular laptop.
-- Because of the `import` at the top of the script, we'd load Diego every time we import the `app` module. Not great!
-- Diego is injected as a global dependency into the WebSocket endpoint: we can't swap it with another implementation (especially useful during tests), and it's not immediately clear that the endpoint depends on it at first sight.
-
-If you think about it, Diego is a **resource** — ideally, it should only be made available to the WebSocket endpoint at the time of processing a connection request.
+However, there are a few non-functional issues with our current setup. If you think about it, Diego is a **resource** — ideally, it should only be made available to the WebSocket endpoint at the time of processing a connection request. Instead, we load it as soon as the `app` module gets imported. Plus, it is injected as a global dependency which makes the code hard to test and less readable.
 
 So, there must be a better way… and there is: [providers]. ✨
 
-Providers are a unique feature of Bocadillo. They were inspired by [pytest fixtures] and offer an elegant, modular and flexible way to **manage and inject resources into web views**.
+Providers are quite unique to Bocadillo. They were inspired by [pytest fixtures] and offer an elegant, modular and flexible way to **manage and inject resources into web views**.
 
 [pytest fixtures]: https://docs.pytest.org/en/latest/fixture.html
 
 Let's use them to fix the code, shall we?
 
-First, let's move Diego to a `providerconf.py` script:
+Open the `providerconf.py` module that was generated by the CLI, and add the following code:
 
 ```python
-# providerconf.py
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
+# chatbot/providerconf.py
 from bocadillo import provider
 
 @provider(scope="app")
 def diego():
-    diego = ChatBot("Diego")
-
-    trainer = ChatterBotCorpusTrainer(diego)
-    trainer.train(
-        "chatterbot.corpus.english.greetings",
-        "chatterbot.corpus.english.conversations",
-    )
+    from .bot import diego
 
     return diego
 ```
 
-The code above declares a `diego` provider which we can now **inject** into the WebSocket view. All we have to do is declare it as a **parameter** to the view.
+This code declares a `diego` provider which lazily loads the chatbot on app startup (hence `scope="app"`).
 
-Let's do just that by updating the `app.py` script. Here, you get it in full:
+We can now **inject** Diego into the WebSocket view. All we have to do is declare it as a **parameter** to the view. Let's do just that by updating the `app.py` script, which is listed here in full:
 
 ```python
-from bocadillo import App
+# chatbot/app.py
+from bocadillo import App, discover_providers
 
 app = App()
+discover_providers("chatbot.providerconf")
+
 
 @app.websocket_route("/conversation")
 async def converse(ws, diego):  # <-- 👋, Diego!
@@ -270,12 +242,12 @@ async def converse(ws, diego):  # <-- 👋, Diego!
 
 No imports required — Diego will _automagically_ get injected in the WebSocket view when processing the WebSocket connection request. ✨
 
-Alright, ready to try things out?
+Ready to try things out?
 
-1. Run the server using [uvicorn]. You should see additional logs corresponding to Bocadillo setting up Diego on startup:
+1. Run the server. You should see additional logs corresponding to Bocadillo setting up Diego on startup:
 
-```bash
-$ uvicorn app:app
+```
+$ uvicorn chatbot.asgi:app
 INFO: Started server process [29843]
 INFO: Waiting for application startup.
 [nltk_data] Downloading package averaged_perceptron_tagger to
@@ -292,10 +264,9 @@ Training conversations.yml: [####################] 100%
 INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
-2. Run the `client.py` script, and start chatting! You shouldn't see any difference from before. In particular, Diego responds just as fast.
+2. Run the `client.py` script again, and start chatting! You shouldn't see any difference from before. In particular, Diego responds just as fast.
 
 ```
-$ python client.py
 > Hello!
 Hi
 > I would like to order a sandwich
@@ -314,7 +285,7 @@ If you were wondering, the answer is yes — we can implement this with provider
 1. Add a `clients` provider to `providerconf.py`:
 
 ```python
-# providerconf.py
+# chatbot/providerconf.py
 from bocadillo import provider
 
 ...
@@ -324,12 +295,12 @@ def clients():
     return set()
 ```
 
-2. Add another provider which returns a context manager that takes care of registering the `ws` connection to the set of clients. FYI, this is an example of a [factory provider][factory providers], but you don't really need to understand the whole code at this point.
+2. Add another provider which returns a context manager that takes care of adding the `ws` connection to the set of clients. FYI, this is an example of a [factory provider][factory providers], but you don't really need to understand the whole code at this point.
 
 [factory providers]: /guides/injection/factory.md
 
 ```python
-# providerconf.py
+# chatbot/providerconf.py
 from contextlib import contextmanager
 from bocadillo import provider
 
@@ -338,20 +309,20 @@ from bocadillo import provider
 @provider
 def save_client(clients):
     @contextmanager
-    def _register(ws):
+    def _save(ws):
         clients.add(ws)
         try:
             yield ws
         finally:
             clients.remove(ws)
 
-    return _register
+    return _save
 ```
 
 3. In the WebSocket view, use the new `save_client` provider to register the WebSocket client:
 
 ```python
-# app.py
+# chatbot/app.py
 
 ...
 
@@ -367,14 +338,14 @@ That's it! While the client is chatting with Diego, it will be present in the se
 
 How about we do something with this information?
 
-## Exposing client count via a REST endpoint
+## Exposing clients count via a REST endpoint
 
 As a final feature, let's step aside from WebSocket for a moment and go back to the good old HTTP protocol. We'll create a simple REST endpoint to view the number of currently connected clients.
 
 Go back to `app.py` and add the following code:
 
 ```python
-# app.py
+# chatbot/app.py
 
 ...
 
@@ -383,9 +354,9 @@ async def client_count(req, res, clients):
     res.json = {"count": len(clients)}
 ```
 
-If you went through the [quickstart] example, hopefully this code shouldn't come as a surprise. All we do here is send the number of `clients` (obtained from the `clients` provider) in a JSON response.
+Hopefully this code shouldn't come as a surprise. All we do here is send the number of `clients` (obtained from the `clients` provider) in a JSON response.
 
-Go ahead! Run `uvicorn app:app` and a few `python client.py` instances, and check out how many clients are connected by opening [http://localhost:8000/client-count](http://localhost:8000/client-count) in a web browser. Press `Ctrl+C` for one of the clients, and see the client count go down!
+Go ahead! Run `uvicorn chatbot.asgi:app`, and a few `python client.py` instances, and check out how many clients are connected by opening [http://localhost:8000/client-count](http://localhost:8000/client-count) in a web browser. Press `Ctrl+C` for one of the clients, and see the client count go down!
 
 Did it work? Congrats! ✨
 
@@ -398,20 +369,29 @@ One of Bocadillo's design principles is to make it easy to write high-quality ap
 You can write those with your favorite test framework. We'll choose [pytest] for the purpose of this tutorial. Let's install it first:
 
 ```bash
-pipenv install --dev pytest
+pip install pytest
 ```
 
-Now, let's setup our testing environment. We'll write a [pytest fixture][pytest fixtures] that sets up a test client. It exposes a Requests-like API as well as helpers to test WebSocket endpoints. Besides, we don't actually need to test the chatbot here, so we'll override the `diego` provider with an "echo" mock — this will have the nice side effect of greatly speeding up the tests.
+Next, create a tests package:
 
-So, go ahead and create a `conftest.py` script and place the following in there:
+```bash
+mkdir tests
+```
+
+We can now setup our testing environment:
+
+- We'll write a [pytest fixture][pytest fixtures] that sets up a test client. The test client exposes a Requests-like API as well as helpers to test WebSocket endpoints.
+- We don't actually need to test the chatbot here, so we'll override the `diego` provider with an "echo" mock — this will have the nice side effect of greatly speeding up the tests.
+
+Go ahead and create a `conftest.py` script and place the following in there:
 
 ```python
-# conftest.py
+# tests/conftest.py
 import pytest
 from bocadillo import provider
 from bocadillo.testing import create_client
 
-from app import app
+from chatbot.asgi import app
 
 @provider
 def diego():
@@ -426,16 +406,16 @@ def client():
     return create_client(app)
 ```
 
-Now is the time to write some tests! Create a `test_app.py` file at the project root directory:
+Now is the time to write some tests! Create a `test_app.py` file in the tests package:
 
 ```bash
-touch test_app.py
+touch tests/test_app.py
 ```
 
 First, let's test that we can connect to the WebSocket endpoint, and that we get a response from Diego if we send a message:
 
 ```python
-# test_app.py
+# tests/test_app.py
 
 def test_connect_and_converse(client):
     with client.websocket_connect("/conversation") as ws:
@@ -446,7 +426,7 @@ def test_connect_and_converse(client):
 Now, let's test the incrementation of the client counter when clients connect to the WebSocket endpoint:
 
 ```python
-# test_app.py
+# tests/test_app.py
 ...
 
 def test_client_count(client):
@@ -485,17 +465,16 @@ If you've made it so far — congratulations! You've just built a **chatbot serv
 
 Together, we've seen how to:
 
-- Setup a Bocadillo project
-- Write a WebSocket endpoint.
-- Write an HTTP endpoint.
-- Use providers to decouple resources and their consumers.
-- Test WebSocket and HTTP endpoints.
+- Setup a project using the [Bocadillo CLI] and edit its contents.
+- Write WebSocket and HTTP endpoints.
+- Use providers to decouple resources from their consumers.
+- Test WebSocket and HTTP endpoints using pytest and Bocadillo's testing helpers.
 
-The complete code for this tutorial is available on our GitHub repo: <repo-page to="docs/getting-started/tutorial" branch="docs" text="get the code"/>. All in all, the server and `providerconf.py` only add up to about 60 lines of code — pretty good bang for the buck!
+The complete code for this tutorial is available on our GitHub repo: [get the code](https://github.com/bocadilloproject/bocadillo/blob/master/docs/getting-started/tutorial/).
 
 ## Next steps
 
-Obviously, we've only scratched the surface of what you can do with Bocadillo. The goal of this tutorial was to take you through the steps of building a _Minimum Meaningful Application_.
+Obviously, we've only scratched the surface of what you can do with Bocadillo. The goal of this tutorial was to take you through the steps of building your First Meaningful Application.
 
 You can iterate upon this chatbot server we've built together very easily. We'd be happy to see what you come up with!
 

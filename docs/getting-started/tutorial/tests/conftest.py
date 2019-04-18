@@ -2,7 +2,7 @@ import pytest
 from bocadillo import provider
 from bocadillo.testing import create_client
 
-from app import app
+from chatbot.app import app
 
 
 @provider

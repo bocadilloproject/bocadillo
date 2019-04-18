@@ -1,7 +1,8 @@
-from bocadillo import App
-
+"""Application definition."""
+from bocadillo import App, discover_providers
 
 app = App()
+discover_providers("chatbot.providerconf")
 
 
 @app.websocket_route("/conversation")

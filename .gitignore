@@ -13,9 +13,14 @@ __pycache__/
 
 # Dependencies
 node_modules/
+venv/
+env/
 
 # Build
 docs/.vuepress/dist
+
+# Serialized data
+*.pickle
 
 # Private
 .env
