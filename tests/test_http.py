@@ -77,10 +77,20 @@ def test_if_handle_is_implemented_then_bypasses_other_methods(app: App, client):
     assert response.text == "Handle!"
 
 
-def test_from_obj(app: App, client):
+def test_view_from_obj(app: App, client):
     class MyView:
         async def get(self, req, res):
             pass
 
     app.route("/")(MyView())
     assert client.get("/").status_code == 200
+
+
+def test_parameter_is_passed_as_keyword_argument(app: App, client):
+    @app.route("/greet/{person}")
+    async def greet(req, res, *, person: str):
+        res.text = person
+
+    response = client.get("/greet/John")
+    assert response.status_code == 200
+    assert response.text == "John"
