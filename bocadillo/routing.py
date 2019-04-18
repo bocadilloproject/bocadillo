@@ -357,14 +357,10 @@ class RoutingMixin:
         self.websocket_router = WebSocketRouter()
 
     def route(self, pattern: str, *, name: str = None, namespace: str = None):
-        """Register a new route by decorating a view.
+        """Register an HTTP route by decorating a view.
 
         # Parameters
         pattern (str): an URL pattern.
-        methods (list of str):
-            an optional list of HTTP methods.
-            Defaults to `["get", "head"]`.
-            Ignored for class-based views.
         name (str):
             an optional name for the route.
             If a route already exists for this name, it is replaced.
