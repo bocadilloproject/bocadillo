@@ -58,7 +58,11 @@ module.exports = {
             items: [
               {
                 text: "FAQ",
-                link: "/faq/"
+                link: "/faq"
+              },
+              {
+                text: "Troubleshooting",
+                link: "/troubleshooting"
               },
               {
                 text: "Chat",
@@ -224,7 +228,8 @@ module.exports = {
           })
         }
       ],
-      "/faq/": ["/faq/"]
+      "/faq": ["/faq"],
+      "/troubleshooting": ["/troubleshooting"]
     }
   }
 };
