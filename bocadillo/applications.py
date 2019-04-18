@@ -234,20 +234,24 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self._lifespan.add_event_handler(event, handler)
         return handler
 
-    async def dispatch_http(self, receive: Receive, send: Send, scope: Scope):
-        req = Request(scope, receive)
-        res = Response(req)
+    def dispatch_http(self, scope: Scope) -> ASGIAppInstance:
+        async def asgi(receive: Receive, send: Send):
+            req = Request(scope, receive)
+            res = Response(req)
 
-        res: Response = await self.server_error_middleware(req, res)
-        await res(receive, send)
-        # Re-raise the exception to allow the server to log the error
-        # and for the test client to optionally re-raise it too.
-        self.server_error_middleware.raise_if_exception()
+            res: Response = await self.server_error_middleware(req, res)
+            await res(receive, send)
+            # Re-raise the exception to allow the server to log the error
+            # and for the test client to optionally re-raise it too.
+            self.server_error_middleware.raise_if_exception()
 
-    async def dispatch_websocket(
-        self, receive: Receive, send: Send, scope: Scope
-    ):
-        await self.websocket_router(scope, receive, send)
+        return asgi
+
+    def dispatch_websocket(self, scope: Scope) -> ASGIAppInstance:
+        async def asgi(receive: Receive, send: Send):
+            await self.websocket_router(scope, receive, send)
+
+        return asgi
 
     def dispatch(self, scope: Scope) -> ASGIAppInstance:
         with self._app_providers():
@@ -266,10 +270,10 @@ class App(RoutingMixin, metaclass=DocsMeta):
                     return WSGIResponder(app, scope)
 
             if scope["type"] == "websocket":
-                return partial(self.dispatch_websocket, scope=scope)
+                return self.dispatch_websocket(scope)
 
             assert scope["type"] == "http"
-            return partial(self.dispatch_http, scope=scope)
+            return self.dispatch_http(scope)
 
     def __call__(self, scope: Scope) -> ASGIAppInstance:
         if scope["type"] == "lifespan":
