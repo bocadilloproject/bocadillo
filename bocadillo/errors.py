@@ -114,10 +114,13 @@ class HTTPErrorMiddleware(HTTPApp):
         self._exception_handlers[exception_class] = handler
 
     def _get_exception_handler(self, exc: _E) -> typing.Optional[ErrorHandler]:
-        for cls, handler in self._exception_handlers.items():
-            if issubclass(type(exc), cls):
-                return handler
-        return None
+        try:
+            return self._exception_handlers[type(exc)]
+        except KeyError:
+            for cls, handler in self._exception_handlers.items():
+                if isinstance(exc, cls):
+                    return handler
+            return None
 
     async def __call__(self, req: Request, res: Response) -> Response:
         response = self.app(req, res)

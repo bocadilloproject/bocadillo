@@ -1,5 +1,7 @@
-import pytest
 import os
+
+import pytest
+
 from bocadillo import settings
 from bocadillo.testing import create_client
 
@@ -11,15 +13,12 @@ def setup_env():
     os.environ.pop("SECRET_KEY")
 
 
-@pytest.fixture(scope="module")
-def client():
-    settings._wrapped = None  # force-clear settings
-    from app import app
+def test_todos():
+    settings._clear()
+    from .app import app
 
-    return create_client(app)
+    client = create_client(app)
 
-
-def test_todos(client):
     r = client.get("/unseen-todos")
     assert r.status_code == 200
     assert len(r.json()) == 3

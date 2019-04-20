@@ -68,5 +68,5 @@ In the following example, we use a cookie-based session to store the ID of the l
 The `SECRET_KEY` environment variable must be set, so use the following to launch this example app:
 
 ```bash
-SECRET_KEY=1234 uvicorn app:app
+SECRET_KEY=1234 uvicorn example.app:app
 ```

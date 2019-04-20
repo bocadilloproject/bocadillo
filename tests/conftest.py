@@ -11,7 +11,7 @@ APP_CLASSES = [App, lambda: Recipe("tacos")]
 
 @pytest.fixture(params=APP_CLASSES, name="raw_app")
 def fixture_raw_app(request) -> App:
-    settings._wrapped = None  # force settings to clear
+    settings._clear()
     cls = request.param
     return cls()
 

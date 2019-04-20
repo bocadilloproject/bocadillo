@@ -1,6 +1,6 @@
-# app.py
+# example/app.py
 from bocadillo import App, view, provider, configure
-import settings
+from . import settings
 
 app = App()
 configure(app, settings)

@@ -146,6 +146,7 @@ module.exports = {
             "error-handling",
             "requests",
             "responses",
+            "json-validation",
             "redirecting",
             "static-files",
             "hooks",
@@ -197,7 +198,7 @@ module.exports = {
         {
           title: "Third-party solutions",
           collapsable: false,
-          children: listDir("how-to", ["tortoise", "socketio"])
+          children: listDir("how-to", ["orm", "socketio"])
         },
         {
           title: "Testing",

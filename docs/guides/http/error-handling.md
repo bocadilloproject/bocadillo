@@ -46,8 +46,8 @@ app.add_error_handler(AttributeError, on_attribute_error)
 
 When an exception is raised within an HTTP view or middleware, the following algorithm is used:
 
-1. We iterate over the registered exception classes until we find one that the raised exception is a subclass of.
-2. The latest registered error handler for that exception class is then called, and the (perhaps mutated) response is returned. If the error handler itself raises an exception, we go back to 1.
+1. We iterate over the registered exception classes until we find the one that was raised, or one that it is a subclass of (in this order).
+2. The error handler found is called, and the (perhaps mutated) response is returned. If the error handler itself raises an exception, we go back to 1.
 3. If no error handler was found:
    - A special error handler is called to convert the response to an `500 Internal Server Error` response.
    - The response is sent to the client and the exception is re-raised to allow server-side logging.

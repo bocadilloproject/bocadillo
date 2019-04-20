@@ -16,37 +16,29 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Added
 
-Routing:
+Features:
 
-- Route parameters are now validated based on type annotations defined on the HTTP or WebSocket view. Annotations can be `int`, `float`, `bool`, `date`, `datetime`, `time`, `decimal.Decimal` or any [TypeSystem] field.
-- Query parameters can be injected into a view by declaring them as parameters with defaults, e.g. `limit: int = None`. Type annotation-based validation is also available.
-
-New settings infrastructure:
-
-- Django-style `bocadillo.settings` lazy object.
-- Configure an app before serving using `bocadillo.configure(app)`.
-
-New plugin mechanism:
-
-- Signature: `(app: App) -> None`.
-- Use the new lazy `settings` object to perform conditional logic.
-- Register a new plugin using `@bocadillo.plugin`.
-- Inspect registered plugins using the `get_plugins()` helper.
-
-Other:
-
-- Error handlers can now re-raise exceptions for further processing, e.g. re-raise an `HTTPError` which will be processed by the registered `HTTPError` handler.
+- Route parameter validation based on type annotations for HTTP and WebSocket views, e.g. `pk: int`. Annotation with any TypeSystem field is supported.
+- Query parameter injection and validation, e.g. `limit: int = None`. Annotation with any TypeSystem field is supported.
+- JSON validation based on TypeSystem.
+- Settings infrastructure: Django-style `bocadillo.settings` lazy object, app configuration using `bocadillo.configure(app[, settings][, **kwargs])`.
+- Plugin mechanism: register a `(app: App) -> None` callable using `@bocadillo.plugin`, and use the new lazy `settings` object to perform plugin setup.
 - Build a full URL for a `LiveServer` using `server.url("/path")`. Note: `server.url` still gives access to the root live server URL.
-  [typesystem]: https://www.encode.io/typesystem
+
+Documentation:
+
+- New how-to guide on integrating with the `orm` async ORM. Replaces the how-to guide on integrating with Tortoise ORM.
 
 ### Changed
 
-- Features such as CORS, HSTS or allowed hosts are now implemented via plugins. See the "Removed" section for the impact on the application API.
+- CORS, HSTS, GZip, allowed hosts, static files and sessions are now implemented via plugins. See the "Removed" section for the impact on the application API.
 - **BREAKING**: redirects now use an exception syntax: `raise Redirect("/foo")` (`from bocadillo import Redirect`) instead of `app.redirect("/foo)`. `app.redirect()` has been removed consequently.
 
 ### Fixed
 
 - The code base now uses `__slots__` in all relevant places. We expect some speed improvements as a result.
+- Error handlers can now re-raise exceptions for further processing, e.g. re-raise an `HTTPError` which will be processed by the registered `HTTPError` handler.
+- Previously, error handlers were searched for parent exception classes only. We now look for an error handler for the exception's class first, and then look for error handlers for any parent exception class.
 
 ### Removed
 

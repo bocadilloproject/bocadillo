@@ -1,13 +1,17 @@
 import os
 import typing
 
+import typesystem
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from .config import settings, SettingsError
+from .config import SettingsError, settings
 from .constants import DEFAULT_CORS_CONFIG
+from .converters import PathConversionError
+from .error_handlers import error_to_json
+from .errors import HTTPError
 from .staticfiles import static
 from .injection import STORE
 
@@ -182,3 +186,33 @@ def use_staticfiles(app: "App"):
         return
 
     app.mount(static_root, static(static_dir, **static_config))
+
+
+@plugin
+def use_path_conversion_error_handling(app: "App"):
+    @app.error_handler(PathConversionError)
+    async def on_path_conversion_error(req, res, exc: PathConversionError):
+        raise HTTPError(400, detail=dict(exc))
+
+
+@plugin
+def use_typesystem_validation_error_handling(app: "App"):
+    """Setup an error handler for `typesystem.ValidationError`.
+
+    This plugin allows to validate TypeSystem schemas while letting the
+    framework deal with formatting and sending back a `400 Bad Request`
+    error response in case of invalid data.
+
+    Settings:
+    - `HANDLE_TYPESYSTEM_VALIDATION_ERRORS` (bool):
+        Set to `False` to disable this plugin. Defaults to `True`.
+    """
+    if not settings.get("HANDLE_TYPESYSTEM_VALIDATION_ERRORS", True):
+        return
+
+    @app.error_handler(typesystem.ValidationError)
+    async def handle_validation_error(req, res, exc):
+        detail = dict(exc)
+        # Don't just re-raise `HTTPError` for handling by the configured
+        # error handler, because we really want to return JSON.
+        await error_to_json(req, res, HTTPError(400, detail=detail))

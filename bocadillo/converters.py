@@ -6,8 +6,6 @@ import typing
 
 import typesystem
 
-from .errors import HTTPError
-
 FIELD_ALIASES: typing.Dict[typing.Type, typesystem.Field] = {
     int: typesystem.Integer,
     float: typesystem.Float,
@@ -17,6 +15,10 @@ FIELD_ALIASES: typing.Dict[typing.Type, typesystem.Field] = {
     time: typesystem.Time,
     datetime: typesystem.DateTime,
 }
+
+
+class PathConversionError(typesystem.ValidationError):
+    pass
 
 
 class Converter:
@@ -69,7 +71,7 @@ class Converter:
                 bound.arguments[param_name] = value
 
         if errors:
-            raise typesystem.ValidationError(messages=errors)
+            raise PathConversionError(messages=errors)
 
         # NOTE: apply defaults last to prevent validating the default values.
         # It's faster and less bug-prone.
@@ -118,7 +120,3 @@ def convert_arguments(
         return await func(*args, **kwargs)
 
     return converted
-
-
-async def on_validation_error(req, res, exc: typesystem.ValidationError):
-    raise HTTPError(400, detail=dict(exc))

@@ -49,61 +49,22 @@ async def index(req, res, db):
 
 ### ORM
 
-Using an ORM (Object Relational Mapper) allows you to think in terms of classes and objects instead of tables and rows. You should be aware that this has [a number of benefits and drawbacks](https://www.fullstackpython.com/object-relational-mappers-orms.html).
+Using an ORM (Object Relational Mapper) allows you to think in terms of classes and objects instead of tables and rows.
 
-There are awesome things happening in the landscape of Python async ORMs right now. Here are some of the best alternatives we've come across:
+This technique has [a number of benefits and drawbacks](https://www.fullstackpython.com/object-relational-mappers-orms.html), but if you go for it our recommended option is [orm], an asynchronous ORM for Python. It's based on SQLAlchemy Core, so it's fast, and easy to use, and supports all major databases (PostgreSQL, MySQL and SQLite). Besides, you can integrate it with Bocadillo to get **data validation** without any boilerplate — see: [Use orm to interact with an SQL database](/how-to/orm.md).
 
-- [orm]: an async ORM built on top of [Databases]. It has support for Postgres, MySQL, and SQLite and exposes a Django-like querying interface.
-- [Tortoise]: an async ORM inspired by the Django ORM. See also our [Tortoise guide](/how-to/tortoise.md).
+[orm]: https://github.com/encode/orm
+
+For completeness, here are some alternatives to `orm` we've come across:
+
+- [Tortoise]: an async ORM inspired by the Django ORM.
 - [GINO]: an async ORM based on SQLAlchemy Core.
 - [peewee-async]: async wrapper around [peewee].
 
 [tortoise]: https://tortoise-orm.readthedocs.io
-[orm]: https://github.com/encode/orm
 [gino]: https://github.com/fantix/gino
 [peewee-async]: https://github.com/05bit/peewee-async
 [peewee]: https://github.com/coleifer/peewee
-
-Our recommended option is the `orm` package. It's beautiful, ease to use, and _very_ easy to integrate with Bocadillo. Beware, though, that the project is still very young, so make sure to pin your dependencies.
-
-Anyway, here's an example setup:
-
-```python
-# db.py
-import os
-
-import databases
-import orm
-import sqlalchemy
-
-url = os.getenv("DATABASE_URL")
-database = databases.Database(url)
-metadata = sqlalchemy.MetaData()
-
-class Post(orm.Model):
-    __tablename__ = "posts"
-    __database__ = database
-    __metadata__ = metadata
-
-    id = orm.Integer(primary_key=True)
-    title = orm.String(max_length=300)
-    content = orm.Text(allow_blank=True)
-
-engine = sqlalchemy.create_engine(url)
-metadata.create_all(engine)
-```
-
-```python
-# app.py
-from bocadillo import App
-from db import Post
-
-app = App()
-
-@app.route("/posts")
-async def list_posts(req, res):
-    res.json = [dict(post) for post in await Post.objects.all()]
-```
 
 ### Dialect-specific client library (advanced)
 

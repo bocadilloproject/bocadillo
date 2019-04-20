@@ -2,7 +2,6 @@ import typing
 
 from starlette.middleware.wsgi import WSGIResponder
 from starlette.routing import Lifespan
-import typesystem
 
 from .app_types import (
     _E,
@@ -16,7 +15,6 @@ from .app_types import (
 )
 from .config import settings
 from .compat import WSGIApp
-from .converters import on_validation_error
 from .error_handlers import error_to_text
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import STORE
@@ -73,7 +71,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
             self.exception_middleware, handler=error_to_text
         )
         self.add_error_handler(HTTPError, error_to_text)
-        self.add_error_handler(typesystem.ValidationError, on_validation_error)
 
         # Lifespan middleware
         self._lifespan = Lifespan()

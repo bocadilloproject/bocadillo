@@ -78,6 +78,9 @@ class LazySettings:
     def get(self, name: str, default: typing.Any = None) -> typing.Any:
         return getattr(self, name, default)
 
+    def _clear(self):
+        self._wrapped = None
+
 
 settings = LazySettings()  # pylint: disable=invalid-name
 
