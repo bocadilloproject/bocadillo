@@ -1,24 +1,28 @@
 # Introduction
 
-Welcome to Bocadillo's documentation!
+Hi there, and welcome to the Bocadillo documentation! 👋
 
-We recommend you read this quick introduction before you get started with Bocadillo. It will hopefully answer some of your questions about the purpose and goals of Bocadillo, and what to expect from it.
+This page is about the design of Bocadillo, and things you may want to know before diving in.
 
-If you want to jump right in, feel free to skip to the [Installation guide](installation.md).
+In a hurry? Skip to the [Installation guide](installation.md).
 
-::: tip CONTRIBUTING
-Building and improving the documentation is an ongoing community effort. If you'd like to contribute, join us on <repo text="GitHub"/> or use the "Edit" link at the bottom of each page!
+::: tip ABOUT THIS WEBSITE
+This documentation site is an ongoing community effort. If you found a typo, use the "Edit" link at the bottom of each page!
 :::
 
 ## What is Bocadillo?
 
-Bocadillo is a modern Python web framework that aims at **making async web apps and services fun to build and accessible to everyone**. We ultimately believe that web frameworks should be fun and easy to use while empowering the developer to make good decisions and ship high-quality applications.
+Bocadillo is a **Python async web framework** that makes server-side async web apps **fun to build** and **accessible to everyone**.
+
+::: tip
+Migrating from v0.13.x? Read the [v0.14 release notes](/blog/release-0.14.html).
+:::
 
 ### Design
 
 Bocadillo is designed to be:
 
-- **Productive**: a carefully chosen set of included batteries\* helps you solve common and more advanced problems.
+- **Productive**: a carefully chosen set of included batteries helps you solve common and more advanced problems.
 - **Real-time capable**: embrace async programming and the baked-in [WebSocket] and [SSE] support to build real-time, highly-concurrent systems.
 - **Flexible**: inject resources into web views using [providers], an explicit, modular and easy-to-use mechanism inspired by pytest fixtures.
 - **Performant**: Bocadillo is built on top of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and framework.
@@ -31,14 +35,9 @@ Bocadillo is designed to be:
 [starlette]: https://www.starlette.io
 [testing]: /guides/architecture/testing.md
 
-_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, [Jinja2] templates, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, file responses, attachments, static files serving via [WhiteNoise], event handlers…_
-
-[whitenoise]: http://whitenoise.evans.io
-[jinja2]: http://jinja.pocoo.org
-
 ### An async web framework
 
-We say Bocadillo is an _async_ web framework. What does that mean?
+We told you that Bocadillo is an _async_ web framework. What does that mean?
 
 Historically, web frameworks in the Python ecosystem — Django, Flask, Pyramid, Falcon, etc. — have built upon the [WSGI] standard. WSGI is a **common language** that Python web servers (such as [gunicorn]) and web applications use to communicate.
 
@@ -59,7 +58,7 @@ Just like WSGI, **ASGI is a common language** that Python _asynchronous_ web ser
 
 ![](/asgi.png)
 
-**Bocadillo is an async web framework because it speaks the ASGI language**. That's it! ✨
+In short, **Bocadillo is an async web framework because it speaks the ASGI language**.
 
 This has a number of benefits. Among others, you can now build **highly-concurrent web apps and services**, which typically results in **higher throughput** for applications that spend a lot of time on I/O.
 
@@ -83,4 +82,4 @@ If you need help to get the ground running, we recommend you read our [Async cra
 
 To learn more about the framework's history, design decisions or why it's even called Bocadillo, check out our [Frequently Asked Questions][faq] page.
 
-[faq]: ../faq/
+[faq]: /faq.md

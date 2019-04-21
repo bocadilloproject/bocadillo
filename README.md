@@ -18,11 +18,13 @@
 
 [docs]: https://bocadilloproject.github.io
 
-Bocadillo is a modern Python web framework that aims at **making async web apps and services fun to build and accessible to everyone**. We ultimately believe that web frameworks should be fun and easy to use while empowering the developer to make good decisions and ship high-quality applications.
+> Migrating from v0.13.x? Read the [v0.14 release notes](https://bocadilloproject.github.io/blog/release-0.14.html).
+
+Bocadillo is a **Python async web framework** that makes server-side async web apps **fun to build** and **accessible to everyone**.
 
 It is designed to be:
 
-- **Productive**: a carefully chosen set of included batteries\* helps you solve common and more advanced problems.
+- **Productive**: a carefully chosen set of included batteries helps you solve common and more advanced problems — request routing, app configuration, static files, data validation, and more!
 
 - **Real-time capable**: embrace asynchronous programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
 
@@ -30,11 +32,9 @@ It is designed to be:
 
 - **Performant**: squeeze the juice out of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and web server.
 
-- **Empowering**: use tailored testing and development tools to build delicious, high-quality applications.
+- **Empowering**: use tailored testing and command line tools to build delicious, high-quality applications.
 
 - **Transparent**: every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
-
-_\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, dependency injection, background tasks, streaming, middleware, redirection, error handling, class-based views, view hooks, media responses, file responses, attachments, static files serving, test client, event handlers…_
 
 [starlette]: https://www.starlette.io
 [uvicorn]: https://www.uvicorn.org
@@ -43,16 +43,25 @@ _\*The bucket list: HTTP, WebSocket, SSE, CORS, HSTS, GZip, Jinja2 templates, de
 
 We all love delicious "Hello, world!" examples, don't we? Here's ours:
 
-1. Install Bocadillo:
+1. Install Bocadillo and the [Bocadillo CLI]:
 
 ```bash
-pip install bocadillo
+pip install bocadillo bocadillo-cli
 ```
 
-2. Write the app:
+[bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
+
+2. Generate the project and `cd` into it:
+
+```bash
+bocadillo create hello
+cd hello/
+```
+
+3. Edit the application script:
 
 ```python
-# app.py
+# hello/app.py
 from bocadillo import App
 
 app = App()
@@ -62,20 +71,20 @@ async def index(req, res):
     res.text = "Hello, world!"
 ```
 
-3. Start a [uvicorn] server (hot reload enabled!):
+4. Start a [uvicorn] server (hot reload enabled!):
 
 ```bash
-uvicorn app:app --reload
+uvicorn hello.asgi:app --reload
 ```
 
-4. Say hello!
+5. Say hello!
 
 ```bash
 $ curl http://localhost:8000
 Hello, world!
 ```
 
-5. Edit `app.py` to say "Hello, Bocadillo!" instead, then hit save. Uvicorn will pick up the changes and restart the application. Try it out again:
+6. Edit `app.py` to send "Hello, Bocadillo!" instead, then hit save. Uvicorn will pick up the changes and restart the application. Try it out again:
 
 ```bash
 $ curl http://localhost:8000
@@ -88,21 +97,15 @@ Hungry for more? Head to the [docs].
 
 ## Changelog
 
-Changes made to Bocadillo across releases are recorded in the [Changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). Be sure to check it out to see where we're coming from!
-
-## Roadmap
-
-For a list of short, mid and long-term feature ideas currently in our scope, see the [Roadmap](https://github.com/bocadilloproject/bocadillo/blob/master/ROADMAP.md).
-
-To see what has already been implemented for the next release, see the [Unreleased section of the changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased).
+We record changes to Bocadillo in the [changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). In particular, check out the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section to see what's coming in the next release.
 
 ## Contributing
 
 Found a bug? A typo? Want to help build a new feature? We'd love to see your contributions! There are also many ways to contribute that don't include code: helping with issues, laying out new ideas, improving docs, etc.
 
-Check out our [Contributing guide](https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md) for more information.
+Check out our [Contributing guide](https://github.com/bocadilloproject/bocadillo/blob/master/CONTRIBUTING.md) to get started.
 
-By the way, here's our Contributor Hall of Fame:
+By the way, here's our Contributor Hall of Fame. 👨‍💻👩‍💻
 
 [![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/0)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/0)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/1)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/1)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/2)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/2)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/3)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/3)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/4)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/4)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/5)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/5)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/6)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/6)[![](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/images/7)](https://sourcerer.io/fame/florimondmanca/bocadilloproject/bocadillo/links/7)
 

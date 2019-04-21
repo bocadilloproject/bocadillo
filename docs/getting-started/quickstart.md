@@ -18,7 +18,7 @@ Next, create a new project called `hello`:
 bocadillo create hello
 ```
 
-You can now `cd hello` and look around. Inside the `hello` package, a bunch of files were generated:
+You can now run `$ cd hello`, and look around. Inside the `hello` package, a bunch of files were generated:
 
 ```
 hello

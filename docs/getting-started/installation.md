@@ -1,56 +1,32 @@
 # Installation
 
-This page will get you up and running with Bocadillo.
+## Basics
 
-## Install Python
-
-Bocadillo being a Python web framework, it requires you to have Python installed.
-
-You can download the latest Python version on [python.org](https://www.python.org/downloads/) or with your OS's package manager.
-
-::: warning COMPATIBILITY NOTE
-Bocadillo is compatible with **Python 3.6 and above**.
-:::
-
-::: tip NOTE
-In the rest of the documentation, we will use `python` to refer to your Python executable. You may need to use `python3` depending on your operating system.
-:::
-
-To verify that Python is correctly installed, type `python` in your shell. You should see something like:
-
-```
-Python 3.7.2 (default, Dec 27 2018, 17:33:56)
-[Clang 10.0.0 (clang-1000.11.45.5)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.
->>>
-```
-
-## Install Bocadillo
-
-Bocadillo is released to PyPI, so you can install using [pip](https://pip.pypa.io/en/stable/):
+Bocadillo can be installed using the following command:
 
 ```bash
 pip install bocadillo
 ```
 
-## Verifying your installation
+**Note**: you will need **Python 3.6 and above** to use Bocadillo. You can get Python from [python.org](https://www.python.org/downloads/) or via the package manager of your OS.
 
-To verify that Bocadillo can be seen by Python, type `python` from your shell, then try to import it:
+## Bocadillo CLI
 
-```python
->>> import bocadillo
->>> bocadillo.__version__
-"0.13.3"
-```
+You may also want to install [Bocadillo CLI](https://github.com/bocadilloproject/bocadillo-cli). It comes with useful command line tools to help with project generation and other common tasks.
 
-Alternatively, you can use an inline script:
+Install it from `pip`:
 
 ```bash
-python -c "import bocadillo; print(bocadillo.__version__)"
-0.13.3
+pip install bocadillo-cli
 ```
 
-Note that you may have another version of Bocadillo installed.
+You can use it to verify that Bocadillo was correctly installed (you may have another version of Bocadillo installed):
+
+```bash
+$ bocadillo -V
+Bocadillo CLI: 0.2.0
+Bocadillo: 0.13.3
+```
 
 ## Extras <Badge text="Advanced" type="warning"/>
 
