@@ -57,7 +57,7 @@ We have tons of ideas on making Bocadillo better. Check out our <repo-page to="R
 
 ### Why pass the request and response around everywhere?
 
-At the fundamental level, an HTTP server application takes an HTTP request as input and _return_ and HTTP response. Many frameworks have implemented this style with great success.
+At the fundamental level, an HTTP server application takes an HTTP request as input and _returns_ an HTTP response. Many frameworks have implemented this style with great success.
 
 In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _return_ a `Response`.
 
