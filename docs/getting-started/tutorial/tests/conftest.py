@@ -1,6 +1,5 @@
 import pytest
-from bocadillo import provider
-from bocadillo.testing import create_client
+from bocadillo import provider, create_client
 
 from chatbot.app import app
 

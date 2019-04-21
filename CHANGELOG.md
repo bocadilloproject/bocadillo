@@ -24,6 +24,7 @@ Features:
 - Settings infrastructure: Django-style `bocadillo.settings` lazy object, app configuration using `bocadillo.configure(app[, settings][, **kwargs])`.
 - Plugin mechanism: register a `(app: App) -> None` callable using `@bocadillo.plugin`, and use the new lazy `settings` object to perform plugin setup.
 - Build a full URL for a `LiveServer` using `server.url("/path")`. Note: `server.url` still gives access to the root live server URL.
+- `create_client` and `LiveServer` can be imported from `bocadillo` instead of `bocadillo.testing`.
 
 Documentation:
 
@@ -67,7 +68,7 @@ Other:
 
 Deprecated items from 0.13:
 
-- **BREAKING**: `.client` attribute on `App` and `Recipe` was removed. Please use `bocadillo.testing.create_client` instead.
+- **BREAKING**: `.client` attribute on `App` and `Recipe` was removed. Please use `bocadillo.create_client` instead.
 
 ## [v0.13.3] - 2019-04-17
 

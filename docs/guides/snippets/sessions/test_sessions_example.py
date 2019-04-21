@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-from bocadillo import settings
-from bocadillo.testing import create_client
+from bocadillo import create_client, settings
 
 
 @pytest.fixture(autouse=True, scope="module")

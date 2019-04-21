@@ -1,8 +1,7 @@
 import pytest
 
-from bocadillo import settings, configure, plugin
+from bocadillo import settings, configure, create_client, plugin
 from bocadillo.plugins import _PLUGINS
-from bocadillo.testing import create_client
 
 
 INITIAL_PLUGINS = dict(_PLUGINS)

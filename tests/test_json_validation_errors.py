@@ -1,8 +1,7 @@
 import pytest
 import typesystem
 
-from bocadillo import configure
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client
 
 
 class Todo(typesystem.Schema):

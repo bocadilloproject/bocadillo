@@ -1,5 +1,4 @@
-from bocadillo import configure
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client
 
 
 def test_if_gzip_enabled_then_response_is_compressed(raw_app):

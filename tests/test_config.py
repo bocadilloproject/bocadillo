@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import configure
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client
 
 
 def test_cannot_reconfigure(app):

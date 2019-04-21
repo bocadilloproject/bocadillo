@@ -1,11 +1,10 @@
-from time import sleep
 from multiprocessing import Value
+from time import sleep
 
 import pytest
 import requests
 
-from bocadillo import App, server_event, ClientDisconnect
-from bocadillo.testing import LiveServer
+from bocadillo import App, ClientDisconnect, LiveServer, server_event
 
 from .utils import stops_incrementing
 

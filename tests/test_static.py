@@ -1,7 +1,6 @@
 import pytest
 
-from bocadillo import configure, static
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client, static
 
 FILE_DIR = "js"
 FILE_NAME = "foo.js"

@@ -388,8 +388,7 @@ Go ahead and create a `conftest.py` script and place the following in there:
 ```python
 # tests/conftest.py
 import pytest
-from bocadillo import provider
-from bocadillo.testing import create_client
+from bocadillo import provider, create_client
 
 from chatbot.asgi import app
 

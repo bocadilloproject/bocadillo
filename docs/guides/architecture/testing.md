@@ -16,8 +16,7 @@ The [`create_client`](/api/testing.md#create-client) helper can be used to build
 [requests]: http://docs.python-requests.org/en/master/
 
 ```python
-from bocadillo import App
-from bocadillo.testing import create_client
+from bocadillo import App, create_client
 
 app = App()
 client = create_client(app)
@@ -33,8 +32,7 @@ If you need to perform integration tests against a live server, the [`LiveServer
 
 ```python
 import requests
-from bocadillo import App, configure
-from bocadillo.testing import LiveServer
+from bocadillo import App, configure, LiveServer
 
 app = App()
 configure(app)

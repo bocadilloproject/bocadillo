@@ -1,5 +1,4 @@
-from bocadillo import configure
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client
 
 
 def test_if_hsts_enabled_and_request_is_on_http_then_redirects_to_https(

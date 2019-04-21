@@ -1,12 +1,11 @@
 from asyncio import sleep
-from time import sleep as sync_sleep
 from multiprocessing import Value
+from time import sleep as sync_sleep
 
 import pytest
 import requests
 
-from bocadillo import App, ClientDisconnect
-from bocadillo.testing import LiveServer
+from bocadillo import App, ClientDisconnect, LiveServer
 
 from .utils import stops_incrementing
 

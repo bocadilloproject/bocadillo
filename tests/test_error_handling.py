@@ -2,9 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
-from bocadillo import App, HTTPError, ExpectedAsync
+from bocadillo import App, create_client, ExpectedAsync, HTTPError
 from bocadillo.error_handlers import error_to_html, error_to_json, error_to_text
-from bocadillo.testing import create_client
 
 
 def test_async_check(app):

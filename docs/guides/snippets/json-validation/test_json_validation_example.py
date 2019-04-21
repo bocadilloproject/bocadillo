@@ -1,5 +1,4 @@
-from bocadillo import settings
-from bocadillo.testing import create_client
+from bocadillo import create_client, settings
 
 
 def test_todos():

@@ -1,5 +1,4 @@
-from bocadillo import configure
-from bocadillo.testing import create_client
+from bocadillo import configure, create_client
 
 
 def test_if_host_not_allowed_then_400(raw_app):

@@ -3,8 +3,7 @@ import typing
 import pytest
 import typesystem
 
-from bocadillo import HTTPError
-from bocadillo.testing import create_client
+from bocadillo import create_client, HTTPError
 from bocadillo.error_handlers import error_to_json
 
 

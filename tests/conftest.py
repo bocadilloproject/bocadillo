@@ -2,8 +2,7 @@ import typing
 
 import pytest
 
-from bocadillo import App, Templates, Recipe, settings, configure
-from bocadillo.testing import create_client
+from bocadillo import App, configure, create_client, Templates, Recipe, settings
 
 
 APP_CLASSES = [App, lambda: Recipe("tacos")]
