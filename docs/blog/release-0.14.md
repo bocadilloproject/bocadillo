@@ -181,9 +181,9 @@ async def health_check(req, res):
 
 ### `Redirect` exception
 
-Previously, redirecting an HTTP request to another URL was performed using the `app.redirect()` helper method. The fact that this method interrupted the execution of a view without a `return` or a `raise` felt like unecessary magic. With the removal of [named routes](#named-routes), we decided to fix this.
+Previously, redirecting an HTTP request to another URL was performed using the `app.redirect()` helper method. The fact that this method interrupted the execution of a view without a `return` or a `raise` felt like unnecessary magic. With the removal of [named routes](#named-routes), we decided to fix this.
 
-Redirections are now performed by raising the `Redirect` exception (which is exactly what `app.redirect()` did internally). Redirecting to another route by name is not supported anymore: you need to pass the full URL.
+Redirections are now performed by raising a `Redirect` exception (which is exactly what `app.redirect()` did internally). Redirecting to another route by name is not supported anymore: you need to pass the full URL.
 
 ```python
 from bocadillo import App, Redirect
