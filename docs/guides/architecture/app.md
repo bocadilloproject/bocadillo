@@ -175,7 +175,7 @@ To enable CORS with (restrictive) default settings, use the `CORS` setting:
 CORS = True
 ```
 
-The default settings are: empty `Allow-Origins`, only `GET` for `Allow-Methods`, empty `Allow-Headers`). You'll typically need to customize the CORS configuration to suit your use case, e.g.:
+The default settings are: empty `Allow-Origins`, only `GET` for `Allow-Methods`, empty `Allow-Headers`. You'll typically need to customize the CORS configuration to suit your use case, e.g.:
 
 ```python
 CORS = {
@@ -189,7 +189,7 @@ Please refer to Starlette's [CORSMiddleware](https://www.starlette.io/middleware
 
 ### HSTS
 
-If you want to enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) and redirect all HTTP traffic to HTTPS (or WS to WSS), use:
+If you want to enable [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security) (HSTS) to redirect all HTTP traffic to HTTPS (or WS to WSS), use:
 
 ```python
 HSTS = True
