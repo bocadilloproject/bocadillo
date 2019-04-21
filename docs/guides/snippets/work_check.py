@@ -2,9 +2,10 @@ import random
 
 from starlette.concurrency import run_in_threadpool
 
-from bocadillo import App
+from bocadillo import App, configure
 
 app = App()
+configure(app)
 
 
 def sort_random_numbers(n):
