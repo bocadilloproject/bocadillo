@@ -66,10 +66,10 @@ This proved to be hardly scalable, because:
 - More and more parameters were added to `App` as we implemented new features.
 - Decomposing an app into multiple sub-apps required to configure them in the same way — when this didn't cause strange errors because of duplicated configuration.
 
-To help with this, **Bocadillo 0.14 completely changes the way are configured** using a new configuration workflow supported by a lightweight plugin system.
+To help with this, **Bocadillo 0.14 completely changes the way applications are configured** using a new configuration workflow supported by a lightweight plugin system.
 
 ::: tip
-This new way of doing things induces some necessary boilerlate, so to help you out we recommend you use the new [Bocadillo CLI](#bocadillo-cli).
+This new way of doing things induces some necessary boilerplate, so to help you out we recommend you use the new [Bocadillo CLI](#bocadillo-cli).
 :::
 
 #### Configuration workflow
