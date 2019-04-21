@@ -92,10 +92,11 @@ We recommend you use Starlette's [Config helper](https://www.starlette.io/config
 ```python
 # settings.py
 from starlette.config import Config
+from starlette.datastructures import URL
 
 config = Config(".env")
 
-DATABASE_URL = config('DATABASE_URL', cast=URL)
+DATABASE_URL = config("DATABASE_URL", cast=URL)
 ```
 
 ```python
