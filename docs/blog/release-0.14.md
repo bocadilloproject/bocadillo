@@ -211,7 +211,7 @@ async def index(req, res):
 
 [bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
-In particular, `bocadillo create <PROJECT_NAME>` instantly generates a project with all the files you need to just start writing code, instead of out how files should be structured! 🚀
+In particular, `bocadillo create <PROJECT_NAME>` instantly generates a project with all the files you need to just start writing code, instead of figuring out how files should be structured! 🚀
 
 Digging it? [Give Bocadillo CLI a star!][bocadillo cli]
 
@@ -300,7 +300,7 @@ Previously, all HTTP routes were given a name which could be used to reverse URL
 
 Due to the complexity introduced compared to how useful this shortcut turns out to be, **named routes and URL reversion have been removed**. This means that:
 
-- `@app.route()` does not have the `name` and `namespace=` parameters anymore.
+- `@app.route()` does not have the `name` and `namespace` parameters anymore.
 - `app.url_for()` and the `url_for` templates variable don't exist anymore.
 
 If you want the full URL to a view, you'll simply need to build it yourself.
