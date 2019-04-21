@@ -1,4 +1,5 @@
 ---
+layout: HomePage
 home: true
 heroImage: /social-image.png
 actionText: Get Started →
