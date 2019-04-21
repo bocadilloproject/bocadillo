@@ -56,13 +56,13 @@ When an exception is raised within an HTTP view or middleware, the following alg
 
 The `HTTPError` exception is used to return HTTP error responses within views.
 
-Every Bocadillo application comes with an `HTTPError` error handler. The default handler returns an error response with the provided `status_code` and returns the error `detail` as plain text.
+Every Bocadillo application comes with an `HTTPError` error handler. The default handler returns an error response with the `status_code` and `detail` as JSON.
 
 Of course, you can register your own error handler for `HTTPError`. Common `HTTPError` handlers are available in the `bocadillo.error_handlers` module:
 
-- `error_to_text()`: converts an exception to plain text (this is the default).
+- `error_to_text()`: converts an exception to plain text.
 - `error_to_html()`: converts an exception to an HTML response.
-- `error_to_json()`: converts an exception to a JSON response.
+- `error_to_json()`: converts an exception to a JSON response (this is the default).
 
 ## Example
 

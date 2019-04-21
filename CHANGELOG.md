@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Changed
+
+- The default `HTTPError` handler now returns the error as JSON instead of plain text.
+
 ## [v0.14.0] - 2019-04-21
 
 ### Added

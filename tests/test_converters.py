@@ -3,8 +3,7 @@ import typing
 import pytest
 import typesystem
 
-from bocadillo import create_client, HTTPError
-from bocadillo.error_handlers import error_to_json
+from bocadillo import create_client
 
 
 def setup_http(app, annotation):
@@ -60,14 +59,6 @@ def test_convert_route_parameters(
     assert json["value"] == converted_value
 
 
-def setup_http_error_handler(app):
-    app.add_error_handler(HTTPError, error_to_json)
-
-
-def setup_websocket_error_handler(app):
-    pass
-
-
 def check_http_status(client, url):
     r = client.get(url)
     assert r.status_code == 400
@@ -81,14 +72,10 @@ def check_websocket_status(client, url):
 
 
 @pytest.mark.parametrize(
-    "setup, setup_error_handler, check_status",
+    "setup, check_status",
     [
-        (setup_http, setup_http_error_handler, check_http_status),
-        (
-            setup_websocket,
-            setup_websocket_error_handler,
-            check_websocket_status,
-        ),
+        (setup_http, check_http_status),
+        (setup_websocket, check_websocket_status),
     ],
 )
 @pytest.mark.parametrize(
@@ -96,14 +83,8 @@ def check_websocket_status(client, url):
     [(int, "a1"), (float, "foo"), (bool, "12"), (bool, "yes"), (bool, "no")],
 )
 def test_if_invalid_route_parameter_then_error_response(
-    app,
-    setup,
-    setup_error_handler,
-    check_status,
-    annotation: typing.Type,
-    string_value: str,
+    app, setup, check_status, annotation: typing.Type, string_value: str
 ):
-    setup_error_handler(app)
     setup(app, annotation)
     client = create_client(app, raise_server_exceptions=False)
     r = check_status(client, f"/{string_value}")

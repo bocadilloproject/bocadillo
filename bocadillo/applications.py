@@ -15,7 +15,7 @@ from .app_types import (
 )
 from .config import settings
 from .compat import WSGIApp
-from .error_handlers import error_to_text
+from .error_handlers import error_to_text, error_to_json
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import STORE
 from .meta import DocsMeta
@@ -70,7 +70,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self.server_error_middleware = ServerErrorMiddleware(
             self.exception_middleware, handler=error_to_text
         )
-        self.add_error_handler(HTTPError, error_to_text)
+        self.add_error_handler(HTTPError, error_to_json)
 
         # Lifespan middleware
         self._lifespan = Lifespan()
