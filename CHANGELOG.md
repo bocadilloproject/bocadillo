@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.14.0] - 2019-04-21
+
 ### Added
 
 Features:
@@ -621,7 +623,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.3...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.0...HEAD
+[v0.14.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.3...v0.14.0
 [v0.13.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.2...v0.13.3
 [v0.13.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.1...v0.13.2
 [v0.13.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.13.0...v0.13.1

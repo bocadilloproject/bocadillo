@@ -71,7 +71,7 @@ To verify Python dependencies have been correctly installed, first [run the test
 ```python
 >>> import bocadillo
 >>> bocadillo.__version__
-'0.13.3'
+'0.14.0'
 ```
 
 #### Installing pre-commit hooks
