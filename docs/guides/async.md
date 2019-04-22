@@ -174,6 +174,26 @@ async def compute_async(*args, **kwargs):
     return compute(*args, **kwargs)
 ```
 
+**Note**: if `compute` is CPU-bound, wrapping it in an `async` function won't magically prevent it from blocking the main thread — you need to use `run_in_threadpool` as well:
+
+```python
+from starlette.concurrency import run_in_threadpool
+from somelib import compute
+
+async def compute_async(*args, **kwargs):
+    return await run_in_threadpool(compute, *args, **kwargs)
+```
+
+This can be simplified using `functools.partial`:
+
+```python
+from functools import partial
+from starlette.concurrency import run_in_threadpool
+from somelib import compute
+
+compute_async = partial(run_in_threadpool, compute)
+```
+
 ### Finding async libraries to replace synchronous ones
 
 One of the caveats associated to async is that _everything_ needs to be asynchronous (a.k.a. non-blocking), or you may block the main thread and lose concurrency.
