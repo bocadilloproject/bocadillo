@@ -14,7 +14,7 @@
 
 [pypi-url]: https://pypi.org/project/bocadillo/
 
-[Documentation][docs] / [CLI](https://github.com/bocadilloproject/queso) / [Twitter](https://twitter.com/bocadillopy) / [Blog](https://bocadilloproject.github.io/blog/) / [Mentions](https://bocadilloproject.github.io/mentions.html) / [FAQ](https://bocadilloproject.github.io/faq/)
+[Documentation][docs] / [CLI](https://github.com/bocadilloproject/bocadillo-cli) / [Twitter](https://twitter.com/bocadillopy) / [Blog](https://bocadilloproject.github.io/blog/) / [Mentions](https://bocadilloproject.github.io/mentions.html) / [FAQ](https://bocadilloproject.github.io/faq/)
 
 [docs]: https://bocadilloproject.github.io
 
