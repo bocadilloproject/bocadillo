@@ -8,7 +8,7 @@ layout: Post
 
 We're very excited to anounce that Bocadillo v0.14 is out! This release standardises how applications are structured and run, and brings new features that make working with Bocadillo even more productive.
 
-If you have any questions or feedback about this release, feel free to [get in touch](/faq/#getting-in-touch)!
+If you have any questions or feedback about this release, feel free to [get in touch](/faq.md#getting-in-touch)!
 
 ::: warning IMPORTANT
 **Bocadillo 0.14.0 is incompatible with 0.13.x and earlier**. We took the decision to introduce breaking changes to improve the API and the overall development workflow. You'll find tips on migrating from 0.13.x in this blog post.
@@ -66,10 +66,10 @@ This proved to be hardly scalable, because:
 - More and more parameters were added to `App` as we implemented new features.
 - Decomposing an app into multiple sub-apps required to configure them in the same way — when this didn't cause strange errors because of duplicated configuration.
 
-To help with this, **Bocadillo 0.14 completely changes the way are configured** using a new configuration workflow supported by a lightweight plugin system.
+To help with this, **Bocadillo 0.14 completely changes the way applications are configured** using a new configuration workflow supported by a lightweight plugin system.
 
 ::: tip
-This new way of doing things induces some necessary boilerlate, so to help you out we recommend you use the new [Bocadillo CLI](#bocadillo-cli).
+This new way of doing things induces some necessary boilerplate, so to help you out we recommend you use the new [Bocadillo CLI](#bocadillo-cli).
 :::
 
 #### Configuration workflow
@@ -181,9 +181,9 @@ async def health_check(req, res):
 
 ### `Redirect` exception
 
-Previously, redirecting an HTTP request to another URL was performed using the `app.redirect()` helper method. The fact that this method interrupted the execution of a view without a `return` or a `raise` felt like unecessary magic. With the removal of [named routes](#named-routes), we decided to fix this.
+Previously, redirecting an HTTP request to another URL was performed using the `app.redirect()` helper method. The fact that this method interrupted the execution of a view without a `return` or a `raise` felt like unnecessary magic. With the removal of [named routes](#named-routes), we decided to fix this.
 
-Redirections are now performed by raising the `Redirect` exception (which is exactly what `app.redirect()` did internally). Redirecting to another route by name is not supported anymore: you need to pass the full URL.
+Redirections are now performed by raising a `Redirect` exception (which is exactly what `app.redirect()` did internally). Redirecting to another route by name is not supported anymore: you need to pass the full URL.
 
 ```python
 from bocadillo import App, Redirect
@@ -211,7 +211,7 @@ async def index(req, res):
 
 [bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
-In particular, `bocadillo create <PROJECT_NAME>` instantly generates a project with all the files you need to just start writing code, instead of out how files should be structured! 🚀
+In particular, `bocadillo create <PROJECT_NAME>` instantly generates a project with all the files you need to just start writing code, instead of figuring out how files should be structured! 🚀
 
 Digging it? [Give Bocadillo CLI a star!][bocadillo cli]
 
@@ -300,7 +300,7 @@ Previously, all HTTP routes were given a name which could be used to reverse URL
 
 Due to the complexity introduced compared to how useful this shortcut turns out to be, **named routes and URL reversion have been removed**. This means that:
 
-- `@app.route()` does not have the `name` and `namespace=` parameters anymore.
+- `@app.route()` does not have the `name` and `namespace` parameters anymore.
 - `app.url_for()` and the `url_for` templates variable don't exist anymore.
 
 If you want the full URL to a view, you'll simply need to build it yourself.
