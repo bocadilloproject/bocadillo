@@ -54,6 +54,15 @@ module.exports = {
         text: "Ecosystem",
         items: [
           {
+            text: "Tooling",
+            items: [
+              {
+                text: "Bocadillo CLI",
+                link: project.cli
+              }
+            ]
+          },
+          {
             text: "Help",
             items: [
               {
@@ -74,16 +83,16 @@ module.exports = {
             text: "News",
             items: [
               {
+                text: "Twitter",
+                link: `https://twitter.com/${project.twitterUsage}`
+              },
+              {
                 text: "Blog",
                 link: "/blog/"
               },
               {
                 text: "Mentions",
                 link: "/mentions"
-              },
-              {
-                text: "Twitter",
-                link: `https://twitter.com/${project.twitterUsage}`
               }
             ]
           },

@@ -25,7 +25,7 @@ Let's break this code down:
 - Next, we grab the current date and time and build a dictionary out of it.
 - Finally, we assign this dictionary to `res.json`, which results in returning a JSON response.
 
-Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.json`. [Learn why in the FAQ](/faq/#why-pass-the-request-and-response-around-everywhere).
+Note that **the view function does not return the response object**. Indeed, in Bocadillo, you shape up the response by mutating the `res` object directly, like we did here by assigning `res.json`. [Learn why in the FAQ](/faq.md#why-pass-the-request-and-response-around-everywhere).
 
 More information on working with requests and responses can be found in the [Request] and [Response] user guides.
 

@@ -23,7 +23,7 @@ Once you're ready to upgrade, you can grab the new version from [PyPI](https://p
 pip install -U bocadillo
 ```
 
-If you have any questions, feel free to [get in touch](/faq/#getting-in-touch)!
+If you have any questions, feel free to [get in touch](/faq.md#getting-in-touch)!
 
 ## Providers: dependency injection for web views
 

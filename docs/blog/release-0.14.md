@@ -8,7 +8,7 @@ layout: Post
 
 We're very excited to anounce that Bocadillo v0.14 is out! This release standardises how applications are structured and run, and brings new features that make working with Bocadillo even more productive.
 
-If you have any questions or feedback about this release, feel free to [get in touch](/faq/#getting-in-touch)!
+If you have any questions or feedback about this release, feel free to [get in touch](/faq.md#getting-in-touch)!
 
 ::: warning IMPORTANT
 **Bocadillo 0.14.0 is incompatible with 0.13.x and earlier**. We took the decision to introduce breaking changes to improve the API and the overall development workflow. You'll find tips on migrating from 0.13.x in this blog post.

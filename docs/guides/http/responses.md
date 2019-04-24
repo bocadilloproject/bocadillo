@@ -7,7 +7,7 @@ This means that the idiomatic way of sending a response is to mutate the `res` o
 ::: tip
 To learn more about this design decision, see our [FAQ][why-pass-req-res].
 
-[why-pass-req-res]: ../../faq/#why-pass-the-request-and-response-around-everywhere
+[why-pass-req-res]: /faq.md#why-pass-the-request-and-response-around-everywhere
 
 :::
 

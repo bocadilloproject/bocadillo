@@ -34,6 +34,7 @@ module.exports = {
   contributing: repoPage("CONTRIBUTING.md"),
   docs,
   aiodine: projectRepo("aiodine"),
+  cli: projectRepo("bocadillo-cli"),
   gitter: `https://gitter.im/${repo}`,
   twitterUser,
   twitter: `https://twitter.com/${twitterUser}`,
