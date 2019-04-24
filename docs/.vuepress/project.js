@@ -32,7 +32,6 @@ module.exports = {
   repoLink,
   issues: `${repoLink}/issues/new/choose`,
   contributing: repoPage("CONTRIBUTING.md"),
-  roadmap: repoPage("ROADMAP.md"),
   docs,
   aiodine: projectRepo("aiodine"),
   gitter: `https://gitter.im/${repo}`,

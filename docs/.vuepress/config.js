@@ -84,10 +84,6 @@ module.exports = {
               {
                 text: "Twitter",
                 link: `https://twitter.com/${project.twitterUsage}`
-              },
-              {
-                text: "Roadmap",
-                link: project.repoPage("ROADMAP.md")
               }
             ]
           },
