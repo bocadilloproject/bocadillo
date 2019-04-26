@@ -21,27 +21,15 @@ def test_async_check(app):
 
 
 @contextmanager
-def build_middleware(
-    expect_kwargs=None, expect_call_after=True, old_style=False
-):
+def build_middleware(expect_kwargs=None, expect_call_after=True):
     called = {"before": False, "after": False}
     kwargs = None
 
     class SetCalled(Middleware):
-        if old_style:
-
-            def __init__(self, inner, app: App, **kw):
-                super().__init__(inner, app, **kw)
-                nonlocal kwargs
-                kwargs = kw
-                assert isinstance(app, App)
-
-        else:
-
-            def __init__(self, inner, **kw):
-                super().__init__(inner, **kw)
-                nonlocal kwargs
-                kwargs = kw
+        def __init__(self, inner, **kw):
+            super().__init__(inner)
+            nonlocal kwargs
+            kwargs = kw
 
         async def before_dispatch(self, req, res):
             nonlocal called
@@ -74,18 +62,7 @@ def test_if_middleware_is_added_then_it_is_called(app: App, client):
         client.get("/")
 
 
-def test_old_style_middleware(app: App, client):
-    with build_middleware(old_style=True) as middleware:
-        app.add_middleware(middleware)
-
-        @app.route("/")
-        async def index(req, res):
-            pass
-
-        client.get("/")
-
-
-def test_can_pass_extra_kwargs(app: App, client):
+def test_extra_kwargs(app: App, client):
     kwargs = {"foo": "bar"}
     with build_middleware(expect_kwargs=kwargs) as middleware:
         app.add_middleware(middleware, **kwargs)

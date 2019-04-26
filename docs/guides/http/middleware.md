@@ -1,10 +1,6 @@
 # HTTP middleware
 
-::: warning
-This feature is **experimental**; the middleware API may be subject to changes.
-:::
-
-The HTTP middleware framework is a lightweight system to plug into the processing of HTTP requests and responses. It is an HTTP-specific solution that is arguably higher-level than [ASGI middleware].
+The HTTP middleware framework is a lightweight system to plug into the processing of HTTP requests and responses. It is an HTTP-specific solution that is arguably higher-level than [ASGI middleware](/guides/agnostic/asgi-middleware.md).
 
 ## How middleware is applied
 
@@ -37,7 +33,7 @@ More specifically, each middleware:
 5. Returns it to its _outer_ middleware.
 
 ::: warning CAVEAT
-An application's HTTP middleware will **not** be called if the request gets routed to a sub-application, e.g. a [recipe](/guides/architecture/recipes.md) or a [mounted application](/api/applications.md#mount).
+An application's HTTP middleware will **not** be called if the request gets routed to a sub-application, e.g. a [mounted application](/api/applications.md#mount).
 
 For this reason, you should register HTTP middleware on _all_ application instances that need it in their processing stack.
 :::
@@ -46,23 +42,19 @@ For this reason, you should register HTTP middleware on _all_ application instan
 
 Two HTTP middleware are registered on every application:
 
-- [`HTTPErrorMiddleware`](../../api/errors.md#httperrormiddleware) is responsible for calling a suitable [error handler](./error-handling.md) when an exception, if it can.
-- [`ServerErrorMiddleware`](../../api/errors.md#servererrormiddleware) is responsible for catching unhandled exceptions and returning 500 errors when one occurs.
+- [`HTTPErrorMiddleware`](/api/errors.md#httperrormiddleware) is responsible for calling a suitable [error handler](./error-handling.md) when an exception occurs, if one exists.
+- [`ServerErrorMiddleware`](/api/errors.md#servererrormiddleware) is responsible for catching unhandled exceptions and returning 500 errors when one occurs.
 
 ## Using middleware
 
-When given a midleware class, you can register it on an application using `app.add_middleware()`:
+When given a middleware class, you can register it on an application using `app.add_middleware()`:
 
 ```python
-app.add_middleware(SomeHTTPMiddleware, foo='bar')
+app.add_middleware(SomeHTTPMiddleware, foo="bar")
 ```
 
 All keyword arguments passed to `app.add_middleware()` will be passed to the middleware constructor upon startup.
 
 ## Writing middleware
 
-If you're interested in writing your own HTTP middleware, see our [Writing middleware] how-to guide.
-
-[writing middleware]: ../../how-to/middleware.md
-[asgi]: https://asgi.readthedocs.io
-[asgi middleware]: ../agnostic/asgi-middleware.md
+If you're interested in writing your own HTTP middleware, see our [Writing middleware](/how-to/middleware.md) how-to guide.

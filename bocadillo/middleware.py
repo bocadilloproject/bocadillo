@@ -25,16 +25,10 @@ class Middleware(HTTPApp, metaclass=MiddlewareMeta):
 
     # Parameters
     inner (callable): the inner middleware that this middleware wraps.
-    app: the #::bocadillo.applications#App instance.
-    kwargs (any):
-        Keyword arguments passed when registering the middleware on `app`.
     """
 
-    def __init__(self, inner: HTTPApp, app: "App" = None, **kwargs):
-        # NOTE: app defaults to `None` to support old-style HTTP middleware.
+    def __init__(self, inner: HTTPApp):
         self.inner = inner
-        self.app = app
-        self.kwargs = kwargs
 
     async def before_dispatch(
         self, req: Request, res: Response

@@ -154,7 +154,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         - [Middleware](../guides/http/middleware.md)
         """
         self.exception_middleware.app = middleware_cls(
-            self.exception_middleware.app, app=self, **kwargs
+            self.exception_middleware.app, **kwargs
         )
 
     def add_asgi_middleware(self, middleware_cls, **kwargs):

@@ -53,30 +53,28 @@ class Always202Middleware(Middleware):
 
 Note: returning a response in `after_dispatch` has no effect.
 
-### Configuration and initialization
+### Configuration
 
-Middleware configuaration and initialization can be performed by overriding its `__init__()` method, which is given the following:
+If you need the middleware to be configured upon registration (via `app.add_middleware()`), you can override `.__init__()` and accept extra parameters.
 
-- `inner`: this is the inner middleware that this middleware wraps.
-- `app`: this is the application instance which this middleware is being registered on.
-- `**kwargs`: any keyword arguments passed to `app.add_middleware()`.
-
-For example, here's a middleware that registers a startup [event handler](../guides/architecture/events.md) if a flag argument was passed:
+For example, here's a middleware that displays a message before each request:
 
 ```python
-from bocadillo import App, Middleware
+from bocadillo import Middleware
 
-class ExpensiveMiddleware(Middleware):
+class MessageMiddleware(Middleware):
+    def __init__(self, inner, message: str):
+        super().__init__(inner)  # Don't forget to call `super()`!
+        self.message = message
 
-    def __init__(self, inner, app: App, warmup=False, **kwargs):
-        super().__init__(inner, app, **kwargs)
+    async def before_dispatch(self, req, res):
+        print("MESSAGE:", self.message)
+```
 
-        if not warmup:
-            return
+Example usage:
 
-        @app.on("startup")
-        async def perform_warmup():
-            print("Warming up middleware…")
+```python
+app.add_middleware(MessageMiddleware, message="Hello, middleware!")
 ```
 
 ### Middleware from scratch
@@ -84,7 +82,7 @@ class ExpensiveMiddleware(Middleware):
 As it turns out, the `before_dispatch()` and `after_dispatch()` hooks on
 `Middleware` are just helpers.
 
-If they don't fit your needs, you can also implement the asynchronous `.__call__()` method directly. Subclassing from `Middleware` will ensure that the inner middleware, app and kwargs are available for use.
+If they don't fit your needs, you can also implement the asynchronous `.__call__()` method directly. Subclassing from `Middleware` will ensure that the inner middleware is available as `.inner`.
 
 For example, here's a "no-op" middleware that forwards request processing to its inner middleware:
 
