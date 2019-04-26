@@ -1,7 +1,7 @@
 ---
 title: "Bocadillo 0.14 released!"
 description: "All-async, app configuration, JSON data validation, route and query parameter validation, Bocadillo CLI, plugin framework, and more!"
-date: 2019-04-24
+date: 2019-04-21
 author: Florimond Manca
 layout: Post
 ---
