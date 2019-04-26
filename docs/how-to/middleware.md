@@ -15,7 +15,7 @@ Each hook is given the current `Request` and `Response` objects, and can alter t
 
 ### Basic usage
 
-HTTP middleware can be created by subclassing from [`Middleware`][http middleware]. A bare-bones HTTP middleware looks like this:
+HTTP middleware can be created by subclassing from [`Middleware`](/api/middleware.md#middleware). A bare-bones HTTP middleware looks like this:
 
 ```python
 from bocadillo import Middleware, Request, Response
@@ -99,65 +99,40 @@ class NoOpMiddleware(Middleware):
 
 ## ASGI middleware
 
-If you need global behavior that don't belong to the world of HTTP, ASGI middleware is for you. They are lower-level middleware classes that implement the [ASGI] interface directly.
+If you need global behavior that does not only apply to HTTP, you can go bare-metal and use ASGI middleware classes. They are lower-level middleware classes that implement the [ASGI] interface directly.
 
-### Using the `ASGIMiddleware` base class
+Beside the inner ASGI `app`, the middleware's `__init__()` method can accept extra parameters for configuration purposes. Users can pass values for those arguments when calling `.add_asgi_middleware()` on the application (see the [ASGI Middleware guide](/guides/agnostic/asgi-middleware.md)).
 
-Similar to `Middleware`, Bocadillo provides an [`ASGIMiddleware`][asgi middleware] base class targeted at writing ASGI middleware.
-
-Here's an example middleware that implements integration with an imaginary database library:
-
-```python
-from bocadillo import App, ASGIMiddleware
-from db import Database
-
-class DatabaseMiddleware(ASGIMiddleware):
-    def __init__(self, inner, app: App, url: str):
-        super().__init__(inner, app)
-        self.db = Database(url)
-        app.on("startup", self.db.connect)
-        app.on("shutdown", self.db.disconnect)
-
-    # ASGI implementation
-    def __call__(self, scope: dict):
-        # Make the db available to the request scope.
-        scope["db"] = self.db
-        return super().__call__(scope)
-```
-
-### Pure ASGI middleware
-
-Bocadillo also supports "pure" ASGI middleware, i.e. middleware that only expects their `inner` middleware to be given to their constructor.
-
-::: tip NOTE
-Third-party ASGI middleware classes are typically given in this form.
+::: tip CHANGED IN 0.15
+There is no `ASGIMiddleware` base class anymore.
 :::
 
-Note that, because it performs initialization on the application instance, the previous `DatabaseMiddleware` cannot be rewritten as a pure ASGI middleware.
-
-As an example, here's a pure ASGI middleware that injects a static value in the request scope:
+As an example, here is an ASGI middleware class that injects a static value into the ASGI scope:
 
 ```python
 from bocadillo import App
 
 class Inject:
-    def __init__(self, inner, value: str):
-        self.inner = inner
+    def __init__(self, app, value: str):
+        self.app = app
         self.value = value
 
     # ASGI implementation
-    def __call__(self, scope: dict):
+    async def __call__(self, scope, receive, send):
         scope["x-value"] = self.value
-        return self.inner(scope)
+        await self.app(scope, receive, send)
 ```
+
+::: warning
+Here, `app` represents the **inner ASGI application** (which is very likely to be another middleware). Note that it will _not_ be the Bocadillo `App` object.
+:::
 
 Example usage:
 
 ```python
-app = App()
 app.add_asgi_middleware(Inject, value="foo")
 
-@app.route("/")
+@app.route("/value")
 async def index(req, res):
     res.text = req["x-value"]  # "foo"
 ```
@@ -169,5 +144,3 @@ You must make sure you implement the ASGI protocol correctly and send
 the correct ASGI events if something goes wrong.
 
 [asgi]: https://asgi.readthedocs.io
-[http middleware]: ../api/middleware.md#middleware
-[asgi middleware]: ../api/middleware.md#asgimiddleware

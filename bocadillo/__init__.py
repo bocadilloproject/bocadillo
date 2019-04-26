@@ -2,7 +2,7 @@ from .applications import App
 from .config import settings, SettingsError, configure
 from .compat import ExpectedAsync
 from .errors import HTTPError
-from .middleware import ASGIMiddleware, Middleware
+from .middleware import Middleware
 from .injection import discover_providers, provider, useprovider
 from .plugins import plugin, get_plugins
 from .recipes import Recipe

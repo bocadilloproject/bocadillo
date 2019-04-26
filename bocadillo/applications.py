@@ -19,7 +19,6 @@ from .error_handlers import error_to_text, error_to_json
 from .errors import HTTPError, HTTPErrorMiddleware, ServerErrorMiddleware
 from .injection import STORE
 from .meta import DocsMeta
-from .middleware import ASGIMiddleware
 from .request import Request
 from .response import Response
 from .routing import RoutingMixin
@@ -165,7 +164,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         middleware_cls: a class that complies with the ASGI3 specification.
 
         # See Also
-        - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
         if hasattr(middleware_cls, "__call__"):
@@ -174,12 +172,11 @@ class App(RoutingMixin, metaclass=DocsMeta):
             if "receive" not in sig.parameters or "send" not in sig.parameters:
                 raise ValueError(
                     f"ASGI middleware class {middleware_cls.__name__} "
-                    "seems to be using the old ASGI2 interface. "
+                    "seems to be using the legacy ASGI2 interface. "
                     "Please upgrade to ASGI3: (scope, receive, send) -> None"
                 )
 
-        args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
-        self.asgi = middleware_cls(self.asgi, *args, **kwargs)
+        self.asgi = middleware_cls(self.asgi, **kwargs)
 
     def on(self, event: str, handler: typing.Optional[EventHandler] = None):
         """Register an event handler.

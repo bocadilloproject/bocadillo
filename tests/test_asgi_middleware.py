@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import App, ASGIMiddleware, configure, create_client
+from bocadillo import App, configure, create_client
 
 
 def test_asgi_middleware(app: App, client):
@@ -8,48 +8,21 @@ def test_asgi_middleware(app: App, client):
     received_app = False
     called = False
 
-    class Middleware(ASGIMiddleware):
-        def __init__(self, inner, app: App, **kwargs):
-            super().__init__(inner, app)
+    class Middleware:
+        def __init__(self, app, **kwargs):
             nonlocal params, received_app
             params = kwargs
             received_app = isinstance(app, App)
+            self.app = app
 
         async def __call__(self, scope, receive, send):
             nonlocal called
+            await self.app(scope, receive, send)
             called = True
-            await super().__call__(scope, receive, send)
 
     app.add_asgi_middleware(Middleware, hello="world")
-    assert received_app
+    assert not received_app
     assert params == {"hello": "world"}
-
-    @app.route("/")
-    async def index(req, res):
-        pass
-
-    client.get("/")
-    assert called
-
-
-def test_pure_asgi_middleware(app: App, client):
-    initialized = False
-    called = False
-
-    class Middleware:
-        def __init__(self, inner):
-            nonlocal initialized
-            self.inner = inner
-            initialized = True
-
-        async def __call__(self, scope, receive, send):
-            nonlocal called
-            called = True
-            await self.inner(scope, receive, send)
-
-    app.add_asgi_middleware(Middleware)
-
-    assert initialized
 
     @app.route("/")
     async def index(req, res):
@@ -105,7 +78,7 @@ def test_middleware_called_if_routed_to_sub_app(
 
 def test_asgi2_middleware_not_supported(app: App):
     class Middleware:
-        def __init__(self, inner):
+        def __init__(self, app):
             pass
 
         def __call__(self, scope):

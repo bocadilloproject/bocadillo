@@ -1,6 +1,6 @@
 import typing
 
-from .app_types import ASGIApp, HTTPApp, Scope, Receive, Send
+from .app_types import HTTPApp
 from .compat import check_async
 from .request import Request
 from .response import Response
@@ -71,22 +71,3 @@ class Middleware(HTTPApp, metaclass=MiddlewareMeta):
         await self.after_dispatch(req, res)
 
         return res
-
-
-class ASGIMiddleware(ASGIApp):
-    """Base class for ASGI middleware classes.
-
-    # Parameters
-    inner (callable): the inner middleware.
-    app (App): the application instance.
-    kwargs (any):
-        Keyword arguments passed when registering the middleware on `app`.
-    """
-
-    def __init__(self, inner: ASGIApp, app: "App", **kwargs):
-        self.inner = inner
-        self.app = app
-        self.kwargs = kwargs
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send):
-        await self.inner(scope, receive, send)

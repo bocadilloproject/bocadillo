@@ -18,6 +18,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - Bocadillo applications now implement ASGI version 3.0.
 
+### Removed
+
+- **BREAKING** Removed `ASGIMiddleware` base class. Please create plain ASGI3-compliant classes instead.
+
 ## [v0.14.2] - 2019-04-26
 
 ### Added

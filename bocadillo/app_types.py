@@ -15,13 +15,8 @@ Receive = typing.Callable[[], typing.Awaitable[Event]]
 Send = typing.Callable[[Event], None]
 
 
-class ASGIAppInstance:
-    def __call__(self, receive: Receive, send: Send) -> None:
-        raise NotImplementedError
-
-
 class ASGIApp:
-    def __call__(self, scope: Scope) -> ASGIAppInstance:
+    def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         raise NotImplementedError
 
 
