@@ -16,7 +16,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Changed
 
-- Bocadillo applications now implement ASGI version 3.0.
+- Bocadillo applications now implement ASGI version 3.0. Support for uvicorn 0.7.x is therefore ensured.
 
 ### Removed
 
