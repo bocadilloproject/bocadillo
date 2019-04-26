@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Support for uvicorn 0.6.x.
+
 ## [v0.14.1] - 2019-04-21
 
 ### Changed

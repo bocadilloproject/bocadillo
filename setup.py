@@ -13,7 +13,7 @@ CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 INSTALL_REQUIRES = [
     "starlette>=0.11, <0.12",
-    "uvicorn>=0.5.1, <0.6",
+    "uvicorn>=0.5.1, <0.7",
     "typesystem>=0.2.2",
     "jinja2>=2.10.1",
     "whitenoise",

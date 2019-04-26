@@ -10,7 +10,7 @@ This is not a course on `asyncio`, nor the `async/await` syntax. We'll keep this
 
 - **Defining an async function**: use `async def` instead of `def`.
 - **Calling an async function**: use the `await` keyword _inside an async function_: `value = await func()`.
-- **CPU-bound operations**: use `starlette.concurrence.run_in_threadpool`.
+- **CPU-bound operations**: use the `starlette.concurrency.run_in_threadpool` helper.
 - **Async libraries**: check out [awesome-asyncio] or do your own research!
 
 ## Terminology
@@ -75,7 +75,7 @@ At this point, `items` is a [coroutine](#coroutine):
 print(type(items))  # <class 'coroutine'>
 ```
 
-Did you notice that "Getting items…" has not been printed yet? The reason why is that `get_items()` has not even run yet!
+Have you noticed that "Getting items…" has not been printed yet? This is because `get_items()` has not even _run_ yet!
 
 "But then", you say, "how do I run the coroutine and get its result?"
 
@@ -105,9 +105,10 @@ As an async web framework, Bocadillo provides an _asynchronous runtime_ and take
 If that sounds confusing, take a look at the following [hello world application](/getting-started/quickstart.md):
 
 ```python
-from bocadillo import App
+from bocadillo import App, configure
 
 app = App()
+configure(app)
 
 @app.route("/")
 async def hello(req, res):
@@ -116,7 +117,7 @@ async def hello(req, res):
 
 This code doesn't care about how the `hello` function is actually run. You don't even need to know anything about `asyncio` or how it works.
 
-You just need to use the `async def` syntax on the view, and Bocadillo will to the heavy lifting to handle requests in a concurrent fashion. It's magic. ✨
+You just need to use the `async def` syntax on the view, and Bocadillo will do the heavy lifting to handle requests in a concurrent fashion. It's magic. ✨
 
 ### Summary
 
@@ -173,11 +174,31 @@ async def compute_async(*args, **kwargs):
     return compute(*args, **kwargs)
 ```
 
+**Note**: if `compute` is CPU-bound, wrapping it in an `async` function won't magically prevent it from blocking the main thread — you need to use `run_in_threadpool` as well:
+
+```python
+from starlette.concurrency import run_in_threadpool
+from somelib import compute
+
+async def compute_async(*args, **kwargs):
+    return await run_in_threadpool(compute, *args, **kwargs)
+```
+
+This can be simplified using `functools.partial`:
+
+```python
+from functools import partial
+from starlette.concurrency import run_in_threadpool
+from somelib import compute
+
+compute_async = partial(run_in_threadpool, compute)
+```
+
 ### Finding async libraries to replace synchronous ones
 
 One of the caveats associated to async is that _everything_ needs to be asynchronous (a.k.a. non-blocking), or you may block the main thread and lose concurrency.
 
-For this reason, you will need to use async equivalents for your favorite libraries if they don't support them natively.
+For this reason, you will need to use async equivalents of your favorite libraries if they don't support async natively.
 
 For example:
 

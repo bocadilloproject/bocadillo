@@ -51,13 +51,13 @@ So, if you're using Bocadillo for a cool project or even in production (wow!), s
 
 ### What's coming next?
 
-We have tons of ideas on making Bocadillo better. Check out our <repo-page to="ROADMAP.md" text="roadmap"/> for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by <open-issue text="opening an issue on GitHub"/>.
+We have tons of ideas on making Bocadillo better. Check out our [GitHub issues](https://github.com/bocadilloproject/bocadillo/issues) for a few hints on what's to expect in the short-to-long term. If you have ideas yourself, be sure to come and discuss them with us, e.g. by <open-issue text="opening an issue on GitHub"/>.
 
 ## Design and API
 
 ### Why pass the request and response around everywhere?
 
-At the fundamental level, an HTTP server application takes an HTTP request as input and _return_ and HTTP response. Many frameworks have implemented this style with great success.
+At the fundamental level, an HTTP server application takes an HTTP request as input and _returns_ an HTTP response. Many frameworks have implemented this style with great success.
 
 In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _return_ a `Response`.
 

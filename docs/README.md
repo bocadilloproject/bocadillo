@@ -27,8 +27,6 @@ meta:
 
 ## Quick start
 
-We all love delicious "Hello, world!" examples, don't we? Here's ours:
-
 1. Install [Bocadillo] and the [Bocadillo CLI]:
 
 ```bash
@@ -38,7 +36,7 @@ pip install bocadillo bocadillo-cli
 [bocadillo]: https://github.com/bocadilloproject/bocadillo
 [bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
-2. Generate the project and `cd` into it:
+2. Generate a project and `cd` into it:
 
 ```bash
 bocadillo create hello
