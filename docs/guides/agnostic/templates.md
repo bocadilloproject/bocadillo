@@ -68,7 +68,7 @@ await templates.render("index.html", {"title": "Hello, Bocadillo!"})
 - You can render a template directly from a string:
 
 ```python
-templates.render_string('<h1>{{ title }}</h1>', title='Hello, Bocadillo!')
+templates.render_string("<h1>{{ title }}</h1>", title="Hello, Bocadillo!")
 # Outputs: "<h1>Hello, Bocadillo!</h1>"
 ```
 
@@ -86,14 +86,14 @@ to where the application is run. For example:
     └── index.html
 ```
 
-Here, using `await templates.render('index.html')` would load and use the template defined in the `./templates/index.html` file.
+Here, using `await templates.render("index.html")` would load and use the template defined in the `./templates/index.html` file.
 
 ### Changing the templates location
 
 You can change the templates directory by passing the path to a `directory` to `Templates`:
 
 ```python
-templates = Templates(directory='path/to/templates')
+templates = Templates(directory="path/to/templates")
 ```
 
 ## Using templates outside an application
