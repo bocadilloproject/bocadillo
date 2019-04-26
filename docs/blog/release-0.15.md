@@ -18,7 +18,7 @@ A few weeks ago, [ASGI version 3.0 was released](https://www.encode.io/reports/f
 
 As a result, **Bocadillo applications implement ASGI3** as of 0.15.0.
 
-**As a Bocadillo user, this change should not impact you**. This is because Bocadillo abstracts away the details of communicating with a web server. (The only exception to this is if you've been using ASGI middleware — see below.)
+**As a Bocadillo user, this change should not impact you**. This is because Bocadillo abstracts away the details of communicating with a web server. (The only exception to this is if you've been using ASGI middleware — see below.) You will only need to use uvicorn 0.6.x — but it should upgrade automatically when running `pip install -U bocadillo`.
 
 **What's next?** The async web ecosystem is slowly migrating from ASGI2 to ASGI3. As such, you may find some libraries you use aren't compatible yet with ASGI3. In that case, please stick to Bocadillo 0.14.x for now, or find an alternative solution.
 

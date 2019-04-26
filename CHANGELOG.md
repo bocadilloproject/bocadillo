@@ -22,6 +22,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - **BREAKING** Removed `ASGIMiddleware` base class. Please create plain ASGI3-compliant classes instead.
 - **BREAKING** The Bocadillo `App` is not passed to HTTP `Middleware` anymore. Prefer plugins to perform global app initialisation.
+- Drop support for uvicorn < 0.6.
 
 ## [v0.14.2] - 2019-04-26
 
