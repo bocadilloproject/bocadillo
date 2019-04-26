@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Changed
+
+- Bocadillo applications now implement ASGI version 3.0.
+
 ## [v0.14.2] - 2019-04-26
 
 ### Added

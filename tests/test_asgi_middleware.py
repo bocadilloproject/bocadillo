@@ -15,10 +15,10 @@ def test_asgi_middleware(app: App, client):
             params = kwargs
             received_app = isinstance(app, App)
 
-        def __call__(self, scope):
+        async def __call__(self, scope, receive, send):
             nonlocal called
             called = True
-            return super().__call__(scope)
+            await super().__call__(scope, receive, send)
 
     app.add_asgi_middleware(Middleware, hello="world")
     assert received_app
@@ -42,10 +42,10 @@ def test_pure_asgi_middleware(app: App, client):
             self.inner = inner
             initialized = True
 
-        def __call__(self, scope: dict):
+        async def __call__(self, scope, receive, send):
             nonlocal called
             called = True
-            return self.inner(scope)
+            await self.inner(scope, receive, send)
 
     app.add_asgi_middleware(Middleware)
 
@@ -101,3 +101,19 @@ def test_middleware_called_if_routed_to_sub_app(
     else:  # allowed origin -> allow-origin header"
         assert "access-control-allow-origin" in res.headers
         assert res.headers.get("access-control-allow-origin") == expected
+
+
+def test_asgi2_middleware_not_supported(app: App):
+    class Middleware:
+        def __init__(self, inner):
+            pass
+
+        def __call__(self, scope):
+            pass
+
+    with pytest.raises(ValueError) as ctx:
+        app.add_asgi_middleware(Middleware)
+
+    error = str(ctx.value).lower()
+    for phrase in "asgi2", "please upgrade", "asgi3", "scope, receive, send":
+        assert phrase in error

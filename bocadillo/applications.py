@@ -1,12 +1,12 @@
+import inspect
 import typing
 
-from starlette.middleware.wsgi import WSGIResponder
+from starlette.middleware.wsgi import WSGIMiddleware
 from starlette.routing import Lifespan
 
 from .app_types import (
     _E,
     ASGIApp,
-    ASGIAppInstance,
     ErrorHandler,
     EventHandler,
     Receive,
@@ -162,12 +162,22 @@ class App(RoutingMixin, metaclass=DocsMeta):
         """Register an ASGI middleware class.
 
         # Parameters
-        middleware_cls: a class that complies with the ASGI specification.
+        middleware_cls: a class that complies with the ASGI3 specification.
 
         # See Also
         - [ASGI middleware](../guides/agnostic/asgi-middleware.md)
         - [ASGI](https://asgi.readthedocs.io)
         """
+        if hasattr(middleware_cls, "__call__"):
+            # Verify the class implements ASGI3, not ASGI2.
+            sig = inspect.signature(middleware_cls.__call__)
+            if "receive" not in sig.parameters or "send" not in sig.parameters:
+                raise ValueError(
+                    f"ASGI middleware class {middleware_cls.__name__} "
+                    "seems to be using the old ASGI2 interface. "
+                    "Please upgrade to ASGI3: (scope, receive, send) -> None"
+                )
+
         args = (self,) if issubclass(middleware_cls, ASGIMiddleware) else ()
         self.asgi = middleware_cls(self.asgi, *args, **kwargs)
 
@@ -206,26 +216,22 @@ class App(RoutingMixin, metaclass=DocsMeta):
         self._lifespan.add_event_handler(event, handler)
         return handler
 
-    def dispatch_http(self, scope: Scope) -> ASGIAppInstance:
-        async def asgi(receive: Receive, send: Send):
-            req = Request(scope, receive)
-            res = Response(req)
+    async def dispatch_http(self, scope: Scope, receive: Receive, send: Send):
+        req = Request(scope, receive)
+        res = Response(req)
 
-            res: Response = await self.server_error_middleware(req, res)
-            await res(receive, send)
-            # Re-raise the exception to allow the server to log the error
-            # and for the test client to optionally re-raise it too.
-            self.server_error_middleware.raise_if_exception()
+        res: Response = await self.server_error_middleware(req, res)
+        await res(scope, receive, send)
+        # Re-raise the exception to allow the server to log the error
+        # and for the test client to optionally re-raise it too.
+        self.server_error_middleware.raise_if_exception()
 
-        return asgi
+    async def dispatch_websocket(
+        self, scope: Scope, receive: Receive, send: Send
+    ):
+        await self.websocket_router(scope, receive, send)
 
-    def dispatch_websocket(self, scope: Scope) -> ASGIAppInstance:
-        async def asgi(receive: Receive, send: Send):
-            await self.websocket_router(scope, receive, send)
-
-        return asgi
-
-    def dispatch(self, scope: Scope) -> ASGIAppInstance:
+    async def dispatch(self, scope: Scope, receive: Receive, send: Send):
         path: str = scope["path"]
 
         # Return a sub-mounted extra app, if found
@@ -236,17 +242,19 @@ class App(RoutingMixin, metaclass=DocsMeta):
             # to the mounted app's point of view.
             scope["path"] = path[len(prefix) :]
             try:
-                return app(scope)
+                return await app(scope, receive, send)
             except TypeError:
-                return WSGIResponder(app, scope)
+                app = WSGIMiddleware(app)
+                return await app(scope, receive, send)
 
         if scope["type"] == "websocket":
-            return self.dispatch_websocket(scope)
+            await self.dispatch_websocket(scope, receive, send)
+        else:
+            assert scope["type"] == "http"
+            await self.dispatch_http(scope, receive, send)
 
-        assert scope["type"] == "http"
-        return self.dispatch_http(scope)
-
-    def __call__(self, scope: Scope) -> ASGIAppInstance:
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
         if scope["type"] == "lifespan":
-            return self._lifespan(scope)
-        return self.asgi(scope)
+            await self._lifespan(scope, receive, send)
+        else:
+            await self.asgi(scope, receive, send)

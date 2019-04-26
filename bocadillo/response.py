@@ -194,7 +194,7 @@ class Response:
         }
         return self.stream(func, **kwargs)
 
-    async def __call__(self, receive, send):
+    async def __call__(self, scope, receive, send):
         """Build and send the response."""
         if self.status_code is None:
             self.status_code = 200
@@ -231,4 +231,4 @@ class Response:
             response_kwargs["content"] = self._stream
 
         response: _Response = response_cls(**response_kwargs)
-        await response(receive, send)
+        await response(scope, receive, send)

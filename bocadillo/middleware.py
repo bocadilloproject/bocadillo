@@ -1,6 +1,6 @@
 import typing
 
-from .app_types import ASGIApp, ASGIAppInstance, HTTPApp, Scope
+from .app_types import ASGIApp, HTTPApp, Scope, Receive, Send
 from .compat import check_async
 from .request import Request
 from .response import Response
@@ -88,5 +88,5 @@ class ASGIMiddleware(ASGIApp):
         self.app = app
         self.kwargs = kwargs
 
-    def __call__(self, scope: Scope) -> ASGIAppInstance:
-        return self.inner(scope)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        await self.inner(scope, receive, send)
