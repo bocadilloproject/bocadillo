@@ -2,21 +2,43 @@
     <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
 </p>
 
+<p align="center">
+    <a href="https://travis-ci.org/bocadilloproject/bocadillo">
+        <img src="https://img.shields.io/travis/bocadilloproject/bocadillo.svg" alt="travis"/>
+    </a>
+    <a href="https://codecov.io/gh/bocadilloproject/bocadillo">
+        <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="test coverage"/>
+    </a>
+    <a href="https://pypi.org/project/bocadillo">
+        <img src="https://img.shields.io/pypi/l/bocadillo.svg" alt="license"/>
+    </a>
+    <a href="https://gitter.im/bocadilloproject/bocadillo">
+        <img src="https://badges.gitter.im/bocadilloproject/bocadillo.svg" alt="chat">
+    </a>
+    <a href="https://twitter.com/bocadillopy">
+        <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="twitter">
+    </a>
+</p>
+
+<p align="center">
+    <a href="https://www.python.org">
+        <img src="https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=" alt="python versions">
+    </a>
+    <a href="https://pypi.org/project/bocadillo">
+        <img src="https://img.shields.io/pypi/v/bocadillo.svg" alt="pypi version">
+    </a>
+    <a href="https://github.com/ambv/black">
+        <img src="https://img.shields.io/badge/code_style-black-000000.svg" alt="code style">
+    </a>
+</p>
+
+<p align="center">
+    <a href="https://bocadilloproject.github.io">Documentation</a> &middot;
+    <a href="https://github.com/bocadilloproject/bocadillo">Source code</a> &middot;
+    <a href="https://github.com/bocadilloproject/bocadillo-cli">CLI</a>
+</p>
+
 ---
-
-[![python](https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=)](https://www.python.org)
-[![pypi](https://img.shields.io/pypi/v/bocadillo.svg)][pypi-url]
-[![travis](https://img.shields.io/travis/bocadilloproject/bocadillo.svg)](https://travis-ci.org/bocadilloproject/bocadillo)
-[![black](https://img.shields.io/badge/code_style-black-000000.svg)](https://github.com/ambv/black)
-[![codecov](https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg)](https://codecov.io/gh/bocadilloproject/bocadillo)
-[![license](https://img.shields.io/pypi/l/bocadillo.svg)][pypi-url]
-[![Join the chat at https://gitter.im/bocadilloproject/bocadillo](https://badges.gitter.im/bocadilloproject/bocadillo.svg)](https://gitter.im/bocadilloproject/bocadillo)
-
-[pypi-url]: https://pypi.org/project/bocadillo/
-
-[Documentation][docs] / [CLI](https://github.com/bocadilloproject/queso) / [Twitter](https://twitter.com/bocadillopy) / [Blog](https://bocadilloproject.github.io/blog/) / [Mentions](https://bocadilloproject.github.io/mentions.html) / [FAQ](https://bocadilloproject.github.io/faq/)
-
-[docs]: https://bocadilloproject.github.io
 
 > Migrating from v0.13.x? Read the [v0.14 release notes](https://bocadilloproject.github.io/blog/release-0.14.html).
 
@@ -41,8 +63,6 @@ It is designed to be:
 
 ## Quick start
 
-We all love delicious "Hello, world!" examples, don't we? Here's ours:
-
 1. Install Bocadillo and the [Bocadillo CLI]:
 
 ```bash
@@ -51,7 +71,7 @@ pip install bocadillo bocadillo-cli
 
 [bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
 
-2. Generate the project and `cd` into it:
+2. Generate a project and `cd` into it:
 
 ```bash
 bocadillo create hello
@@ -93,7 +113,7 @@ Hello, Bocadillo!
 
 Tastes good! 🥪
 
-Hungry for more? Head to the [docs].
+Hungry for more? Head to the [docs](https://bocadilloproject.github.io).
 
 ## Changelog
 
