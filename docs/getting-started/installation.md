@@ -25,7 +25,7 @@ You can use it to verify that Bocadillo was correctly installed (you may have an
 ```bash
 $ bocadillo -V
 Bocadillo CLI: 0.2.0
-Bocadillo: 0.14.1
+Bocadillo: 0.14.2
 ```
 
 ## Extras <Badge text="Advanced" type="warning"/>
