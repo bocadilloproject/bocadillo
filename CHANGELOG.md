@@ -21,7 +21,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Removed
 
 - **BREAKING** Removed `ASGIMiddleware` base class. Please create plain ASGI3-compliant classes instead.
-- The Bocadillo `App` is not passed to HTTP `Middleware` anymore. Prefer plugins to perform global app initialisation.
+- **BREAKING** The Bocadillo `App` is not passed to HTTP `Middleware` anymore. Prefer plugins to perform global app initialisation.
 
 ## [v0.14.2] - 2019-04-26
 
