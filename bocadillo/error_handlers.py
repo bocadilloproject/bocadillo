@@ -46,10 +46,7 @@ async def error_to_json(req: Request, res: Response, exc: HTTPError):
     ```
     """
     res.status_code = exc.status_code
-    data = {"error": exc.title, "status": exc.status_code}
-    if exc.detail:
-        data["detail"] = exc.detail
-    res.json = data
+    res.json = exc.as_json()
 
 
 async def error_to_text(req: Request, res: Response, exc: HTTPError):

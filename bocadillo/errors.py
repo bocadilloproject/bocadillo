@@ -55,6 +55,12 @@ class HTTPError(Exception):
         """Return the HTTP error's title, e.g. `"404 Not Found"`."""
         return f"{self.status_code} {self.status_phrase}"
 
+    def as_json(self) -> dict:
+        data = {"error": self.title, "status": self.status_code}
+        if self.detail:
+            data["detail"] = self.detail
+        return data
+
     def __str__(self):
         return self.title
 

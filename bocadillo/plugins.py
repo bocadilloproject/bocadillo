@@ -10,7 +10,6 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .config import SettingsError, settings
 from .constants import DEFAULT_CORS_CONFIG
 from .converters import PathConversionError
-from .error_handlers import error_to_json
 from .errors import HTTPError
 from .staticfiles import static
 from .injection import STORE
@@ -212,7 +211,5 @@ def use_typesystem_validation_error_handling(app: "App"):
 
     @app.error_handler(typesystem.ValidationError)
     async def handle_validation_error(req, res, exc):
-        detail = dict(exc)
-        # Don't just re-raise `HTTPError` for handling by the configured
-        # error handler, because we really want to return JSON.
-        await error_to_json(req, res, HTTPError(400, detail=detail))
+        res.status_code = 400
+        res.json = HTTPError(400, detail=dict(exc)).as_json()
