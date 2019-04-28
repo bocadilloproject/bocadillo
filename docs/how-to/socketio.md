@@ -30,9 +30,10 @@ First, we'll create the Bocadillo application. [Install Bocadillo](/getting-star
 
 ```python
 # app.py
-from bocadillo import App, Templates
+from bocadillo import App, configure, Templates
 
 app = App()
+configure(app)
 templates = Templates(app)
 
 @app.route("/")
@@ -120,11 +121,12 @@ pip install python-socketio
 
 Now, let's update the `app.py` script:
 
-```python{1,7,8}
+```python{1,8,9}
 import socketio
 from bocadillo import App, Templates
 
 app = App()
+configure(app)
 templates = Templates(app)
 
 sio = socketio.AsyncServer(async_mode="asgi")
