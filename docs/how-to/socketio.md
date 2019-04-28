@@ -12,10 +12,6 @@ All the code can be found in our [socketio-example repository][socketio-example]
 [socket.io-client]: https://github.com/socketio/socket.io-client
 [socketio-example]: https://github.com/bocadilloproject/socketio-example
 
-::: warning
-Due to `python-socketio` not supporting ASGI3 yet, you need to use `bocadillo < 0.15` for the moment.
-:::
-
 ## Planning
 
 What are we going to build, exactly?
@@ -30,7 +26,13 @@ Let's get down to business, shall we?
 
 ## Basic application
 
-First, we'll create the Bocadillo application. [Install Bocadillo](/getting-started/installation.md) if not done already, and create the following `app.py` file:
+First, we'll create the Bocadillo application. [Install Bocadillo](/getting-started/installation.md) if not done already.
+
+::: warning
+Due to `python-engineio` not supporting ASGI3 yet (see [#107](https://github.com/miguelgrinberg/python-engineio/issues/107)), you need to use `bocadillo < 0.15` for the moment.
+:::
+
+Then, create the following `app.py` file:
 
 ```python
 # app.py
