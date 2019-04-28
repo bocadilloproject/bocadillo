@@ -12,6 +12,10 @@ All the code can be found in our [socketio-example repository][socketio-example]
 [socket.io-client]: https://github.com/socketio/socket.io-client
 [socketio-example]: https://github.com/bocadilloproject/socketio-example
 
+::: warning
+Due to `python-socketio` not supporting ASGI3 yet, you need to use `bocadillo < 0.15` for the moment.
+:::
+
 ## Planning
 
 What are we going to build, exactly?
@@ -123,7 +127,7 @@ Now, let's update the `app.py` script:
 
 ```python{1,8,9}
 import socketio
-from bocadillo import App, Templates
+from bocadillo import App, configure, Templates
 
 app = App()
 configure(app)
