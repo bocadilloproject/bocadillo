@@ -7,7 +7,7 @@ This page is about the design of Bocadillo, and things you may want to know befo
 In a hurry? Skip to the [Installation guide](installation.md).
 
 ::: tip ABOUT THIS WEBSITE
-This documentation site is an ongoing community effort. If you found a typo, use the "Edit" link at the bottom of each page!
+This documentation site is an ongoing community effort. If you find a typo, use the "Edit" link at the bottom of each page to submit a fix!
 :::
 
 ## What is Bocadillo?
@@ -25,7 +25,7 @@ Bocadillo is designed to be:
 - **Productive**: a carefully chosen set of included batteries helps you solve common and more advanced problems.
 - **Real-time capable**: embrace async programming and the baked-in [WebSocket] and [SSE] support to build real-time, highly-concurrent systems.
 - **Flexible**: inject resources into web views using [providers], an explicit, modular and easy-to-use mechanism inspired by pytest fixtures.
-- **Performant**: Bocadillo is built on top of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and framework.
+- **Performant**: Bocadillo is built on top of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and web server.
 - **Empowering**: ships with testing and development tools that help you build delicious, high-quality applications.
 - **Transparent**: we make sure every single feature is documented front to back, and provide optimal editor support with a 100% type-annotated code base.
 
@@ -44,9 +44,9 @@ Historically, web frameworks in the Python ecosystem — Django, Flask, Pyramid,
 [wsgi]: https://www.python.org/dev/peps/pep-3333/
 [gunicorn]: https://gunicorn.org
 
-WSGI was not designed to handle multiple clients at a time — a property known as concurrency. If processing a request requires running a 10-second long database query, other clients have to wait, period.
+WSGI was not designed to handle multiple clients at a time — a property known as **concurrency**. If processing a request requires running a 10-second long database query, other clients have to wait, period.
 
-This is why, after the introduction of asynchronous programming in Python 3.5 ([async/await], [asyncio], etc), the community worked towards a new standard. The result of this effort is [ASGI] - the Asynchronous Server Gateway Interface.
+This is why, after the introduction of asynchronous programming in Python 3.5 ([async/await], [asyncio], etc), the community worked towards a new standard. The result of this effort was [ASGI] - the Asynchronous Server Gateway Interface.
 
 [async/await]: https://www.python.org/dev/peps/pep-0492/
 [asyncio]: https://docs.python.org/3/library/asyncio.html
