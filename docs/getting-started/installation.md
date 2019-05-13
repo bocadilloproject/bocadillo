@@ -8,7 +8,10 @@ Bocadillo can be installed using the following command:
 pip install bocadillo
 ```
 
-**Note**: you will need **Python 3.6 and above** to use Bocadillo. You can get Python from [python.org](https://www.python.org/downloads/) or via the package manager of your OS.
+**Note**:
+
+- You will need **Python 3.6 and above** to use Bocadillo. You can get Python from [python.org](https://www.python.org/downloads/) or via the package manager of your OS.
+- On Linux, due to [a known limitation in httptools](https://github.com/MagicStack/httptools/issues/33), you also need to install `python-dev` for your current version of Python, e.g. `apt-get install python3.7-dev` for Python 3.7.
 
 ## Bocadillo CLI
 

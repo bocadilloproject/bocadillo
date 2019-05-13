@@ -51,7 +51,7 @@ class Post(orm.Model):
     title = orm.String(max_length=300)
     content = orm.Text(allow_blank=True)
 
-engine = sqlalchemy.create_engine(url)
+engine = sqlalchemy.create_engine(str(settings.DATABASE_URL))
 metadata.create_all(engine)
 ```
 

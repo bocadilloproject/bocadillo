@@ -26,13 +26,20 @@ Let's get down to business, shall we?
 
 ## Basic application
 
-First, we'll create the Bocadillo application. [Install Bocadillo](/getting-started/installation.md) if not done already, and create the following `app.py` file:
+First, we'll create the Bocadillo application. [Install Bocadillo](/getting-started/installation.md) if not done already.
+
+::: warning
+Due to `python-engineio` not supporting ASGI3 yet (see [#107](https://github.com/miguelgrinberg/python-engineio/issues/107)), you need to use `bocadillo < 0.15` for the moment.
+:::
+
+Then, create the following `app.py` file:
 
 ```python
 # app.py
-from bocadillo import App, Templates
+from bocadillo import App, configure, Templates
 
 app = App()
+configure(app)
 templates = Templates(app)
 
 @app.route("/")
@@ -120,11 +127,12 @@ pip install python-socketio
 
 Now, let's update the `app.py` script:
 
-```python{1,7,8}
+```python{1,8,9}
 import socketio
-from bocadillo import App, Templates
+from bocadillo import App, configure, Templates
 
 app = App()
+configure(app)
 templates = Templates(app)
 
 sio = socketio.AsyncServer(async_mode="asgi")

@@ -20,7 +20,6 @@ generate:
   - middleware.md:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
-          - bocadillo.middleware.ASGIMiddleware+
   - plugins.md:
       - bocadillo.plugins+
   - recipes.md:
