@@ -1,10 +1,8 @@
-from contextlib import contextmanager
+import pathlib
 import typing
+from contextlib import contextmanager
 
 from jinja2 import Environment, FileSystemLoader, Template
-
-
-DEFAULT_TEMPLATES_DIR = "templates"
 
 
 class Templates:
@@ -20,9 +18,6 @@ class Templates:
     :::
 
     # Parameters
-    app (any):
-        an optional application object.
-        May be a subclass of #::bocadillo.routing#RoutingMixin.
     directory (str):
         the directory where templates should be searched for.
         Defaults to `"templates"` relative to the current working directory.
@@ -30,20 +25,17 @@ class Templates:
         global template variables.
     """
 
-    __slots__ = ("app", "_directory", "_environment")
+    __slots__ = ("_directory", "_environment")
 
     def __init__(
         self,
-        app: typing.Optional[typing.Any] = None,
-        directory: str = DEFAULT_TEMPLATES_DIR,
-        context: dict = None,
+        *args,  # compatibility with `Templates(app)`
+        directory: typing.Union[str, pathlib.Path] = "templates",
+        context: dict = None
     ):
         if context is None:
             context = {}
-
-        self.app = app
-
-        self._directory = directory
+        self._directory = str(directory)
         self._environment = Environment(
             loader=FileSystemLoader([self.directory]), autoescape=True
         )

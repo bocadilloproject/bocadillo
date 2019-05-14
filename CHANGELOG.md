@@ -14,6 +14,14 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Improved documentation on custom templates directories.
+
+### Changed
+
+- The `app` argument to `Templates` is now deprecated, and will be removed in 0.16.
+
 ## [v0.15.0] - 2019-04-26
 
 ### Changed

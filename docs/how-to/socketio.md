@@ -40,7 +40,7 @@ from bocadillo import App, configure, Templates
 
 app = App()
 configure(app)
-templates = Templates(app)
+templates = Templates()
 
 @app.route("/")
 async def index(req, res):
@@ -133,7 +133,7 @@ from bocadillo import App, configure, Templates
 
 app = App()
 configure(app)
-templates = Templates(app)
+templates = Templates()
 
 sio = socketio.AsyncServer(async_mode="asgi")
 app.mount("/sio", socketio.ASGIApp(sio))

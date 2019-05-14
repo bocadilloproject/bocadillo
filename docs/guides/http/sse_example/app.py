@@ -3,7 +3,7 @@ from asyncio import Queue
 from bocadillo import App, Templates, server_event
 
 app = App()
-templates = Templates(app)
+templates = Templates()
 
 clients = set()
 

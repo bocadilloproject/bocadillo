@@ -2,7 +2,7 @@
 from bocadillo import App, Templates
 
 app = App()
-templates = Templates(app)
+templates = Templates()
 
 
 @app.websocket_route("/chat", value_type="json")

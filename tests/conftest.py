@@ -27,8 +27,8 @@ def client(app):
 
 
 @pytest.fixture(name="templates")
-def fixture_templates(app: App):
-    return Templates(app)
+def fixture_templates():
+    return Templates()
 
 
 class TemplateWrapper(typing.NamedTuple):
