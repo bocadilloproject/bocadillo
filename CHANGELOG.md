@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.15.1] - 2019-05-17
+
 ### Fixed
 
 - Improved documentation on custom templates directories.
@@ -655,7 +657,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.1...HEAD
+[v0.15.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.0...v0.15.1
 [v0.15.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.2...v0.15.0
 [v0.14.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.1...v0.14.2
 [v0.14.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.0...v0.14.1
