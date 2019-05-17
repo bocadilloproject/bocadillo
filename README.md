@@ -4,19 +4,19 @@
 
 <p align="center">
     <a href="https://travis-ci.org/bocadilloproject/bocadillo">
-        <img src="https://img.shields.io/travis/bocadilloproject/bocadillo.svg" alt="travis"/>
+        <img src="https://img.shields.io/travis/bocadilloproject/bocadillo.svg" alt="Build status"/>
     </a>
     <a href="https://codecov.io/gh/bocadilloproject/bocadillo">
-        <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="test coverage"/>
+        <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="Test coverage"/>
     </a>
     <a href="https://pypi.org/project/bocadillo">
-        <img src="https://img.shields.io/pypi/l/bocadillo.svg" alt="license"/>
-    </a>
-    <a href="https://gitter.im/bocadilloproject/bocadillo">
-        <img src="https://badges.gitter.im/bocadilloproject/bocadillo.svg" alt="chat">
+        <img src="https://img.shields.io/pypi/l/bocadillo.svg" alt="License"/>
     </a>
     <a href="https://twitter.com/bocadillopy">
-        <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="twitter">
+        <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="@bocadillopy on Twitter">
+    </a>
+    <a href="https://saythanks.io/to/florimondmanca">
+        <img src="https://img.shields.io/badge/Say_Thanks-!-1EAEDB.svg" alt="Say Thanks!">
     </a>
 </p>
 
