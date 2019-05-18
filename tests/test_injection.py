@@ -3,15 +3,14 @@ import pytest
 from bocadillo import App, provider, useprovider, WebSocket
 
 
-@pytest.fixture(autouse=True)
-async def hello_provider():
-    @provider
-    async def hello_format():
-        return "Hello, {who}!"
+@provider
+async def hello_format():
+    return "Hello, {who}!"
 
-    @provider
-    async def hello(hello_format) -> str:
-        return hello_format.format(who="providers")
+
+@provider
+async def hello(hello_format) -> str:
+    return hello_format.format(who="providers")
 
 
 def test_function_based_view(app: App, client):

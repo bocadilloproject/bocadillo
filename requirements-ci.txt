@@ -1,7 +1,0 @@
--e .[full]
-pytest
-pytest-asyncio
-pytest-cov
-codecov
-pydoc-markdown<2.0.5
-# ^ See: https://github.com/NiklasRosenstein/pydoc-markdown/pull/78
