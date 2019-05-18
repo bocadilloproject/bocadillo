@@ -53,7 +53,7 @@ async def index(req, res):
 To help with the transition:
 
 1. We've added checks to the framework that detect when you use a regular function whereas an asynchronous one is expected.
-2. We've added an [async crash course](/guides/async.md) with tips, common patterns, and resources for people getting started with Python async.
+2. We've added an [async crash course](https://bocadilloproject.github.io/guides/async.html) with tips, common patterns, and resources for people getting started with Python async.
 
 We hope this decision will foster your interest in learning about async Python, and make working with Bocadillo more straight-forward!
 
@@ -78,13 +78,13 @@ App configuration is now performed once and for all with the `bocadillo.configur
 
 As for where and how those settings should be defined, the TL;DR is: use a **settings module**.
 
-To learn more, please refer to the new [Configuration](/guides/architecture/app.md#configuration) guide.
+To learn more, please refer to the new [Configuration](https://bocadilloproject.github.io/guides/architecture/app.html#configuration) guide.
 
 #### Plugins
 
 Plugins are small pieces of functionality which are setup at configuration time.
 
-Many features in Bocadillo are now implemented as plugins. As a result, **`App` does not take any parameter anymore**. Instead, you should define plugin-specific **settings** in the settings module. These are specified in the [plugins API reference](/api/plugins.md).
+Many features in Bocadillo are now implemented as plugins. As a result, **`App` does not take any parameter anymore**. Instead, you should define plugin-specific **settings** in the settings module. These are specified in the [plugins API reference](https://bocadilloproject.github.io/api/plugins.html).
 
 What does this mean in practice? Well, instead of:
 
@@ -132,7 +132,7 @@ We concluded that this early design decision was bad, because:
 
 For this reason, **`app.run()` has been removed entirely**. This has two consequences:
 
-1. The official way to serve apps is now to **use the `uvicorn` command**. See [Serving an application](/guides/architecture/app.md#serving-an-application).
+1. The official way to serve apps is now to **use the `uvicorn` command**. See [Serving an application](https://bocadilloproject.github.io/guides/architecture/app.html#serving-an-application).
 2. **Debug mode has been removed.** You can enable hot reload using the `--reload` option to `uvicorn`.
 
 Here's a comparison of the minimum working application with hot reload enabled:
@@ -223,7 +223,7 @@ This one is pretty exciting. There's been a gap in the framework as to how JSON 
 
 In 0.14, you can now **use the [TypeSystem](https://www.encode.io/typesystem) library to validate and serialize JSON data**. 🎉
 
-To learn more, read [JSON validation](/guides/http/json-validation.md).
+To learn more, read [JSON validation](https://bocadilloproject.github.io/guides/http/json-validation.html).
 
 ### Route parameter validation
 
@@ -239,7 +239,7 @@ async def get_user(req, res, pk: int):
 
 For advanced validation use cases, you can annotate the route parameter with a TypeSystem field.
 
-Learn more in [Route parameter validation and conversion](/guides/http/routing.md#validation-and-conversion).
+Learn more in [Route parameter validation and conversion](https://bocadilloproject.github.io/guides/http/routing.html#validation-and-conversion).
 
 ### Query parameter injection
 
@@ -263,7 +263,7 @@ async def get_users(req, res, token: str = None):
     pass
 ```
 
-Learn more in [Query parameters](/guides/http/routing.md#query-parameters).
+Learn more in [Query parameters](https://bocadilloproject.github.io/guides/http/routing.html#query-parameters).
 
 ### Exceptions in error handlers
 
@@ -307,4 +307,4 @@ If you want the full URL to a view, you'll simply need to build it yourself.
 
 ### Test client with `app.client`
 
-Accessing the test client via `app.client` was deprecated in 0.13. It is now definitively removed. You must use `bocadillo.create_client()` instead, as described in [Testing](/guides/architecture/testing.md).
+Accessing the test client via `app.client` was deprecated in 0.13. It is now definitively removed. You must use `bocadillo.create_client()` instead, as described in [Testing](https://bocadilloproject.github.io/guides/architecture/testing.html).

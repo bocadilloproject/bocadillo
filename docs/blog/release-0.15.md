@@ -6,7 +6,7 @@ author: Florimond Manca
 layout: Post
 ---
 
-If you have any questions or feedback about this release, feel free to [get in touch](/faq.md#getting-in-touch)!
+If you have any questions or feedback about this release, feel free to [get in touch](https://bocadilloproject.github.io/faq.html#getting-in-touch)!
 
 [[toc]]
 
@@ -34,13 +34,13 @@ You shouldn't be impacted by these changes unless you wrote HTTP or ASGI middlew
 
 The `ASGIMiddleware` base class was removed entirely. We obviously still support ASGI middleware — via `app.add_asgi_middleware()` for instance — but instead of relying on a base class, you must now implement the ASGI protocol yourself.
 
-Please refer to [Writing middleware](/how-to/middleware.md#asgi-middleware) for details.
+Please refer to [Writing middleware](https://bocadilloproject.github.io/how-to/middleware.html#asgi-middleware) for details.
 
 ### App initialisation
 
 We used to encourage app initialisation via middleware by passing the `App` instance to the middleware's constructor.
 
-However, with the arrival of [plugins](/guides/architecture/plugins.md) in 0.14, we now have a dedicated (and more scalable) way to perform application initialisation.
+However, with the arrival of [plugins](https://bocadilloproject.github.io/guides/architecture/plugins.html) in 0.14, we now have a dedicated (and more scalable) way to perform application initialisation.
 
 For this reason, the constructors of middleware classes aren't given the `App` instance anymore.
 
