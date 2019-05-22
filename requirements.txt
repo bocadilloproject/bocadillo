@@ -1,5 +1,7 @@
+-e .[full]
 nox
 black
 pre-commit
 pylint
 mypy
+pydoc-markdown<2.0.5

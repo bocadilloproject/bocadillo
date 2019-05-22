@@ -48,24 +48,24 @@ npm install
 
 ### Working with the repo
 
-Testing and other tooling is automated through [`nox`](https://nox.thea.codes/en/stable/index.html):
+Testing is automated through [`nox`](https://nox.thea.codes/en/stable/index.html):
 
 - To run the [`pytest`](https://docs.pytest.org) test suite, run:
 
 ```bash
-nox -s tests
+nox -s test
 ```
 
 - To also generate a coverage report, run:
 
 ```bash
-nox -s tests -- coverage
+nox -s test -- coverage
 ```
 
 - To also only show lines not covered by tests, run:
 
 ```
-nox -s tests -- coverage missing
+nox -s test -- coverage:missing
 ```
 
 - To serve the docs site (built with [vuepress], hot reload enabled), run:
@@ -73,36 +73,26 @@ nox -s tests -- coverage missing
 [vuepress]: https://vuepress.vuejs.org
 
 ```bash
-nox -s docs -- serve
+npm start
 ```
 
 - To build the docs site, run:
 
 ```bash
-nox -s docs
+npm run build
 ```
 
-### Creating documentation pages
-
-To add a new page to the docs, create a new `.md` file in the appropriate subdirectory of `docs` (`getting-started`, `guides`, `how-to` or `discussions`), then add a route in the appropriate `sidebar` configuration in `docs/.vuepress/config.js`.
-
-Feel free to refer to the [VuePress] docs if needed.
-
-### Generating the API Reference
-
-The API reference is automatically generated with [Pydoc-Markdown] when running `nox -s docs` or `nox -s docs -- serve`.
+- The API reference is automatically generated with [Pydoc-Markdown] when serving or building the documentation. If you need to regenerate it manually, run:
 
 [pydoc-markdown]: https://niklasrosenstein.github.io/pydoc-markdown/
 
-If you need to regenerate it manually, run:
-
 ```bash
-nox -s docs -- api
+npm run build:apiref
 ```
 
-If it is running, the docs site should reload and display the updated API reference.
-
 See [`pydocmd.yml`](./pydocmd.yml) for the configuration details and the [Pydoc-Markdown] documentation for usage reference.
+
+- To add a new page to the docs, create a new `.md` file in the appropriate subdirectory of `docs` (`guide`, `how-to` or `discussions`), then add a route in the appropriate `sidebar` configuration in `docs/.vuepress/config.js`. Feel free to refer to the [VuePress] docs if needed.
 
 ## Code style
 

@@ -1,17 +1,16 @@
+import os
+
 import nox
 
 Session = nox.sessions.Session
-
-
-def _install_package(session: Session):
-    session.install("-e", ".[full]")
+VUEPRESS = os.path.join(".", "node_modules", "vuepress", "bin", "vuepress.js")
 
 
 @nox.session(reuse_venv=True)
-def tests(session: Session):
-    _install_package(session)
+def test(session: Session):
+    session.install("-r", "requirements.txt")
     session.install("pytest", "pytest-cov", "pytest-asyncio")
-    if "coverage" in session.posargs and "missing" in session.posargs:
+    if "coverage:missing" in session.posargs:
         session.run(
             "pytest",
             "--cov=./",
@@ -26,21 +25,10 @@ def tests(session: Session):
         session.run("pytest")
 
 
-@nox.session(reuse_venv=True)
-def docs(session: Session):
-    _install_package(session)
-    session.install("pydoc-markdown<2.0.5")
-    session.run("pydocmd", "generate")
-    if "serve" in session.posargs:
-        session.run("vuepress", "dev", "docs", external=True)
-    elif "api" not in session.posargs:
-        session.run("vuepress", "build", "docs", external=True)
-
-
 @nox.session(python=["3.6", "3.7"])
 def ci(session: Session):
     session.install("codecov")
-    tests(session)
+    test(session)
 
 
 @nox.session(reuse_venv=True)

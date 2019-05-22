@@ -19,7 +19,7 @@ jobs:
         - nvm install 10
         - nvm use 10
         - npm install
-      script: nox -s docs
+      script: npm run build
       deploy:
         provider: pages
         skip_cleanup: true
