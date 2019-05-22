@@ -29,6 +29,7 @@ docs/.vuepress/dist
 debug/
 .coverage
 out/
+.nox/
 
 # Databases
 *.sqlite3*

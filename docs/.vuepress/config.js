@@ -1,10 +1,8 @@
-const dotenv = require("dotenv");
+require("dotenv").config();
 
 const head = require("./head");
 const project = require("./project");
 const listDir = require("./utils").listDir;
-
-dotenv.load();
 
 module.exports = {
   base: "/",
