@@ -19,7 +19,7 @@ module.exports = {
     docsBranch: "release/docs",
     editLinks: true,
     editLinkText: "Edit this page on GitHub",
-    sidebarDepth: 2,
+    sidebarDepth: 1,
     lastUpdated: true,
     serviceWorker: { updatePopup: true },
     algolia:
@@ -31,12 +31,8 @@ module.exports = {
         : {},
     nav: [
       {
-        text: "Get Started",
-        link: "/getting-started/"
-      },
-      {
-        text: "Guides",
-        link: "/guides/"
+        text: "Guide",
+        link: "/guide/"
       },
       {
         text: "How-To",
@@ -117,112 +113,56 @@ module.exports = {
       }
     ],
     sidebar: {
-      "/getting-started/": [
+      "/guide/": [
+        "/guide/",
         {
-          title: "Getting Started",
-          collapsable: false,
-          children: listDir("getting-started", [
-            "",
-            "installation",
-            "quickstart",
-            "tutorial"
-          ])
-        }
-      ],
-      "/guides/": [
-        "/guides/async",
-        {
-          title: "Architecture",
-          collapsable: false,
-          children: listDir("guides/architecture", [
-            "app",
-            "recipes",
-            "events",
-            "plugins",
-            "testing"
-          ])
+          title: "Getting started",
+          children: listDir("guide", ["installation", "async", "tutorial"])
         },
         {
-          title: "HTTP",
-          collapsable: false,
-          children: listDir("guides/http", [
+          title: "Essentials",
+          children: listDir("guide", [
+            "apps",
+            "config",
             "routing",
-            "views",
-            "error-handling",
             "requests",
             "responses",
+            "errors"
+          ])
+        },
+        {
+          title: "Built-in features",
+          children: listDir("guide", [
             "json-validation",
-            "redirecting",
+            ["builtin-middleware", "Middleware"],
             "static-files",
-            "hooks",
-            "background-tasks",
-            "middleware",
             "sessions",
-            "sse"
+            "templates",
+            "background-tasks"
           ])
         },
         {
-          title: "WebSockets",
-          collapsable: false,
-          children: listDir("guides/websockets", [
-            "",
-            "routing",
-            "messages",
-            "connections",
-            "error-handling",
-            "example"
+          title: "Real-Time Web",
+          children: listDir("guide", ["websockets", "sse"])
+        },
+        {
+          title: "Reusability & Modularity",
+          children: listDir("guide", [
+            "nested-apps",
+            "providers",
+            "plugins",
+            "hooks",
+            "middleware",
+            "recipes"
           ])
         },
         {
-          title: "Protocol-agnostic",
-          collapsable: false,
-          children: listDir("guides/agnostic", ["asgi-middleware", "templates"])
-        },
-        {
-          title: "Providers (Dependency injection)",
-          collapsable: false,
-          children: listDir("guides/injection", [
-            "",
-            "problem",
-            "basics",
-            "scopes",
-            "async",
-            "yield",
-            "modularity",
-            "factory",
-            "auto"
-          ])
+          title: "Tooling",
+          children: listDir("guide", ["testing", "cli"])
         }
       ],
-      "/how-to/": [
-        {
-          title: "Building upon the framework",
-          collapsable: false,
-          children: listDir("how-to", ["middleware", "heroku"])
-        },
-        {
-          title: "Third-party solutions",
-          collapsable: false,
-          children: listDir("how-to", ["orm", "socketio"])
-        },
-        {
-          title: "Testing",
-          collapsable: false,
-          children: listDir("how-to", ["test-pytest"])
-        }
-      ],
-      "/discussions/": [
-        {
-          title: "Discussions",
-          collapsable: false,
-          children: listDir("discussions", [
-            "databases",
-            "frontend",
-            "deployment",
-            "security"
-          ])
-        }
-      ],
+      "/how-to/": ["heroku", "orm", "socketio", "test-pytest"],
+      "/discussions/": ["databases", "frontend", "deployment", "security"],
       "/api/": [
         {
           title: "Python modules",

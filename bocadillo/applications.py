@@ -110,9 +110,6 @@ class App(RoutingMixin, metaclass=DocsMeta):
         recipe:
             a #::bocadillo.recipes#Recipe or #::bocadillo.recipes#RecipeBook
             to be applied to the application.
-
-        # See Also
-        - [Recipes](../guides/architecture/recipes.md)
         """
         recipe.apply(self)
 
@@ -151,7 +148,7 @@ class App(RoutingMixin, metaclass=DocsMeta):
         middleware_cls: a subclass of #::bocadillo.middleware#Middleware.
 
         # See Also
-        - [Middleware](../guides/http/middleware.md)
+        - [Middleware](/guide/middleware.md)
         """
         self.exception_middleware.app = middleware_cls(
             self.exception_middleware.app, **kwargs

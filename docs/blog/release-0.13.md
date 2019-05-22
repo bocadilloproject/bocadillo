@@ -120,7 +120,7 @@ In particular, there's a brand new [tutorial](https://bocadilloproject.github.io
 ### Middleware improvements
 
 - The new [`ASGIMiddleware`](https://bocadilloproject.github.io/how-to/middleware.html#using-the-asgimiddleware-base-class) base class streamlines the writing of ASGI middleware.
-- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed to the constructor, instead of only `inner`. This allows to perform initialisation on the `app` by overriding the constructor. The same goes for the new `ASGIMiddleware` base class. See [Configuration and initialization](/how-to/middleware.html#configuration-and-initialization).
+- HTTP middleware classes can now expect both the `inner` middleware _and_ the `app` instance to be passed to the constructor, instead of only `inner`. This allows to perform initialisation on the `app` by overriding the constructor. The same goes for the new `ASGIMiddleware` base class. See [Configuration and initialization](https://bocadilloproject.github.io/how-to/middleware.html#configuration-and-initialization).
 - Fix: ASGI middleware is now properly applied even when the request is routed to a sub-application (e.g. a recipe). In the past, this could lead to CORS headers not being added on a recipe despite them being configured on the root application.
 
 ### Streaming

@@ -12,7 +12,7 @@ class Request(_Request):
 
     This is a subclass of [`Starlette.requests.Request`][starlette-request]. As a result, all methods and attributes on Starlette's `Request` are available on this class. Additional or redefined members are documented here.
 
-    For usage tips, see [Requests (Guide)](../guides/http/requests.md).
+    For usage tips, see [Requests (Guide)](/guide/requests.md).
 
     [starlette-request]: https://www.starlette.io/requests/
 

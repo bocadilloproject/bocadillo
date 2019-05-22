@@ -33,7 +33,7 @@ uvicorn.run(
 )
 ```
 
-- Passing `--certfile` and `--keyfile` to Gunicorn in a production setup (see [deployment]):
+- Passing `--certfile` and `--keyfile` to Gunicorn in a production setup (see [deployment](/discussions/deployment.md)):
 
 ```bash
 gunicorn --certfile=path/to/server.crt --keyfile=path/to/server.key ...
@@ -41,7 +41,7 @@ gunicorn --certfile=path/to/server.crt --keyfile=path/to/server.key ...
 
 If you're hosting your app via a cloud provider, refer to their documentation as they may provide a feature to set up HTTPS for you.
 
-It can be a good idea to enable [HSTS] so that all HTTP traffic is redirected to HTTPS.
+It can be a good idea to enable [HSTS](/guide/builtin-middleware.md#hsts) so that all HTTP traffic is redirected to HTTPS.
 
 ## XSS
 
@@ -49,7 +49,7 @@ XSS stands for **Cross-Site Scripting**. This attack consists in injecting malic
 
 One way to prevent XSS attacks is by escaping all quotes, replacing them with their HTML equivalent.
 
-If you're using the [templating utilities][templates] provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
+If you're using the [templating utilities](/guide/templates.md) provided by Bocadillo, you are already benefiting from Jinja2 escaping strings in XML and HTML templates.
 
 However, you should always quote attributes in order for this to work, e.g.
 
@@ -126,9 +126,4 @@ An HTTP Host Header attack consists in a malicious user providing a fake `Host` 
 
 In order to prevent this type of attack, every Bocadillo applications has a whitelist of hosts which the `Host` header is validated against. An invalid `Host` will result in Bocadillo sending a `400 Bad Request` response.
 
-By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `App` — see [allowed hosts].
-
-[deployment]: ./deployment.md
-[templates]: ../guides/agnostic/templates.md
-[hsts]: ../guides/http/middleware.md#hsts
-[allowed hosts]: ../guides/architecture/app.md#allowed-hosts
+By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `App` — see [allowed hosts](/guide/builtin-middleware.md#allowed-hosts).

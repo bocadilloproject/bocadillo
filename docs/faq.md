@@ -59,9 +59,7 @@ We have tons of ideas on making Bocadillo better. Check out our [GitHub issues](
 
 At the fundamental level, an HTTP server application takes an HTTP request as input and _returns_ an HTTP response. Many frameworks have implemented this style with great success.
 
-In Bocadillo however, you may have noticed that [HTTP views][http-views] don't _return_ a `Response`.
-
-[http-views]: /guides/http/views.md
+In Bocadillo however, you may have noticed that HTTP views don't _return_ a `Response`.
 
 Instead, they are given the `Request` object (nothing outstanding there) _and_ the `Response` object. Inside a view, the response is _mutated_ as seems fit. Why?
 

@@ -7,7 +7,7 @@ Modern web applications typically consist of a _backend_ and a _frontend_. Bocad
 Frontend frameworks generally have their own development tooling, including command line tools, hot reload, etc. Based on this assumption, here are our recommendations:
 
 - **In development**, run 2 separate servers in development: one for Bocadillo, one for the frontend.
-- **In production**, have Bocadillo serve the frontend build. This is efficient enough for most use cases (thanks to WhiteNoise), and can be achieved by mounting the build directory as an [extra static files directory](/guides/http/static-files.md#extra-static-files-directories).
+- **In production**, have Bocadillo serve the frontend build. This is efficient enough for most use cases (thanks to WhiteNoise), and can be achieved by mounting the build directory as an [extra static files directory](/guide/static-files.md#extra-static-files-directories).
 
 ## Example repos
 

@@ -14,7 +14,7 @@ We'll be working on a `blog` project generated with the [Bocadillo CLI](https://
 pip install "orm>=0.1,<0.2"
 ```
 
-2. Configure the database URL in the [settings module](/guides/architecture/app.md#settings-module):
+2. Configure the database URL in the [settings module](/guide/config.md#settings-module):
 
 ```python
 # blog/settings.py
@@ -55,7 +55,7 @@ engine = sqlalchemy.create_engine(str(settings.DATABASE_URL))
 metadata.create_all(engine)
 ```
 
-4. [Provide](/guides/injection/) a database connection:
+4. [Provide](/guide/providers.md) a database connection:
 
 ```python
 # blog/providerconf.py
@@ -98,7 +98,7 @@ To learn more about making queries with `orm`, you can read the [orm documentati
 
 More specifically, data passed to `.create()` and `.update()` is validated against the model's fields, and calling these methods may raise a `typesystem.ValidationError` exception.
 
-Thanks to [JSON validation](/guides/http/json-validation.md), Bocadillo is able to catch and process this exception in order to return an appropriate error response.
+Thanks to [JSON validation](/guide/json-validation.md), Bocadillo is able to catch and process this exception in order to return an appropriate error response.
 
 This eliminates boilerplate and allows you to write clean REST API endpoints. ✨
 

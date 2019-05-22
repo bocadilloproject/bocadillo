@@ -16,7 +16,7 @@ from .injection import consumer
 class WebSocket:
     """Represents a WebSocket connection.
 
-    See also [WebSockets](/guides/websockets/).
+    See also [WebSockets](/guide/websockets.md).
 
     # Parameters
     scope (dict): ASGI scope.

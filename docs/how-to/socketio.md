@@ -26,7 +26,7 @@ Let's get down to business, shall we?
 
 ## Basic application
 
-First, we'll create the Bocadillo application. [Install Bocadillo](/getting-started/installation.md) if not done already.
+First, we'll create the Bocadillo application. [Install Bocadillo](/guide/installation.md) if not done already.
 
 ::: warning
 Due to `python-engineio` not supporting ASGI3 yet (see [#107](https://github.com/miguelgrinberg/python-engineio/issues/107)), you need to use `bocadillo < 0.15` for the moment.
@@ -49,7 +49,7 @@ async def index(req, res):
 
 All we're doing here is creating a Bocadillo application with a root endpoint that serves an HTML page, which we're now going to set up. We'll start from the HTML page provided in the [socket.io chat tutorial].
 
-1. First, create a `static` directory in the project root directory, and place the following CSS file there. You can check out the [Static files](/guides/http/static-files.md) guide to know how Bocadillo will pick that up.
+1. First, create a `static` directory in the project root directory, and place the following CSS file there. You can check out the [Static files](/guide/static-files.md) guide to know how Bocadillo will pick that up.
 
 ```css
 /* static/styles.css */
@@ -93,7 +93,7 @@ form button {
 }
 ```
 
-2. Next, create a `templates` directory and place the following `index.html` HTML file there. See [Templates](/guides/agnostic/templates.md) if you need a quick refresher about serving templates in Bocadillo.
+2. Next, create a `templates` directory and place the following `index.html` HTML file there. See [Templates](/guide/templates.md) if you need a quick refresher about serving templates in Bocadillo.
 
 ```html
 <!-- templates/index.html -->
@@ -165,7 +165,7 @@ Our approach here is to install the `socket.io` library and use the static JavaS
 Alternatively, you could retrieve these files from a CDN. See also the [JavaScript client documentation (socket.io)](https://socket.io/docs/#Javascript-Client).
 :::
 
-Next, we'll update the `app.py` script to [serve the static files](/guides/http/static-files.md#extra-static-files-directories) associated to the socket.io client:
+Next, we'll update the `app.py` script to [serve the static files](/guide/static-files.md#extra-static-files-directories) associated to the socket.io client:
 
 ```python
 # app.py

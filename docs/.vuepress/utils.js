@@ -1,14 +1,21 @@
 const fs = require("fs");
 
+const makeAddDir = dir => file => `/${dir}/${file}`;
+
 function listDir(dir, children) {
-  if (children === undefined) {
+  if (!children) {
     // NOTE: children will be sorted in alphabetical order.
     children = fs
       .readdirSync(`docs/${dir}`)
       .filter(file => file.endsWith(".md"))
       .filter(file => file !== "README.md");
   }
-  return children.map(file => `/${dir}/${file}`);
+  const addDir = makeAddDir(dir);
+  return children.map(file => {
+    if (typeof file === "string") return addDir(file);
+    const [theFile, title] = file;
+    return [addDir(theFile), title];
+  });
 }
 
 function maybeRoot(base, path) {

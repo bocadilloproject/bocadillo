@@ -6,7 +6,7 @@ Storing data and/or retrieving it from a database is a very common task to perfo
 
 In the meantime, you'll need to integrate with third-party libraries. While doing so, you'll definitely find [providers] handy, as shown in this guide.
 
-[providers]: /guides/injection/
+[providers]: /guide/providers.md
 
 ::: tip NOTE
 **Querying a database is typically I/O-bound** and can represent a significant part of the request processing time.
@@ -106,4 +106,4 @@ Here are some popular ones:
 - [aioelasticsearch](https://github.com/aio-libs/aioelasticsearch) for ElasticSearch.
 - [aioredis](https://github.com/aio-libs/aioredis) for Redis.
 
-You can find an example Redis setup [at the end of the providers problem statement](/guides/injection/problem.md#with-providers).
+You can find an example Redis setup [at the end of the providers problem statement](/guide/providers.md#problem-with-providers).

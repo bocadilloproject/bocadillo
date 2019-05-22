@@ -10,7 +10,7 @@ class Templates:
 
     This is a light wrapper around [jinja2](http://jinja.pocoo.org/docs).
 
-    See also [Templates](../guides/agnostic/templates.md) for detail.
+    See also [Templates](/guide/templates.md) for detail.
 
     ::: tip
     Parameters are also stored as attributes and can be accessed or

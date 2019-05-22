@@ -10,4 +10,4 @@ Uvicorn 7.0+ outputs this if an exception occurred during application startup. Y
 uvicorn myproject.asgi:app --lifespan=on
 ```
 
-In particular, this may occur if you use Bocadillo 0.14+ and did not call `configure()` before serving the application (see [Configuration](/guides/architecture/app.md#configuration)).
+In particular, this may occur if you use Bocadillo 0.14+ and did not call `configure()` before serving the application (see [Configuration](/guide/config.md)).

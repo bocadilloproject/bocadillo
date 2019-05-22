@@ -89,7 +89,7 @@ def use_cors(app: "App"):
 def use_gzip(app: "App"):
     """Enable [GZip] compression.
 
-    [GZip]: /guides/http/middleware.md#gzip
+    [GZip]: /guide/builtin-middleware.md#gzip
 
     Settings:
     - `GZIP` (bool):
@@ -110,7 +110,7 @@ def use_gzip(app: "App"):
 def use_hsts(app: "App"):
     """Enable [HSTS].
 
-    [HSTS]: /guides/http/middleware.md#hsts
+    [HSTS]: /guide/builtin-middleware.md#hsts
 
     Settings:
     - `HSTS` (bool):

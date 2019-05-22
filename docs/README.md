@@ -3,7 +3,7 @@ layout: HomePage
 home: true
 heroImage: /social-image.png
 actionText: Get Started →
-actionLink: /getting-started/
+actionLink: /guide/
 features:
   - title: 🥪 Productive
     details: A carefully chosen set of included batteries helps you solve common and more advanced problems.
@@ -45,7 +45,7 @@ cd hello/
 
 3. Edit the application script:
 
-```python
+```python{6-8}
 # hello/app.py
 from bocadillo import App
 
@@ -80,4 +80,4 @@ Hello, Bocadillo!
 
 Tastes good! 🥪
 
-Hungry for more? Head to our [Getting Started](./getting-started/README.md) guide!
+Hungry for more? [Head to the user guide!](/guide/)
