@@ -20,6 +20,9 @@ generate:
   - middleware.md:
       - bocadillo.middleware:
           - bocadillo.middleware.Middleware+
+          - bocadillo.middleware.ExceptionMiddleware
+          - bocadillo.middleware.ServerErrorMiddleware
+          - bocadillo.middleware.RequestResponseMiddleware
   - plugins.md:
       - bocadillo.plugins+
   - recipes.md:

@@ -42,7 +42,7 @@ def test_can_register_class_based_view(app: App):
         pass
 
 
-@pytest.mark.parametrize("method", map(str.lower, ALL_HTTP_METHODS))
+@pytest.mark.parametrize("method", ALL_HTTP_METHODS)
 def test_if_method_not_implemented_then_405(app: App, client, method: str):
     @app.route("/")
     class Index:

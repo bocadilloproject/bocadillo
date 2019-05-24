@@ -6,8 +6,6 @@ from .response import Response
 if typing.TYPE_CHECKING:
     from .applications import App
 
-_E = typing.TypeVar("_E", bound=Exception)
-
 # ASGI
 Scope = dict
 Event = typing.MutableMapping[str, typing.Any]
@@ -24,7 +22,9 @@ class ASGIApp:
 Handler = typing.Callable[
     [Request, Response, typing.Any], typing.Awaitable[None]
 ]
-ErrorHandler = typing.Callable[[Request, Response, _E], typing.Awaitable[None]]
+ErrorHandler = typing.Callable[
+    [Request, Response, BaseException], typing.Awaitable[None]
+]
 
 
 class HTTPApp:

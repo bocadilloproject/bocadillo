@@ -59,7 +59,7 @@ def use_allowed_hosts(app: "App"):
     if allowed_hosts is None:
         allowed_hosts = ["*"]
 
-    app.add_asgi_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
 
 @plugin
@@ -82,7 +82,7 @@ def use_cors(app: "App"):
     if cors is True:
         cors = dict(DEFAULT_CORS_CONFIG)
 
-    app.add_asgi_middleware(CORSMiddleware, **cors)
+    app.add_middleware(CORSMiddleware, **cors)
 
 
 @plugin
@@ -103,7 +103,7 @@ def use_gzip(app: "App"):
         return
 
     gzip_min_size = settings.get("GZIP_MIN_SIZE", 1024)
-    app.add_asgi_middleware(GZipMiddleware, minimum_size=gzip_min_size)
+    app.add_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
 
 @plugin
@@ -120,7 +120,7 @@ def use_hsts(app: "App"):
     if not settings.get("HSTS"):
         return
 
-    app.add_asgi_middleware(HTTPSRedirectMiddleware)
+    app.add_middleware(HTTPSRedirectMiddleware)
 
 
 @plugin
@@ -158,7 +158,7 @@ def use_sessions(app: "App"):
             "`SESSIONS` must have a non-empty `secret_key` to use sessions."
         )
 
-    app.add_asgi_middleware(SessionMiddleware, **sessions)
+    app.add_middleware(SessionMiddleware, **sessions)
 
 
 @plugin

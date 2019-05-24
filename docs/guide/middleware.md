@@ -23,30 +23,23 @@ For this reason, you should register HTTP middleware on all apps that need it in
 
 ## Using middleware
 
-When given a middleware class, you can register it on an application using:
-
-- `app.add_middleware()` if it is an HTTP middleware:
+When given a middleware class, and regardless of its type (HTTP or ASGI), you can register it on an application using `app.add_middleware()`.
 
 ```python
-app.add_middleware(SomeHTTPMiddleware, foo="bar")
+app.add_middleware(SomeMiddleware, foo="bar")
 ```
-
-- `.add_asgi_middleware()` if it is an ASGI middleware:
 
 All keyword arguments passed to both `.add_middleware()` and `.add_asgi_middleware()` get passed to the middleware constructor.
 
 ## Default middleware
 
-Two HTTP middleware classes are registered on every application:
-
-- [`HTTPErrorMiddleware`](/api/errors.md#httperrormiddleware) is responsible for calling a suitable [error handler](/guide/errors.md) when an exception occurs, if one exists.
-- [`ServerErrorMiddleware`](/api/errors.md#servererrormiddleware) is responsible for catching unhandled exceptions and returning 500 errors when one occurs.
+The default middleware classes registered on every application are documented in the [middleware API reference](/api/middleware.md).
 
 ## Writing HTTP middleware
 
-HTTP middleware should be inherit from [`Middleware`](/api/middleware.md#middleware), a base class which provides two hooks:
+HTTP middleware should inherit from [`Middleware`](/api/middleware.md#middleware), a base class which provides two hooks:
 
-- `.before_dispatch()`: called before a request is dispatched (i.e. processed by the inner middleware).
+- `.before_dispatch()`: called before the request is dispatched (i.e. processed by the inner middleware).
 - `.after_dispatch()`: called after the request has been dispatched.
 
 Each hook is given the current `Request` and `Response` objects, and can alter them as necessary to achieve the desired behavior.

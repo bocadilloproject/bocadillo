@@ -1,11 +1,13 @@
 from functools import partial
+import inspect
 import typing
 
 from . import injection
 from .app_types import Handler
-from .compat import camel_to_snake, check_async
+from .compat import check_async
 from .constants import ALL_HTTP_METHODS
 from .converters import ViewConverter, convert_arguments
+from .errors import HTTPError
 
 MethodsParam = typing.Union[typing.List[str], all]  # type: ignore
 
@@ -19,6 +21,16 @@ class HTTPConverter(ViewConverter):
     def get_query_params(self, args, kwargs):
         req = args[0]
         return req.query_params
+
+
+def get_handlers(obj: typing.Any) -> typing.Dict[str, typing.Callable]:
+    if hasattr(obj, "handle"):
+        return {method: obj.handle for method in ALL_HTTP_METHODS}
+    return {
+        method: getattr(obj, method)
+        for method in ALL_HTTP_METHODS
+        if hasattr(obj, method)
+    }
 
 
 class View:
@@ -45,13 +57,9 @@ class View:
     ::: tip
     `.handle()` is special: if defined, it overrides all others.
     :::
-
-    # Attributes
-    name (str): the name of the view.
     """
 
     __slots__ = (
-        "name",
         "get",
         "post",
         "put",
@@ -62,9 +70,6 @@ class View:
         "handle",
     )
 
-    def __init__(self, name: str):
-        self.name = name
-
     get: Handler
     post: Handler
     put: Handler
@@ -74,114 +79,66 @@ class View:
     options: Handler
     handle: Handler
 
-    @classmethod
-    def create(
-        cls: typing.Type["View"],
-        name: str,
-        handlers: typing.Dict[str, Handler],
-        class_based: bool,
-    ) -> "View":
+    def __init__(self, obj: typing.Any, methods=None):
+        if isinstance(obj, View):
+            raise NotImplementedError
+        if inspect.isclass(obj):
+            # View-like class.
+            name = obj.__name__
+            class_based = True
+            handlers = get_handlers(obj())
+        elif callable(obj):
+            # Function-based view.
+            name = obj.__name__
+            class_based = False
+            if methods is None:
+                methods = ["get"]
+            if methods is all:
+                methods = ["handle"]
+            else:
+                methods = [m.lower() for m in methods]
+            handlers = {method: obj for method in methods}
+        else:
+            # Treat as a view-like object.
+            name = obj.__class__.__name__
+            class_based = True
+            handlers = get_handlers(obj)
+
         for method, handler in handlers.items():
             full_name = f"{name}.{method.lower()}" if class_based else name
             check_async(
                 handler, reason=(f"view '{full_name}()' must be asynchronous")
             )
 
-        if class_based:
-            name = camel_to_snake(name)
-
         copy_get_to_head = "get" in handlers and "head" not in handlers
         if copy_get_to_head:
             handlers["head"] = handlers["get"]
 
-        vue: View = cls(name)
-
         for method, handler in handlers.items():
             handler = convert_arguments(handler, converter_class=HTTPConverter)
             handler = injection.consumer(handler)
-            setattr(vue, method, handler)
+            setattr(self, method, handler)
 
-        return vue
-
-    def get_handler(self, method: str) -> Handler:
+    async def __call__(self, req, res, **params):
         try:
-            return getattr(self, "handle")
+            handler = getattr(self, "handle")
         except AttributeError:
             try:
-                return getattr(self, method)
-            except AttributeError as exc:
-                raise HandlerDoesNotExist from exc
+                handler = getattr(self, req.method.lower())
+            except AttributeError:
+                raise HTTPError(405)
+        await handler(req, res, **params)
 
 
-def from_handler(handler: Handler, methods: MethodsParam = None) -> View:
-    """Convert a handler to a #::bocadillo.views#View instance.
+def view(methods: typing.Union[typing.List[str], all] = None):
+    """Convert the decorated function to a proper #::bocadillo.views#View.
 
     # Parameters
-    handler (function or coroutine function):
-        Its name is copied onto the view.
-        It used as a handler for each of the declared `methods`.
-        For example, if `methods=["post"]` then the returned `view` object
-        will only have a `.post()` handler.
     methods (list of str):
         A list of supported HTTP methods. The `all` built-in can be used
         to support all HTTP methods. Defaults to `["get"]`.
 
-    # Returns
-    view: a #::bocadillo.views#View instance.
-
     # See Also
     - The [constants](./constants.md) module for the list of all HTTP methods.
     """
-    if methods is None:
-        methods = ["get"]
-    if methods is all:
-        methods = ["handle"]
-    else:
-        methods = [m.lower() for m in methods]
-    handlers = {method: handler for method in methods}
-    return View.create(handler.__name__, handlers, class_based=False)
-
-
-def from_obj(obj: typing.Any) -> View:
-    """Convert an object to a #::bocadillo.views#View instance.
-
-    # Parameters
-    obj (any):
-        its handlers and snake-cased class name are copied onto the view.
-
-    # Returns
-    view: a #::bocadillo.views#View instance.
-    """
-    handlers = get_handlers(obj)
-    return View.create(obj.__class__.__name__, handlers, class_based=True)
-
-
-def get_handlers(obj: typing.Any) -> typing.Dict[str, Handler]:
-    """Return all #::bocadillo.views#View handlers declared on an object.
-
-    # Parameters
-    obj (any): an object.
-
-    # Returns
-    handlers (dict):
-        A dict mapping an HTTP method to a handler.
-    """
-    all_methods = map(str.lower, ALL_HTTP_METHODS)
-    try:
-        handle = obj.handle
-    except AttributeError:
-        return {
-            method: getattr(obj, method)
-            for method in all_methods
-            if hasattr(obj, method)
-        }
-    else:
-        return {method: handle for method in all_methods}
-
-
-def view(methods: MethodsParam = None):
-    """Convert the decorated function to a proper #::bocadillo.views#View.
-
-    This decorator is a shortcut for [from_handler](#from-handler).
-    """
-    return partial(from_handler, methods=methods)
+    return partial(View, methods=methods)

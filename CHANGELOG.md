@@ -14,6 +14,25 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## Added
+
+- Reusable and composable routes using `Router` and `app.include_router()`.
+- `app.add_middleware()` now also supports ASGI middleware classes.
+
+### Fixed
+
+- Bocadillo now handles missing trailing slashes by performing a temporary redirect (302) if needed. This results in more robust URL matching. Set `REDIRECT_TRAILING_SLASH = False` to disable this behavior.
+
+### Changed
+
+- HTTP middleware is now also called when a request is routed to a sub-application.
+- The `Middleware` class now also implement the ASGI interface. Mostly an implementation detail
+- Methods in `ALL_HTTP_METHODS` are now lower-cased instead of upper-cased.
+
+### Deprecated
+
+- `app.add_asgi_middleware()` is deprecated in favor of `app.add_middleware()`. It will be removed in v0.17.0.
+
 ## [v0.15.1] - 2019-05-17
 
 ### Fixed

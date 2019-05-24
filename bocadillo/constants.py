@@ -1,13 +1,13 @@
 import typing
 
 ALL_HTTP_METHODS: typing.Tuple[str, ...] = (
-    "GET",
-    "HEAD",
-    "POST",
-    "PUT",
-    "DELETE",
-    "OPTIONS",
-    "PATCH",
+    "get",
+    "head",
+    "post",
+    "put",
+    "delete",
+    "options",
+    "patch",
 )
 
 DEFAULT_CORS_CONFIG = {"allow_origins": [], "allow_methods": ["GET"]}

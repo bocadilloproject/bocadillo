@@ -154,7 +154,6 @@ def test_return_response_in_before_hook(app: App, client):
     assert r.text == "Foo"
 
 
-@pytest.mark.xfail(reason="not supported")
 def test_middleware_called_if_routed_to_sub_app(app: App, client):
     with build_middleware() as middleware:
         app.add_middleware(middleware)

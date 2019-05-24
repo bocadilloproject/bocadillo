@@ -6,7 +6,7 @@ from .compat import check_async
 from .request import Request
 from .response import Response
 from .routing import HTTPRoute
-from .views import Handler, get_handlers, View
+from .views import View, Handler, get_handlers
 
 HookFunction = typing.Callable[
     [Request, Response, dict], typing.Awaitable[None]
@@ -66,13 +66,13 @@ class Hooks:
     ):
         hook = self._prepare(hook, *args, **kwargs)
 
-        def attach_hook(handler: typing.Union[typing.Type[View], Handler]):
-            if inspect.isclass(handler):
-                # Recursively apply the hook to all handlers.
-                for method, _handler in get_handlers(handler).items():
-                    setattr(handler, method, attach_hook(_handler))
-                return handler
-            return _with_hook(hook_type, hook, handler)
+        def attach_hook(view):
+            if inspect.isclass(view):
+                # Recursively apply hook to all view handlers.
+                for method, handler in get_handlers(view).items():
+                    setattr(view, method, attach_hook(handler))
+                return view
+            return _with_hook(hook_type, hook, view)
 
         return attach_hook
 

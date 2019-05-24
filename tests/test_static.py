@@ -75,5 +75,9 @@ def test_whitenoise_config(raw_app):
     app = configure(
         raw_app, static_root="static", static_config={"max_age": 30}
     )
-    whitenoise = app._children["/static"]
+    whitenoise = next(
+        route.app
+        for route in app.router.routes
+        if hasattr(route, "path") and route.path == "/static"
+    )
     assert whitenoise.max_age == 30

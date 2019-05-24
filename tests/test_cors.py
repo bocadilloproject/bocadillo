@@ -1,4 +1,32 @@
+import pytest
+
 from bocadillo import configure, create_client
+
+
+@pytest.mark.parametrize(
+    ["origin", "allowed"],
+    [("localhost:8001", True), ("example.com", True), ("unknown.org", False)],
+)
+def test_allow_origin(raw_app, origin: str, allowed: bool):
+    app = configure(
+        raw_app, cors={"allow_origins": ["example.com", "localhost:8001"]}
+    )
+
+    @app.route("/")
+    async def index(req, res):
+        res.text = "OK"
+
+    client = create_client(app)
+    r = client.get("/", headers={"origin": origin})
+
+    assert r.text == "OK"
+    assert r.status_code == 200 if allowed else 400
+
+    if allowed:  # allowed origin -> allow-origin header
+        assert "access-control-allow-origin" in r.headers
+        assert r.headers["access-control-allow-origin"] == origin
+    else:  # unknown origin -> no allow-origin header
+        assert "access-control-allow-origin" not in r.headers
 
 
 def test_no_allowed_origins_by_default(raw_app):
@@ -6,50 +34,24 @@ def test_no_allowed_origins_by_default(raw_app):
 
     @app.route("/")
     async def index(req, res):
-        pass
+        res.text = "OK"
 
     client = create_client(app)
-    response = client.options(
+    r = client.options(
         "/",
         headers={
             "origin": "foobar.com",
             "access-control-request-method": "GET",
         },
     )
-    assert response.status_code == 400
+    assert r.status_code == 400, r.text
 
 
-def test_if_origin_not_in_allow_origins_then_400(raw_app):
-    app = configure(raw_app, cors={"allow_origins": ["foobar.com"]})
-
-    @app.route("/")
-    async def index(req, res):
-        pass
-
-    client = create_client(app)
-    response = client.options(
-        "/",
-        headers={
-            "origin": "foobar.com",
-            "access-control-request-method": "GET",
-        },
-    )
-    assert response.status_code == 200
-
-    response = client.options(
-        "/",
-        headers={
-            "origin": "example.com",
-            "access-control-request-method": "GET",
-        },
-    )
-    assert response.status_code == 400
-
-
-def test_if_method_not_in_allow_methods_then_400(raw_app):
+@pytest.mark.parametrize("method, allowed", [("GET", True), ("POST", False)])
+def test_allow_method(raw_app, method, allowed):
     app = configure(
         raw_app,
-        cors={"allow_origins": ["foobar.com"], "allow_methods": ["POST"]},
+        cors={"allow_origins": ["foobar.com"], "allow_methods": ["GET"]},
     )
 
     @app.route("/")
@@ -57,11 +59,11 @@ def test_if_method_not_in_allow_methods_then_400(raw_app):
         pass
 
     client = create_client(app)
-    response = client.options(
+    r = client.options(
         "/",
         headers={
             "origin": "foobar.com",
-            "access-control-request-method": "GET",
+            "access-control-request-method": method,
         },
     )
-    assert response.status_code == 400
+    assert r.status_code == 200 if allowed else 400

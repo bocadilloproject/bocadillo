@@ -147,6 +147,7 @@ module.exports = {
           title: "Reusability & Modularity",
           children: listDir("guide", [
             "nested-apps",
+            "routers",
             "providers",
             "plugins",
             "hooks",

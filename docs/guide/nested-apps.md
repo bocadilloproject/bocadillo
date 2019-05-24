@@ -8,7 +8,7 @@ This applies not only to Bocadillo applications, but to **any ASGI-compliant app
 
 Nested Bocadillo applications can be used to split a project into smaller applications and then tie them all together in a single _root_ application.
 
-For example, if our project has a mix of REST API and HTML pages, we can separate the REST API endpoints in a dedicated app:
+For example, if our project has a mix of REST API and HTML pages, we can separate the REST API endpoints in an **isolated app**:
 
 ```python
 # myproject/api.py
@@ -39,7 +39,9 @@ async def home(req, res):
 With this setup, a request to `GET /api/todos` will return the list of todos.
 
 ::: warning CAVEAT
-**Mounted applications are independant from their parent**: they do not share middleware nor error handlers. Besides, lifespan event handlers will only be called on the **root** application, i.e. the one that is eventually by the ASGI web server.
+**Mounted applications are isolated from their parent**: they do not share middleware or error handlers. Besides, lifespan event handlers will only be called on the **root** application, i.e. the one that is eventually by the ASGI web server.
+
+If you only want to split **routes** into dedicated files, take a look at [Routers](/guide/routers.md) in the next section.
 :::
 
 ## Third-party ASGI apps

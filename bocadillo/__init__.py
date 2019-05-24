@@ -9,6 +9,7 @@ from .recipes import Recipe
 from .redirection import Redirect
 from .request import ClientDisconnect, Request
 from .response import Response
+from .routing import Router
 from .sse import server_event
 from .staticfiles import static
 from .templates import Templates

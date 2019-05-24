@@ -9,7 +9,6 @@ VUEPRESS = os.path.join(".", "node_modules", "vuepress", "bin", "vuepress.js")
 @nox.session(reuse_venv=True)
 def test(session: Session):
     session.install("-r", "requirements.txt")
-    session.install("pytest", "pytest-cov", "pytest-asyncio")
     if "coverage:missing" in session.posargs:
         session.run(
             "pytest",
@@ -20,9 +19,10 @@ def test(session: Session):
             "term-missing",
         )
     elif "coverage" in session.posargs:
+        session.install("pytest-cov")
         session.run("pytest", "--cov=./")
     else:
-        session.run("pytest")
+        session.run("pytest", *session.posargs)
 
 
 @nox.session(python=["3.6", "3.7"])

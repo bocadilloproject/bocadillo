@@ -54,5 +54,5 @@ def test_if_methods_is_all_then_all_methods_allowed(app: App, client):
     async def index(req, res):
         pass
 
-    for method in map(str.lower, ALL_HTTP_METHODS):
+    for method in ALL_HTTP_METHODS:
         assert getattr(client, method)("/").status_code == 200

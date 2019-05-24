@@ -20,7 +20,7 @@ def compile_path(pattern: str) -> typing.Tuple[typing.Pattern, str]:
             )
 
         regex += pattern[idx : match.start()]
-        expr = r".+" if not name else rf"?P<{name}>[^/]+"
+        expr = r".+" if not name else rf"?P<{name}>.+"
         regex += rf"({expr})"
 
         path_format += pattern[idx : match.start()]

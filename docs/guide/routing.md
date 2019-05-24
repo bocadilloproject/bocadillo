@@ -8,7 +8,7 @@ In Bocadillo, **routes** map an **URL pattern** to a **view**, which can be a fu
 
 ## How are requests processed?
 
-When an inbound HTTP requests hits your Bocadillo application, the following algorithm is used to determine which view gets executed:
+When an inbound HTTP request hits your Bocadillo application, the following algorithm is used to determine which view gets executed:
 
 1. Bocadillo runs through each URL pattern and stops at the first matching one, extracting the raw route parameters as well. If none can be found, an `HTTPError(404)` is raised.
 2. Bocadillo checks that the matching route supports the requested HTTP method, and raises an `HTTPError(405)` exception if it does not.
@@ -16,6 +16,23 @@ When an inbound HTTP requests hits your Bocadillo application, the following alg
 4. If no pattern matches, or if an exception is raised in the process, Bocadillo invokes an appropriate error handler (see [Route error handling](#route-error-handling) below).
 
 The router searches against the requested **URL path**. This does not include the domain name nor query parameters.
+
+### About trailing slashes <Badge type="warn" text="Advanced"/>
+
+When no route matches the requested URL path, and the URL path does not contain a trailing slash, Bocadillo will add it and send a temporary redirect (302) response. The client will then automatically perform a new request, and the routing algorithm starts again.
+
+For example, if `/items` did not match any route, the client will be redirected to `/items/`. If no route matches `/items/`, an `HTTPError(400)` exception is raised.
+
+::: warning
+Please note that when this happen, [CORS pre-flight requests will fail](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSExternalRedirectNotAllowed). For this reason, make sure to use a trailing slash when requesting your Bocadillo API from a web browser.
+:::
+
+To disable this behavior, use the `REDIRECT_TRAILING_SLASH` setting:
+
+```python
+# settings.py
+REDIRECT_TRAILING_SLASH = False
+```
 
 ## Routes examples
 
@@ -47,13 +64,12 @@ Note that:
 
 Here's how a few example requests would be handled:
 
-| Requested URL path | Matched route   | Reason                                                             |
-| ------------------ | --------------- | ------------------------------------------------------------------ |
-| `/`                | `home()`        | Only matching route.                                               |
-| `/items/13`        | `get_items()`   | Only matching route.                                               |
-| `/items/42`        | `get_item_42()` | First route to match.                                              |
-| `/items/42/`       | None            | URL pattern for `get_item_42()` does not include a trailing slash. |
-| `/items/foo`       | None            | URL pattern for `get_items()` requires `pk` to be an integer.      |
+| Requested URL path | Matched route   | Reason                                        |
+| ------------------ | --------------- | --------------------------------------------- |
+| `/`                | `home()`        | Only matching route.                          |
+| `/items/13`        | `get_items()`   | Only matching route.                          |
+| `/items/42`        | `get_item_42()` | First route to match.                         |
+| `/items/foo`       | None            | `get_items()` requires `pk` to be an integer. |
 
 ## Function-based views
 

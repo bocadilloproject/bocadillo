@@ -16,8 +16,8 @@ def test_method(app: App, client, method: str):
             nonlocal req_method
             req_method = req.method
 
-    r = getattr(client, method.lower())("/")
-    assert req_method == method
+    r = getattr(client, method)("/")
+    assert req_method.lower() == method.lower()
 
 
 @pytest.mark.parametrize(

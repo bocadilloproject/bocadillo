@@ -9,6 +9,7 @@ def test_if_gzip_enabled_then_response_is_compressed(raw_app):
         pass
 
     client = create_client(app)
-    response = client.get("/", headers={"Accept-Encoding": "gzip"})
-    assert response.status_code == 200
-    assert response.headers["content-encoding"] == "gzip"
+    r = client.get("/", headers={"Accept-Encoding": "gzip"})
+    assert r.status_code == 200
+    assert "content-encoding" in r.headers
+    assert r.headers["content-encoding"] == "gzip"
