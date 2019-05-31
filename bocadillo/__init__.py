@@ -1,9 +1,9 @@
 from .applications import App
-from .config import settings, SettingsError, configure
 from .compat import ExpectedAsync
+from .config import SettingsError, configure, settings
 from .errors import HTTPError
-from .middleware import Middleware
 from .injection import discover_providers, provider, useprovider
+from .middleware import Middleware
 from .plugins import plugin
 from .recipes import Recipe
 from .redirection import Redirect
@@ -13,7 +13,7 @@ from .routing import Router
 from .sse import server_event
 from .staticfiles import static
 from .templates import Templates
-from .testing import create_client, LiveServer
+from .testing import LiveServer, create_client
 from .views import view
 from .websockets import WebSocket, WebSocketDisconnect
 
