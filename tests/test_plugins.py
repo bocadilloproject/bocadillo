@@ -1,28 +1,16 @@
 import pytest
 
-from bocadillo import settings, configure, create_client, plugin
-from bocadillo.plugins import _PLUGINS
-
-
-INITIAL_PLUGINS = dict(_PLUGINS)
-
-
-@pytest.fixture(autouse=True)
-def reset_plugins():
-    yield
-    _PLUGINS.clear()
-    for name, value in INITIAL_PLUGINS.items():
-        _PLUGINS[name] = value
+from bocadillo import configure, create_client, settings
+from bocadillo.plugins import plugin
 
 
 def test_basic(raw_app):
-    @plugin
     def use_foo(app):
         @app.route("/foo")
         async def foo(req, res):
             res.text = "Foo"
 
-    app = configure(raw_app)
+    app = configure(raw_app, plugins=[use_foo])
     client = create_client(app)
 
     r = client.get("/foo")
@@ -31,7 +19,6 @@ def test_basic(raw_app):
 
 
 def test_use_settings(raw_app):
-    @plugin
     def use_hello(app):
         hello_message = getattr(settings, "HELLO_MESSAGE")
 
@@ -39,9 +26,28 @@ def test_use_settings(raw_app):
         async def foo(req, res):
             res.text = hello_message
 
-    app = configure(raw_app, hello_message="Hello, plugins!")
+    app = configure(
+        raw_app, plugins=[use_hello], hello_message="Hello, plugins!"
+    )
     client = create_client(app)
 
     r = client.get("/hello")
     assert r.status_code == 200
     assert r.text == "Hello, plugins!"
+
+
+@pytest.mark.parametrize("should_use", (True, False))
+def test_conditional_plugin(raw_app, should_use):
+    used = False
+
+    def use_hello(_):
+        nonlocal used
+        used = True
+
+    configure(raw_app, plugins=[{use_hello: should_use}])
+    assert used is should_use
+
+
+def test_at_plugin_is_deprecated(app):
+    with pytest.raises(DeprecationWarning):
+        plugin(app)

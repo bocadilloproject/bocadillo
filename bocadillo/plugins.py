@@ -19,21 +19,24 @@ if typing.TYPE_CHECKING:
 
 PluginFunction = typing.Callable[["App"], None]
 
-_PLUGINS: typing.Dict[str, PluginFunction] = {}
+
+def plugin(func):
+    raise DeprecationWarning(
+        "`@plugin` has been removed in Bocadillo v0.16.0. "
+        "Users should now register plugins via the `PLUGINS` setting. "
+        "As a result, you can safely remove the decorator."
+    )
 
 
-def plugin(func: PluginFunction):
-    """Register a new plugin."""
-    _PLUGINS[func.__name__] = func
+_BUILTIN_PLUGINS = []
+
+
+def _builtin(func):
+    _BUILTIN_PLUGINS.append(func)
     return func
 
 
-def get_plugins() -> typing.Dict[str, PluginFunction]:
-    """Return the currently registered plugins."""
-    return _PLUGINS
-
-
-@plugin
+@_builtin
 def use_providers(app: "App"):
     """Configure providers.
 
@@ -46,7 +49,7 @@ def use_providers(app: "App"):
     app.on("shutdown", STORE.exit_session)
 
 
-@plugin
+@_builtin
 def use_allowed_hosts(app: "App"):
     """Restrict which hosts an application is allowed to be served at.
 
@@ -62,7 +65,7 @@ def use_allowed_hosts(app: "App"):
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 
 
-@plugin
+@_builtin
 def use_cors(app: "App"):
     """Enable CORS (Cross-Origin Resource Sharing) headers.
 
@@ -85,7 +88,7 @@ def use_cors(app: "App"):
     app.add_middleware(CORSMiddleware, **cors)
 
 
-@plugin
+@_builtin
 def use_gzip(app: "App"):
     """Enable [GZip] compression.
 
@@ -106,7 +109,7 @@ def use_gzip(app: "App"):
     app.add_middleware(GZipMiddleware, minimum_size=gzip_min_size)
 
 
-@plugin
+@_builtin
 def use_hsts(app: "App"):
     """Enable [HSTS].
 
@@ -123,7 +126,7 @@ def use_hsts(app: "App"):
     app.add_middleware(HTTPSRedirectMiddleware)
 
 
-@plugin
+@_builtin
 def use_sessions(app: "App"):
     """Enable cookie-based signed sessions.
 
@@ -161,7 +164,7 @@ def use_sessions(app: "App"):
     app.add_middleware(SessionMiddleware, **sessions)
 
 
-@plugin
+@_builtin
 def use_staticfiles(app: "App"):
     """Enable static files serving with WhiteNoise.
 
@@ -187,14 +190,14 @@ def use_staticfiles(app: "App"):
     app.mount(static_root, static(static_dir, **static_config))
 
 
-@plugin
+@_builtin
 def use_path_conversion_error_handling(app: "App"):
     @app.error_handler(PathConversionError)
     async def on_path_conversion_error(req, res, exc: PathConversionError):
         raise HTTPError(400, detail=dict(exc))
 
 
-@plugin
+@_builtin
 def use_typesystem_validation_error_handling(app: "App"):
     """Setup an error handler for `typesystem.ValidationError`.
 
@@ -213,3 +216,15 @@ def use_typesystem_validation_error_handling(app: "App"):
     async def handle_validation_error(req, res, exc):
         res.status_code = 400
         res.json = HTTPError(400, detail=dict(exc)).as_json()
+
+
+def setup_plugins(app: "App"):
+    plugin_entries = _BUILTIN_PLUGINS + settings.get("PLUGINS", [])
+    for entry in plugin_entries:
+        if isinstance(entry, dict):
+            for plugin_func, condition in entry.items():
+                if condition:
+                    plugin_func(app)
+        else:
+            plugin_func = entry
+            plugin_func(app)

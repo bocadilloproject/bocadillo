@@ -47,7 +47,6 @@ A hook just needs to be an asynchronous callable, so it can also be a class that
 
 ```python
 class RequestHasHeader:
-
     def __init__(self, header: str):
         self.header = header
 

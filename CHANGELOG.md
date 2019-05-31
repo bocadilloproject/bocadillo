@@ -18,6 +18,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - Reusable and composable routes using `Router` and `app.include_router()`.
 - `app.add_middleware()` now also supports ASGI middleware classes.
+- Register plugins using the new `PLUGINS` setting.
 
 ### Fixed
 
@@ -31,6 +32,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Deprecated
 
+- `@plugin` is deprecated in favor of using the `PLUGINS` setting. The decorator now raises a `DeprecationWarning` and will be removed in v0.17.0.
 - `app.add_asgi_middleware()` is deprecated in favor of `app.add_middleware()`. It will be removed in v0.17.0.
 
 ## [v0.15.1] - 2019-05-17

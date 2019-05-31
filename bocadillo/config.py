@@ -89,16 +89,17 @@ def configure(app: "App", settings_obj: typing.Any = None, **kwargs) -> "App":
     """Configure the application settings and setup plugins.
 
     # Parameters
+    app (App): an application instance.
     settings_obj (any): an optional settings object or module.
     **kwargs (any): arbitrary settings, case-insensitive.
+
+    # Returns
+    app (App): the same object as `app`, for convenience.
     """
-    from .plugins import get_plugins
+    from .plugins import setup_plugins
 
     kwargs = {key.upper(): value for key, value in kwargs.items()}
-
     settings.configure(settings_obj, **kwargs)
+    setup_plugins(app)
 
-    for plugin in get_plugins().values():
-        plugin(app)
-
-    return app  # for convenience
+    return app

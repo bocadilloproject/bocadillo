@@ -4,7 +4,7 @@ from .compat import ExpectedAsync
 from .errors import HTTPError
 from .middleware import Middleware
 from .injection import discover_providers, provider, useprovider
-from .plugins import plugin, get_plugins
+from .plugins import plugin
 from .recipes import Recipe
 from .redirection import Redirect
 from .request import ClientDisconnect, Request
