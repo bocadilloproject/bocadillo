@@ -1,10 +1,11 @@
 import typing
 
-from starlette.middleware.wsgi import WSGIMiddleware
 from starlette.datastructures import URL
+from starlette.middleware.wsgi import WSGIMiddleware
+from starlette.routing import Lifespan
 from starlette.websockets import WebSocketClose
 
-from .app_types import ASGIApp, Receive, Scope, Send
+from .app_types import ASGIApp, EventHandler, Receive, Scope, Send
 from .config import settings
 from .errors import HTTPError
 from .redirection import Redirect
@@ -111,10 +112,11 @@ class Mount(BaseRoute):
 
 
 class Router:
-    __slots__ = ("routes",)
+    __slots__ = ("routes", "lifespan")
 
     def __init__(self):
         self.routes: typing.List[BaseRoute] = []
+        self.lifespan = Lifespan()
 
     def add_route(self, route: BaseRoute) -> None:
         self.routes.append(route)
@@ -141,6 +143,18 @@ class Router:
     def mount(self, path: str, app: ASGIApp):
         """Mount an ASGI or WSGI app at the given path."""
         return self.add_route(Mount(path, app))
+
+    def on(self, event: str, handler: typing.Optional[EventHandler] = None):
+        if handler is None:
+
+            def register(func):
+                self.lifespan.add_event_handler(event, func)
+                return func
+
+            return register
+
+        self.lifespan.add_event_handler(event, handler)
+        return handler
 
     def route(self, pattern: str):
         """Register an HTTP route by decorating a view.
@@ -203,6 +217,10 @@ class Router:
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
         scope["send"] = send  # See: `RequestResponseMiddleware`.
+
+        if scope["type"] == "lifespan":
+            await self.lifespan(scope, receive, send)
+            return
 
         route = self._find_route(scope)
 

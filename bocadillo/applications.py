@@ -1,8 +1,6 @@
 import inspect
 import typing
 
-from starlette.routing import Lifespan
-
 from .app_types import ASGIApp, ErrorHandler, EventHandler, Receive, Scope, Send
 from .compat import WSGIApp
 from .config import settings
@@ -39,14 +37,6 @@ class App(metaclass=DocsMeta):
         An optional name for the app.
     """
 
-    __slots__ = (
-        "name",
-        "router",
-        "_exception_middleware",
-        "_asgi",
-        "_lifespan",
-    )
-
     def __init__(self, name: str = None):
         self.name = name
 
@@ -60,8 +50,6 @@ class App(metaclass=DocsMeta):
                 self._exception_middleware, handler=error_to_text
             )
         )
-
-        self._lifespan = Lifespan()
 
         # Startup checks.
         @self.on("startup")
@@ -124,7 +112,6 @@ class App(metaclass=DocsMeta):
         # Parameters
         pattern (str): an URL pattern.
         """
-
         return self.router.websocket_route(
             pattern,
             auto_accept=auto_accept,
@@ -231,19 +218,7 @@ class App(metaclass=DocsMeta):
         app.on("shutdown", shutdown)
         ```
         """
-        if handler is None:
-
-            def register(func):
-                self._lifespan.add_event_handler(event, func)
-                return func
-
-            return register
-
-        self._lifespan.add_event_handler(event, handler)
-        return handler
+        return self.router.on(event, handler=handler)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
-        if scope["type"] == "lifespan":
-            await self._lifespan(scope, receive, send)
-        else:
-            await self._asgi(scope, receive, send)
+        await self._asgi(scope, receive, send)
