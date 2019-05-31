@@ -6,11 +6,11 @@ jobs:
   include:
     - stage: test
       python: "3.6"
-      script: nox -s ci-3.6
+      script: invoke ci
 
     - stage: test
       python: "3.7"
-      script: nox -s ci-3.7
+      script: invoke ci
       after_success: codecov
 
     - stage: docs

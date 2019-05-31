@@ -1,12 +1,8 @@
 # Contributing to Bocadillo
 
-Have you found a bug? You'd like to add a new feature or improve the docs? Fantastic news! All contributions are happily welcome.
+Hi, and thank you for your interest in contributing to Bocadillo! Here are a few pointers on how to contribute to this project.
 
-Here, we point at a few guidelines that you should follow in order to get your contribution accepted.
-
-**Note**: before submitting any code changes for review, you should first **open an issue** so that maintainers and contributors can discuss it with you.
-
-This step is important because there may be aspects you didn't think about, or there may be ways to expand or focus your suggestions. Eventually, discussing your suggestions with others can only improve the quality of the contribution you'll make.
+**Note**: if the change you're proposing is non-trivial, you should **open an issue** first to discuss it with maintainers.
 
 ## Contents
 
@@ -23,15 +19,14 @@ Bocadillo has a single repository for both the `bocadillo` package and its docum
 
 ### Setting up the repo
 
-1. Fork the `bocadilloproject/bocadillo` repo and clone it.
-
+1. Fork this repository and clone it on your machine.
 2. Install the dependencies:
 
 ```bash
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
-pre-commit install
+pip install invoke
+invoke install
 ```
 
 3. If you plan to contribute documentation, make sure you have [Node.js](https://nodejs.org/en) installed, and run:
@@ -48,24 +43,24 @@ npm install
 
 ### Working with the repo
 
-Testing is automated through [`nox`](https://nox.thea.codes/en/stable/index.html):
+Common tasks are automated through [Invoke](http://docs.pyinvoke.org/en/1.2/index.html):
 
 - To run the [`pytest`](https://docs.pytest.org) test suite, run:
 
 ```bash
-nox -s test
+invoke test
 ```
 
-- To also generate a coverage report, run:
+- To generate a coverage report, run:
 
 ```bash
-nox -s test -- coverage
+invoke coverage
 ```
 
 - To also only show lines not covered by tests, run:
 
 ```
-nox -s test -- coverage:missing
+invoke coverage --missing
 ```
 
 - To serve the docs site (built with [vuepress], hot reload enabled), run:
@@ -87,10 +82,10 @@ npm run build
 [pydoc-markdown]: https://niklasrosenstein.github.io/pydoc-markdown/
 
 ```bash
-npm run build:apiref
+invoke apiref
 ```
 
-See [`pydocmd.yml`](./pydocmd.yml) for the configuration details and the [Pydoc-Markdown] documentation for usage reference.
+See [`pydocmd.yml`](./pydocmd.yml) for configuration details and the [Pydoc-Markdown] documentation for usage reference.
 
 - To add a new page to the docs, create a new `.md` file in the appropriate subdirectory of `docs` (`guide`, `how-to` or `discussions`), then add a route in the appropriate `sidebar` configuration in `docs/.vuepress/config.js`. Feel free to refer to the [VuePress] docs if needed.
 

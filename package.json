@@ -2,9 +2,8 @@
   "name": "bocadillo",
   "version": "0.15.1",
   "scripts": {
-    "build:apiref": "pydocmd generate",
-    "start": "npm run build:apiref && vuepress dev docs",
-    "build": "npm run build:apiref && vuepress build docs"
+    "start": "invoke apiref && vuepress dev docs",
+    "build": "invoke apiref && vuepress build docs"
   },
   "dependencies": {
     "date-fns": "^1.30.1",

@@ -1,9 +1,19 @@
+# Library
 -e .[full]
-nox
-black
+
+# Tools / project automation
+invoke
 pre-commit
+
+# Linting
+black
 pylint
 mypy
+
+# API docs
 pydoc-markdown<2.0.5
+
+# Testing
 pytest
+pytest-cov
 pytest-asyncio
