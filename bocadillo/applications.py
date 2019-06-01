@@ -1,14 +1,13 @@
-import inspect
 import typing
 
 from .app_types import ASGIApp, ErrorHandler, EventHandler, Receive, Scope, Send
-from .compat import WSGIApp
+from .compat import WSGIApp, is_asgi3
 from .config import settings
+from .contrib.pydocmd import DocsMeta
 from .deprecation import deprecated
 from .error_handlers import error_to_json, error_to_text
 from .errors import HTTPError
 from .injection import STORE
-from .meta import DocsMeta
 from .middleware import (
     ExceptionMiddleware,
     RequestResponseMiddleware,
@@ -168,15 +167,13 @@ class App(metaclass=DocsMeta):
         # See Also
         - [Middleware](/guide/middleware.md)
         """
-        if hasattr(middleware_cls, "__call__"):
-            # Verify the class implements ASGI3, not ASGI2.
-            sig = inspect.signature(middleware_cls.__call__)
-            if "receive" not in sig.parameters or "send" not in sig.parameters:
-                raise ValueError(
-                    f"ASGI middleware class {middleware_cls.__name__} "
-                    "seems to be using the legacy ASGI2 interface. "
-                    "Please upgrade to ASGI3: (scope, receive, send) -> None"
-                )
+        # Verify the class implements ASGI3, not ASGI2.
+        if not is_asgi3(middleware_cls):
+            raise ValueError(
+                f"ASGI middleware class {middleware_cls.__name__} "
+                "seems to be using the legacy ASGI2 interface. "
+                "Please upgrade to ASGI3: (scope, receive, send) -> None"
+            )
 
         self._exception_middleware.app = middleware_cls(
             self._exception_middleware.app, **kwargs

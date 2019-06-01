@@ -38,14 +38,19 @@ async def test_modify_templates_dir(templates: Templates, tmpdir_factory):
     assert html == template.rendered
 
 
+def test_modify_context():
+    templates = Templates(context={"initial": "stuff"})
+    templates.context = {"key": "value"}
+    templates.context["foo"] = "bar"
+    assert (
+        templates.render_string("{{ foo }}, {{ key }} and {{ initial }}")
+        == "bar, value and "
+    )
+
+
 @pytest.mark.asyncio
 async def test_if_template_does_not_exist_then_not_found_raised(
     templates: Templates
 ):
     with pytest.raises(TemplateNotFound):
         await templates.render("doesnotexist.html")
-
-
-def test_use_without_app():
-    templates = Templates()
-    assert templates.render_string("foo") == "foo"

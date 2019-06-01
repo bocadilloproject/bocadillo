@@ -14,7 +14,7 @@ def test(c):
 
 @task
 def coverage(c, missing=False):
-    command = "pytest --cov=bocadillo tests/"
+    command = "pytest --cov=bocadillo tests/ --cov-fail-under=100"
     if missing:
         command += " --cov-report term-missing --cov-report term:skip-covered"
     c.run(command)

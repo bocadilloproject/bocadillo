@@ -66,10 +66,8 @@ class ExceptionMiddleware:
     def __init__(
         self,
         app: ASGIApp,
-        handlers: typing.Dict[typing.Type[BaseException], ErrorHandler] = None,
+        handlers: typing.Dict[typing.Type[BaseException], ErrorHandler],
     ) -> None:
-        if handlers is None:
-            handlers = {}
         self.app = app
         self._exception_handlers = handlers
 

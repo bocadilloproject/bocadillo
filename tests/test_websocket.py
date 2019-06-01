@@ -62,11 +62,30 @@ def test_websocket_route_parameters(app: App, client):
         assert ws.receive_text() == "foo"
 
 
-def test_non_existing_endpoint_returns_403_as_per_the_asgi_spec(client):
+def test_websocket_route_parameters_no_match(app: App, client):
+    @app.websocket_route("/chat-{room}")
+    async def greet(ws, room):
+        pass
+
+    with pytest.raises(WebSocketDisconnect) as ctx:
+        with client.websocket_connect("/chat/foo"):
+            pass
+    assert ctx.value.code == 403
+
+
+def test_non_existing_endpoint_returns_403(app, client):
+    http_route_called = False
+
+    @app.route("/foo")
+    async def http_foo(req, res):
+        nonlocal http_route_called
+        http_route_called = True
+
     with pytest.raises(WebSocketDisconnect) as ctx:
         with client.websocket_connect("/foo"):
             pass
     assert ctx.value.code == 403
+    assert not http_route_called
 
 
 def test_reject_closes_with_403(app: App, client):

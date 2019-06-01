@@ -107,11 +107,8 @@ class ViewConverter(Converter):
 
 
 def convert_arguments(
-    func: typing.Callable, converter_class=None
+    func: typing.Callable, converter_class: typing.Type[Converter]
 ) -> typing.Callable:
-    if converter_class is None:
-        converter_class = Converter
-
     converter = converter_class(func)
 
     @wraps(func)

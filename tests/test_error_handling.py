@@ -44,10 +44,20 @@ def test_if_http_error_is_raised_then_automatic_response_is_sent(
     assert phrase in response.text
 
 
+class MyKeyError(KeyError):
+    pass
+
+
 @pytest.mark.parametrize(
-    "exception_cls", [KeyError, ValueError, AttributeError]
+    "exception_cls, success",
+    [
+        (KeyError, True),
+        (MyKeyError, True),
+        (ValueError, False),
+        (AttributeError, False),
+    ],
 )
-def test_custom_error_handler(app: App, exception_cls):
+def test_custom_error_handler(app: App, exception_cls, success):
     called = False
 
     @app.error_handler(KeyError)
@@ -62,15 +72,13 @@ def test_custom_error_handler(app: App, exception_cls):
 
     client = create_client(app, raise_server_exceptions=False)
 
-    if exception_cls == KeyError:
-        response = client.get("/")
-        assert called
+    response = client.get("/")
+    assert called is success
+    if success:
         assert response.status_code == 200
         assert response.text == "Oops!"
     else:
-        response = client.get("/")
         assert response.status_code == 500
-        assert not called
 
 
 # Use in a test to run against multiple error details. See:

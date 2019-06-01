@@ -3,7 +3,7 @@ import typing
 from .request import Request
 from .response import Response
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 # ASGI

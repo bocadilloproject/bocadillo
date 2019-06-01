@@ -14,7 +14,7 @@ from .errors import HTTPError
 from .staticfiles import static
 from .injection import STORE
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 PluginFunction = typing.Callable[["App"], None]

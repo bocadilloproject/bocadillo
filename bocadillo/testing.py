@@ -1,4 +1,3 @@
-import os
 import random
 from multiprocessing import Event, Process
 import typing
@@ -6,12 +5,7 @@ import typing
 import uvicorn
 from starlette.testclient import TestClient
 
-try:
-    import pytest
-except ImportError:  # pragma: no cover
-    pytest = None
-
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 
@@ -68,11 +62,6 @@ class LiveServer:
         stop_timeout: float = 5,
         **kwargs,
     ):
-        if (
-            pytest is not None and os.getenv("CI") and os.getenv("TRAVIS")
-        ):  # pragma: no cover
-            pytest.skip("live server process sometimes makes travis ci stall")
-
         kwargs.setdefault("host", "127.0.0.1")
         kwargs.setdefault("port", random.randint(3000, 9999))
 

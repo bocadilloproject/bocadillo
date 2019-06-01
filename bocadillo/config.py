@@ -1,6 +1,6 @@
 import typing
 
-if typing.TYPE_CHECKING:
+if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
 
 
@@ -11,7 +11,7 @@ class SettingsError(Exception):
 class Settings:
     def __init__(self, obj: typing.Optional[typing.Any]):
         for setting in dir(obj):
-            if not setting.isupper():
+            if not setting.isupper() or setting.startswith("_"):
                 continue
             value = getattr(obj, setting)
             setattr(self, setting, value)
@@ -42,12 +42,7 @@ class LazySettings:
         wrapped = Settings(obj)
 
         for name, option in options.items():
-            if name.startswith("_"):
-                continue
-
-            if not name.isupper():
-                raise SettingsError(f"Setting {name} must be uppercase.")
-
+            assert name.isupper()
             setattr(wrapped, name, option)
 
         self._wrapped = wrapped
@@ -75,6 +70,9 @@ class LazySettings:
             self.__dict__.pop(name, None)  # remove from cache
         super().__setattr__(name, value)
 
+    def __contains__(self, name: str) -> bool:
+        return name in self.__dict__
+
     def get(self, name: str, default: typing.Any = None) -> typing.Any:
         return getattr(self, name, default)
 
@@ -90,7 +88,7 @@ def configure(app: "App", settings_obj: typing.Any = None, **kwargs) -> "App":
 
     # Parameters
     app (App): an application instance.
-    settings_obj (any): an optional settings object or module.
+    settings (any): an optional settings object or module.
     **kwargs (any): arbitrary settings, case-insensitive.
 
     # Returns
@@ -98,8 +96,10 @@ def configure(app: "App", settings_obj: typing.Any = None, **kwargs) -> "App":
     """
     from .plugins import setup_plugins
 
+    if settings_obj is None:
+        settings_obj = kwargs.pop("settings", None)
     kwargs = {key.upper(): value for key, value in kwargs.items()}
-    settings.configure(settings_obj, **kwargs)
+    settings.configure(obj=settings_obj, **kwargs)
     setup_plugins(app)
 
     return app

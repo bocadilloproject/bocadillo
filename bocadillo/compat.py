@@ -25,6 +25,11 @@ def check_async(func, reason: str):
         raise ExpectedAsync(message)
 
 
+def is_asgi3(app: typing.Callable) -> bool:
+    sig = inspect.signature(app.__call__)
+    return "receive" in sig.parameters or "send" in sig.parameters
+
+
 # For 3.6 compatibility (only available in 3.7+).
 class asyncnullcontext:
     def __init__(self, enter_result: typing.Any = None):

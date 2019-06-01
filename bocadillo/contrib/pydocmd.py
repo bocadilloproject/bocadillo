@@ -1,7 +1,4 @@
-"""Meta classes."""
-
-
-class DocsMeta(type):
+class DocsMeta(type):  # pragma: no cover
     """Metaclass that provides a few fixes related to Pydoc-Markdown."""
 
     def __new__(mcs, name, bases, namespace):

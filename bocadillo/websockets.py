@@ -103,9 +103,6 @@ class WebSocket:
     def __getattr__(self, name: str) -> typing.Any:
         return getattr(self._ws, name)
 
-    def __getitem__(self, name: str) -> typing.Any:
-        return self._ws.__getitem__(name)
-
     # Connection handling.
 
     async def accept(self, subprotocol: str = None) -> None:

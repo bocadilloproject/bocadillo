@@ -79,7 +79,7 @@ def test_view_from_obj(app: App, client):
 
 def test_parameter_is_passed_as_keyword_argument(app: App, client):
     @app.route("/greet/{person}")
-    async def greet(req, res, *, person: str):
+    async def greet(req, res, person: str):
         res.text = person
 
     response = client.get("/greet/John")

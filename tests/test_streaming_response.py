@@ -44,21 +44,21 @@ def test_stream_func_must_be_async_generator_function(app: App):
     @app.route("/")
     async def index(req, res):
         with pytest.raises(AssertionError):
-            # Regular function
+            # Regular function (non-generator)
             @res.stream
             def foo():
                 pass
 
         with pytest.raises(AssertionError):
-            # Coroutine function
+            # Coroutine function (non-generator)
             @res.stream
-            async def foo():
+            async def bar():
                 pass
 
         with pytest.raises(AssertionError):
             # Regular generator
             @res.stream
-            def foo():
+            def baz():
                 yield "nope"
 
 
@@ -75,7 +75,7 @@ def test_stop_on_client_disconnect(app: App):
                 sent.value += 1
 
     with LiveServer(app) as server:
-        r = requests.get(f"{server.url}/inf", stream=True)
+        r = requests.get(server.url("/inf"), stream=True)
         assert r.status_code == 200
         assert stops_incrementing(counter=sent, response=r)
 
@@ -95,7 +95,7 @@ def test_raise_on_disconnect(app: App):
                 caught.value = 1
 
     with LiveServer(app) as server:
-        r = requests.get(f"{server.url}/inf", stream=True)
+        r = requests.get(server.url("/inf"), stream=True)
         assert r.status_code == 200
         r.close()
         sync_sleep(0.1)

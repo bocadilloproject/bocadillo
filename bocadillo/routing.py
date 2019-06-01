@@ -136,7 +136,7 @@ class Router:
                         view=route.view,
                         **route.ws_kwargs,
                     )
-                elif isinstance(route, Mount):
+                else:
                     route = Mount(path=_join(prefix, route.path), app=route.app)
             self.add_route(route)
 
