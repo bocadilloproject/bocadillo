@@ -1,4 +1,6 @@
-# Middleware <Badge type="warn" text="Experimental"/>
+# Middleware
+
+<Badge type="warn" text="Experimental"/>
 
 Bocadillo middleware is a lightweight system to plug into the processing of requests and responses.
 
@@ -15,12 +17,6 @@ Because of this, it is convenient to think of middleware as being organized in *
 
 What this means is that middleware classes effectively chain the responsibility of dispatching the request down to the router of the application.
 
-::: warning CAVEAT
-Contrary to ASGI middleware, HTTP middleware will **not** be called if the request gets routed to a [nested application](/guide/nested-apps.md).
-
-For this reason, you should register HTTP middleware on all apps that need it in their processing stack.
-:::
-
 ## Using middleware
 
 When given a middleware class, and regardless of its type (HTTP or ASGI), you can register it on an application using `app.add_middleware()`.
@@ -29,7 +25,7 @@ When given a middleware class, and regardless of its type (HTTP or ASGI), you ca
 app.add_middleware(SomeMiddleware, foo="bar")
 ```
 
-All keyword arguments passed to both `.add_middleware()` and `.add_asgi_middleware()` get passed to the middleware constructor.
+All keyword arguments passed to `.add_middleware()` get passed to the middleware constructor.
 
 ## Default middleware
 
@@ -44,16 +40,16 @@ HTTP middleware should inherit from [`Middleware`](/api/middleware.md#middleware
 
 Each hook is given the current `Request` and `Response` objects, and can alter them as necessary to achieve the desired behavior.
 
-A bare-bones HTTP middleware looks like this:
+A "do nothing" HTTP middleware looks like this:
 
 ```python
-from bocadillo import Middleware, Request, Response
+from bocadillo import Middleware
 
 class NoOpMiddleware(Middleware):
-    async def before_dispatch(self, req: Request, res: Response):
+    async def before_dispatch(self, req, res):
         pass
 
-    async def after_dispatch(self, req: Request, res: Response):
+    async def after_dispatch(self, req, res):
         pass
 ```
 
@@ -64,11 +60,10 @@ For example, this middleware will result in a `202 Accepted` response being
 returned for any request made to the application:
 
 ```python
-from bocadillo import Middleware, Request, Response
+from bocadillo import Middleware
 
 class Always202Middleware(Middleware):
-
-    async def before_dispatch(self, req: Request, res: Response):
+    async def before_dispatch(self, req, res):
         res.status_code = 202
         return res
 ```
@@ -125,11 +120,11 @@ Here, `app` represents the **inner ASGI application** (which is very likely to b
 Example usage:
 
 ```python
-app.add_asgi_middleware(ASGIMessageMiddleware, message="Hello, middleware!")
+app.add_middleware(ASGIMessageMiddleware, message="Hello, middleware!")
 ```
 
-::: warning CAVEAT
-Bocadillo is not able to perform error handling at the ASGI middleware level.
-You must make sure you implement the ASGI protocol correctly and send
-the correct [ASGI events](https://asgi.readthedocs.io/en/latest/specs/main.html#events) if something goes wrong.
-:::
+## Error handling
+
+Exceptions raised in middleware (be it HTTP or ASGI middleware) are handled exactly as described in [Error handling (Essentials)](https://bocadilloproject.github.io/guide/errors.html).
+
+In particular, this means you can raise exceptions such as `HTTPError` in the `.before_dispatch()` or `.after_dispatch()` methods or an HTTP middleware, or in the `.__call__()` method or an ASGI middleware.

@@ -1,7 +1,11 @@
 # Recipes
 
+<Badge type="warn" text="Deprecated"/>
+
 ::: warning DEPRECATION NOTICE
-Recipes are **deprecated** and will be replaced with a proper router extension mechanism in the near future — see also [#261](https://github.com/bocadilloproject/bocadillo/issues/261). In the meantime, consider using [nested applications](/guide/nested-apps.md) instead.
+Recipes were **deprecated** in 0.160, and will be **removed** in 0.17.0.
+
+Please consider using [routers](/guide/routers.md) instead.
 :::
 
 **Recipes** allow to **group together a set of related routes** which can later be added to the router of the main `App` object.

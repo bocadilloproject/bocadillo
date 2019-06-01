@@ -17,8 +17,9 @@ As a result, we strongly recommend you read this document carefully before upgra
 ## Added
 
 - Reusable and composable routes using `Router` and `app.include_router()`.
-- `app.add_middleware()` now also supports ASGI middleware classes.
 - Register plugins using the new `PLUGINS` setting.
+- `app.add_middleware()` now also supports ASGI middleware classes.
+- Exceptions raised in ASGI middleware are now processed by error handlers.
 - HTTP methods on function-based views can now be specified using the `methods=` argument to `@route()`.
 
 ### Fixed

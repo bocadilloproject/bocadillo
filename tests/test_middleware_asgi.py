@@ -1,7 +1,7 @@
 import pytest
 from starlette.responses import PlainTextResponse
 
-from bocadillo import App
+from bocadillo import App, HTTPError
 
 
 class ASGIMiddleware:
@@ -52,6 +52,18 @@ def test_send_response_in_middleware(app: App, client):
     r = client.get("/")
     assert r.status_code == 200
     assert r.text == "OK"
+
+
+def test_error_handling(app: App, client):
+    class NotAvailableMiddleware(ASGIMiddleware):
+        async def __call__(self, scope, receive, send):
+            raise HTTPError(503)
+
+    app.add_middleware(NotAvailableMiddleware)
+
+    r = client.get("/")
+    assert r.status_code == 503
+    assert "Service Unavailable" in r.text
 
 
 def test_middleware_called_if_routed_to_sub_app(app: App, client):

@@ -21,7 +21,7 @@ The router searches against the requested **URL path**. This does not include th
 
 When no route matches the requested URL path, and the URL path does not contain a trailing slash, Bocadillo will add it and send a temporary redirect (302) response. The client will then automatically perform a new request, and the routing algorithm starts again.
 
-For example, if `/items` did not match any route, the client will be redirected to `/items/`. If no route matches `/items/`, an `HTTPError(400)` exception is raised.
+For example, if `/items` did not match any route, the client will be redirected to `/items/`. If no route matches `/items/`, an `HTTPError(404)` exception is raised.
 
 ::: warning
 Please note that when this happen, [CORS pre-flight requests will fail](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors/CORSExternalRedirectNotAllowed). For this reason, make sure to use a trailing slash when requesting your Bocadillo API from a web browser.
