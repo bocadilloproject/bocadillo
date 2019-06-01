@@ -65,7 +65,7 @@ async def synchronize_shared_todos(ws):
 
 Notice how we didn't repeat `/todos` in the URL pattern here? We can actually define it just once by passing a `prefix` to `app.include_router()`:
 
-```python{3,8}
+```python{3,7}
 # myproject/app.py
 from bocadillo import App
 from .routers import users, todos
