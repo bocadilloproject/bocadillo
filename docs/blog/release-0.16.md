@@ -143,3 +143,7 @@ See also: [HTTP methods](https://bocadilloproject.github.io/guide/routing.html#h
 ### Constants
 
 The `ALL_HTTP_METHODS` constant (from `bocadillo.constants`) now contains HTTP methods in lowercase, instead of uppercase.
+
+### `res.media`
+
+`res.media` has deprecated since 0.14, and it has now been removed. Please use `res.json` instead. For more information, see [Sending content](https://bocadilloproject.github.io/guide/responses.html#sending-content).
