@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.16.0] - 2019-06-01
+
 ## Added
 
 - Reusable and composable routes using `Router` and `app.include_router()`.
@@ -685,7 +687,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.1...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.0...HEAD
+[v0.16.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.1...v0.16.0
 [v0.15.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.0...v0.15.1
 [v0.15.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.2...v0.15.0
 [v0.14.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.1...v0.14.2
