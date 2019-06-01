@@ -22,8 +22,7 @@ from bocadillo import App, view
 
 app = App()
 
-@app.route("/orders")
-@view(methods=["post"])
+@app.route("/orders", methods=["post"])
 async def create_order(req, res):
     @res.background
     def send_confirmation():
@@ -47,8 +46,7 @@ async def send_confirmation(who: str):
     # TODO: send an email here
     await sleep(1)
 
-@app.route("/orders")
-@view(methods=["post"])
+@app.route("/orders", methods=["post"])
 async def create_order(req, res):
     res.background(send_confirmation, who="user@example.net")
     res.status_code = 201

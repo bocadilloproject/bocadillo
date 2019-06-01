@@ -86,13 +86,13 @@ class App(metaclass=DocsMeta):
         """
         return self.router.mount(prefix, app)
 
-    def route(self, pattern: str):
+    def route(self, pattern: str, methods: typing.List[str] = None):
         """Register an HTTP route by decorating a view.
 
         # Parameters
         pattern (str): an URL pattern.
         """
-        return self.router.route(pattern)
+        return self.router.route(pattern, methods=methods)
 
     def websocket_route(
         self,
@@ -182,7 +182,9 @@ class App(metaclass=DocsMeta):
             self._exception_middleware.app, **kwargs
         )
 
-    @deprecated(since="0.16", removal="0.17", alternative="App.add_middleware")
+    @deprecated(
+        since="0.16.0", removal="0.17.0", alternative="`.add_middleware()`"
+    )
     def add_asgi_middleware(self, middleware_cls, **kwargs):
         """Register an ASGI middleware class.
 

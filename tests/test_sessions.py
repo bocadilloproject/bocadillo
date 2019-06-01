@@ -28,8 +28,7 @@ def test_sessions_enabled_secret_key_present(raw_app, from_env):
     else:
         app = configure(raw_app, sessions={"secret_key": "not-so-secret"})
 
-    @app.route("/set")
-    @view(methods=["post"])
+    @app.route("/set", methods=["post"])
     async def set_session(req, res):
         req.session["data"] = "something"
         res.text = "Saved"

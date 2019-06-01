@@ -1,12 +1,11 @@
 import pytest
 
-from bocadillo import App, ExpectedAsync, view
+from bocadillo import App, ExpectedAsync
 from bocadillo.constants import ALL_HTTP_METHODS
 
 
 def test_function_based_view(app: App, client):
     @app.route("/")
-    @view()
     async def index(req, res):
         pass
 
@@ -26,14 +25,6 @@ def test_async_check(app):
 
     with pytest.raises(ExpectedAsync):
         app.route("/")(Index)
-
-
-def test_view_decorator_is_optional(app: App, client):
-    @app.route("/")
-    async def index(req, res):
-        pass
-
-    assert client.get("/").status_code == 200
 
 
 def test_can_register_class_based_view(app: App):

@@ -19,6 +19,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 - Reusable and composable routes using `Router` and `app.include_router()`.
 - `app.add_middleware()` now also supports ASGI middleware classes.
 - Register plugins using the new `PLUGINS` setting.
+- HTTP methods on function-based views can now be specified using the `methods=` argument to `@route()`.
 
 ### Fixed
 
@@ -27,13 +28,14 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Changed
 
 - HTTP middleware is now also called when a request is routed to a sub-application.
-- The `Middleware` class now also implement the ASGI interface. Mostly an implementation detail
+- The `Middleware` class now also implement the ASGI interface. Mostly an implementation detail.
 - Methods in `ALL_HTTP_METHODS` are now lower-cased instead of upper-cased.
 
 ### Deprecated
 
 - `@plugin` is deprecated in favor of using the `PLUGINS` setting. The decorator now raises a `DeprecationWarning` and will be removed in v0.17.0.
 - `app.add_asgi_middleware()` is deprecated in favor of `app.add_middleware()`. It will be removed in v0.17.0.
+- The `@view()` decorator has been deprecated in favor of `@route(methods=...)`. It will be removed in v0.17.0
 
 ## [v0.15.1] - 2019-05-17
 

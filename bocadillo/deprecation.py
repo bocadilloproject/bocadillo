@@ -40,25 +40,18 @@ def deprecated(
 
     if isinstance(alternative, tuple):
         name, link = alternative
-        alternative_formatted = f"[`{name}`]({link})"
-        alternative = name
-    else:
-        alternative_formatted = f"`{alternative}`"
+        alternative = f"[`{name}`]({link})"
 
-    def get_message(obj: _FT, strip: bool = False) -> str:
-        obj_name = obj.__name__ if strip else f"`{obj.__name__}`"
-        alt = alternative if strip else alternative_formatted
+    def get_message(obj: _FT) -> str:
         return (
-            f"{obj_name} was **deprecated** in v{since}, and will "
-            f"be **removed** in v{removal}. Please use {alt} instead."
+            f"`{obj.__name__}` was **deprecated** in v{since}, and will "
+            f"be **removed** in v{removal}. Please use {alternative} instead."
         )
 
     def show_warning(obj: _FT):
         warnings.simplefilter("always", DeprecationWarning)
         warnings.warn(
-            get_message(obj, strip=True),
-            category=DeprecationWarning,
-            stacklevel=2,
+            get_message(obj), category=DeprecationWarning, stacklevel=2
         )
         warnings.simplefilter("default", DeprecationWarning)
 

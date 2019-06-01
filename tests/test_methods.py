@@ -9,8 +9,7 @@ from bocadillo.constants import ALL_HTTP_METHODS
     [(["get", "post"], "get", 200), (["post"], "get", 405), ([], "put", 405)],
 )
 def test_allowed_methods(app: App, client, methods, method, status):
-    @app.route("/")
-    @view(methods=methods)
+    @app.route("/", methods=methods)
     async def index(req, res):
         pass
 
@@ -40,8 +39,7 @@ def test_if_get_implemented_then_head_mapped(app: App, client):
 
 
 def test_if_get_in_function_view_methods_then_head_mapped(app: App, client):
-    @app.route("/")
-    @view(methods=["get"])
+    @app.route("/", methods=["get"])
     async def index(req, res):
         pass
 
@@ -49,10 +47,21 @@ def test_if_get_in_function_view_methods_then_head_mapped(app: App, client):
 
 
 def test_if_methods_is_all_then_all_methods_allowed(app: App, client):
-    @app.route("/")
-    @view(methods=all)
+    @app.route("/", methods=all)
     async def index(req, res):
         pass
 
     for method in ALL_HTTP_METHODS:
         assert getattr(client, method)("/").status_code == 200
+
+
+def test_legacy_view_decorator(app, client):
+    with pytest.deprecated_call():
+
+        @app.route("/")
+        @view(methods=["post"])
+        async def index(req, res):
+            pass
+
+    assert client.get("/").status_code == 405
+    assert client.post("/").status_code == 200

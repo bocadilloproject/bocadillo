@@ -24,8 +24,7 @@ async def get_unseen_todos(req, res):
     res.json = unseen_todos
 
 
-@app.route("/todos")
-@view(methods=["post"])
+@app.route("/todos", methods=["post"])
 async def create_todo(req, res):
     json = await req.json()
     todo = {"id": len(TODOS) + 1, "content": json["content"]}

@@ -124,19 +124,18 @@ Which HTTP methods are exposed on a route depends on the view function or class.
 
 On class-based views, HTTP methods are exposed based on the class' methods. For example, the POST method is accepted if and only if the view implements `.post()`.
 
-On function-based views, you can use the [`@view()`](/api/views.md#view-2) decorator and its case-insensitive `methods` argument:
+On function-based views, you can use the case-insensitive `methods` argument to `@.route()`:
 
 ```python
 from bocadillo import view
 
-@app.route("/items")
-@view(methods=["post"])
+@app.route("/items", methods=["post"])
 async def create_item(req, res):
     # ...
     res.status_code = 201
 ```
 
-If `methods` is not given, or the decorator is omitted altogether, only safe HTTP methods are exposed, i.e. `GET` and `HEAD`.
+If `methods` is not given, only safe HTTP methods are exposed, i.e. `GET` and `HEAD`.
 
 When a non-allowed HTTP method is requested by a client, a `405 Not Allowed` error response is automatically returned.
 

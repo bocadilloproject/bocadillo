@@ -156,7 +156,7 @@ class Router:
         self.lifespan.add_event_handler(event, handler)
         return handler
 
-    def route(self, pattern: str):
+    def route(self, pattern: str, methods: typing.List[str] = None):
         """Register an HTTP route by decorating a view.
 
         # Parameters
@@ -165,7 +165,7 @@ class Router:
 
         def decorate(view: typing.Any) -> HTTPRoute:
             if not isinstance(view, View):
-                view = View(view)
+                view = View(view, methods=methods)
             route = HTTPRoute(pattern, view)
             self.add_route(route)
             return route
