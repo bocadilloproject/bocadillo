@@ -38,6 +38,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 - `app.add_asgi_middleware()` is deprecated in favor of `app.add_middleware()`. It will be removed in v0.17.0.
 - The `@view()` decorator has been deprecated in favor of `@route(methods=...)`. It will be removed in v0.17.0
 
+### Removed
+
+- `res.media` was deprecated since 0.14.0, and has been removed. Please use `res.json` instead.
+
 ## [v0.15.1] - 2019-05-17
 
 ### Fixed

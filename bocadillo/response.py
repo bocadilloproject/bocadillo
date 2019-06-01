@@ -97,12 +97,6 @@ class Response:
         self._background: typing.Optional[BackgroundFunc] = None
         self._stream: typing.Optional[Stream] = None
 
-    @deprecated(since="0.14", removal="0.15", alternative="res.json")
-    def media(self, value):
-        self.json = value
-
-    media = property(fget=None, fset=media)
-
     def file(self, path: str, attach: bool = True):
         """Send a file asynchronously using [aiofiles].
 
