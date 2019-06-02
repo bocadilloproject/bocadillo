@@ -4,6 +4,19 @@ import typing
 PARAM_RE = re.compile(r"{}|{([a-zA-Z_:][a-zA-Z0-9_:]*)}")
 WILDCARD = "{}"
 
+CONVERTER_PATTERNS = {"path": r".*"}
+
+
+def convert_part(name: str, converter: str) -> str:
+    try:
+        return CONVERTER_PATTERNS[converter]
+    except KeyError as exc:
+        raise TypeError(
+            f"Unknown path converter '{converter}' "
+            f"on route parameter '{name}'. "
+            f"Available: {', '.join(CONVERTER_PATTERNS)}"
+        ) from exc
+
 
 def compile_path(pattern: str) -> typing.Tuple[typing.Pattern, str]:
     regex = "^"
@@ -11,16 +24,16 @@ def compile_path(pattern: str) -> typing.Tuple[typing.Pattern, str]:
     idx = 0
 
     for match in PARAM_RE.finditer(pattern):
-        name, = match.groups(default="")
-        if ":" in name:
-            raise TypeError(
-                "path specifiers were removed in 0.14.0. "
-                "Use type annotations on view parameters instead, "
-                "e.g. `pk: int` instead of '{pk:d}'"
-            )
+        declaration, = match.groups(default="")
+        name, sep, converter = declaration.partition(":")
+        has_converter = sep == ":"
 
         regex += pattern[idx : match.start()]
-        expr = r".+" if not name else rf"?P<{name}>.+"
+        if not name:
+            expr = r".*"
+        else:
+            part = convert_part(name, converter) if has_converter else r"[^/]+"
+            expr = rf"?P<{name}>{part}"
         regex += rf"({expr})"
 
         path_format += pattern[idx : match.start()]

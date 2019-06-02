@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Changed
+
+- Previously, route parameter matching was not strict: a parameter could match an entire section of the URL, leading to confusing behavior. You must now use the `:path` converter (e.g. `/images/{filename:path}`) to match path-like route parameters.
+
 ## [v0.16.0] - 2019-06-01
 
 ## Added

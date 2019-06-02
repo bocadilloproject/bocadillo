@@ -150,16 +150,3 @@ def test_querystring_converter(
     )
     json = get_json(client, f"/{querystring}")
     assert json == result
-
-
-def test_specifiers_fail(app):
-    with pytest.raises(TypeError) as ctx:
-
-        @app.route("/{x:d}")
-        async def index(req, res, x):
-            pass
-
-    # Migration hint must be present.
-    error = str(ctx.value)
-    assert "pk: int" in error
-    assert "{pk:d}" in error
