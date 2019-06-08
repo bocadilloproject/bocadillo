@@ -132,7 +132,7 @@ module.exports = {
           title: "Built-in features",
           children: listDir("guide", [
             "json-validation",
-            ["builtin-middleware", "Middleware"],
+            ["builtin-middleware", "CORS, HSTS, GZip"],
             "static-files",
             "sessions",
             "templates",

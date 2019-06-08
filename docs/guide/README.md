@@ -1,9 +1,5 @@
 # Introduction
 
-::: tip NOTE
-Migrating from v0.13.x? Read the [v0.14 release notes](/blog/release-0.14.html).
-:::
-
 Hi there, and welcome to the Bocadillo documentation! 👋
 
 Before we get started, here is some general information about Bocadillo we thought you may want to know.
