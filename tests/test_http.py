@@ -85,3 +85,33 @@ def test_parameter_is_passed_as_keyword_argument(app: App, client):
     response = client.get("/greet/John")
     assert response.status_code == 200
     assert response.text == "John"
+
+
+def test_match_path(app, client):
+    @app.route("/items/{pk}")
+    async def items(req, res, pk: int):
+        res.text = f"Item {pk}"
+
+    @app.route("/items/{pk}/owner")
+    async def item_owner(req, res, pk: int):
+        res.text = "Joe"
+
+    @app.route("/items/{sink:path}")
+    async def item_with_path(req, res, sink):
+        res.text = sink
+
+    assert client.get("/items/1").text == "Item 1"
+    assert client.get("/items/1/owner").text == "Joe"
+    assert client.get("/items/foo/bar").text == "foo/bar"
+
+
+def test_unknown_specifier(app):
+    with pytest.raises(TypeError) as ctx:
+
+        @app.route("/{x:d}")
+        async def index(req, res, x):
+            pass
+
+    error = str(ctx.value).lower()
+    for phrase in "unknown", "'d'", "'x'":
+        assert phrase in error

@@ -82,7 +82,7 @@ class Mount(BaseRoute):
 
         self.app = app
         self.path = path
-        self._parser = Parser(self.path + "/{path}")
+        self._parser = Parser(self.path + "/{path:path}")
 
     def matches(self, scope: dict) -> typing.Tuple[bool, dict]:
         path = scope["path"]

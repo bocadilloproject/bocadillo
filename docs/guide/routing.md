@@ -70,6 +70,9 @@ Here's how a few example requests would be handled:
 | `/items/13`        | `get_items()`   | Only matching route.                          |
 | `/items/42`        | `get_item_42()` | First route to match.                         |
 | `/items/foo`       | None            | `get_items()` requires `pk` to be an integer. |
+| `/items/13/detail` | None            | No matching route\*.                          |
+
+_\* Route parameters search in individual URL parts. If you want to match entire sections of the URL, see [Path-like route parameters](#path-like-route-parameters)._
 
 ## Function-based views
 
@@ -291,6 +294,18 @@ As you can see, the value of an anonymous parameter is not passed to the view. I
 - Wildcard routes should not be used to implement 404 pages — Bocadillo already returns those for you.
 
 :::
+
+## Path-like route parameters
+
+If you want a route parameter to match an entire section of the URL, use the `:path` converter.
+
+```python
+@app.route("/images/{location:path}")
+async def get_image(req, res, location: str):
+    pass
+```
+
+Here, requesting `/images/news/header.png` will result in the view being given `location="news/header.png"`.
 
 ## Redirecting
 

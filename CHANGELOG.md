@@ -14,6 +14,12 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.16.1] - 2019-06-02
+
+### Changed
+
+- Previously, route parameter matching was not strict: a parameter could match an entire section of the URL, leading to confusing behavior. You must now use the `:path` converter (e.g. `/images/{filename:path}`) to match path-like route parameters.
+
 ## [v0.16.0] - 2019-06-01
 
 ## Added
@@ -687,7 +693,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.1...HEAD
+[v0.16.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.1...v0.16.0
 [v0.15.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.0...v0.15.1
 [v0.15.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.14.2...v0.15.0
