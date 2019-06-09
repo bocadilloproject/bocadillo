@@ -8,6 +8,15 @@ function versioned(value) {
 }
 
 module.exports = [
+  // Stylesheets.
+  [
+    "link",
+    {
+      rel: "stylesheet",
+      href: "/octicons.css"
+    }
+  ],
+
   // Favicon hints.
   [
     "link",

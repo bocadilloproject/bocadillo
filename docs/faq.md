@@ -33,10 +33,6 @@ Its simplicity and low cost allowed it to thrive, become an iconic piece of Span
 
 This name was chosen because it is short, easy to remember, and reminiscent that web frameworks should be fun, easy to use, and allow to build delicious systems from simple ingredients.
 
-This Spanish inspiration also explains our tagline, "A modern Python web framework built with asynchronous _salsa_".
-
-Congrats, you know all of it! 🎉
-
 ### Is Bocadillo stable?
 
 Although most of its core architecture and features probably won't change much, Bocadillo is still in its early days and some changes may be brought to the framework if we deem it necessary. This has happened in the past, and may happen again. We will of course follow best practices and resort to a deprecation cycle if the change is too important to be released out of the blue.
@@ -87,9 +83,9 @@ Quite fast, according to [benchmarks]. Optimizing for speed has not been our pri
 
 We wouldn't go as far as saying so. Only experience will tell. However, if you are using Bocadillo in production already, [let us know][contact-maintainers]!
 
-### Does Bocadillo scale?
+### Do Bocadillo applications scale?
 
-Yes, it _should_ in many ways.
+Yes, they do in many ways.
 
 Bocadillo being an async framework, you get client concurrency for free, which can help increase request throughput in case that your application is IO-intensive.
 
@@ -107,15 +103,11 @@ No, you don't _have_ to.
 
 Bocadillo already serves static files efficiently for you using [WhiteNoise](http://whitenoise.evans.io/en/stable/), and if you're using a process manager like Gunicorn you should be just fine.
 
-In our experience, running behind Nginx should be motivated by specific needs.
-
 ## Getting in touch
 
 ### How can I get help?
 
-We have a [Gitter chat room][gitter] where you can reach out and ask any questions related to installing or using Bocadillo. There are a few community member over there who may be able to help you out. Remember to be nice, polite and respectful. If nobody answers your question, try making it more specific or give it more time; members who can help may be busy.
-
-[gitter]: https://gitter.im/bocadilloproject/bocadillo
+If you're looking for help, or something's not working, you can [browse through issues](https://github.com/bocadilloproject/bocadillo/issues). If your problem hasn't been discussed before, feel free to <open-issue text="open an issue"/>. Maintainers will tag is as a "question" and community members will probably get back to you. Remember: be nice, polite, and clearly explain the problem you are having. If nobody answers your question, try making it more specific or give it more time.
 
 ### I think I've found a bug! What should I do?
 
@@ -124,12 +116,11 @@ The first step would be to verify it can be reproduced, and then <open-issue tex
 If you're willing to help fix the bug, detailed instructions can be found in our <repo-page to="CONTRIBUTING.md" text="Contributing guide"/>.
 
 ::: warning
-If the bug is related to security, **do not** publicly reveal the information. We'll need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
+If the bug is related to security, **do not** publicly reveal the information. We need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].
 :::
 
 ### How can I contact maintainers?
 
 If you've got anything else to tell us, you can reach out on Twitter. Our official account is <twitter-link/>.
 
-[@bocadillopy]: https://twitter.com/bocadillopy
 [contact-maintainers]: #how-can-i-contact-maintainers

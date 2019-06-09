@@ -2,7 +2,7 @@
 
 import setuptools
 
-description = "A modern Python web framework filled with asynchronous salsa."
+description = "Fast, highly-concurrent and scalable web APIs for everyone"
 
 with open("README.md", "r") as readme:
     long_description = readme.read()

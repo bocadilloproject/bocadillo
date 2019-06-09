@@ -3,36 +3,26 @@
     <div class="hero">
       <img id="hero-image" v-if="data.heroImage" :src="$withBase(data.heroImage)" alt="hero">
 
-      <h1 id="title">{{ data.heroText || $title || 'Hello' }}</h1>
+      <h1 id="title">{{ data.heroText || $title }}</h1>
 
-      <p
-        id="description"
-        class="description"
-      >{{ data.tagline || $description || 'Welcome to your VuePress site' }}</p>
+      <p id="description" class="description" v-html="data.tagline || $description"></p>
 
       <p>
-        <iframe
-          src="https://ghbtns.com/github-btn.html?user=bocadilloproject&repo=bocadillo&type=star&count=true&size=large"
-          frameborder="0"
-          scrolling="0"
-          width="130px"
-          height="30px"
-        ></iframe>
+        <StarButton/>
       </p>
 
-      <p class="action" v-if="data.actionText && data.actionLink">
-        <NavLink class="action-button" :item="actionLink"/>
+      <b-action-link :to="data.actionLink" :text="data.actionText" :primary="true"/>
+
+      <p>
+        Latest release:
+        <strong>{{ $version }}</strong>
       </p>
     </div>
 
-    <div class="features" v-if="data.features && data.features.length">
-      <div class="feature" v-for="(feature, index) in data.features" :key="index">
-        <h2>{{ feature.title }}</h2>
-        <p>{{ feature.details }}</p>
-      </div>
+    <div id="home-main">
+      <Content custom class="home-content"/>
+      <HomeSideBar/>
     </div>
-
-    <Content custom/>
 
     <div class="footer" v-if="data.footer">{{ data.footer }}</div>
   </div>
@@ -47,19 +37,14 @@ export default {
   computed: {
     data() {
       return this.$page.frontmatter;
-    },
-
-    actionLink() {
-      return {
-        link: this.data.actionLink,
-        text: this.data.actionText
-      };
     }
   }
 };
 </script>
 
 <style lang="stylus" scoped>
+@import './config.styl';
+
 .home {
   padding-top: 0 !important;
 }
@@ -76,5 +61,26 @@ export default {
 
 #description {
   margin-top: 0.5rem;
+}
+
+#home-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-column-gap: 4rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: $MQMobile) {
+  .home {
+    padding: 0 !important;
+  }
+
+  .home-content {
+    padding: 0 2rem;
+  }
+
+  #home-main {
+    display: block;
+  }
 }
 </style>

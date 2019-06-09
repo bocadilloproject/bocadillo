@@ -23,7 +23,7 @@ function projectRepo(name) {
 
 module.exports = {
   title: "Bocadillo",
-  description: "A modern Python web framework filled with asynchronous salsa",
+  description: "Fast, scalable and real-time capable web APIs for everyone.",
   name,
   author: "Florimond Manca",
   org,
@@ -33,9 +33,7 @@ module.exports = {
   issues: `${repoLink}/issues/new/choose`,
   contributing: repoPage("CONTRIBUTING.md"),
   docs,
-  aiodine: projectRepo("aiodine"),
   cli: projectRepo("bocadillo-cli"),
-  gitter: `https://gitter.im/${repo}`,
   twitterUser,
   twitter: `https://twitter.com/${twitterUser}`,
   algoliaIndex: "bocadilloproject",
