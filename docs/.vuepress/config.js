@@ -66,10 +66,6 @@ module.exports = {
               {
                 text: "Troubleshooting",
                 link: "/troubleshooting"
-              },
-              {
-                text: "Chat",
-                link: `https://gitter.im/${project.repo}`
               }
             ]
           },
@@ -81,8 +77,8 @@ module.exports = {
                 link: `https://twitter.com/${project.twitterUsage}`
               },
               {
-                text: "Blog",
-                link: "/blog/"
+                text: "News",
+                link: "/news/"
               },
               {
                 text: "Mentions",

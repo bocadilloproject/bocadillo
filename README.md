@@ -40,7 +40,7 @@
 
 ---
 
-> Migrating from v0.13.x? Read the [v0.14 release notes](https://bocadilloproject.github.io/blog/release-0.14.html).
+> Migrating from v0.13.x? Read the [v0.14 release notes](https://bocadilloproject.github.io/news/release-0.14.html).
 
 Bocadillo is a **Python async web framework** that makes server-side async web apps **fun to build** and **accessible to everyone**.
 

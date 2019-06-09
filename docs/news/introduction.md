@@ -6,7 +6,7 @@ author: Florimond Manca
 layout: Post
 ---
 
-Hi all! A few months ago, I published a blog post on my personal blog in which I shared my story of becoming an open source maintainer by building Bocadillo: [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimondmanca.com/how-i-built-a-python-web-framework-and-became-an-open-source-maintainer).
+Hi all! A few months ago, I published a blog post on my personal blog in which I shared my story of becoming an open source maintainer by building Bocadillo: [How I Built A Python Web Framework And Became An Open Source Maintainer](https://blog.florimond.dev/how-i-built-a-python-web-framework-and-became-an-open-source-maintainer).
 
 The community's response to this blog post was heart-warming. Since then, I've kept working on the framework and I'm enjoying the journey more than ever. I haven't written much more about it, but that's going to change because…
 

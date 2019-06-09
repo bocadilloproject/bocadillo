@@ -23,6 +23,16 @@ const docsOverhaulRoutes = [
   }))
 ];
 
-export default ({ Vue, router }) => {
-  router.addRoutes([...docsOverhaulRoutes]);
+export default ({ router }) => {
+  router.addRoutes([
+    ...docsOverhaulRoutes,
+    {
+      path: "/blog/",
+      redirect: "/news/"
+    },
+    {
+      path: "/blog/:path",
+      redirect: "/news/:path"
+    }
+  ]);
 };

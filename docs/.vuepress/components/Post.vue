@@ -2,7 +2,7 @@
   <Page :sidebarItems="[]">
     <template slot="top">
       <p class="wrapper">
-        <router-link to="/blog/">← Back to posts</router-link>
+        <router-link to="/news/">← Back to posts</router-link>
       </p>
 
       <PostShare :page="$page"/>
