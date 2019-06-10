@@ -156,7 +156,7 @@ module.exports = {
           children: listDir("guide", ["testing", "cli"])
         }
       ],
-      "/how-to/": ["heroku", "orm", "socketio", "test-pytest"],
+      "/how-to/": ["heroku", "orm", "graphql", "socketio", "test-pytest"],
       "/discussions/": ["databases", "frontend", "deployment", "security"],
       "/api/": [
         {

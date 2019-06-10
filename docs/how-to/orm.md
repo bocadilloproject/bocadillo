@@ -1,4 +1,4 @@
-# Use `orm` to interact with an SQL database
+# SQL databases with `orm`
 
 The [orm] ilbrary is a Python asynchronous ORM. We've discussed what ORMs are in the [Databases](/discussions/databases.md) guide. This page will show you how to integrate it in a Bocadillo project in order to retrieve, validate and insert data into an SQL database.
 
