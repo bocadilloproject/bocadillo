@@ -10,7 +10,7 @@
         <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="Test coverage"/>
     </a>
     <a href="https://pypi.org/project/bocadillo">
-        <img src="https://img.shields.io/pypi/v/bocadillo.svg" alt="pypi version">
+        <img src="https://badge.fury.io/py/bocadillo.svg" alt="pypi version">
     </a>
     <a href="https://github.com/ambv/black">
         <img src="https://img.shields.io/badge/code_style-black-000000.svg" alt="code style">
