@@ -4,7 +4,7 @@ If you're interested in using [socket.io][socketio] (a.k.a. SocketIO) to build a
 
 In this guide, we'll go through the process of rewriting the [socket.io chat tutorial] with Bocadillo, [python-socketio] and the [socket.io-client] library.
 
-All the code can be found in our [socketio-example repository][socketio-example] on GitHub.
+All the code can be found in the [socketio-example repository][socketio-example] on GitHub.
 
 [socketio]: https://socket.io
 [python-socketio]: https://python-socketio.readthedocs.io
@@ -284,4 +284,4 @@ socket.on("response", message => {
 
 If you've made it so far, congrats! You've just built a real-time chat application with Bocadillo, [python-socketio] and [socket.io-client].
 
-You can find all the code for this guide in our [socketio-example] repository. The full code contains useful comments, context and links, so be sure to check out the repo!
+You can find all the code for this guide in the [socketio-example] repository. The full code contains useful comments, context and links, so be sure to check out the repo!

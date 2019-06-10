@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Choose where Bocadillo should look for providers using the new `PROVIDERS_MODULES` setting.
+
 ## [v0.16.2] - 2019-06-18
 
 ### Added

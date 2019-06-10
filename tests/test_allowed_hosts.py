@@ -1,3 +1,5 @@
+import pytest
+
 from bocadillo import configure, create_client
 
 

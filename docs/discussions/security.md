@@ -1,9 +1,9 @@
 # Security
 
-Bocadillo is still a young framework and, while we're building it with security in mind, you should make sure you follow common security guidelines before putting your application in production.
+While Bocadillo was designed with security in mind, you should make sure you follow common security guidelines before putting your application in production.
 
 ::: warning DISCLAIMER
-Information Security is hard, and we're no experts. If you notice anything wrong with the present recommendations, please let us know, e.g. by opening an issue.
+Information Security is hard, and we're no experts. If you notice anything wrong with the present recommendations, please let us know!
 :::
 
 ## HTTPS
@@ -18,13 +18,13 @@ Once your certificate and key files (`.crt`, `.key`) are generated, you can prov
 
 ```bash
 # Command line usage:
-uvicorn app:app --ssl-certfile=path/to/server.crt --ssl-keyfile=path/to/server.key
+uvicorn myproject.asgi:app --ssl-certfile=path/to/server.crt --ssl-keyfile=path/to/server.key
 ```
 
 ```python
 # Programmatic usage:
 import uvicorn
-from app import app
+from myproject.asgi import app
 
 uvicorn.run(
     app,
@@ -66,16 +66,15 @@ instead of
 Besides, Jinja2 cannot protect you against someone injecting malicious codes in the `href` attribute of a link tag. To prevent this, you need to set the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) header, which can be achieved via a middleware:
 
 ```python
-from bocadillo import App, Middleware
+from bocadillo import Middleware
 
 class CSPMiddleware(Middleware):
-
-    def after_dispatch(self, req, res):
+    async def after_dispatch(self, req, res):
         # Only load scripts from the origin where the response
         # is served.
         res.headers["content-security-policy"] = "default-src 'self'"
 
-app = App()
+# ...
 app.add_middleware(CSPMiddleware)
 ```
 
@@ -89,7 +88,7 @@ These attacks work because web browsers automatically provide session cookies an
 
 A Token-based method is a popular way to mitigate CSRF attacks.
 
-Bocadillo does not provide any such CSRF mitigation mechanism at the moment — but session cookies are not supported yet either.
+Bocadillo does not provide any such CSRF mitigation mechanism at the moment.
 
 For more information on CSRF, see the OWASP [CSRF guide](<https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)>) and [Prevention Cheatsheet](<https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Token_Based_Mitigation>).
 
@@ -105,20 +104,20 @@ For example, don't write:
 
 ```python
 symbol = "RHAT"
-c.execute(f"SELECT * FROM stocks WHERE symbol = '{symbol}'")
+cursor.execute(f"SELECT * FROM stocks WHERE symbol = '{symbol}'")
 ```
 
 Instead, use:
 
 ```python
-c.execute('SELECT * FROM stocks WHERE symbol=?', ("RHAT",))
+cursor.execute('SELECT * FROM stocks WHERE symbol=?', ("RHAT",))
 ```
+
+(Snippets taken from the [sqlite3](https://docs.python.org/3/library/sqlite3.html) documentation.)
 
 This will allow the underlying database driver to escape parameters for you.
 
 Of course, this depends on the driver you're using; we recommend you refer to its documentation to make sure it supports this functionality.
-
-The example above is taken from the [sqlite3](https://docs.python.org/3/library/sqlite3.html) documentation intro.
 
 ## Host header validation
 
@@ -126,4 +125,4 @@ An HTTP Host Header attack consists in a malicious user providing a fake `Host` 
 
 In order to prevent this type of attack, every Bocadillo applications has a whitelist of hosts which the `Host` header is validated against. An invalid `Host` will result in Bocadillo sending a `400 Bad Request` response.
 
-By default, this whitelist is empty. You must configure it through the `allowed_hosts` parameter to `App` — see [allowed hosts](/guide/builtin-middleware.md#allowed-hosts).
+By default, all hosts are whitelisted. For production usage, you should configure it accordingly — see [allowed hosts](/guide/builtin-middleware.md#allowed-hosts).

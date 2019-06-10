@@ -73,7 +73,7 @@ Lastly, without this approach we probably wouldn't have been able to implement a
 
 ### How fast is Bocadillo?
 
-Quite fast, according to [benchmarks]. Optimizing for speed has not been our primary focus so far, but we'll definitely consider improving it further as the project stabilizes.
+Quite fast, according to [benchmarks]. Optimizing for speed has not been the primary focus so far, but improving it will definitely be considered as the project stabilizes.
 
 [benchmarks]: https://github.com/the-benchmarker/web-frameworks
 
@@ -94,7 +94,7 @@ Plus, by running Bocadillo using a process manager, you can run multiple process
 Other than that, a Bocadillo application can be scaled up and out as any other web app.
 
 ::: tip
-For hints on deploying Bocadillo applications, see our [Deployment](/discussions/deployment.md) guide.
+For hints on deploying Bocadillo applications, see the [Deployment](/discussions/deployment.md) guide.
 :::
 
 ### Do I need to run Bocadillo behind a reverse proxy such as Nginx?
@@ -113,7 +113,7 @@ If you're looking for help, or something's not working, you can [browse through 
 
 The first step would be to verify it can be reproduced, and then <open-issue text="open an issue on GitHub"/>.
 
-If you're willing to help fix the bug, detailed instructions can be found in our <repo-page to="CONTRIBUTING.md" text="Contributing guide"/>.
+If you're willing to help fix the bug, detailed instructions can be found in the <repo-page to="CONTRIBUTING.md" text="Contributing guide"/>.
 
 ::: warning
 If the bug is related to security, **do not** publicly reveal the information. We need to handle this privately first, so consider [contacting a maintainer][contact-maintainers].

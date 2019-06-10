@@ -1,6 +1,6 @@
 # Responses
 
-Bocadillo passes the request and the response objects to each HTTP view. This means that the idiomatic way of sending a response is to mutate the `res` object directly. To learn more about this design decision, see our [FAQ](/faq.md#why-pass-the-request-and-response-around-everywhere).
+Bocadillo passes the request and the response objects to each HTTP view. This means that the idiomatic way of sending a response is to mutate the `res` object directly. To learn more about this design decision, see the [FAQ](/faq.md#why-pass-the-request-and-response-around-everywhere).
 
 ## Sending content
 

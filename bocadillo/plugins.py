@@ -11,8 +11,8 @@ from .config import SettingsError, settings
 from .constants import DEFAULT_CORS_CONFIG
 from .converters import PathConversionError
 from .errors import HTTPError
+from .injection import STORE, discover_providers
 from .staticfiles import static
-from .injection import STORE
 
 if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
@@ -29,6 +29,7 @@ def plugin(func):
 
 
 _BUILTIN_PLUGINS = []
+_MISSING = object()
 
 
 def _builtin(func):
@@ -38,12 +39,21 @@ def _builtin(func):
 
 @_builtin
 def use_providers(app: "App"):
-    """Configure providers.
+    """Discover and configure providers.
 
-    This plugin is always enabled. It ensures that app-scoped providers
-    are correctly setup on app startup, and tore down on app shutdown, and
-    resolves dependencies between providers.
+    Ensures that app-scoped providers are setup on app startup, and tore down
+    on app shutdown.
+
+    Settings:
+    - `PROVIDERS_MODULES` (list of str, optional):
+        a list of Python modules (e.g. `path.to.providersconf`) where Bocadillo
+        should look for providers.
     """
+    providers_modules = settings.get("PROVIDERS_MODULES")
+    if not providers_modules:
+        return
+
+    discover_providers(*providers_modules)
     STORE.freeze()
     app.on("startup", STORE.enter_session)
     app.on("shutdown", STORE.exit_session)

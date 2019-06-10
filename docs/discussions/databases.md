@@ -51,7 +51,7 @@ async def index(req, res, db):
 
 Using an ORM (Object Relational Mapper) allows you to think in terms of classes and objects instead of tables and rows.
 
-This technique has [a number of benefits and drawbacks](https://www.fullstackpython.com/object-relational-mappers-orms.html), but if you go for it our recommended option is [orm], an asynchronous ORM for Python. It's based on SQLAlchemy Core, so it's fast, and easy to use, and supports all major databases (PostgreSQL, MySQL and SQLite). Besides, you can integrate it with Bocadillo to get **data validation** without any boilerplate — see: [Use orm to interact with an SQL database](/how-to/orm.md).
+This technique has [a number of benefits and drawbacks](https://www.fullstackpython.com/object-relational-mappers-orms.html), but if you go for it the recommended option is [orm], an asynchronous ORM for Python. It's based on SQLAlchemy Core, so it's fast, and easy to use, and supports all major databases (PostgreSQL, MySQL and SQLite). Besides, you can integrate it with Bocadillo to get **data validation** without any boilerplate — see: [Use orm to interact with an SQL database](/how-to/orm.md).
 
 [orm]: https://github.com/encode/orm
 

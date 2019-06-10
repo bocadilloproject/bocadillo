@@ -80,7 +80,6 @@ from bocadillo import App, discover_providers
 from .models import Post
 
 app = App()
-discover_providers("blog.providerconf")
 
 @app.route("/posts")
 class PostsList:
@@ -110,7 +109,6 @@ from bocadillo import App, discover_providers
 from .models import Post
 
 app = App()
-discover_providers("blog.providerconf")
 
 @app.route("/posts")
 class PostsList:

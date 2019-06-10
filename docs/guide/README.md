@@ -70,4 +70,4 @@ We think this decision was totally worth it, because:
 
 Although Bocadillo was designed to make working with async as pleasurable as possible, we do know that learning async Python can be overwhelming in the beginning.
 
-If you need help to get the ground running, take a look at our [Async crash course](/guide/async.md).
+If you need help to get the ground running, take a look at the [Async crash course](/guide/async.md).

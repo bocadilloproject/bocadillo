@@ -4,7 +4,7 @@ Modern web applications typically consist of a _backend_ and a _frontend_. Bocad
 
 ## Guidelines
 
-Frontend frameworks generally have their own development tooling, including command line tools, hot reload, etc. Based on this assumption, here are our recommendations:
+Frontend frameworks generally have their own development tooling, including command line tools, hot reload, etc. Based on this assumption, here are some recommendations:
 
 - **In development**: run 2 separate servers — one for Bocadillo, one for the frontend.
 - **In production**, either:

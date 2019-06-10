@@ -22,7 +22,7 @@ Let's break down this command:
 
 ## Running with Docker
 
-Bocadillo applications can easily be containerized to run in Docker containers. You can find an example `Dockerfile` in our [docker-example](https://github.com/bocadilloproject/docker-example) repo.
+Bocadillo applications can easily be containerized to run in Docker containers. You can find an example `Dockerfile` in the [docker-example](https://github.com/bocadilloproject/docker-example) repo.
 
 ## What about static files?
 
@@ -36,4 +36,4 @@ In practice, this means that **you won't need any extra steps to serve static fi
 
 ### Heroku
 
-Bocadillo applications are very easy to deploy to Heroku. Check out our [Heroku deployment guide](/how-to/heroku.md) to get started!
+Bocadillo applications are very easy to deploy to Heroku. Check out the [Heroku deployment guide](/how-to/heroku.md) to get started!

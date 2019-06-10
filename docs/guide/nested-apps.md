@@ -52,5 +52,5 @@ As a result, **any library that provides an ASGI adapter can be used with Bocadi
 
 Here are just a few examples:
 
-- [python-socketio](https://python-socketio.readthedocs.io/en/latest/) for high-level WebSocket programming. See also our [how-to guide](/how-to/socketio.md).
+- [python-socketio](https://python-socketio.readthedocs.io/en/latest/) for high-level WebSocket programming. See also the [how-to guide](/how-to/socketio.md).
 - [tartiflette-starlette](https://github.com/tartiflette/tartiflette-starlette), an ASGI adapter for the [Tartiflette](https://tartiflette.io/) async GraphQL engine.

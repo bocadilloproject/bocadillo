@@ -6,23 +6,25 @@ In practice, you can view providers as a **runtime dependency injection system**
 
 The API for providers was heavily influenced by [pytest fixtures](https://docs.pytest.org/en/latest/provider.html), so it should feel fairly familiar. Also, their core implementation was extracted into a separate, officially supported package: [aiodine](https://github.com/bocadilloproject/aiodine).
 
-## Providers by example: Redis cache
+## Example
 
 Suppose we want to implement a cache system backed by [Redis](https://redis.io), a distributed key-value store, using the [aioredis](https://github.com/aio-libs/aioredis) library. How would we make a Redis connection available to views?
 
-The naive solution would be to create a `redis` object, initially `None`, and then use [lifespan handlers](/guide/apps.md#lifespan-events) to give it a value on app startup. It's hacky, and definitely not very testable. Instead, let's use providers!
+The naive solution would be to create a `redis` global variable, initially `None`, and then use [lifespan handlers](/guide/apps.md#lifespan-events) to give it a value on app startup. It's hacky, and definitely not very testable. Instead, let's use providers!
 
-To follow best practices, we'll start by adding a `REDIS_URL` setting to the settings module:
+Let's start by adding a `REDIS_URL` setting to the settings module:
 
 ```python
 # myproject/settings.py
 from starlette.config import Config
 
 config = Config(".env")
+
+PROVIDERS_MODULES = ["myproject.providerconf"]
 REDIS_URL = config("REDIS_URL", default="redis://localhost")
 ```
 
-We can now define the `redis` provider. In theory, you can declare providers anywhere, but we recommend you place them all in a script called `providerconf.py`:
+We can now define the `redis` provider. Since we registered `myproject.providerconf` in `PROVIDERS_MODULES`, let's place the provider there:
 
 ```python
 # myproject/providerconf.py
@@ -40,7 +42,7 @@ Thanks to this code, if a request is made to your application, and the view aske
 
 1. Bocadillo executes everything above the `yield` statement. In this case, it connects to Redis and creates the connection object.
 2. The `yield`ed object (here, the Redis connection) is passed to the view as a keyword argument.
-3. When the view has finished, Bocadillo executes everything after the `yield` statement. In this case, it closes the Redis connection.
+3. When the view has finished (and even if an exception occurred), Bocadillo executes everything after the `yield` statement. In this case, it closes the Redis connection.
 
 ::: tip
 It is not mandatory that a provider uses `yield`. If no cleanup is required, it can also simply `return`:
@@ -53,15 +55,12 @@ async def hello():
 
 :::
 
-Now, how can the `redis` provider be injected in a view, you ask? Simple enough: just **declare it as a parameter of the view**:
+Now, how can we use the `redis` provider in a view?
+
+Simple enough: **by declaring it as a view parameter**.
 
 ```python
 # myproject/app.py
-from bocadillo import App, discover_providers
-
-app = App()
-discover_providers("myproject.providerconf")
-
 @app.route("/value")           👇
 async def get_value(req, res, redis):
     value = await redis.get("some-key")
@@ -71,7 +70,7 @@ async def get_value(req, res, redis):
     res.json = {"value": value}
 ```
 
-An important principle behind providers is **define once, reuse everywere**: we could just as easily add a WebSocket endpoint and access the Redis cache there:
+An important principle behind providers is _Define once, reuse everywere_: we could also access the Redis cache in other REST endpoints, or in a WebSocket endpoint:
 
 ```python
 # myproject/app.py
@@ -240,17 +239,23 @@ async def retrieve_note(req, res, pk: int, get_note):
 
 Bocadillo can find providers from a number of sources:
 
-1. Asynchronous functions decorated with `@provider` that live in a module marked for discovery using `discover_providers()`. **This is the recommended method for provider discovery.**
+1. **(Recommended)** Functions decorated with `@provider` that live in a module listed in the `PROVIDERS_MODULES` setting. This is what [Bocadillo CLI](https://github.com/bocadilloproject/bocadillo-cli) generates.
+
+```python
+# myproject/settings.py
+PROVIDERS_MODULES = ["myproject.providerconf", "myproject.more_providers"]
+```
+
+2. Functions decorated with `@provider` that live in a module marked for discovery using `discover_providers()`.
 
 ```python
 # myproject/app.py
 from bocadillo import discover_providers
 
-# Assumption: `myproject/` contains `more_providers.py`.
 discover_providers("myproject.more_providers")
 ```
 
-2. Functions decorated with `@provider` that live in a `providerconf.py` module relative to the current working directory (note that this may be different from the directory where `app.py` is located).
+3. Functions decorated with `@provider` that live in a `providerconf.py` module relative to the current working directory (note that this may be different from the directory where `app.py` is located).
 
 ```python
 # providerconf.py
@@ -262,7 +267,7 @@ async def random() -> float:
     return _random.random()
 ```
 
-3. Functions decorated with `@provider` present in the application script:
+4. Functions decorated with `@provider` present in the application script:
 
 ```python
 # myproject/app.py
@@ -279,25 +284,20 @@ async def hello(req, res, message):
     res.json = {"message": message}
 ```
 
-4. Functions decorated with `@provider` that get _imported_ in the application script:
+5. Functions decorated with `@provider` that get _imported_ in the application script:
 
 ```python
-# myproject/notes.py
-from typing import NamedTuple
+# myproject/messages.py
 from bocadillo import provider
 
-class Note(NamedTuple):
-    id: int
-    text: str
-
 @provider
-async def example_note() -> Note:
-    return Note(id=1, text="Cook mashed potatoes")
+async def message():
+    return "Hello, providers!"
 ```
 
 ```python
 # myproject/app.py
-from notes import Note  # => `example_note` discovered
+from . import messages
 ```
 
 ## Naming providers <Badge text="Advanced" type="warn"/>
@@ -307,9 +307,9 @@ By default, a provider's name is the same as that of its defining function, but 
 When the provider is declared and used _in the same file_, linters and IDEs may complain because of conflicting names. A good convention is then to name the provider function as `provide_{name}`. For example:
 
 ```python
-@provider(name="show_hello")
-async def provide_show_hello():
-    print("Hello, providers!")
+@provider(name="hello")
+async def provide_hello():
+    return "Hello, providers!"
 ```
 
 ## Lazy evaluation <Badge text="Advanced" type="warn"/>
