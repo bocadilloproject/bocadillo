@@ -4,9 +4,14 @@
 
 > GraphQL [...] gives clients the power to ask for exactly what they need and nothing more, makes it easier to evolve APIs over time, and enables powerful developer tools.
 
-If you want to build a GraphQL API with Bocadillo, we recommend using:
+If you want to add a GraphQL endpoint to Bocadillo, all you need is an async GraphQL engine that provides an ASGI adapter. Options include [Ariadne] and [Tartiflette].
 
-- [Tartiflette](https://tartiflette.io): a Python asynchronous GraphQL engine built on `libgraphqlparser`.
+[ariadne]: https://github.com/mirumee/ariadne
+[tartiflette]: https://tartiflette.io
+
+In this guide, we will be using:
+
+- [Tartiflette]: a Python asynchronous GraphQL engine built on `libgraphqlparser`.
 - [tartiflette-starlette](https://github.com/tartiflette/tartiflette-starlette): an ASGI wrapper for Tartiflette featuring a built-in **GraphiQL client**.
 
 ::: tip SEE ALSO
@@ -54,7 +59,7 @@ app.mount("/graphql", graphql)
 3. Serve the app, and make your first query!
 
 ```bash
-curl -H "Content-Type: application/graphql"  -d '{ hello }' http://localhost:8000
+curl -H "Content-Type: application/graphql" http://localhost:8000
 ```
 
 ```json
