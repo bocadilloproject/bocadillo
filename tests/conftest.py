@@ -2,17 +2,13 @@ import typing
 
 import pytest
 
-from bocadillo import App, configure, create_client, Templates, Recipe, settings
+from bocadillo import App, configure, create_client, Templates, settings
 
 
-APP_CLASSES = [App, lambda: Recipe("tacos")]
-
-
-@pytest.fixture(params=APP_CLASSES, name="raw_app")
+@pytest.fixture(name="raw_app")
 def fixture_raw_app(request) -> App:
     settings._clear()
-    cls = request.param
-    return cls()
+    return App()
 
 
 @pytest.fixture(name="app")

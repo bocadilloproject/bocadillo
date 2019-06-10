@@ -154,8 +154,7 @@ module.exports = {
             "providers",
             "plugins",
             "hooks",
-            "middleware",
-            "recipes"
+            "middleware"
           ])
         },
         {

@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import SettingsError, configure, create_client, view
+from bocadillo import SettingsError, configure, create_client
 from bocadillo.utils import override_env
 
 

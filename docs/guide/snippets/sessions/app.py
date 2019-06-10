@@ -1,5 +1,5 @@
 # todos/app.py
-from bocadillo import App, configure, view
+from bocadillo import App, configure
 from . import settings
 
 app = App()

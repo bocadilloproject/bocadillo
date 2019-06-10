@@ -1,6 +1,6 @@
 import pytest
 
-from bocadillo import App, view
+from bocadillo import App
 from bocadillo.constants import ALL_HTTP_METHODS
 
 
@@ -53,15 +53,3 @@ def test_if_methods_is_all_then_all_methods_allowed(app: App, client):
 
     for method in ALL_HTTP_METHODS:
         assert getattr(client, method)("/").status_code == 200
-
-
-def test_legacy_view_decorator(app, client):
-    with pytest.deprecated_call():
-
-        @app.route("/")
-        @view(methods=["post"])
-        async def index(req, res):
-            pass
-
-    assert client.get("/").status_code == 405
-    assert client.post("/").status_code == 200

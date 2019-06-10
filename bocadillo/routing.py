@@ -164,8 +164,7 @@ class Router:
         """
 
         def decorate(view: typing.Any) -> HTTPRoute:
-            if not isinstance(view, View):
-                view = View(view, methods=methods)
+            view = View(view, methods=methods)
             route = HTTPRoute(pattern, view)
             self.add_route(route)
             return route

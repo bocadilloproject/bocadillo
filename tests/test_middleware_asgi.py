@@ -104,8 +104,3 @@ def test_asgi2_middleware_not_supported(app: App):
     error = str(ctx.value).lower()
     for phrase in "asgi2", "please upgrade", "asgi3", "scope, receive, send":
         assert phrase in error
-
-
-def test_add_asgi_middleware_is_deprecated(app):
-    with pytest.deprecated_call():
-        app.add_asgi_middleware(ASGIMiddleware)

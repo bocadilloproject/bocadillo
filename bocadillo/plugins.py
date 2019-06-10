@@ -19,15 +19,6 @@ if typing.TYPE_CHECKING:  # pragma: no cover
 
 PluginFunction = typing.Callable[["App"], None]
 
-
-def plugin(func):
-    raise DeprecationWarning(
-        "`@plugin` has been removed in Bocadillo v0.16.0. "
-        "Users should now register plugins via the `PLUGINS` setting. "
-        "As a result, you can safely remove the decorator."
-    )
-
-
 _BUILTIN_PLUGINS = []
 _MISSING = object()
 

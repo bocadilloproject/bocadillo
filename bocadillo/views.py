@@ -1,4 +1,3 @@
-from functools import partial
 import inspect
 import typing
 
@@ -7,7 +6,6 @@ from .app_types import Handler
 from .compat import check_async
 from .constants import ALL_HTTP_METHODS
 from .converters import ViewConverter, convert_arguments
-from .deprecation import deprecated
 from .errors import HTTPError
 
 MethodsParam = typing.Union[typing.List[str], all]  # type: ignore
@@ -129,22 +127,3 @@ class View:
             except AttributeError:
                 raise HTTPError(405)
         await handler(req, res, **params)
-
-
-@deprecated(
-    since="0.16.0",
-    removal="0.17.0",
-    alternative="the `methods` argument to `@route()`",
-)
-def view(methods: typing.Union[typing.List[str], all] = None):
-    """Convert the decorated function to a proper #::bocadillo.views#View.
-
-    # Parameters
-    methods (list of str):
-        A list of supported HTTP methods. The `all` built-in can be used
-        to support all HTTP methods. Defaults to `["get"]`.
-
-    # See Also
-    - The [constants](./constants.md) module for the list of all HTTP methods.
-    """
-    return partial(View, methods=methods)

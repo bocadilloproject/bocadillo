@@ -4,7 +4,6 @@ from .app_types import ASGIApp, ErrorHandler, EventHandler, Receive, Scope, Send
 from .compat import WSGIApp, is_asgi3
 from .config import settings
 from .contrib.pydocmd import DocsMeta
-from .deprecation import deprecated
 from .error_handlers import error_to_json, error_to_text
 from .errors import HTTPError
 from .injection import STORE
@@ -14,9 +13,6 @@ from .middleware import (
     ServerErrorMiddleware,
 )
 from .routing import Router
-
-if typing.TYPE_CHECKING:  # pragma: no cover
-    from .recipes import Recipe
 
 
 class App(metaclass=DocsMeta):
@@ -120,16 +116,6 @@ class App(metaclass=DocsMeta):
             caught_close_codes=caught_close_codes,
         )
 
-    def recipe(self, recipe: "Recipe"):
-        """Apply a recipe.
-
-        # Parameters
-        recipe:
-            a #::bocadillo.recipes#Recipe or #::bocadillo.recipes#RecipeBook
-            to be applied to the application.
-        """
-        recipe.apply(self)
-
     def add_error_handler(
         self, exception_cls: typing.Type[BaseException], handler: ErrorHandler
     ):
@@ -178,20 +164,6 @@ class App(metaclass=DocsMeta):
         self._exception_middleware.app = middleware_cls(
             self._exception_middleware.app, **kwargs
         )
-
-    @deprecated(
-        since="0.16.0", removal="0.17.0", alternative="`.add_middleware()`"
-    )
-    def add_asgi_middleware(self, middleware_cls, **kwargs):
-        """Register an ASGI middleware class.
-
-        # Parameters
-        middleware_cls: a class that complies with the ASGI3 specification.
-
-        # See Also
-        - [ASGI](https://asgi.readthedocs.io)
-        """
-        self.add_middleware(middleware_cls, **kwargs)
 
     def on(self, event: str, handler: typing.Optional[EventHandler] = None):
         """Register an event handler.

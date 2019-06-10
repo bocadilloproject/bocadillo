@@ -18,6 +18,15 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 - Choose where Bocadillo should look for providers using the new `PROVIDERS_MODULES` setting.
 
+### Removed
+
+Terminated deprecations:
+
+- **BREAKING** Recipes were removed. This includes the `Recipe` and `RecipeBook` classes, as well as `app.apply()`. Consider using routers instead.
+- **BREAKING** `app.add_asgi_middleware()` was removed. Please use `app.add_middleware()` instead.
+- **BREAKING** `@view` was removed. Please use `@route(methods=...)` instead.
+- **BREAKING** `@plugin` was removed. Register plugins using the `PLUGINS` setting instead.
+
 ## [v0.16.2] - 2019-06-18
 
 ### Added
@@ -65,7 +74,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Removed
 
-- `res.media` was deprecated since 0.14.0, and has been removed. Please use `res.json` instead.
+- **BREAKING** `res.media` was deprecated since 0.14.0, and has been removed. Please use `res.json` instead.
 
 ## [v0.15.1] - 2019-05-17
 

@@ -1,7 +1,6 @@
 import pytest
 
 from bocadillo import configure, create_client, settings
-from bocadillo.plugins import plugin
 
 
 def test_basic(raw_app):
@@ -46,8 +45,3 @@ def test_conditional_plugin(raw_app, should_use):
 
     configure(raw_app, plugins=[{use_hello: should_use}])
     assert used is should_use
-
-
-def test_at_plugin_is_deprecated(app):
-    with pytest.raises(DeprecationWarning):
-        plugin(app)
