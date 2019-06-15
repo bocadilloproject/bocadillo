@@ -10,7 +10,7 @@ module.exports = {
   description: project.description,
   lastUpdated: true,
   head,
-  serviceWorker: true,
+  plugins: ["@vuepress/pwa"],
   themeConfig: {
     repo: project.repo,
     docsDir: "docs",
@@ -19,7 +19,11 @@ module.exports = {
     editLinkText: "Edit this page on GitHub",
     sidebarDepth: 1,
     lastUpdated: true,
-    serviceWorker: { updatePopup: true },
+    plugins: {
+      "@vuepress/pwa": {
+        updatePopup: true
+      }
+    },
     algolia:
       process.env.NODE_ENV === "production"
         ? {

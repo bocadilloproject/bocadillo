@@ -61,7 +61,7 @@ $ tree
 
 4. Edit `requirements.txt` to add Chatterbot there:
 
-```txt
+```
 bocadillo >= 0.14
 chatterbot
 pytz  # Required by Chatterbot

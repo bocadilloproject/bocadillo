@@ -25,7 +25,7 @@ The [Procfile](https://devcenter.heroku.com/articles/procfile) is a text file lo
 
 As described in [Deployment](/discussions/deployment.md#running-with-gunicorn), the following should fit most use cases:
 
-```txt
+```
 web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app
 ```
 
@@ -33,7 +33,7 @@ web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app
 
 Heroku recognizes a Python app by the existence of `requirements.txt` file in the root directory (see [Python Dependencies via Pip](https://devcenter.heroku.com/articles/python-pip)). Here's an example of what yours may look like:
 
-```txt
+```
 bocadillo
 gunicorn
 ```
@@ -42,7 +42,7 @@ gunicorn
 
 Place this file in the root directory with a specific Python version. [Heroku will look at it](https://devcenter.heroku.com/articles/python-runtimes) to determine which Python version to use.
 
-```txt
+```
 python-3.6.8
 ```
 

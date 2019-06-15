@@ -6,9 +6,10 @@
     "build": "invoke apiref && vuepress build docs"
   },
   "dependencies": {
+    "@vuepress/plugin-pwa": "^1.0.1",
     "date-fns": "^1.30.1",
     "dotenv": "^8.0.0",
     "octicons": "^8.5.0",
-    "vuepress": "^0.14.11"
+    "vuepress": "^1.0.1"
   }
 }

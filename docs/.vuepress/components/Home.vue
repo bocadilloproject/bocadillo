@@ -1,11 +1,11 @@
 <template>
-  <div class="home">
-    <div class="hero">
-      <img id="hero-image" v-if="data.heroImage" :src="$withBase(data.heroImage)" alt="hero">
+  <main class="home" aria-labelledby="main-title">
+    <header class="hero">
+      <img v-if="data.heroImage" :src="$withBase(data.heroImage)" alt="hero">
 
-      <h1 id="title">{{ data.heroText || $title }}</h1>
+      <h1 id="main-title">{{ data.heroText || $title }}</h1>
 
-      <p id="description" class="description" v-html="data.tagline || $description"></p>
+      <p class="description" v-html="data.tagline || $description"></p>
 
       <p>
         <StarButton/>
@@ -17,23 +17,22 @@
         Latest release:
         <strong>{{ $version }}</strong>
       </p>
-    </div>
+    </header>
 
     <div id="home-main">
-      <Content custom class="home-content"/>
+      <Content class="theme-default-content custom home-content"/>
       <HomeSideBar/>
     </div>
 
     <div class="footer" v-if="data.footer">{{ data.footer }}</div>
-  </div>
+  </main>
 </template>
 
 <script>
-import NavLink from "@theme/NavLink.vue";
+import Home from "@theme/components/Home.vue";
 
 export default {
-  components: { NavLink },
-
+  extends: Home, // Get default styles
   computed: {
     data() {
       return this.$page.frontmatter;
@@ -45,21 +44,17 @@ export default {
 <style lang="stylus" scoped>
 @import './config.styl';
 
-.home {
-  padding-top: 0 !important;
-}
-
-#hero-image {
+.hero img {
   margin-top: 1em;
   margin-bottom: 0;
 }
 
-#title {
+#main-title {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-#description {
+.description {
   margin-top: 0.5rem;
 }
 
@@ -71,10 +66,6 @@ export default {
 }
 
 @media (max-width: $MQMobile) {
-  .home {
-    padding: 0 !important;
-  }
-
   .home-content {
     padding: 0 2rem;
   }

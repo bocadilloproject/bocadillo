@@ -1,6 +1,6 @@
 ---
-layout: HomePage
 home: true
+layout: HomeLayout
 heroImage: /social-image.png
 actionText: Get Started →
 actionLink: /guide/

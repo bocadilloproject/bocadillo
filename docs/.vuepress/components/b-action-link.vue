@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import NavLink from "@theme/NavLink.vue";
+import NavLink from "@theme/components/NavLink.vue";
 export default {
   components: { NavLink },
   props: {

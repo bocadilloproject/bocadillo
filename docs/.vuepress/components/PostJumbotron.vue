@@ -1,5 +1,5 @@
 <template>
-  <section class="wrapper">
+  <section class="page-width">
     <h1>{{ post.title }}</h1>
     <PostMeta :post="post"/>
     <p v-if="post.description">{{ post.description }}</p>
