@@ -6,7 +6,7 @@
       </h4>
       <p class="post-description">{{ post.frontmatter.description }}</p>
     </template>
-    <b-link to="/blog/" :more="true">More news</b-link>
+    <b-link to="/news/" :more="true">More news</b-link>
   </div>
 </template>
 

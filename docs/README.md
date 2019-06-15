@@ -3,6 +3,7 @@ home: true
 layout: HomeLayout
 heroText: Bocadillo
 tagline: Fast, scalable and real-time capable web APIs for everyone
+metaTitle: "Bocadillo | Python async web framework"
 heroImage: /logo.png
 actionText: Get Started →
 actionLink: /guide/
