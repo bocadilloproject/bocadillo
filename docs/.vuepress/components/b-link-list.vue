@@ -13,3 +13,9 @@ export default {
   props: ["items", "icons"]
 };
 </script>
+
+<style scoped>
+li {
+  padding-top: 0.3rem;
+}
+</style>
