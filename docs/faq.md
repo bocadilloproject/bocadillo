@@ -4,11 +4,11 @@
 
 ### Why does this project even exist?
 
-Bocadillo was born from a desire to make the best elements of popular WSGI frameworks enter the world of asynchronous programming.
+Bocadillo was born from a desire to make the best elements of popular WSGI frameworks enter the world of **asynchronous programming**.
 
 Our dream is to create a framework where it is as easy to work with a database as in Django, to build a REST API as in Falcon, and to get started as in Flask — all this while leveraging modern async Python to build concurrent apps that scale and embrace the real-time web.
 
-Bocadillo would probably not exist without [Starlette][starlette] and [Uvicorn][uvicorn], two open source projects that pioneered the world of asynchronous web frameworks and servers.
+Bocadillo would probably not exist without [Starlette][starlette] and [Uvicorn][uvicorn], two open source projects that pioneered the world of **asynchronous web frameworks** and servers.
 
 [starlette]: https://www.starlette.io
 [uvicorn]: https://www.uvicorn.org

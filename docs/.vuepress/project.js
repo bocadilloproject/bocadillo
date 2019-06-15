@@ -23,7 +23,8 @@ function projectRepo(name) {
 
 module.exports = {
   title: "Bocadillo",
-  description: "Fast, scalable and real-time capable web APIs for everyone.",
+  description:
+    "Fast, scalable and real-time capable web APIs for everyone: Bocadillo is a Python asynchronous web framework built with productivity and modularity in mind.",
   name,
   author: "Florimond Manca",
   org,

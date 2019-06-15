@@ -80,7 +80,7 @@ module.exports = [
     "meta",
     {
       name: "twitter:image",
-      content: "https://bocadilloproject.github.io/social-image.png"
+      content: "https://bocadilloproject.github.io/logo.png"
     }
   ],
 

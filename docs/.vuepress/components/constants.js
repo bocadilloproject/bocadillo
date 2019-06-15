@@ -3,7 +3,7 @@ export const FEATURES = [
     title: "Productive",
     icon: "package",
     details:
-      "Bocadillo was designed to help you build, test and deploy web APIs as easily as possible. It focuses on modularity, has thorough documentation, and integrates seamlessly with third-party async libraries."
+      "Bocadillo is an ASGI web framework designed to help you build, test and deploy web APIs as easily as possible. It focuses on modularity, has thorough documentation, and integrates seamlessly with third-party async libraries."
   },
   {
     title: "Real-time capable",

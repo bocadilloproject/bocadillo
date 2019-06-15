@@ -12,7 +12,11 @@ This documentation site is an ongoing community effort. If you've found a typo, 
 
 ## Why Bocadillo?
 
-With Bocadillo, you can use Python 3.6+ asynchronous programming to build fast, scalable and real-time capable web APIs. Here is what makes this as fun and approachable as possible:
+**Bocadillo** is a **Python asynchronous web framework**. It is built on top of asyncio and [Starlette], and implements the [ASGI] standard.
+
+With Bocadillo, you can use **asynchronous programming** available in Python 3.6+ to build fast, scalable and real-time capable web APIs.
+
+Here's how Bocadillo makes this as fun and approachable as possible:
 
 <b-features/>
 
@@ -22,13 +26,14 @@ To learn more about the framework's history, design decisions, or why it's even 
 [sse]: /guide/sse.md
 [providers]: /guide/providers.md
 [starlette]: https://www.starlette.io
+[asgi]: https://asgi.readthedocs.io
 [testing]: /guide/testing.md
 
 ## What makes Bocadillo an async web framework?
 
 We keep saying that Bocadillo is a Python **async web framework** — what does it mean?
 
-Historically, web frameworks in the Python ecosystem — Django, Flask, Pyramid, Falcon, etc. — have been built using the [WSGI] standard. WSGI is a **common language** that Python web servers (such as [gunicorn]) and web applications use to communicate.
+Historically, web frameworks in the Python ecosystem — Django, Flask, Pyramid, Falcon, etc. — have been built using the [WSGI] standard. WSGI is a _common language_ that Python web servers (such as [gunicorn]) and web applications use to communicate.
 
 [wsgi]: https://www.python.org/dev/peps/pep-3333/
 [gunicorn]: https://gunicorn.org
@@ -41,13 +46,13 @@ This is why, after the introduction of asynchronous programming in Python 3.5 ([
 [asyncio]: https://docs.python.org/3/library/asyncio.html
 [asgi]: https://asgi.readthedocs.io
 
-Just like WSGI, **ASGI is a common language** that enables communication between _asynchronous_ web servers (such as [uvicorn]) and _asynchronous_ web applications (such as Bocadillo). This is similar to how HTTP makes the communication between web browsers and web servers possible.
+Just like WSGI, **ASGI** is a _common language_ that enables communication between _asynchronous_ web servers (such as [uvicorn]) and _asynchronous_ web applications (such as Bocadillo). This is similar to how HTTP makes the communication between web browsers and web servers possible.
 
 [uvicorn]: https://www.uvicorn.org
 
 <b-figure src="/asgi.png" caption="The flow of requests from a web browser to a Bocadillo application."/>
 
-In short, **Bocadillo is an async web framework because it speaks the ASGI language**.
+In short, **Bocadillo is an async web framework** because it speaks the **ASGI** language.
 
 This has a number of benefits. Among others, you can now build **highly-concurrent web apps and services**, which typically results in **higher throughput** for applications that spend a lot of time on I/O.
 

@@ -1,6 +1,6 @@
 ---
 title: Bocadillo News
-description: Official Bocadillo news, release notes, and announcements.
+description: Official Bocadillo release notes, and announcements.
 ---
 
 <Jumbotron :title="$page.frontmatter.title" :description="$page.frontmatter.description"/>

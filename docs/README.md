@@ -1,7 +1,9 @@
 ---
 home: true
 layout: HomeLayout
-heroImage: /social-image.png
+heroText: Bocadillo
+tagline: Fast, scalable and real-time capable web APIs for everyone
+heroImage: /logo.png
 actionText: Get Started →
 actionLink: /guide/
 footer: MIT Licensed | Copyright © 2018-present Florimond Manca
@@ -9,7 +11,7 @@ footer: MIT Licensed | Copyright © 2018-present Florimond Manca
 
 ## What is Bocadillo?
 
-Bocadillo is a Python async web framework that makes building performant and highly concurrent web APIs fun and accessible to everyone.
+**Bocadillo** is a **Python asynchronous and ASGI web framework** that makes building performant and highly concurrent web APIs fun and accessible to everyone.
 
 <b-features :summary="true"/>
 
