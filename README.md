@@ -79,7 +79,7 @@ Ready to dive in? [Visit the documentation site][docs].
 
 All changes to Bocadillo are recorded in the [changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). To see what's coming in the next release, read the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section.
 
-Release notes may also be published as blog posts on the [Official Bocadillo blog](https://bocadilloproject.github.io/blog).
+Release notes may also be published as blog posts on [Bocadillo News](https://bocadilloproject.github.io/news/).
 
 ## Contributing
 
