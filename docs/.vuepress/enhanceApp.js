@@ -24,5 +24,16 @@ const docsOverhaulRoutes = [
 ];
 
 export default ({ Vue, router }) => {
-  router.addRoutes([...docsOverhaulRoutes]);
+  Vue.prototype.$version = "0.16.1";
+  router.addRoutes([
+    ...docsOverhaulRoutes,
+    {
+      path: "/blog/",
+      redirect: "/news/"
+    },
+    {
+      path: "/blog/:path",
+      redirect: "/news/:path"
+    }
+  ]);
 };

@@ -61,7 +61,7 @@ $ tree
 
 4. Edit `requirements.txt` to add Chatterbot there:
 
-```txt
+```
 bocadillo >= 0.14
 chatterbot
 pytz  # Required by Chatterbot
@@ -144,7 +144,7 @@ Type `Ctrl+C` to exit the session and close the WebSocket connection.
 
 Now that we're able to make the server and a client communicate, how about we replace the echo implementation with an actual, intelligent and friendly chatbot?
 
-This is where [ChatterBot] comes in! We'll create a chatbot rightfully named **Diego** — a chatbot speaking the asynchronous salsa. 🕺
+This is where [ChatterBot] comes in! We'll create a chatbot named **Diego**.
 
 Go ahead and create a `bot.py` file, and add Diego in there:
 

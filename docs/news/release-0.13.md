@@ -95,7 +95,7 @@ Because this builds upon [response streaming](https://bocadilloproject.github.io
 
 Everything you need to know is in the [SSE usage guide](https://bocadilloproject.github.io/guides/http/sse.html), but here's a sneak peak to get you going:
 
-<<<@/docs/blog/snippets/release_0_13_sse.py
+<<<@/docs/news/snippets/release_0_13_sse.py
 
 ## Cookie-based sessions
 

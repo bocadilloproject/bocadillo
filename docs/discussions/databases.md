@@ -11,7 +11,7 @@ In the meantime, you'll need to integrate with third-party libraries. While doin
 ::: tip NOTE
 **Querying a database is typically I/O-bound** and can represent a significant part of the request processing time.
 
-This makes asynchronous programming an ideal tool for the job, which is why this page only discusses **async solutions**.
+This makes **asynchronous programming** an ideal tool for the job, which is why this page only discusses **async solutions**.
 :::
 
 ## SQL

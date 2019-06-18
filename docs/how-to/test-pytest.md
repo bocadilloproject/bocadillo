@@ -1,4 +1,4 @@
-# Test applications using pytest
+# Testing with `pytest`
 
 This page lists what we believe are best practices when testing Bocadillo applications using the [pytest] test framework.
 

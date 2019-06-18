@@ -130,8 +130,6 @@ On class-based views, HTTP methods are exposed based on the class' methods. For 
 On function-based views, you can use the case-insensitive `methods` argument to `@.route()`:
 
 ```python
-from bocadillo import view
-
 @app.route("/items", methods=["post"])
 async def create_item(req, res):
     # ...

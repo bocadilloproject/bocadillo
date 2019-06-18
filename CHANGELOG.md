@@ -166,8 +166,6 @@ Deprecated items from 0.13:
 
 ## [v0.13.0] - 2019-03-16
 
-Supporting blog post: [Bocadillo 0.13 released!](https://bocadilloproject.github.io/blog/release-0.13.md)
-
 ### Added
 
 Features:

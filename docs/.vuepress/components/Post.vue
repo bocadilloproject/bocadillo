@@ -1,24 +1,30 @@
 <template>
-  <Page :sidebarItems="[]">
-    <template slot="top">
-      <p class="wrapper">
-        <router-link to="/blog/">← Back to posts</router-link>
+  <Layout>
+    <template slot="page-top">
+      <p class="navbar-fix page-width">
+        <router-link to="/news/">← Back to posts</router-link>
       </p>
 
       <PostShare :page="$page"/>
 
       <PostJumbotron :post="$page.frontmatter"/>
 
-      <div class="wrapper">
+      <div class="page-width">
         <hr>
       </div>
     </template>
-  </Page>
+  </Layout>
 </template>
 
 <script>
-import Page from "@theme/Page";
+import Layout from "@theme/layouts/Layout.vue";
 import PostShare from "./PostShare";
 
-export default { components: { Page, PostShare } };
+export default { components: { Layout, PostShare } };
 </script>
+
+<style scoped>
+.navbar-fix {
+  padding: 4em 2rem 0 2rem;
+}
+</style>

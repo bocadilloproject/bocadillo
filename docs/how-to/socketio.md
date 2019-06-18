@@ -1,4 +1,4 @@
-# Build a real-time application with socket.io
+# Real-time messaging with `socket.io`
 
 If you're interested in using [socket.io][socketio] (a.k.a. SocketIO) to build a real-time web application, Bocadillo got you covered.
 

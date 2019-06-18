@@ -1,4 +1,4 @@
-# Use `orm` to interact with an SQL database
+# SQL databases with `orm`
 
 The [orm] ilbrary is a Python asynchronous ORM. We've discussed what ORMs are in the [Databases](/discussions/databases.md) guide. This page will show you how to integrate it in a Bocadillo project in order to retrieve, validate and insert data into an SQL database.
 
@@ -83,7 +83,7 @@ app = App()
 discover_providers("blog.providerconf")
 
 @app.route("/posts")
-class TodoList:
+class PostsList:
     async def get(self, req, res):
         res.json = [dict(post) for post in await Post.objects.all()]
 ```
@@ -113,13 +113,13 @@ app = App()
 discover_providers("blog.providerconf")
 
 @app.route("/posts")
-class TodoList:
+class PostsList:
     async def get(self, req, res):
         res.json = [dict(post) for post in await Post.objects.all()]
 
     async def post(self, req, res):
-        todo = await Todo.objects.create(**await req.json())
-        res.json = dict(todo)
+        post = await Post.objects.create(**await req.json())
+        res.json = dict(post)
 ```
 
-Since we call `Todo.objects.create()` in `.post()`, the input JSON is validated against the `Post` model's data schema, and Bocadillo will return a `400 Bad Request` error response if it is invalid.
+Since we call `Post.objects.create()` in `.post()`, the input JSON is validated against the `Post` model's data schema, and Bocadillo will return a `400 Bad Request` error response if it is invalid.

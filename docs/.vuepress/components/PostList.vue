@@ -14,18 +14,12 @@
 </template>
 
 <script>
+import { getBlogPages } from "./utils";
 export default {
   props: ["page"],
   computed: {
     posts() {
-      const currentPage = this.page ? this.page : this.$page.path;
-      const postHere = new RegExp(`(${currentPage})(?=.*html)`);
-      const posts = this.$site.pages
-        .filter(x => x.path.match(postHere))
-        .sort(
-          (a, b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date)
-        );
-      return posts;
+      return getBlogPages(this.$site);
     }
   }
 };

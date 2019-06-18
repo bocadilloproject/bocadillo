@@ -27,6 +27,8 @@ jobs:
         github-token: $GITHUB_TOKEN
         target-branch: master
         local-dir: docs/.vuepress/dist
+        on:
+          branch: release/docs
 
     - stage: release
       if: tag IS present

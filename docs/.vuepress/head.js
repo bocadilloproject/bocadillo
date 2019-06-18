@@ -8,6 +8,15 @@ function versioned(value) {
 }
 
 module.exports = [
+  // Stylesheets.
+  [
+    "link",
+    {
+      rel: "stylesheet",
+      href: "/octicons.css"
+    }
+  ],
+
   // Favicon hints.
   [
     "link",
@@ -64,14 +73,14 @@ module.exports = [
   ["meta", { name: "twitter:card", content: "summary" }],
   ["meta", { name: "twitter:url", content: project.docs }],
   ["meta", { name: "twitter:title", content: project.title }],
-  ["meta", { name: "twitter:site", content: project.title }],
+  ["meta", { name: "twitter:site", content: "@bocadillopy" }],
   ["meta", { name: "twitter:creator", content: project.author }],
   ["meta", { name: "twitter:description", content: project.description }],
   [
     "meta",
     {
       name: "twitter:image",
-      content: "https://bocadilloproject.github.io/social-image.png"
+      content: "https://bocadilloproject.github.io/logo.png"
     }
   ],
 

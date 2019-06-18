@@ -10,7 +10,10 @@ module.exports = {
   description: project.description,
   lastUpdated: true,
   head,
-  serviceWorker: true,
+  plugins: [
+    "@vuepress/pwa",
+    ["sitemap", { hostname: "https://bocadilloproject.github.io" }]
+  ],
   themeConfig: {
     repo: project.repo,
     docsDir: "docs",
@@ -19,7 +22,11 @@ module.exports = {
     editLinkText: "Edit this page on GitHub",
     sidebarDepth: 1,
     lastUpdated: true,
-    serviceWorker: { updatePopup: true },
+    plugins: {
+      "@vuepress/pwa": {
+        updatePopup: true
+      }
+    },
     algolia:
       process.env.NODE_ENV === "production"
         ? {
@@ -66,10 +73,6 @@ module.exports = {
               {
                 text: "Troubleshooting",
                 link: "/troubleshooting"
-              },
-              {
-                text: "Chat",
-                link: `https://gitter.im/${project.repo}`
               }
             ]
           },
@@ -81,8 +84,8 @@ module.exports = {
                 link: `https://twitter.com/${project.twitterUsage}`
               },
               {
-                text: "Blog",
-                link: "/blog/"
+                text: "News",
+                link: "/news/"
               },
               {
                 text: "Mentions",
@@ -132,7 +135,7 @@ module.exports = {
           title: "Built-in features",
           children: listDir("guide", [
             "json-validation",
-            ["builtin-middleware", "Middleware"],
+            ["builtin-middleware", "CORS, HSTS, GZip"],
             "static-files",
             "sessions",
             "templates",
@@ -160,7 +163,7 @@ module.exports = {
           children: listDir("guide", ["testing", "cli"])
         }
       ],
-      "/how-to/": ["heroku", "orm", "socketio", "test-pytest"],
+      "/how-to/": ["heroku", "orm", "graphql", "socketio", "test-pytest"],
       "/discussions/": ["databases", "frontend", "deployment", "security"],
       "/api/": [
         {

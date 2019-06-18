@@ -10,21 +10,6 @@
         <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="Test coverage"/>
     </a>
     <a href="https://pypi.org/project/bocadillo">
-        <img src="https://img.shields.io/pypi/l/bocadillo.svg" alt="License"/>
-    </a>
-    <a href="https://twitter.com/bocadillopy">
-        <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="@bocadillopy on Twitter">
-    </a>
-    <a href="https://saythanks.io/to/florimondmanca">
-        <img src="https://img.shields.io/badge/Say_Thanks-!-1EAEDB.svg" alt="Say Thanks!">
-    </a>
-</p>
-
-<p align="center">
-    <a href="https://www.python.org">
-        <img src="https://img.shields.io/pypi/pyversions/bocadillo.svg?logo=python&logoColor=fed749&colorB=3770a0&label=" alt="python versions">
-    </a>
-    <a href="https://pypi.org/project/bocadillo">
         <img src="https://img.shields.io/pypi/v/bocadillo.svg" alt="pypi version">
     </a>
     <a href="https://github.com/ambv/black">
@@ -33,91 +18,68 @@
 </p>
 
 <p align="center">
-    <a href="https://bocadilloproject.github.io">Documentation</a> &middot;
-    <a href="https://github.com/bocadilloproject/bocadillo">Source code</a> &middot;
-    <a href="https://github.com/bocadilloproject/bocadillo-cli">CLI</a>
+    <a href="https://twitter.com/bocadillopy">
+        <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="@bocadillopy on Twitter">
+    </a>
+    &nbsp;
+    <a href="https://saythanks.io/to/florimondmanca">
+        <img src="https://img.shields.io/badge/Say_Thanks-!-1EAEDB.svg" alt="Say Thanks!">
+    </a>
 </p>
 
 ---
 
-> Migrating from v0.13.x? Read the [v0.14 release notes](https://bocadilloproject.github.io/blog/release-0.14.html).
+Documentation: [https://bocadilloproject.github.io][docs]
 
-Bocadillo is a **Python async web framework** that makes server-side async web apps **fun to build** and **accessible to everyone**.
+[docs]: https://bocadilloproject.github.io
 
-It is designed to be:
+---
 
-- **Productive**: a carefully chosen set of included batteries helps you solve common and more advanced problems — request routing, app configuration, static files, data validation, and more!
+Bocadillo is a **Python async web framework** that makes building performant and highly concurrent web APIs fun and accessible to everyone.
 
-- **Real-time capable**: embrace asynchronous programming and the baked-in WebSocket and SSE support to build real-time, highly-concurrent systems.
+## Requirements
 
-- **Flexible**: inject resources into web views using providers, an explicit, modular and easy-to-use mechanism inspired by pytest fixtures.
+Python 3.6+
 
-- **Performant**: squeeze the juice out of [Starlette] and [uvicorn], the lightning-fast ASGI toolkit and web server.
-
-- **Empowering**: use tailored testing and command line tools to build delicious, high-quality applications.
-
-- **Transparent**: every single feature is documented front to back and has optimal editor support thanks to a 100% type-annotated code base.
-
-[starlette]: https://www.starlette.io
-[uvicorn]: https://www.uvicorn.org
-
-## Quick start
-
-1. Install Bocadillo and the [Bocadillo CLI]:
+## Installation
 
 ```bash
-pip install bocadillo bocadillo-cli
+pip install bocadillo
 ```
 
-[bocadillo cli]: https://github.com/bocadilloproject/bocadillo-cli
-
-2. Generate a project and `cd` into it:
-
-```bash
-bocadillo create hello
-cd hello/
-```
-
-3. Edit the application script:
+## Example
 
 ```python
-# hello/app.py
-from bocadillo import App
+from bocadillo import App, configure
 
 app = App()
+configure(app)
 
 @app.route("/")
 async def index(req, res):
-    res.text = "Hello, world!"
+    res.json = {"hello": "world"}
 ```
 
-4. Start a [uvicorn] server (hot reload enabled!):
+Save this as `app.py`, then start a [uvicorn](https://www.uvicorn.org) server (hot reload enabled!):
 
 ```bash
-uvicorn hello.asgi:app --reload
+uvicorn app:app --reload
 ```
 
-5. Say hello!
-
-```bash
-$ curl http://localhost:8000
-Hello, world!
-```
-
-6. Edit `app.py` to send "Hello, Bocadillo!" instead, then hit save. Uvicorn will pick up the changes and restart the application. Try it out again:
+Say hello!
 
 ```bash
 $ curl http://localhost:8000
-Hello, Bocadillo!
+{"hello": "world"}
 ```
 
-Tastes good! 🥪
-
-Hungry for more? Head to the [docs](https://bocadilloproject.github.io).
+Ready to dive in? [Visit the documentation site][docs].
 
 ## Changelog
 
-We record changes to Bocadillo in the [changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). In particular, check out the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section to see what's coming in the next release.
+All changes to Bocadillo are recorded in the [changelog](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md). To see what's coming in the next release, read the [Unreleased](https://github.com/bocadilloproject/bocadillo/blob/master/CHANGELOG.md#unreleased) section.
+
+Release notes may also be published as blog posts on the [Official Bocadillo blog](https://bocadilloproject.github.io/blog).
 
 ## Contributing
 

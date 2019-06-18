@@ -1,5 +1,5 @@
 <template>
-  <section class="wrapper header">
+  <section class="header">
     <h1>{{ title }}</h1>
     <p v-if="description">{{ description }}</p>
   </section>
@@ -17,7 +17,6 @@ export default {
   }
 };
 </script>
-
 
 <style lang="stylus" scoped>
 h1 {
