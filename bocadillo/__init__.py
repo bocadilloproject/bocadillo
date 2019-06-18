@@ -17,4 +17,4 @@ from .testing import LiveServer, create_client
 from .views import view
 from .websockets import WebSocket, WebSocketDisconnect
 
-__version__ = "0.16.1"
+__version__ = "0.16.2"
