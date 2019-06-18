@@ -17,6 +17,13 @@ As a result, we strongly recommend you read this document carefully before upgra
 ### Added
 
 - Added support for uvicorn 0.8.x.
+- (Docs) Add Vue example repo to frontend frameworks guide.
+
+### Changed
+
+- (Docs) Apply new brand.
+- (Docs) Redesign home page.
+- (Docs) "Bocadillo Blog" becomes "Bocadillo News".
 
 ## [v0.16.1] - 2019-06-02
 
