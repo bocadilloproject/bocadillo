@@ -22,7 +22,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 Terminated deprecations:
 
-- **BREAKING** Recipes were removed. This includes the `Recipe` and `RecipeBook` classes, as well as `app.apply()`. Consider using routers instead.
+- **BREAKING** Recipes were removed. This includes the `Recipe` and `RecipeBook` classes, as well as `app.recipe()`. Consider using routers instead.
 - **BREAKING** `app.add_asgi_middleware()` was removed. Please use `app.add_middleware()` instead.
 - **BREAKING** `@view` was removed. Please use `@route(methods=...)` instead.
 - **BREAKING** `@plugin` was removed. Register plugins using the `PLUGINS` setting instead.
