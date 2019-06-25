@@ -2,4 +2,4 @@ from starlette.config import Config
 
 config = Config(".env")
 
-PROVIDERS_MODULES = "chatbot.providerconf"
+PROVIDER_MODULES = "chatbot.providerconf"

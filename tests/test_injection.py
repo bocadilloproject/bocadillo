@@ -5,7 +5,7 @@ from bocadillo import App, configure, useprovider, WebSocket
 
 @pytest.fixture
 def app(raw_app: App) -> App:
-    return configure(raw_app, providers_modules=["tests.data.providerconf"])
+    return configure(raw_app, provider_modules=["tests.data.providerconf"])
 
 
 async def say_hi(req, res, hello):

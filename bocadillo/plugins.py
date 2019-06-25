@@ -36,15 +36,15 @@ def use_providers(app: "App"):
     on app shutdown.
 
     Settings:
-    - `PROVIDERS_MODULES` (list of str, optional):
+    - `PROVIDER_MODULES` (list of str, optional):
         a list of Python modules (e.g. `path.to.providersconf`) where Bocadillo
         should look for providers.
     """
-    providers_modules = settings.get("PROVIDERS_MODULES")
-    if not providers_modules:
+    modules = settings.get("PROVIDER_MODULES")
+    if not modules:
         return
 
-    discover_providers(*providers_modules)
+    discover_providers(*modules)
     STORE.freeze()
     app.on("startup", STORE.enter_session)
     app.on("shutdown", STORE.exit_session)

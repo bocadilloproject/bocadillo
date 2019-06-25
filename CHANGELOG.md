@@ -16,7 +16,7 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ### Added
 
-- Choose where Bocadillo should look for providers using the new `PROVIDERS_MODULES` setting.
+- Choose where Bocadillo should look for providers using the new `PROVIDER_MODULES` setting.
 
 ### Removed
 

@@ -20,11 +20,11 @@ from starlette.config import Config
 
 config = Config(".env")
 
-PROVIDERS_MODULES = ["myproject.providerconf"]
+PROVIDER_MODULES = ["myproject.providerconf"]
 REDIS_URL = config("REDIS_URL", default="redis://localhost")
 ```
 
-We can now define the `redis` provider. Since we registered `myproject.providerconf` in `PROVIDERS_MODULES`, let's place the provider there:
+We can now define the `redis` provider. Since we registered `myproject.providerconf` in `PROVIDER_MODULES`, let's place the provider there:
 
 ```python
 # myproject/providerconf.py
@@ -239,11 +239,11 @@ async def retrieve_note(req, res, pk: int, get_note):
 
 Bocadillo can find providers from a number of sources:
 
-1. **(Recommended)** Functions decorated with `@provider` that live in a module listed in the `PROVIDERS_MODULES` setting. This is what [Bocadillo CLI](https://github.com/bocadilloproject/bocadillo-cli) generates.
+1. **(Recommended)** Functions decorated with `@provider` that live in a module listed in the `PROVIDER_MODULES` setting. This is what [Bocadillo CLI](https://github.com/bocadilloproject/bocadillo-cli) generates.
 
 ```python
 # myproject/settings.py
-PROVIDERS_MODULES = ["myproject.providerconf", "myproject.more_providers"]
+PROVIDER_MODULES = ["myproject.providerconf", "myproject.more_providers"]
 ```
 
 2. Functions decorated with `@provider` that live in a module marked for discovery using `discover_providers()`.
