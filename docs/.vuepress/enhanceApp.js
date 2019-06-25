@@ -24,7 +24,7 @@ const docsOverhaulRoutes = [
 ];
 
 export default ({ Vue, router }) => {
-  Vue.prototype.$version = "0.16.2";
+  Vue.prototype.$version = "0.17.0";
   router.addRoutes([
     ...docsOverhaulRoutes,
     {

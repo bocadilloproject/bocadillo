@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.17.0] - 2019-06-25
+
 ### Added
 
 - Choose where Bocadillo should look for providers using the new `PROVIDER_MODULES` setting.
@@ -717,7 +719,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.17.0...HEAD
+[v0.17.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.2...v0.17.0
 [v0.16.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.1...v0.16.2
 [v0.16.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.0...v0.16.1
 [v0.16.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.15.1...v0.16.0
