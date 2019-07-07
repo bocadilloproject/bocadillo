@@ -28,7 +28,7 @@ You can use it to verify that Bocadillo was correctly installed (you may have an
 ```bash
 $ bocadillo -V
 Bocadillo CLI: 0.2.0
-Bocadillo: 0.17.0
+Bocadillo: 0.18.0
 ```
 
 ## Extras <Badge text="Advanced" type="warning"/>

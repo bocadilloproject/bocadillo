@@ -1,6 +1,6 @@
 {
   "name": "bocadillo",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "scripts": {
     "start": "invoke apiref && vuepress dev docs",
     "build": "invoke apiref && vuepress build docs"
