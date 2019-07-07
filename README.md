@@ -18,12 +18,11 @@
 </p>
 
 <p align="center">
+    <a href="https://github.com/timofurrer/awesome-asyncio">
+        <img src="https://awesome.re/mentioned-badge-flat.svg" alt="Mentioned in awesome-asyncio">
+    </a>
     <a href="https://twitter.com/bocadillopy">
         <img src="https://img.shields.io/twitter/follow/bocadillopy.svg?label=%40bocadillopy&style=social" alt="@bocadillopy on Twitter">
-    </a>
-    &nbsp;
-    <a href="https://saythanks.io/to/florimondmanca">
-        <img src="https://img.shields.io/badge/Say_Thanks-!-1EAEDB.svg" alt="Say Thanks!">
     </a>
 </p>
 
