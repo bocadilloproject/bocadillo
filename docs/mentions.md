@@ -4,6 +4,10 @@ This page is a curated list of articles, newsletters, projects and other content
 
 [[toc]]
 
+## July 2019
+
+- (July 7, 2019): Bocadillo is [added](https://github.com/timofurrer/awesome-asyncio/pull/49) to [awesome-asyncio](https://github.com/timofurrer/awesome-asyncio#web-frameworks).
+
 ## May 2019
 
 - (May 25, 2019): [Bocadillo, or how I built an open source async web framework](https://github.com/florimondmanca/talks/blob/master/2019_05_25-bocadillo_pyconweb2019.pdf) - Florimond Manca, PyConWeb 2019.
