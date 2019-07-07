@@ -4,13 +4,16 @@ This page is a curated list of articles, newsletters, projects and other content
 
 [[toc]]
 
+## May 2019
+
+- (May 25, 2019): [Bocadillo, or how I built an open source async web framework](https://github.com/florimondmanca/talks/blob/master/2019_05_25-bocadillo_pyconweb2019.pdf) - Florimond Manca, PyConWeb 2019.
+
 ## April 2019
 
 - (Apr 17, 2019): Chad Smith published [react-example](https://github.com/bocadilloproject/react-example), an example project using a React frontend in conjunction with a Bocadillo server.
 
 ## March 2019
 
-- (Mar 25, 2019): Florimond Manca’s talk [Bocadillo, or how I built an open source async web framework](https://pyconweb.com/talks/26-05-2019/bocadillo-or-how-i-built-an-open-source-async-web-framework) was [selected](https://twitter.com/pyconweb/status/1110160571457028096?s=21) for PyConWeb 2019 and scheduled on May 26, 2019.
 - (Mar 17, 2019): [Building A Real-Time Chatbot Server In Python With WebSocket, Chatterbot And Bocadillo](https://blog.florimond.dev/real-time-chatbot-server-python-bocadillo) applies real-time web capabilities of Bocadillo to chatbot technology.
 - (Mar 16, 2019): [aiodine](https://github.com/bocadilloproject/aiodine) to power the async dependency injection mechanism of providers, a feature released in 0.13.
 - (Mar, 2019): [TermPair](https://github.com/cs01/termpair) by Chad Smith: View and control remote terminals from your browser.
