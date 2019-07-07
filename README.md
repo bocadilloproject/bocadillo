@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://travis-ci.org/bocadilloproject/bocadillo">
-        <img src="https://img.shields.io/travis/bocadilloproject/bocadillo.svg" alt="Build status"/>
+        <img src="https://travis-ci.org/bocadilloproject/bocadillo.svg?branch=master" alt="Build status"/>
     </a>
     <a href="https://codecov.io/gh/bocadilloproject/bocadillo">
         <img src="https://codecov.io/gh/bocadilloproject/bocadillo/branch/master/graph/badge.svg" alt="Test coverage"/>
