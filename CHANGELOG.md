@@ -14,6 +14,18 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Compatibility with Starlette ≥ 0.12.2.
+
+### Changed
+
+- Redirections in application of HSTS now redirect with `308 Permanent Redirect`.
+
+### Removed
+
+- Drop support for Starlette < 0.12.2.
+
 ## [v0.17.0] - 2019-06-25
 
 ### Added

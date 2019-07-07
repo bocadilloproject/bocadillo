@@ -12,7 +12,7 @@ DOCS = "https://bocadilloproject.github.io"
 CHANGELOG = f"{GITHUB}/blob/master/CHANGELOG.md"
 
 INSTALL_REQUIRES = [
-    "starlette>=0.12, <0.13",
+    "starlette>=0.12.2, <0.13",
     "uvicorn>=0.7, <0.9",
     "typesystem>=0.2.2",
     "jinja2>=2.10.1",
