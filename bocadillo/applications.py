@@ -101,7 +101,7 @@ class App(metaclass=DocsMeta):
     ):
         """Register a WebSocket route by decorating a view.
 
-        See #::bocadillo.websockets#WebSocket for a description of keyword
+        See [WebSocket](/api/websockets.md) for a description of keyword
         parameters.
 
         # Parameters
