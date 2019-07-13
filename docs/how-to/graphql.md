@@ -45,7 +45,7 @@ engine = Engine("type Query { hello: String }")
 graphql = TartifletteApp(engine=engine)
 ```
 
-3. Mount it as a [nested app](/guide/nested-apps.md):
+3. Mount it as a [nested app](/guide/nested-apps.md) and register the startup event handler:
 
 ```python{3,6}
 # myproject/app.py
@@ -54,6 +54,7 @@ from .graphql import graphql
 
 app = App()
 app.mount("/graphql", graphql)
+app.on("startup", graphql.startup)
 ```
 
 3. Serve the app, and make your first query!
@@ -74,7 +75,7 @@ The GraphiQL client can be enabled using the `graphiql` option to `TartifletteAp
 
 ```python
 # myproject/settings.py
-GRAPHIQL = config("GRAPHIQL", default=True)
+GRAPHIQL = True  # Modify to your liking
 ```
 
 ```python
