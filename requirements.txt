@@ -11,7 +11,7 @@ pylint
 mypy
 
 # API docs
-pydoc-markdown<2.0.5
+pydoc-markdown<2.0.6
 
 # Testing
 pytest
