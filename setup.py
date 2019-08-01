@@ -19,7 +19,6 @@ INSTALL_REQUIRES = [
     "whitenoise",
     "requests",
     "python-multipart",
-    "websockets>=6.0",
     "aiodine>=1.2.5, <2.0",
 ]
 
