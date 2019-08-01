@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a dependency conflict with the `websockets` library - @NeolithEra
+
 ## [v0.18.0] - 2019-07-07
 
 ### Added
