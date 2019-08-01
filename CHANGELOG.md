@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.18.1] - 2019-08-01
+
 ### Fixed
 
 - Fixed a dependency conflict with the `websockets` library - @NeolithEra
@@ -737,7 +739,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.0...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.1...HEAD
+[v0.18.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.0...v0.18.1
 [v0.18.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.17.0...v0.18.0
 [v0.17.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.2...v0.17.0
 [v0.16.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.16.1...v0.16.2
