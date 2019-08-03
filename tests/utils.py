@@ -1,7 +1,7 @@
 import time
+import typing
 from contextlib import contextmanager
 from multiprocessing import Value
-import typing
 
 import requests
 

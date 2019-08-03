@@ -47,15 +47,14 @@ setuptools.setup(
     },
     license="MIT",
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Environment :: Web Environment",
-        "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Natural Language :: English",
+        "Intended Audience :: Developers",
+        "Environment :: Web Environment",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
     ],
 )

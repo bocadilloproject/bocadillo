@@ -14,6 +14,10 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+### Added
+
+- Support for Python 3.8b3.
+
 ## [v0.18.1] - 2019-08-01
 
 ### Fixed

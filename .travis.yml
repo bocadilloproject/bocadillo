@@ -13,6 +13,10 @@ jobs:
       script: invoke ci
       after_success: codecov
 
+    - stage: test
+      python: "3.8-dev"
+      script: invoke ci
+
     - stage: docs
       if: branch = release/docs
       before_install:

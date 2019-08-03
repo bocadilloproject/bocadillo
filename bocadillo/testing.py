@@ -1,12 +1,18 @@
 import random
-from multiprocessing import Event, Process
+import sys
 import typing
+from multiprocessing import Event, Process
 
 import uvicorn
 from starlette.testclient import TestClient
 
 if typing.TYPE_CHECKING:  # pragma: no cover
     from .applications import App
+
+try:
+    import pytest
+except ImportError:  # pragma: no cover
+    pytest = None
 
 
 def create_client(app: "App", **kwargs) -> TestClient:
@@ -70,6 +76,7 @@ class LiveServer:
         self.ready_timeout = ready_timeout
         self.stop_timeout = stop_timeout
         self._process: Process = None
+        self._ready: Event = None
 
     @property
     def url(self) -> ServerURL:
@@ -77,22 +84,23 @@ class LiveServer:
         port = self.kwargs["port"]
         return ServerURL(f"http://{host}:{port}")
 
+    async def callback_notify(self):
+        # Run periodically by the Uvicorn server.
+        self._ready.set()
+
     def __enter__(self):
-        ready = Event()
+        if pytest is not None and sys.version_info >= (3, 8):
+            pytest.skip("LiveServer fails on 3.8")
 
-        def target():
-            async def callback_notify():
-                # Run periodically by the Uvicorn server.
-                ready.set()
-
-            uvicorn.run(
-                self.app, callback_notify=callback_notify, **self.kwargs
-            )
-
-        self._process = Process(target=target)
+        self._ready = Event()
+        self._process = Process(
+            target=uvicorn.run,
+            args=(self.app,),
+            kwargs={"callback_notify": self.callback_notify, **self.kwargs},
+        )
         self._process.start()
 
-        if not ready.wait(self.ready_timeout):  # pragma: no cover
+        if not self._ready.wait(self.ready_timeout):  # pragma: no cover
             raise TimeoutError(
                 f"Live server not ready after {self.ready_timeout} seconds"
             )

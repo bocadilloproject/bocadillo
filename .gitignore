@@ -28,6 +28,7 @@ docs/.vuepress/dist
 # Development
 debug/
 .coverage
+.coverage.*
 out/
 .nox/
 
