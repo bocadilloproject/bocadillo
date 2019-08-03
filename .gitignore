@@ -13,8 +13,8 @@ __pycache__/
 
 # Dependencies
 node_modules/
-venv/
-env/
+venv*/
+env*/
 
 # Build
 docs/.vuepress/dist
@@ -34,3 +34,6 @@ out/
 # Databases
 *.sqlite3*
 *.db
+
+# Pyenv
+.python-version
