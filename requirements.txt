@@ -4,6 +4,7 @@
 # Tools / project automation
 invoke
 pre-commit
+bumpversion
 
 # Linting
 black
