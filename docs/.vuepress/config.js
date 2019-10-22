@@ -10,10 +10,7 @@ module.exports = {
   description: project.description,
   lastUpdated: true,
   head,
-  plugins: [
-    "@vuepress/pwa",
-    ["sitemap", { hostname: "https://bocadilloproject.github.io" }]
-  ],
+  plugins: [["sitemap", { hostname: "https://bocadilloproject.github.io" }]],
   themeConfig: {
     repo: project.repo,
     docsDir: "docs",

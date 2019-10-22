@@ -1,3 +1,13 @@
+# NOTICE
+
+Bocadillo is now **DEPRECATED**. It is not being maintained any more. The project will be **ARCHIVED** by November 2019.
+
+We recommend users to migrate to other well-supported alternatives, such as [Starlette](https://www.starlette.io) or [FastAPI](https://fastapi.tiangolo.com).
+
+Please see [#334](https://github.com/bocadilloproject/bocadillo/issues/334) for more information.
+
+---
+
 <p align="center">
     <img src="https://github.com/bocadilloproject/bocadillo/blob/master/.github/banner.png?raw=true">
 </p>
