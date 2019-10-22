@@ -1,17 +1,23 @@
 <template>
   <main class="home" aria-labelledby="main-title">
+    <DeprecationWarning style="margin-top: 1rem;" />
+
     <header class="hero">
-      <img v-if="data.heroImage" :src="$withBase(data.heroImage)" alt="hero">
+      <img v-if="data.heroImage" :src="$withBase(data.heroImage)" alt="hero" />
 
       <h1 id="main-title">{{ data.heroText || $title }}</h1>
 
       <p class="description" v-html="data.tagline || $description"></p>
 
       <p>
-        <StarButton/>
+        <StarButton />
       </p>
 
-      <b-action-link :to="data.actionLink" :text="data.actionText" :primary="true"/>
+      <b-action-link
+        :to="data.actionLink"
+        :text="data.actionText"
+        :primary="true"
+      />
 
       <p>
         Latest release:
@@ -20,8 +26,8 @@
     </header>
 
     <div id="home-main">
-      <Content class="theme-default-content custom home-content"/>
-      <HomeSideBar/>
+      <Content class="theme-default-content custom home-content" />
+      <HomeSideBar />
     </div>
 
     <div class="footer" v-if="data.footer">{{ data.footer }}</div>

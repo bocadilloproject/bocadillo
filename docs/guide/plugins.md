@@ -43,7 +43,7 @@ To register plugins, use the `PLUGINS` setting:
 
 ```python
 # myproject/settings.py
-from starlette.config iport Config
+from starlette.config import Config
 from third_party_logs.plugins import use_startup_message
 
 config = Config(".env")
