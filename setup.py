@@ -29,7 +29,7 @@ EXTRAS_REQUIRE["full"] = [
 
 setuptools.setup(
     name="bocadillo",
-    version="0.18.2",
+    version="0.18.3",
     author="Florimond Manca",
     author_email="florimond.manca@gmail.com",
     description=description,

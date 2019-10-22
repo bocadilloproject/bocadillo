@@ -14,6 +14,8 @@ As a result, we strongly recommend you read this document carefully before upgra
 
 ## [Unreleased]
 
+## [v0.18.3] - 2019-10-22
+
 ## [v0.18.2] - 2019-08-03
 
 ### Added
@@ -745,7 +747,8 @@ async def foo(req, res):
 - `README.md`.
 - `CONTRIBUTING.md`.
 
-[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.2...HEAD
+[unreleased]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.3...HEAD
+[v0.18.3]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.2...v0.18.3
 [v0.18.2]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.1...v0.18.2
 [v0.18.1]: https://github.com/bocadilloproject/bocadillo/compare/v0.18.0...v0.18.1
 [v0.18.0]: https://github.com/bocadilloproject/bocadillo/compare/v0.17.0...v0.18.0
