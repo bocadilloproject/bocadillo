@@ -24,13 +24,6 @@ module.exports = {
         updatePopup: true
       }
     },
-    algolia:
-      process.env.NODE_ENV === "production"
-        ? {
-            apiKey: process.env.ALGOLIA_API_KEY,
-            indexName: project.algoliaIndex
-          }
-        : {},
     nav: [
       {
         text: "Guide",

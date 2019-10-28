@@ -37,7 +37,6 @@ module.exports = {
   cli: projectRepo("bocadillo-cli"),
   twitterUser,
   twitter: `https://twitter.com/${twitterUser}`,
-  algoliaIndex: "bocadilloproject",
   repoPage,
   docsPage,
   projectRepo
