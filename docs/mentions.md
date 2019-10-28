@@ -4,6 +4,10 @@ This page is a curated list of articles, newsletters, projects and other content
 
 [[toc]]
 
+## September 2019
+
+- (September 9, 2019): [Bocadillo: Introduction sur ce framework asynchrone](https://www.codeandcode.fr/blog/bocadillo-introduction/) (fr) by Mikael Briolet.
+
 ## July 2019
 
 - (July 7, 2019): Bocadillo is [added](https://github.com/timofurrer/awesome-asyncio/pull/49) to [awesome-asyncio](https://github.com/timofurrer/awesome-asyncio#web-frameworks).

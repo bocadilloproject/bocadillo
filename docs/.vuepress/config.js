@@ -78,7 +78,7 @@ module.exports = {
             items: [
               {
                 text: "Twitter",
-                link: `https://twitter.com/${project.twitterUsage}`
+                link: project.twitter
               },
               {
                 text: "News",
