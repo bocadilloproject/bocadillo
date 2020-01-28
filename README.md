@@ -1,6 +1,6 @@
 # NOTICE
 
-Bocadillo is now **UNMAINTAINED**. This repository will be archived by November 2019. We recommend users to migrate to other well-supported alternatives, such as [Starlette](https://www.starlette.io) or [FastAPI](https://fastapi.tiangolo.com). Please see [#334](https://github.com/bocadilloproject/bocadillo/issues/334) for more information.
+Bocadillo is now **UNMAINTAINED**. This repository should be archived soon. We recommend users to migrate to other well-supported alternatives, such as [Starlette](https://www.starlette.io) or [FastAPI](https://fastapi.tiangolo.com). Please see [#334](https://github.com/bocadilloproject/bocadillo/issues/334) for more information.
 
 ---
 
